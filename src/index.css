@@ -244,6 +244,13 @@ main {
   min-width: 259px;
 }
 
+.resume{
+  text-align: center;
+  color: hsl(45, 54%, 58%);
+  font-weight: 1000;
+  text-decoration: none;
+  cursor: pointer;
+}
 
 .sidebar {
   margin-bottom: 15px;

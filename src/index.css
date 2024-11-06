@@ -868,6 +868,7 @@ main {
 
 .organization-block {
   display: flex;                /* Flex display for horizontal layout */
+  flex-direction: column;         /* Column direction by default for smaller screens */
   background: var(--border-gradient-onyx);
   border-radius: 5px;          /* Rounded corners */
   padding: 15px;               /* Inner spacing */
@@ -877,6 +878,7 @@ main {
 }
 
 .organization-image {
+  width: 100px;                   /* Fixed width for larger screens */
   flex: 0 0 100px;             /* Fixed width for image box */
   margin-right: 15px;          /* Space between image and details */
 }
@@ -895,6 +897,7 @@ main {
   display: flex;               /* Align buttons horizontally */
   gap: 10px;                  /* Space between buttons */
   margin-top: 10px;           /* Space above buttons */
+  flex-wrap: wrap;
 }
 
 .organization-buttons button {
@@ -921,6 +924,20 @@ main {
   cursor: pointer;
   font-size: 1rem;
   padding: 0.5rem 1rem;
+}
+
+/* Media query for larger screens */
+@media (min-width: 768px) {
+  .organization-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .organization-block {
+    flex-direction: row;         /* Horizontal layout for wider screens */
+    width: 48%;                  /* Two columns */
+    margin-bottom: 10px;
+  }
 }
 
 

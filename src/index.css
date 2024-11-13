@@ -868,8 +868,7 @@ main {
 
 .organization-block {
   display: flex;                /* Flex display for horizontal layout */
-  flex-direction: column;         /* Column direction by default for smaller screens */
-  background: var(--border-gradient-onyx);
+  background: var(--bg-gradient-jet);
   border-radius: 5px;          /* Rounded corners */
   padding: 15px;               /* Inner spacing */
   box-shadow: var(--shadow-4);
@@ -909,12 +908,20 @@ main {
 }
 
 .organization-buttons button {
-  background: var(--border-gradient-onyx);
+  background: var(--bg-gradient-jet);
   box-shadow: var(--shadow-4);
   border: 1px solid var(--jet);
   margin-top: -1vh;
 
 }
+
+.organization-buttons button:hover {
+  background: var(--bg-gradient-onyx);
+  box-shadow: var(--shadow-4);
+  border: 1px solid var(--jet);
+  margin-top: -1vh;
+}
+
 
 
 .btn-contributions, .btn-participations {
@@ -927,16 +934,26 @@ main {
 }
 
 /* Media query for larger screens */
-@media (min-width: 768px) {
+@media (max-width: 767px) {
   .organization-container {
-    flex-direction: row;
-    flex-wrap: wrap;
+    padding: 10px;
   }
 
   .organization-block {
-    flex-direction: row;         /* Horizontal layout for wider screens */
-    width: 48%;                  /* Two columns */
-    margin-bottom: 10px;
+    flex-direction: column;         /* Stack content vertically */
+    width: 100%;                    /* Full width for each block */
+    margin-bottom: 15px;
+  }
+
+  .organization-image {
+    width: 80px;                    /* Smaller image width for phones */
+    margin-right: 0;                /* Remove side margin */
+    margin-bottom: 10px;            /* Space below image */
+  }
+
+  .organization-buttons {
+    align-items: flex-start;        /* Align buttons to the left */
+    gap: 5px;                       /* Smaller gap between buttons */
   }
 }
 
@@ -1363,13 +1380,6 @@ textarea.form-input::-webkit-resizer { display: none; }
 
   .navbar-link { font-weight: var(--fw-500); }
 
-
-
-  /**
-   * ABOUT
-   */
-
-  /* service */
 
   .service-list {
     grid-template-columns: 1fr 1fr;

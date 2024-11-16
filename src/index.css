@@ -470,11 +470,11 @@ main {
   line-height: 1.6;
 }
 
-.licenses { margin-bottom: 30px; }
+.certifications { margin-bottom: 30px; }
 
-.licenses-title { margin-bottom: 20px; }
+.certifications-title { margin-bottom: 20px; }
 
-.licenses-list {
+.certifications-list {
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
@@ -488,12 +488,12 @@ main {
   scroll-snap-type: inline mandatory;
 }
 
-.licenses-item {
+.certifications-item {
   min-width: 100%;
   scroll-snap-align: center;
 }
 
-.licenses-avatar-box {
+.certifications-avatar-box {
   position: absolute;
   top: 0;
   left: 0;
@@ -503,9 +503,9 @@ main {
   box-shadow: var(--shadow-1);
 }
 
-.licenses-item-title { margin-bottom: 7px; }
+.certifications-item-title { margin-bottom: 7px; }
 
-.licenses-text {
+.certifications-text {
   color: var(--light-gray);
   font-size: var(--fs-6);
   font-weight: var(--fw-300);
@@ -1149,28 +1149,10 @@ textarea.form-input::-webkit-resizer { display: none; }
 
   .about-text { margin-bottom: 40px; }
 
-  /* service */
 
-  .service-item {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 18px;
-    padding: 30px;
-  }
+  .certifications-title { margin-bottom: 25px; }
 
-  .service-icon-box {
-    margin-bottom: 0;
-    margin-top: 5px;
-  }
-
-  .service-content-box { text-align: left; }
-
-  /* testimonials */
-
-  .licenses-title { margin-bottom: 25px; }
-
-  .licenses-list {
+  .certifications-list {
     gap: 30px;
     margin: 0 -30px;
     padding: 30px;
@@ -1182,24 +1164,24 @@ textarea.form-input::-webkit-resizer { display: none; }
     padding-top: 25px;
   }
 
-  .licenses-avatar-box {
+  .certifications-avatar-box {
     transform: translate(30px, -30px);
     border-radius: 20px;
   }
 
-  .licenses-avatar-box img { width: 80px; border-radius: 20px;}
+  .certifications-avatar-box img { width: 80px; border-radius: 20px;}
 
-  .licenses-item-title {
+  .certifications-item-title {
     margin-bottom: 10px;
     margin-left: 95px;
   }
 
-  .licenses-text {
+  .certifications-text {
     line-clamp: 2;
     -webkit-line-clamp: 2;
   }
 
-  .modal-container { padding: 20px; }
+  .licenses-modal-container { padding: 20px; }
 
   .licenses-modal {
     display: flex;

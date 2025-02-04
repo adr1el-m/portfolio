@@ -998,6 +998,72 @@
     0%, 60%, 100% { transform: translateY(0); }
     30% { transform: translateY(-4px); }
   }
+
+  /* Mobile-friendly chatbot styles */
+  @media (max-width: 768px) {
+    .chatbot-btn {
+      bottom: 80px; /* Move up to avoid navbar */
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      font-size: 1.2rem;
+    }
+
+    .chatbox {
+      position: fixed;
+      bottom: 80px; /* Move up to avoid navbar */
+      right: 10px;
+      width: calc(100% - 20px); /* Full width minus margins */
+      max-width: 350px;
+      height: 60vh; /* Percentage of viewport height */
+      max-height: 500px;
+      margin: 10px;
+      border-radius: 15px;
+    }
+
+    .chatbox-header {
+      padding: 12px;
+      font-size: 1rem;
+    }
+
+    .chatbox-messages {
+      padding: 12px;
+    }
+
+    .chatbox-input {
+      padding: 8px;
+    }
+
+    .chatbox-input input {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+
+    .chatbox-input button {
+      padding: 8px 12px;
+    }
+
+    .message {
+      padding: 8px 12px;
+      font-size: 14px;
+      max-width: 85%;
+    }
+  }
+
+  /* Additional improvements for very small screens */
+  @media (max-width: 380px) {
+    .chatbox {
+      width: calc(100% - 10px);
+      right: 5px;
+      margin: 5px;
+    }
+
+    .chatbot-btn {
+      width: 45px;
+      height: 45px;
+      font-size: 1rem;
+    }
+  }
   </style>
 
 </body>

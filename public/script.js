@@ -7,7 +7,7 @@ const sidebarBtn = document.querySelector("[data-sidebar-btn]");
 
 sidebarBtn.addEventListener("click", function () { elementToggleFunc(sidebar); });
 
-const testimonialsItem = document.querySelectorAll("[data-testimonials-item]");
+const testimonialsItem = document.querySelectorAll("[data-certifications-item]");
 const overlay = document.querySelector("[data-overlay]");
 
 

@@ -621,6 +621,25 @@
 
       </article>
 
+      <!-- Add this section for FAQ -->
+      <article class="faq" data-page="faq">
+        <header>
+          <h2 class="h2 article-title">Frequently Asked Questions</h2>
+        </header>
+
+        <section class="faq-section">
+          <div class="faq-item">
+            <h3 class="faq-question" onclick="toggleFAQ(this)">What is your background?</h3>
+            <p class="faq-answer">I am a Computer Science student with a passion for technology and programming.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-question" onclick="toggleFAQ(this)">What services do you offer?</h3>
+            <p class="faq-answer">I offer web development, database administration, graphic design, and UI/UX design services.</p>
+          </div>
+          <!-- Add more FAQ items as needed -->
+        </section>
+      </article>
+
     </div>
 
   </main>
@@ -649,143 +668,37 @@
     </div>
   </div>
 
+  <!-- Back-to-top button -->
+  <div class="back-to-top" aria-label="Back to top">
+    <ion-icon name="arrow-up-outline"></ion-icon>
+  </div>
+
+  <!-- Theme Toggle Button -->
+  <div class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+    <ion-icon name="sunny-outline"></ion-icon>
+  </div>
+
+  <!-- Project Modal -->
+  <div id="projectModal" class="project-modal">
+    <div class="project-modal-content">
+      <span class="project-modal-close">&times;</span>
+      <div class="project-modal-images">
+        <button class="project-modal-prev">&larr;</button>
+        <img src="" alt="Project Image" class="project-modal-current-image">
+        <button class="project-modal-next">&rarr;</button>
+      </div>
+      <div class="project-modal-links">
+        <a href="#" class="project-github" target="_blank">GitHub</a>
+        <a href="#" class="project-live" target="_blank">Live Demo</a>
+      </div>
+    </div>
+  </div>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <script src="script.js"></script>
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-
-  <script>
-  const chatbotBtn = document.querySelector('.chatbot-btn');
-  const chatbox = document.querySelector('.chatbox');
-  const closeBtn = document.querySelector('.close-btn');
-  const messagesDiv = document.querySelector('.chatbox-messages');
-  const inputField = document.querySelector('.chatbox-input input');
-  const sendBtn = document.querySelector('.chatbox-input button');
-
-  // Toggle chatbox visibility
-  chatbotBtn.addEventListener('click', () => {
-    chatbox.style.display = chatbox.style.display === 'none' ? 'flex' : 'none';
-  });
-
-  closeBtn.addEventListener('click', () => {
-    chatbox.style.display = 'none';
-  });
-
-  // Send message on button click or Enter key
-  sendBtn.addEventListener('click', handleMessage);
-  inputField.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      handleMessage();
-    }
-  });
-
-  async function handleMessage() {
-    const message = inputField.value.trim();
-    if (!message) return;
-
-    // Add user message
-    addMessage(message, 'user');
-    inputField.value = '';
-
-    // Show typing indicator
-    const typingDiv = document.createElement('div');
-    typingDiv.className = 'message bot-message typing-indicator';
-    typingDiv.innerHTML = `
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-    `;
-    messagesDiv.appendChild(typingDiv);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-    // Get and display bot response
-    setTimeout(async () => {
-      const response = await getChatbotResponse(message);
-      typingDiv.remove();
-      addMessage(response, 'bot');
-    }, 1000);
-  }
-
-  function addMessage(text, sender) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${sender}-message`;
-    messageDiv.textContent = text;
-    messagesDiv.appendChild(messageDiv);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }
-
-  // Initialize with welcome message
-  window.addEventListener('load', () => {
-    addMessage("Hi! I'm AdrAI, Adriel's digital assistant. How can I help you today?", 'bot');
-  });
-
-  // Define knowledge base about Adriel
-  const knowledge = {
-    personal: {
-      name: "Adriel Magalona",
-      role: "Computer Science Student",
-      location: "Taguig City, Metro Manila, Philippines",
-      email: "dagsmagalona@gmail.com"
-    },
-    about: "A university student with a passion for technology and computer science. I love diving into new challenges and picking up new skills along the way. Whether it's coding, problem-solving, or exploring the latest tech trends, I'm always eager to learn and grow.",
-    skills: [
-      "Web Development",
-      "Database Administration",
-      "Graphic Designing",
-      "UI/UX Design"
-    ],
-    education: [
-      {
-        school: "Polytechnic University of the Philippines",
-        period: "2024 — 2028",
-        details: "Computer Science program"
-      },
-      {
-        school: "University of Makati",
-        period: "2022 — 2024",
-        details: "Computer Programming track under TVL strand"
-      }
-    ],
-    organizations: [
-      "Google Developer Student Clubs - PUP",
-      "AWS Cloud Club PUP",
-      "PUP Manila Microsoft Student Community",
-      "PUP The Programmers' Guild",
-      "Junior Blockchain Education Consortium of the Philippines - PUP Manila"
-    ]
-  };
-
-  async function getChatbotResponse(message) {
-    try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=AIzaSyDr-mS0aSHgcapEfJ5oNSaoiD4jyLqUZNA`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: `You are AdrAI, Adriel Magalona's digital assistant. Here is information about Adriel: ${JSON.stringify(knowledge)}. 
-                        Please provide a natural, conversational response to this question: ${message}`
-                    }]
-                }]
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data.candidates[0].content.parts[0].text;
-
-    } catch (error) {
-        console.error('Error:', error);
-        return "I apologize, but I'm having trouble connecting to my knowledge base right now. Please try again in a moment! 🔄";
-    }
-  }
-  </script>
 
   <style>
   .chatbot-btn {
@@ -996,6 +909,7 @@
     30% { transform: translateY(-4px); }
   }
 
+
   /* Mobile-friendly chatbot styles */
   @media (max-width: 768px) {
     .chatbot-btn {
@@ -1060,6 +974,114 @@
       height: 45px;
       font-size: 1rem;
     }
+  }
+
+  /* Add this CSS for dark mode adaptation */
+  .faq-section {
+    background-color: #2c2c2c; /* Dark background */
+    color: #fff; /* Light text */
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .faq-item {
+    margin-bottom: 15px;
+  }
+
+  .faq-question {
+    cursor: pointer;
+    font-weight: bold;
+    transition: color 0.3s;
+  }
+
+  .faq-question:hover {
+    color: #ffdb70; /* Highlight on hover */
+  }
+
+  .faq-answer {
+    display: none; /* Initially hidden */
+    margin-top: 5px;
+    padding: 10px;
+    background-color: #3a3a3a; /* Slightly lighter background for answers */
+    border-radius: 5px;
+  }
+
+  /* Project Modal Styles */
+  .project-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+  }
+  .project-modal-content {
+    background: #fff;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    padding: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .project-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  .project-modal-images {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .project-modal-images img {
+    max-width: 100%;
+    border-radius: 4px;
+  }
+  .project-modal-prev,
+  .project-modal-next {
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #333;
+  }
+  .project-modal-prev {
+    left: 10px;
+  }
+  .project-modal-next {
+    right: 10px;
+  }
+  .project-modal-links {
+    margin-top: 15px;
+    display: flex;
+    gap: 20px;
+  }
+  .project-modal-links a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+    border: 1px solid #007bff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background 0.3s;
+  }
+  .project-modal-links a:hover {
+    background: #007bff;
+    color: #fff;
   }
   </style>
 

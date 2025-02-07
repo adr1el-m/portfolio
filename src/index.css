@@ -157,12 +157,18 @@ article { display: none; }
 
 article.active {
   display: block;
-  animation: fade 0.5s ease backwards;
+  animation: slideFadeIn 0.6s ease-out;
 }
 
-@keyframes fade {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .h2,
@@ -256,10 +262,10 @@ main {
   margin-bottom: 15px;
   max-height: 112px;
   overflow: hidden;
-  transition: var(--transition-2);
+  transition: max-height 0.5s ease, opacity 0.5s ease;
 }
 
-.sidebar.active { max-height: 405px; }
+.sidebar.active { max-height: 405px; opacity: 1; }
 
 .sidebar-info {
   position: relative;
@@ -409,12 +415,31 @@ main {
   font-size: var(--fs-8);
   padding: 20px 7px;
   transition: color var(--transition-1);
+  position: relative;
+  overflow: hidden;
 }
 
 .navbar-link:hover,
 .navbar-link:focus { color: var(--light-gray-70); }
 
 .navbar-link.active { color: var(--orange-yellow-crayola); }
+
+.navbar-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0%;
+  height: 2px;
+  background: var(--orange-yellow-crayola);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.navbar-link:hover::after,
+.navbar-link.active::after {
+  width: 100%;
+}
 
 .about .article-title { margin-bottom: 15px; }
 
@@ -641,6 +666,7 @@ main {
   visibility: hidden;
   pointer-events: none;
   transition: 0.15s ease-in-out;
+  animation: slideFadeIn 0.3s ease;
 }
 
 .filter-select.active + .select-list {
@@ -1343,4 +1369,502 @@ textarea.form-input::-webkit-resizer { display: none; }
 .timeline-text {
   max-width: 700px;
 }
+}
+
+/* NEW ANIMATIONS & UI/UX UPDATES */
+
+/* Smooth slide & fade in animation */
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* A pulse effect for interactive elements */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Apply slide & fade to articles when activated */
+article.active {
+  display: block;
+  animation: slideFadeIn 0.6s ease-out;
+}
+
+/* Add an animated underline effect to navigation links */
+.navbar-link {
+  position: relative;
+  overflow: hidden;
+}
+
+.navbar-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0%;
+  height: 2px;
+  background: var(--orange-yellow-crayola);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.navbar-link:hover::after,
+.navbar-link.active::after {
+  width: 100%;
+}
+
+/* Chatbot button "pulse" on hover for extra feedback */
+.chatbot-btn:hover {
+  animation: pulse 0.8s ease-in-out;
+  transform: scale(1.1);
+}
+
+/* Sidebar toggle transition update */
+.sidebar {
+  transition: max-height 0.5s ease, opacity 0.5s ease;
+}
+
+.sidebar.active {
+  opacity: 1;
+}
+
+/* Filter select dropdown now uses a slideFadeIn effect */
+.filter-select-box .select-list {
+  animation: slideFadeIn 0.3s ease;
+}
+
+/* Timeline items get a gentle hover lift & shadow */
+.timeline-item {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.timeline-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+/* Organization buttons lift on hover */
+.organization-buttons button {
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.organization-buttons button:hover {
+  transform: translateY(-2px);
+}
+
+/* Global transition for smoother interactions */
+* {
+  transition: all 0.25s ease;
+}
+
+/* FAQ answer expand/collapse animation */
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+}
+
+.faq-answer.show {
+  max-height: 200px; /* Adjust as needed */
+  opacity: 1;
+}
+
+/* ===== Additional Animation & UI/UX Improvements ===== */
+
+/* Fade in up for reveal animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.reveal.animate {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+/* Zoom effect for project items on hover */
+.project-item {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.project-item:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+}
+
+/* Back-to-top button styles */
+.back-to-top {
+  position: fixed;
+  bottom: 90px;
+  right: 37px;
+  background: var(--orange-yellow-crayola);
+  color: var(--smoky-black);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.back-to-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-10px);
+}
+.back-to-top:hover {
+  transform: translateY(-15px);
+}
+
+/* Enhanced sliding animation for FAQ answers */
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.4s ease, opacity 0.4s ease;
+  opacity: 0;
+  padding: 0 10px;
+}
+.faq-answer.show {
+  max-height: 200px; /* Adjust as needed */
+  opacity: 1;
+  padding: 10px;
+}
+
+/* Bounce effect for avatar image on page load */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+.avatar-box img {
+  animation: bounce 2s;
+}
+
+/* Theme Toggle Styles */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--border-gradient-onyx);
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: var(--shadow-1);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+}
+
+/* Light Mode Overrides */
+body.light-mode {
+  background: #f5f5f5; /* lighter background */
+  color: #333;
+}
+
+body.light-mode .sidebar,
+body.light-mode article {
+  background: #ffffff;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .navbar {
+  background: #ffffffcc;
+  border-color: #ccc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .navbar-link {
+  color: #333;
+}
+
+body.light-mode .navbar-link.active {
+  color: #ffdb70;
+}
+
+body.light-mode .form-input {
+  background: #fff;
+  border: 1px solid #ccc;
+  color: #333;
+}
+
+body.light-mode .form-btn {
+  background: #ffdb70;
+  color: #333;
+  border: none;
+}
+
+/* Add further element overrides as needed for your light theme */
+
+/* Extended Light Mode Overrides */
+body.light-mode,
+body.light-mode h1,
+body.light-mode h2,
+body.light-mode h3,
+body.light-mode h4,
+body.light-mode h5,
+body.light-mode h6,
+body.light-mode p,
+body.light-mode li,
+body.light-mode span,
+body.light-mode a {
+  color: #333 !important;
+}
+
+body.light-mode {
+  background: #f5f5f5 !important;
+}
+
+/* Update sidebar, article, and navbar backgrounds and borders */
+body.light-mode .sidebar,
+body.light-mode article,
+body.light-mode .navbar {
+  background: #ffffff !important;
+  border-color: #ccc !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+
+/* Ensure navbar text becomes dark */
+body.light-mode .navbar-link {
+  color: #333 !important;
+}
+body.light-mode .navbar-link.active {
+  color: #ffdb70 !important;
+}
+
+/* Update FAQ section */
+body.light-mode .faq-section {
+  background-color: #f0f0f0 !important;
+  color: #333 !important;
+}
+body.light-mode .faq-answer {
+  background-color: #e8e8e8 !important;
+  color: #333 !important;
+  border: 1px solid #ccc !important;
+}
+
+/* Update form elements (if needed) */
+body.light-mode .form-input {
+  background: #fff !important;
+  border: 1px solid #ccc !important;
+  color: #333 !important;
+}
+body.light-mode .form-btn {
+  background: #ffdb70 !important;
+  color: #333 !important;
+  border: none !important;
+}
+
+/* Update Chatbot styles */
+body.light-mode .chatbox {
+  background: #ffffff !important;
+  border: 1px solid #ccc !important;
+}
+body.light-mode .chatbox-header {
+  background: #f0f0f0 !important;
+  color: #333 !important;
+  border-bottom: 1px solid #ccc !important;
+}
+body.light-mode .chatbox-messages {
+  background: #ffffff !important;
+  color: #333 !important;
+}
+body.light-mode .chatbox-input input {
+  background: #ffffff !important;
+  border: 1px solid #ccc !important;
+  color: #333 !important;
+}
+body.light-mode .chatbox-input button {
+  background: #ffdb70 !important;
+  color: #333 !important;
+  border: none !important;
+}
+
+/* Extended Light Mode Overrides for Service List */
+body.light-mode .service-item {
+  background: #ffffff !important;
+  border: 1px solid #ccc !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  color: #333 !important;
+}
+
+body.light-mode .service-item::before {
+  background: #f5f5f5 !important;
+}
+
+/* Project Modal Styles (Dark Mode with Animation) */
+.project-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: none; /* Shown via JavaScript by setting display to flex */
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.project-modal-content {
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  padding: 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  animation: modalPopIn 0.5s ease-out;
+  /* Optionally, add a subtle drop-shadow for depth */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.project-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #ffdb70;
+  transition: transform 0.3s ease;
+}
+
+.project-modal-close:hover {
+  transform: scale(1.1);
+}
+
+.project-modal-images {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.project-modal-images img {
+  max-width: 100%;
+  border-radius: 4px;
+}
+
+.project-modal-prev,
+.project-modal-next {
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ffdb70;
+  transition: color 0.3s ease;
+}
+
+.project-modal-prev {
+  left: 10px;
+}
+
+.project-modal-next {
+  right: 10px;
+}
+
+.project-modal-prev:hover,
+.project-modal-next:hover {
+  color: #ffc107; /* Slightly lighter yellow on hover */
+}
+
+.project-modal-links {
+  margin-top: 15px;
+  display: flex;
+  gap: 20px;
+}
+
+.project-modal-links a {
+  text-decoration: none;
+  color: #ffdb70;
+  font-weight: bold;
+  border: 1px solid #ffdb70;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.project-modal-links a:hover {
+  background: #ffdb70;
+  transform: translateY(-2px);
+  color: #1a1a1a;
+}
+
+/* Light Mode Overrides for Project Modal */
+body.light-mode .project-modal-content {
+  background: #ffffff !important;
+  color: #333 !important;
+  border: 1px solid #ccc !important;
+}
+body.light-mode .project-modal-close {
+  color: #333 !important;
+}
+body.light-mode .project-modal-prev,
+body.light-mode .project-modal-next {
+  color: #333 !important;
+}
+body.light-mode .project-modal-links a {
+  color: #007bff !important;
+  border: 1px solid #007bff !important;
+}
+body.light-mode .project-modal-links a:hover {
+  background: #007bff !important;
+  color: #fff !important;
 }

@@ -150,7 +150,7 @@
       </nav>
 
 
-      <article class="about  active" data-page="about">
+      <article class="about active" data-page="about">
 
         <header>
           <h2 class="h2 article-title">About me</h2>
@@ -162,78 +162,30 @@
           </p>
         </section>
 
-        <section class="service">
-
-          <h3 class="h3 service-title">What i'm doing</h3>
-
-          <ul class="service-list">
-
-            <li class="service-item">
-
-              <div class="service-icon-box">
-                <img src="images/webdev-icon.png" alt="Web Developement icon" width="40">
-              </div>
-
-              <div class="service-content-box">
-                <h4 class="h4 service-item-title">Web Developement</h4>
-
-                <p class="service-item-text">
-                  Sleek and well-crafted web development at a high professional standard.
-                </p>
-              </div>
-
-            </li>
-
-            <li class="service-item">
-
-              <div class="service-icon-box">
-                <img src="images/database-icon.png" alt="Database Administrator icon" width="40">
-              </div>
-
-              <div class="service-content-box">
-                <h4 class="h4 service-item-title">Database Administrator</h4>
-
-                <p class="service-item-text">
-                  The designer and overseer responsible for creating and maintaining a basic MySQL database. 
-                </p>
-              </div>
-
-            </li>
-
-            <li class="service-item">
-
-              <div class="service-icon-box">
-                <img src="images/graphDes-icon.png" alt="Graphic Designing icon" width="40">
-              </div>
-
-              <div class="service-content-box">
-                <h4 class="h4 service-item-title">Graphic Designing</h4>
-
-                <p class="service-item-text">
-                  Edits and prepares publication materials for an organization to be published online.
-                </p>
-              </div>
-
-            </li>
-
-            <li class="service-item">
-
-              <div class="service-icon-box">
-                <img src="images/uiUx-icon.png" alt="UI/UX icon" width="40">
-              </div>
-
-              <div class="service-content-box">
-                <h4 class="h4 service-item-title">UI/UX Designer</h4>
-
-                <p class="service-item-text">
-                  I create innovative interfaces that elevate user experience and enhance design aesthetics.
-                </p>
-              </div>
-
-            </li>
-
-          </ul>
-
+        <section class="achievements">
+          <h3 class="h3 achievements-title">Achievements</h3>
+          <div class="achievements-panel" style="overflow: hidden;">
+            <div class="achievement-item"
+                 onclick="openAchievementModal(this)"
+                 data-images='["achievements/excalicode/cor.jpg", "achievements/excalicode/cop.jpg"]'
+                 data-organizer="Organized by The Programmers' Guild at Polytechnic University of the Philippines, where I won the Knight Category in a Data Structures & Algorithms competition."
+                 data-date="September 2024"
+                 data-location="Polytechnic University of the Philippines"
+                 data-description="Description for Award 1.">
+              <h4 class="h4">Excalicode</h4>
+            </div>
+            <div class="achievement-item"
+                 onclick="openAchievementModal(this)"
+                 data-image="images/award2.jpg"
+                 data-description="Description for Award 2.">
+              <h4 class="h4">Award Title 2</h4>
+            </div>
+            <div class="achievement-item"
+                 onclick="openAchievementModal(this)"
+                 data-description="Description for Award 3.">
+              <h4 class="h4">Award Title 3</h4>
+            </div>
+          </div>
         </section>
 
         <section class="certifications">
@@ -640,6 +592,10 @@
         </section>
       </article>
 
+      <article class="achievements" data-page="achievements">
+        <!-- All achievements content removed -->
+      </article>
+
     </div>
 
   </main>
@@ -690,6 +646,34 @@
       <div class="project-modal-links">
         <a href="#" class="project-github" target="_blank">GitHub</a>
         <a href="#" class="project-live" target="_blank">Live Demo</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Updated Achievement Modal -->
+  <div id="achievementModal" class="achievement-modal">
+    <div class="achievement-modal-content">
+      <span class="achievement-modal-close">&times;</span>
+      <div class="achievement-modal-body">
+        <!-- Left column: Image and slider controls -->
+        <div class="achievement-media">
+          <div class="achievement-slider">
+            <img class="achievement-slide-image" src="" alt="Achievement Image">
+          </div>
+          <div class="achievement-slider-controls">
+            <button class="achievement-slider-prev">&larr;</button>
+            <button class="achievement-slider-next">&rarr;</button>
+          </div>
+        </div>
+        <!-- Right column: Achievement text information -->
+        <div class="achievement-info">
+          <h3 class="achievement-title-modal"></h3>
+          <p class="achievement-desc-modal"></p>
+          <div class="achievement-details">
+            <p class="achievement-organizer"></p>
+            <p class="achievement-date-location"></p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1082,6 +1066,11 @@
   .project-modal-links a:hover {
     background: #007bff;
     color: #fff;
+  }
+
+  /* Add pointer cursor on achievement items */
+  .achievement-item {
+    cursor: pointer;
   }
   </style>
 

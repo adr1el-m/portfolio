@@ -1,5 +1,65 @@
 'use strict';
 
+// Achievement modal function
+function openAchievementModal(item) {
+  const achievementModal = document.getElementById('achievementModal');
+  const slideImageEl = achievementModal.querySelector('.achievement-slide-image');
+  const titleModalEl = achievementModal.querySelector('.achievement-title-modal');
+  const descModalEl = achievementModal.querySelector('.achievement-desc-modal');
+  const organizerModalEl = achievementModal.querySelector('.achievement-organizer');
+  const dateLocationEl = achievementModal.querySelector('.achievement-date-location');
+
+  // Try to fetch an array of images from the "data-images" attribute.
+  let imagesData = item.getAttribute('data-images');
+  let imagesArray = [];
+  try {
+    if (imagesData) {
+      imagesArray = JSON.parse(imagesData);
+    } else {
+      // Fallback: if only a single image is provided using "data-image"
+      let singleImage = item.getAttribute('data-image');
+      if (singleImage) {
+        imagesArray = [singleImage];
+      }
+    }
+  } catch (error) {
+    console.error("Error parsing achievement images:", error);
+    imagesArray = [];
+  }
+
+  // Use a fallback image if no images are specified.
+  if (imagesArray.length === 0) {
+    imagesArray = ['images/default-achievement.jpg'];
+  }
+
+  // Always show the first image when the modal is opened.
+  window.currentAchievementImages = imagesArray;
+  window.currentAchievementImageIndex = 0;
+  slideImageEl.src = window.currentAchievementImages[0];
+
+  // Retrieve achievement title and description.
+  const achievementTitle = item.querySelector('h4') ? item.querySelector('h4').innerText : "Achievement";
+  const achievementDesc = item.getAttribute('data-description') || "";
+  
+  // Retrieve additional details.
+  const organizer = item.getAttribute('data-organizer') || "";
+  const date = item.getAttribute('data-date') || "";
+  const location = item.getAttribute('data-location') || "";
+  const dateLocation = (date && location) ? `${date} - ${location}` : (date || location);
+
+  // Populate modal fields.
+  titleModalEl.innerText = achievementTitle;
+  descModalEl.innerText = achievementDesc;
+  organizerModalEl.innerText = organizer;
+  dateLocationEl.innerText = dateLocation;
+
+  // Display the modal.
+  achievementModal.style.display = "flex";
+
+  // Update slider navigation buttons.
+  updateAchievementNavigationButtons();
+}
+
 const elementToggleFunc = function (elem) { elem.classList.toggle("active"); }
 
 const sidebar = document.querySelector("[data-sidebar]");
@@ -345,4 +405,84 @@ modalPrevBtn.addEventListener('click', () => {
     modalImageEl.src = currentProjectImages[currentImageIndex];
   }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Attach click event listener to each achievement item to open modal
+  const achievementItems = document.querySelectorAll('.achievements-panel .achievement-item');
+  achievementItems.forEach(item => {
+    item.addEventListener('click', function() {
+      openAchievementModal(this);
+    });
+  });
+
+  // Updated function for arrow button state (only right arrow is used for forward navigation)
+  function updateAchievementNavigationButtons() {
+    const achievementModal = document.getElementById('achievementModal');
+    const prevBtn = achievementModal.querySelector('.achievement-slider-prev');
+    const nextBtn = achievementModal.querySelector('.achievement-slider-next');
+
+    // Enable the left arrow (prevBtn) only if we're not on the first image.
+    if (window.currentAchievementImageIndex === 0) {
+      prevBtn.classList.add('disabled');
+      prevBtn.style.opacity = '0.5';
+      prevBtn.style.pointerEvents = 'none';
+    } else {
+      prevBtn.classList.remove('disabled');
+      prevBtn.style.opacity = '1';
+      prevBtn.style.pointerEvents = 'auto';
+    }
+
+    // Enable the right arrow (nextBtn) only if we're not on the last image.
+    if (window.currentAchievementImageIndex === window.currentAchievementImages.length - 1) {
+      nextBtn.classList.add('disabled');
+      nextBtn.style.opacity = '0.5';
+      nextBtn.style.pointerEvents = 'none';
+    } else {
+      nextBtn.classList.remove('disabled');
+      nextBtn.style.opacity = '1';
+      nextBtn.style.pointerEvents = 'auto';
+    }
+  }
+
+  // Set up event listeners for both arrow buttons after the DOM content is fully loaded.
+  const achievementModal = document.getElementById('achievementModal');
+  const prevBtn = achievementModal.querySelector('.achievement-slider-prev');
+  const nextBtn = achievementModal.querySelector('.achievement-slider-next');
+
+  // Listener for the left arrow: Navigate to the previous image.
+  prevBtn.addEventListener('click', () => {
+    if (window.currentAchievementImageIndex > 0) {
+      window.currentAchievementImageIndex--;
+      const slideImageEl = achievementModal.querySelector('.achievement-slide-image');
+      slideImageEl.src = window.currentAchievementImages[window.currentAchievementImageIndex];
+      updateAchievementNavigationButtons();
+    }
+  });
+
+  // Listener for the right arrow: Navigate to the next image.
+  nextBtn.addEventListener('click', () => {
+    if (window.currentAchievementImageIndex < window.currentAchievementImages.length - 1) {
+      window.currentAchievementImageIndex++;
+      const slideImageEl = achievementModal.querySelector('.achievement-slide-image');
+      slideImageEl.src = window.currentAchievementImages[window.currentAchievementImageIndex];
+      updateAchievementNavigationButtons();
+    }
+  });
+
+  // Achievement modal close functionality
+  const achievementModalClose = achievementModal.querySelector('.achievement-modal-close');
+
+  achievementModalClose.addEventListener('click', () => {
+    achievementModal.style.display = 'none';
+  });
+
+  achievementModal.addEventListener('click', (e) => {
+    if (e.target === achievementModal) {
+      achievementModal.style.display = 'none';
+    }
+  });
+});
+
+// Make sure the function is available globally for inline onclick calls.
+window.openAchievementModal = openAchievementModal;
 

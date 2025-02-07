@@ -1868,3 +1868,197 @@ body.light-mode .project-modal-links a:hover {
   background: #007bff !important;
   color: #fff !important;
 }
+
+/* Achievements Section Styles */
+.achievements {
+  margin-bottom: 30px;
+}
+
+.achievements-title {
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 7px;
+}
+
+.achievements-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30px;
+  height: 3px;
+  background: var(--text-gradient-yellow);
+  border-radius: 3px;
+}
+
+.achievements-panel {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 10px;
+  scroll-behavior: smooth;
+}
+
+.achievement-item {
+  background: none;
+  border: none;
+  padding: 0;
+  width: auto;
+  flex-shrink: 0;
+  box-shadow: none;
+  transition: none;
+  display: block;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.achievement-item:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Achievement Title Styling */
+.achievement-item h4 {
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: normal;
+  margin: 0 0 0.5rem 0;
+  color: inherit;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* Achievement Description Styling with Truncation */
+.achievement-item p {
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: inherit;
+  margin: 0;
+  overflow: visible;
+  text-overflow: clip;
+  display: block;
+  -webkit-line-clamp: unset;
+  -webkit-box-orient: unset;
+}
+
+.achievements-panel .achievement-item p {
+  display: none;
+}
+
+/* Updated Achievement Modal (Bigger Horizontal Layout) */
+.achievement-modal {
+  display: none; /* Hidden by default, shown via JS */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.achievement-modal-content {
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 8px;
+  max-width: 1200px;  /* Increased modal size for clearer image display */
+  width: 95%;
+  padding: 40px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.achievement-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #ffdb70;
+  z-index: 5; /* Ensure the close button is on top */
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.achievement-modal-close:hover {
+  transform: scale(1.1);
+}
+
+.achievement-modal-body {
+  display: flex;
+  flex-direction: row; /* Side-by-side columns */
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Left column: Media (Image and slider controls) */
+.achievement-media {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.achievement-slider {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.achievement-slide-image {
+  max-width: 100%;
+  height: auto;  /* Maintains the natural aspect ratio */
+  border-radius: 4px;
+  display: block;
+}
+
+.achievement-slider-controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.achievement-slider-prev,
+.achievement-slider-next {
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #ffdb70;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Right column: Text Information */
+.achievement-info {
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.achievement-info h3 {
+  margin-top: 0;
+}
+
+.achievement-info p {
+  margin: 10px 0;
+}
+
+.achievement-details p {
+  margin: 5px 0;
+}

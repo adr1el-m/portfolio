@@ -2048,8 +2048,9 @@ body.light-mode .project-modal-links a:hover {
 }
 
 .achievement-slide-image {
-  max-width: 100%;
-  height: auto;  /* Maintains the natural aspect ratio */
+  width: 600px;       /* Fixed width – adjust as needed */
+  height: 400px;      /* Fixed height – adjust as needed */
+  object-fit: contain;/* Scale the image without cropping it */
   border-radius: 4px;
   display: block;
 }

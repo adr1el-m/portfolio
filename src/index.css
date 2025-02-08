@@ -1893,6 +1893,7 @@ body.light-mode .project-modal-links a:hover {
 
 .achievements-panel {
   display: flex;
+<<<<<<< HEAD
   gap: 20px;
   overflow-x: auto;
   padding: 10px;
@@ -1930,6 +1931,78 @@ body.light-mode .project-modal-links a:hover {
 }
 
 /* Achievement Description Styling with Truncation */
+=======
+  flex-direction: row; /* Stack items horizontally */
+  gap: 10px;
+  padding: 20px;
+  overflow-x: auto; /* Enable horizontal scrollbar */
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+}
+
+/* Optional scrollbar styling similar to your "has-scrollbar" class */
+.achievements-panel::-webkit-scrollbar {
+  height: 8px;
+}
+
+.achievements-panel::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.achievements-panel::-webkit-scrollbar-thumb {
+  background: #ffdb70;
+  border-radius: 4px;
+}
+
+.achievements-panel::-webkit-scrollbar-thumb:hover {
+  background: #ffdb70;
+}
+
+.achievement-item {
+  background: #2c2c2c;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 10px 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+  width: 400px;      /* Fixed width */
+  min-width: 600px;  /* Fixed minimum width */
+  height: 50px;      /* Fixed height */
+  overflow: hidden;  /* Hide any overflowing content */
+  box-sizing: border-box;
+  width: auto !important; min-width: 0 !important; /* Let width adapt to content */
+  flex: 0 0 auto; /* New line: prevent the panel from shrinking */
+}
+
+.achievement-item:hover,
+.achievement-item:focus,
+.achievement-item:active {
+  transform: scale(1.05);
+  box-shadow: 0px 4px 15px rgba(255, 215, 0, 0.5);
+  border-color: var(--orange-yellow-crayola);
+  outline: none;
+}
+
+.achievement-item h4 {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.1rem;
+  color: #fff;         /* Default color: white */
+  text-align: center;  /* Center the title inside the panel */
+  padding: 0 1em;
+}
+
+.achievement-item:hover h4 {
+  color: #FFD700;      /* On hover: gold */
+}
+
+>>>>>>> backup
 .achievement-item p {
   font-family: inherit;
   font-size: 0.9rem;
@@ -2015,8 +2088,14 @@ body.light-mode .project-modal-links a:hover {
 }
 
 .achievement-slide-image {
+<<<<<<< HEAD
   max-width: 100%;
   height: auto;  /* Maintains the natural aspect ratio */
+=======
+  width: 600px;       /* Fixed width – adjust as needed */
+  height: 400px;      /* Fixed height – adjust as needed */
+  object-fit: contain;/* Scale the image without cropping it */
+>>>>>>> backup
   border-radius: 4px;
   display: block;
 }
@@ -2061,4 +2140,30 @@ body.light-mode .project-modal-links a:hover {
 
 .achievement-details p {
   margin: 5px 0;
+<<<<<<< HEAD
+=======
+  font-size: 0.95rem;
+  color: #ccc;
+}
+
+.detail-label {
+  font-weight: 700;
+  color: var(--orange-yellow-crayola);
+  margin-right: 5px;
+}
+
+/* When viewport width is less than 960px, switch to a single column */
+@media (max-width: 960px) {
+  .achievements-panel {
+    grid-template-columns: 450px;
+    justify-content: center;
+  }
+}
+
+/* Optional: For very narrow screens, allow horizontal scrolling if needed */
+@media (max-width: 470px) {
+  .achievements-panel {
+    overflow-x: auto;
+  }
+>>>>>>> backup
 }

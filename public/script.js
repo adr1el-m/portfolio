@@ -44,14 +44,31 @@ function openAchievementModal(item) {
   // Retrieve additional details.
   const organizer = item.getAttribute('data-organizer') || "";
   const date = item.getAttribute('data-date') || "";
+<<<<<<< HEAD
   const location = item.getAttribute('data-location') || "";
   const dateLocation = (date && location) ? `${date} - ${location}` : (date || location);
+=======
+  const locationText = item.getAttribute('data-location') || "";
+  
+  // Format the details with HTML markup so that each appears on its own line with bold labels.
+  let detailsHTML = "";
+  if (locationText) {
+    detailsHTML += `<p><span class="detail-label">Location:</span> ${locationText}</p>`;
+  }
+  if (date) {
+    detailsHTML += `<p><span class="detail-label">Date:</span> ${date}</p>`;
+  }
+  dateLocationEl.innerHTML = detailsHTML;
+>>>>>>> backup
 
   // Populate modal fields.
   titleModalEl.innerText = achievementTitle;
   descModalEl.innerText = achievementDesc;
   organizerModalEl.innerText = organizer;
+<<<<<<< HEAD
   dateLocationEl.innerText = dateLocation;
+=======
+>>>>>>> backup
 
   // Display the modal.
   achievementModal.style.display = "flex";

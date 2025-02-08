@@ -1893,45 +1893,6 @@ body.light-mode .project-modal-links a:hover {
 
 .achievements-panel {
   display: flex;
-<<<<<<< HEAD
-  gap: 20px;
-  overflow-x: auto;
-  padding: 10px;
-  scroll-behavior: smooth;
-}
-
-.achievement-item {
-  background: none;
-  border: none;
-  padding: 0;
-  width: auto;
-  flex-shrink: 0;
-  box-shadow: none;
-  transition: none;
-  display: block;
-  cursor: pointer;
-  margin-bottom: 1rem;
-}
-
-.achievement-item:hover {
-  transform: none;
-  box-shadow: none;
-}
-
-/* Achievement Title Styling */
-.achievement-item h4 {
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: normal;
-  margin: 0 0 0.5rem 0;
-  color: inherit;
-  white-space: normal;
-  overflow: visible;
-  text-overflow: clip;
-}
-
-/* Achievement Description Styling with Truncation */
-=======
   flex-direction: row; /* Stack items horizontally */
   gap: 10px;
   padding: 20px;
@@ -2002,7 +1963,6 @@ body.light-mode .project-modal-links a:hover {
   color: #FFD700;      /* On hover: gold */
 }
 
->>>>>>> backup
 .achievement-item p {
   font-family: inherit;
   font-size: 0.9rem;
@@ -2088,14 +2048,9 @@ body.light-mode .project-modal-links a:hover {
 }
 
 .achievement-slide-image {
-<<<<<<< HEAD
-  max-width: 100%;
-  height: auto;  /* Maintains the natural aspect ratio */
-=======
   width: 600px;       /* Fixed width – adjust as needed */
   height: 400px;      /* Fixed height – adjust as needed */
   object-fit: contain;/* Scale the image without cropping it */
->>>>>>> backup
   border-radius: 4px;
   display: block;
 }
@@ -2140,8 +2095,6 @@ body.light-mode .project-modal-links a:hover {
 
 .achievement-details p {
   margin: 5px 0;
-<<<<<<< HEAD
-=======
   font-size: 0.95rem;
   color: #ccc;
 }
@@ -2165,5 +2118,4 @@ body.light-mode .project-modal-links a:hover {
   .achievements-panel {
     overflow-x: auto;
   }
->>>>>>> backup
 }

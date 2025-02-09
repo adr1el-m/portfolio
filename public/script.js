@@ -388,7 +388,7 @@ async function getChatbotResponse(message) {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `You are AdrAI, Adriel Magalona's digital assistant. Here is information about Adriel: ${JSON.stringify(knowledge)}. ${message}`
+            text: `You are AdrAI, Adriel Magalona's digital assistant. Provide concise and relevant answers that directly address the user's question. Avoid overwhelming the response with unnecessary or unrelated details. Use the following data for reference only when needed: ${JSON.stringify(knowledge)}. ${message}`
           }]
         }]
       })

@@ -236,17 +236,20 @@ inputField.addEventListener('keypress', (e) => {
 // Function to format chatbot responses: replace newlines with <br> and **text** with bold
 function formatChatbotResponse(text) {
   // Replace all newline characters with <br> for line breaks
-  let formatted = text.replace(/\n/g, '<br>')
+  let formatted = text.replace(/\n/g, '<br>');
 
   // Replace any text wrapped with ** with <strong> tags for bold text
-  formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+  formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+  // Replace stray single asterisks with a hyphen "-"
+  formatted = formatted.replace(/\*/g, '-');
 
   // If there are no line breaks and the text is long, insert additional line breaks after sentence-ending punctuation
   if (!formatted.includes('<br>') && formatted.length > 300) {
-    formatted = formatted.replace(/([.?!])\s+(?=[A-Z])/g, '$1<br><br>')
+    formatted = formatted.replace(/([.?!])\s+(?=[A-Z])/g, '$1<br><br>');
   }
 
-  return formatted
+  return formatted;
 }
 
 async function handleMessage() {

@@ -237,8 +237,16 @@ inputField.addEventListener('keypress', (e) => {
 function formatChatbotResponse(text) {
   // Replace all newline characters with <br> for line breaks
   let formatted = text.replace(/\n/g, "<br>");
+
   // Replace any text wrapped with ** with <strong> tags for bold text
   formatted = formatted.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+  // If there aren't any line breaks and the text is long, insert additional line breaks
+  // This regex finds sentence-ending punctuation followed by whitespace before an uppercase letter.
+  if (!formatted.includes("<br>") && formatted.length > 300) {
+    formatted = formatted.replace(/([.?!])\s+(?=[A-Z])/g, "$1<br><br>");
+  }
+
   return formatted;
 }
 

@@ -236,18 +236,17 @@ inputField.addEventListener('keypress', (e) => {
 // Function to format chatbot responses: replace newlines with <br> and **text** with bold
 function formatChatbotResponse(text) {
   // Replace all newline characters with <br> for line breaks
-  let formatted = text.replace(/\n/g, "<br>");
+  let formatted = text.replace(/\n/g, '<br>')
 
   // Replace any text wrapped with ** with <strong> tags for bold text
-  formatted = formatted.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
 
-  // If there aren't any line breaks and the text is long, insert additional line breaks
-  // This regex finds sentence-ending punctuation followed by whitespace before an uppercase letter.
-  if (!formatted.includes("<br>") && formatted.length > 300) {
-    formatted = formatted.replace(/([.?!])\s+(?=[A-Z])/g, "$1<br><br>");
+  // If there are no line breaks and the text is long, insert additional line breaks after sentence-ending punctuation
+  if (!formatted.includes('<br>') && formatted.length > 300) {
+    formatted = formatted.replace(/([.?!])\s+(?=[A-Z])/g, '$1<br><br>')
   }
 
-  return formatted;
+  return formatted
 }
 
 async function handleMessage() {
@@ -389,8 +388,7 @@ async function getChatbotResponse(message) {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `You are AdrAI, Adriel Magalona's digital assistant. Here is information about Adriel: ${JSON.stringify(knowledge)}. 
-Please provide a natural, conversational response to this question: ${message}`
+            text: `You are AdrAI, Adriel Magalona's digital assistant. Here is information about Adriel: ${JSON.stringify(knowledge)}. ${message}`
           }]
         }]
       })

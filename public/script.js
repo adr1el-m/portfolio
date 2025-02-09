@@ -233,6 +233,15 @@ inputField.addEventListener('keypress', (e) => {
   }
 });
 
+// Function to format chatbot responses: replace newlines with <br> and **text** with bold
+function formatChatbotResponse(text) {
+  // Replace all newline characters with <br> for line breaks
+  let formatted = text.replace(/\n/g, "<br>");
+  // Replace any text wrapped with ** with <strong> tags for bold text
+  formatted = formatted.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  return formatted;
+}
+
 async function handleMessage() {
   const message = inputField.value.trim();
   if (!message) return;
@@ -263,7 +272,13 @@ async function handleMessage() {
 function addMessage(text, sender) {
   const messageDiv = document.createElement('div');
   messageDiv.className = `message ${sender}-message`;
-  messageDiv.textContent = text;
+
+  // Use formatted HTML only for bot responses
+  if (sender === 'bot') {
+    messageDiv.innerHTML = formatChatbotResponse(text);
+  } else {
+    messageDiv.textContent = text;
+  }
   messagesDiv.appendChild(messageDiv);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
@@ -273,39 +288,86 @@ window.addEventListener('load', () => {
   addMessage("Hi! I'm AdrAI, Adriel's digital assistant. How can I help you today?", 'bot');
 });
 
-// Define knowledge base about Adriel
+// Define an enhanced knowledge base about Adriel
 const knowledge = {
   personal: {
-    name: "Adriel Magalona",
+    name: "Adriel M. Magalona",
     role: "Computer Science Student",
     location: "Taguig City, Metro Manila, Philippines",
     email: "dagsmagalona@gmail.com"
   },
-  about: "A university student with a passion for technology and computer science. I love diving into new challenges and picking up new skills along the way. Whether it's coding, problem-solving, or exploring the latest tech trends, I'm always eager to learn and grow.",
-  skills: [
-    "Web Development",
-    "Database Administration",
-    "Graphic Designing",
-    "UI/UX Design"
+  about: "A university student with a passion for technology and computer science. I love diving into new challenges, picking up new skills along the way, and contributing to innovative projects.",
+  technicalSkills: {
+    languages: ["C", "C++", "Python", "Visual Basic", "HTML", "Java", "JavaScript", "PHP"],
+    librariesFrameworks: ["React", "Bootstrap", "Tailwind CSS", "Axios", "Express", "Cors"],
+    databases: ["MySQL"],
+    tools: ["Visual Studio Code", "Cursor", "Git", "GitHub", "XAMPP", "NPM", "Vercel", "Vite", "Node.js", "ESLint", "dotenv", "Multer"]
+  },
+  experience: [
+    {
+      title: "Senior Front-End Web Developer",
+      organization: "PUP Manila Microsoft Student Community",
+      period: "October 2024 – Present",
+      details: "Collaborated with the front-end team to design interactive layouts for the organization's website and learning materials. Conducted workshops to enhance team skills and knowledge-sharing."
+    },
+    {
+      title: "Layout Committee Chairperson",
+      organization: "Information and Communications Technology Society - Higher School ng Umak",
+      period: "October 2022 – June 2024",
+      details: "Led the design of graphical elements for publication materials, ensuring alignment with organizational vision. Collaborated with the team to brainstorm concepts and communicate key messages through visual design."
+    }
+  ],
+  projects: [
+    {
+      name: "Online Document Request System",
+      technologies: "PHP, XAMPP, HTML, CSS, JavaScript, MySQL",
+      date: "September 2024",
+      details: "Built a system for processing student document requests with AJAX-powered status updates, file uploads, responsive interfaces, session management, real-time approvals, and robust error handling."
+    },
+    {
+      name: "FinanceWise",
+      technologies: "HTML, CSS, JavaScript, Bootstrap, Express, Git",
+      date: "January 2025",
+      details: "Developed an AI-powered financial advisory platform that delivers personalized recommendations for spending, investments, and loans, helping users make informed financial decisions."
+    },
+    {
+      name: "Excalicode's Data Structures and Algorithms Champion",
+      date: "September 2024",
+      details: "Organized by The Programmers' Guild at Polytechnic University of the Philippines, where I won the Knight Category in a Data Structures and Algorithms competition."
+    },
+    {
+      name: "Entrepreneurship Educators Association of the Philippines Hackathon",
+      date: "September 2024",
+      details: "Placed 3rd out of 6 teams after a month-long bootcamp and consulting with UP Diliman professors. Pitched EcoSiklo, a venture repurposing fabric scraps into pet essentials."
+    }
+  ],
+  certifications: [
+    {
+      body: "Java Object-Oriented Programming Basics Workshop with Microsoft Learn Integration",
+      organization: "PUP Manila Microsoft Student Community",
+      date: "August 2024"
+    },
+    {
+      body: "Introduction to Microsoft Copilot",
+      organization: "PUP Manila Microsoft Student Community",
+      date: "August 2024"
+    }
   ],
   education: [
     {
       school: "Polytechnic University of the Philippines",
-      period: "2024 — 2028",
-      details: "Computer Science program"
+      location: "Manila, Philippines",
+      degree: "Bachelor of Science in Computer Science",
+      period: "September 2024 – Present",
+      details: "Department of Science and Technology (DOST) Undergraduate Scholar, Gawad Pagkilala 2024 Awardee."
     },
     {
       school: "University of Makati",
-      period: "2022 — 2024",
-      details: "Computer Programming track under TVL strand"
+      location: "Taguig, Philippines",
+      degree: "Technical-Vocational and Livelihood Track - Computer Programming",
+      period: "September 2022 – June 2024",
+      details: "Grades: 97.17 GWA, Consistent Dean's Lister, Graduated: Top 7 overall out of 1,466 students."
     }
-  ],
-  organizations: [
-    "Google Developer Student Clubs - PUP",
-    "AWS Cloud Club PUP",
-    "PUP Manila Microsoft Student Community",
-    "PUP The Programmers' Guild",
-    "Junior Blockchain Education Consortium of the Philippines - PUP Manila"
   ]
 };
 

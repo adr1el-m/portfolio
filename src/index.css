@@ -1574,22 +1574,34 @@ article.active {
   animation: bounce 2s;
 }
 
-/* Theme Toggle Styles */
+/* Theme Toggle Button repositioned to top right */
 .theme-toggle {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  background: var(--border-gradient-onyx);
-  padding: 10px;
+  top: 30px;      /* positions the toggle away from the bottom */
+  right: 30px;    /* positions it in the top-right corner */
+  z-index: 900 !important;
+  background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+  color: #ffdb70;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  box-shadow: var(--shadow-1);
-  transition: all 0.3s ease;
-  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3),
+              inset 2px 2px 6px rgba(255, 255, 255, 0.1),
+              inset -2px -2px 6px rgba(0, 0, 0, 0.8);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
 .theme-toggle:hover {
   transform: scale(1.1);
+  background: linear-gradient(145deg, #1a1a1a, #2c2c2c);
+  box-shadow: 0 6px 25px rgba(255, 215, 0, 0.2),
+              inset 2px 2px 6px rgba(255, 255, 255, 0.1),
+              inset -2px -2px 6px rgba(0, 0, 0, 0.8);
 }
 
 /* Light Mode Overrides */
@@ -2118,4 +2130,45 @@ body.light-mode .project-modal-links a:hover {
   .achievements-panel {
     overflow-x: auto;
   }
+}
+
+/* Responsive adjustments for the Achievements Modal */
+@media (max-width: 600px) {
+  /* Ensure modal content fits within smaller screens */
+  .achievement-modal-content {
+    max-width: 100%;
+    width: 95%;
+    padding: 20px;
+    margin: 0 10px;
+    flex-direction: column;
+  }
+
+  /* Stack the left (media) and right (info) columns vertically */
+  .achievement-modal-body {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  /* Make sure the media section spans the full width */
+  .achievement-media {
+    width: 100%;
+  }
+
+  /* Adjust the image size to use the available width and auto height */
+  .achievement-slide-image {
+    width: 100%;
+    height: auto;
+    max-height: 300px; /* Optional: limit the height on mobile */
+  }
+
+  /* Adjust the info section for better readability */
+  .achievement-info {
+    width: 100%;
+    padding: 10px;
+  }
+}
+
+/* Ensure the chatbox is always above the theme toggle */
+.chatbox {
+  z-index: 1100 !important;
 }

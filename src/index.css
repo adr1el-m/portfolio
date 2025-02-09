@@ -1577,8 +1577,8 @@ article.active {
 /* Theme Toggle Button repositioned to top right */
 .theme-toggle {
   position: fixed;
-  top: 30px;      /* positions the toggle away from the bottom */
-  right: 30px;    /* positions it in the top-right corner */
+  top: 10px;      /* positions the toggle away from the bottom */
+  right: 5px;    /* positions it in the top-right corner */
   z-index: 900 !important;
   background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
   color: #ffdb70;

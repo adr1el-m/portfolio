@@ -383,7 +383,7 @@ const knowledge = {
 
 async function getChatbotResponse(message) {
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=AIzaSyDr-mS0aSHgcapEfJ5oNSaoiD4jyLqUZNA`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${window.GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -391,9 +391,15 @@ async function getChatbotResponse(message) {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `You are AdrAI, Adriel Magalona's digital assistant. Provide concise and relevant answers that directly address the user's question. Avoid overwhelming the response with unnecessary or unrelated details. Use the following data for reference only when needed: ${JSON.stringify(knowledge)}. ${message}`
+            text: `You are AdrAI, Adriel Magalona's digital assistant. Provide concise and relevant answers that directly address the user's question. Avoid overwhelming the response with unnecessary or unrelated details. Use the following data for reference only when needed: ${JSON.stringify(knowledge)}. 
+
+User question: ${message}`
           }]
-        }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 800
+        }
       })
     });
 
@@ -402,7 +408,14 @@ async function getChatbotResponse(message) {
     }
 
     const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
+    
+    // Check if the response has the expected structure
+    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+      return data.candidates[0].content.parts[0].text;
+    } else {
+      console.error('Unexpected response structure:', data);
+      return "I apologize, but I received an unexpected response format. Please try again later.";
+    }
 
   } catch (error) {
     console.error('Error:', error);
@@ -564,4 +577,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Make sure the function is available globally for inline onclick calls.
 window.openAchievementModal = openAchievementModal;
-

@@ -1,4 +1,4 @@
-# My Portfolio
+# Adriel's Portfolio
 
 Welcome to my portfolio! This project is a carefully crafted showcase of my work, skills, and professional journey. Built with passion and attention to detail, it demonstrates my approach to responsive design, modern web development, and creative problem-solving.
 
@@ -7,32 +7,29 @@ Welcome to my portfolio! This project is a carefully crafted showcase of my work
 This portfolio serves as my professional digital presence and integrates various state-of-the-art web development techniques. It highlights my proficiency in:
 
 - **Frontend Technologies:** HTML5, CSS3, and modern JavaScript (ES6+)
-- **Frameworks & Libraries:** React, Ionicons, and Font Awesome
+- **Responsive Design:** Mobile-first approach with CSS Grid and Flexbox
 - **Advanced CSS:** Utilizing CSS variables, gradients, transitions, and animations for dynamic and engaging user experiences
 - **Asynchronous & Data-Driven Applications:** Implementing real-time interactions with the Fetch API and integrating external APIs for enhanced functionality
 
 ## Project Structure
 
-- **`src/`:**  
-  Contains the core React components, hooks, and styling files that form the interactive user interface of the portfolio.
-- **`public/`:**  
-  Hosts static assets such as PDFs (e.g., my CV and chatbot guide), configuration files, images, and other media essential to the website.
-- **`package.json`:**  
-  Manages the project dependencies, scripts, and project metadata.
+- **`index.html`:** Main HTML file with semantic structure and accessibility features
+- **`style.css`:** Comprehensive CSS with modern features, animations, and responsive design
+- **`script.js`:** Modern JavaScript with ES6+ features, chatbot integration, and interactive components
+- **`public/`:** Static assets including images, PDFs, and achievement galleries
+- **`dev-server.py`:** Custom Python development server with auto-reload and network access
+- **`package.json`:** Project metadata and development scripts
 
 ## How My Portfolio is Made
 
-- **React & Modern JavaScript:**  
-  The portfolio is built on **React** using modern JavaScript (ES6+). It is bootstrapped with Create React App, which enables efficient development with hot reloading, optimized builds, and an easy-to-extend environment.
+- **Vanilla Web Technologies:**  
+  The portfolio is built using **pure HTML5, CSS3, and JavaScript** without any framework dependencies. This approach ensures fast loading times, excellent performance, and complete control over every aspect of the user experience.
 
 - **Responsive & Adaptive Design:**  
-  The design leverages CSS Flexbox, Grid, and media queries to ensure a seamless experience on devices ranging from mobile phones to desktop monitors. Advanced CSS techniques such as transitions and animations (e.g., smooth logo spinning and modal slides) add life to the interactive components.
+  The design leverages CSS Flexbox, Grid, and media queries to ensure a seamless experience on devices ranging from mobile phones to desktop monitors. Advanced CSS techniques such as transitions and animations add life to the interactive components.
 
-- **Tooling and Build Process:**  
-  The application uses a robust build process powered by **Webpack** (via Create React App) and **Babel** for transpilation. Code quality is enforced through **ESLint**, and environment variables are managed using a dedicated `.env` file for configuration and security.
-
-- **Testing & Quality Assurance:**  
-  Critical components are tested using **React Testing Library**, ensuring that key UI elements render correctly and interact as expected, which aids in maintaining a reliable and maintainable codebase.
+- **Modern Development Workflow:**  
+  The project uses a custom Python development server that provides live reloading, proper MIME types, and network access for testing on mobile devices. This lightweight approach eliminates build complexity while maintaining a professional development experience.
 
 ## Chatbot Integration
 

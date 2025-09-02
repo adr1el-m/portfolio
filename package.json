@@ -1,38 +1,33 @@
 {
-  "name": "my-portfolio",
-  "version": "0.1.0",
+  "name": "adriel-portfolio",
+  "version": "1.0.0",
+  "description": "Adriel Magalona's Personal Portfolio Website",
+  "main": "index.html",
   "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
-  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "python3 dev-server.py",
+    "serve": "python3 dev-server.py",
+    "start": "python3 dev-server.py",
+    "build": "python3 build-production.py",
+    "build:full": "python3 build-production.py && python3 compress-assets.py",
+    "deploy": "python3 deploy.py",
+    "serve:prod": "python3 production-server.py",
+    "optimize-images": "python3 optimize-images.py",
+    "lint": "echo 'Add linting tools as needed'"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "keywords": [
+    "portfolio",
+    "web-developer",
+    "computer-science",
+    "student",
+    "javascript",
+    "html",
+    "css"
+  ],
+  "author": "Adriel Magalona <dagsmagalona@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adr1el-m/portfolio"
   }
 }

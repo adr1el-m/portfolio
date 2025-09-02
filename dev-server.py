@@ -10,11 +10,18 @@ import webbrowser
 import os
 import sys
 from pathlib import Path
+from csp_config import get_security_headers
 
-PORT = 8000
+PORT = 8001  # Changed to avoid conflict with existing server
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
+        # Add security headers from centralized configuration
+        security_headers = get_security_headers()
+        for header, value in security_headers.items():
+            self.send_header(header, value)
+        
+        # Development-specific headers
         self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
         self.send_header('Pragma', 'no-cache')
         self.send_header('Expires', '0')
@@ -46,7 +53,7 @@ def serve_portfolio():
                 webbrowser.open(f'http://localhost:{PORT}')
                 print("🌐 Opening browser automatically...")
             except:
-                print("💡 Open http://localhost:8000 in your browser")
+                print(f"💡 Open http://localhost:{PORT} in your browser")
             
             httpd.serve_forever()
             

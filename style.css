@@ -1427,10 +1427,150 @@ article.active {
   width: 100%;
 }
 
-/* Chatbot button "pulse" on hover for extra feedback */
+/* Enhanced Chatbot Features */
+.chatbot-btn {
+  animation: pulse 2s infinite;
+}
+
 .chatbot-btn:hover {
   animation: pulse 0.8s ease-in-out;
   transform: scale(1.1);
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+  50% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 10px rgba(0, 123, 255, 0.1); }
+  100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+}
+
+/* Smart Suggestions */
+.chatbox-suggestions {
+  padding: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.suggestion-btn {
+  background: linear-gradient(135deg, var(--primary-color), #0056b3);
+  border: none;
+  border-radius: 25px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.suggestion-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.suggestion-btn:hover {
+  background: linear-gradient(135deg, #0056b3, var(--primary-color));
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+}
+
+.suggestion-btn:hover::before {
+  left: 100%;
+}
+
+.suggestion-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Enhanced suggestion container for better visibility */
+.chatbox-suggestions {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 215, 0, 0.2) !important;
+  margin: 10px !important;
+  border-radius: 15px !important;
+}
+
+/* Make suggestions more prominent in dark theme */
+.chatbox-suggestions .suggestion-btn {
+  background: linear-gradient(135deg, #ffdb70, #FFC000) !important;
+  color: #1a1a1a !important;
+  font-weight: 600 !important;
+  border: none !important;
+  box-shadow: 0 3px 10px rgba(255, 215, 0, 0.3) !important;
+}
+
+.chatbox-suggestions .suggestion-btn:hover {
+  background: linear-gradient(135deg, #FFC000, #ffdb70) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 5px 15px rgba(255, 215, 0, 0.5) !important;
+}
+
+/* Enhanced Typing Indicator */
+.typing-indicator {
+  opacity: 0.8;
+}
+
+.typing-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 8px;
+}
+
+.typing-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-color);
+  animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+  0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+.typing-text {
+  font-style: italic;
+  color: var(--text-color-light);
+}
+
+/* Enhanced Message Formatting */
+.message-content strong {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.message-content em {
+  font-style: italic;
+  color: var(--text-color-light);
+}
+
+.message-content code {
+  background: var(--bg-color-2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  color: var(--primary-color);
 }
 
 /* Sidebar toggle transition update */

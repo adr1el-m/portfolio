@@ -1,5 +1,62 @@
 'use strict';
 
+// XSS Protection: Secure HTML sanitization function
+function sanitizeHTML(htmlString) {
+  // Return empty string if input is not a string
+  if (typeof htmlString !== 'string') {
+    return '';
+  }
+  
+  // Create a temporary div element
+  const temp = document.createElement('div');
+  
+  // Set the HTML content
+  temp.innerHTML = htmlString;
+  
+  // Remove all script tags and their content
+  const scripts = temp.querySelectorAll('script');
+  scripts.forEach(script => script.remove());
+  
+  // Remove all event handlers (onclick, onload, etc.)
+  const allElements = temp.querySelectorAll('*');
+  allElements.forEach(element => {
+    // Remove all event handler attributes
+    const attributes = element.attributes;
+    for (let i = attributes.length - 1; i >= 0; i--) {
+      const attr = attributes[i];
+      if (attr.name.startsWith('on')) {
+        element.removeAttribute(attr.name);
+      }
+      // Remove javascript: URLs
+      if (attr.value && attr.value.toLowerCase().startsWith('javascript:')) {
+        element.removeAttribute(attr.name);
+      }
+      // Remove data: URLs that could contain scripts
+      if (attr.value && attr.value.toLowerCase().startsWith('data:')) {
+        element.removeAttribute(attr.name);
+      }
+    }
+  });
+  
+  return temp.innerHTML;
+}
+
+// XSS Protection: Safe HTML insertion function
+function safeSetHTML(element, htmlString) {
+  if (!element) return;
+  
+  // For trusted content (like our own templates), we can use innerHTML
+  // but we'll sanitize it anyway for extra safety
+  const sanitizedHTML = sanitizeHTML(htmlString);
+  element.innerHTML = sanitizedHTML;
+}
+
+// XSS Protection: Safe text insertion (preferred method)
+function safeSetText(element, text) {
+  if (!element) return;
+  element.textContent = text;
+}
+
 // Simple loadingManager stub to prevent errors
 const loadingManager = {
   setModalLoading: function(modal, loading) {
@@ -102,7 +159,7 @@ function openAchievementModal(item) {
   if (date) {
     detailsHTML += `<p><span class="detail-label">Date:</span> ${date}</p>`;
   }
-  dateLocationEl.innerHTML = detailsHTML;
+  safeSetHTML(dateLocationEl, detailsHTML);
 
   // Populate modal fields.
   titleModalEl.innerText = achievementTitle;
@@ -308,7 +365,7 @@ const pages = document.querySelectorAll("[data-page]");
 for (let i = 0; i < navigationLinks.length; i++) {
   navigationLinks[i].addEventListener("click", function () {
     for (let i = 0; i < pages.length; i++) {
-      if (this.innerHTML.toLowerCase() === pages[i].dataset.page) {
+      if (this.textContent.toLowerCase() === pages[i].dataset.page) {
         pages[i].classList.add("active");
         navigationLinks[i].classList.add("active");
         window.scrollTo(0, 0);
@@ -360,9 +417,9 @@ const themeToggle = document.querySelector("#themeToggle");
 
 function updateThemeIcon() {
   if (document.body.classList.contains("light-mode")) {
-    themeToggle.innerHTML = '<ion-icon name="moon-outline"></ion-icon>';
+    safeSetHTML(themeToggle, '<ion-icon name="moon-outline"></ion-icon>');
   } else {
-    themeToggle.innerHTML = '<ion-icon name="sunny-outline"></ion-icon>';
+    safeSetHTML(themeToggle, '<ion-icon name="sunny-outline"></ion-icon>');
   }
 }
 
@@ -419,50 +476,175 @@ function formatChatbotResponse(text) {
   return formatted;
 }
 
-async function handleMessage() {
-  const message = inputField.value.trim();
-  if (!message) return;
+// Old handleMessage function removed - using enhanced version below
 
-  // Add user message
-  addMessage(message, 'user');
-  inputField.value = '';
-
-  // Show typing indicator
-  const typingDiv = document.createElement('div');
-  typingDiv.className = 'message bot-message typing-indicator';
-  typingDiv.innerHTML = `
-    <div class="typing-dot"></div>
-    <div class="typing-dot"></div>
-    <div class="typing-dot"></div>
-  `;
-  messagesDiv.appendChild(typingDiv);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-  // Get and display bot response
-  setTimeout(async () => {
-    const response = await getChatbotResponse(message);
-    typingDiv.remove();
-    addMessage(response, 'bot');
-  }, 1000);
-}
-
-function addMessage(text, sender) {
+window.addMessage = function(text, sender) {
   const messageDiv = document.createElement('div');
   messageDiv.className = `message ${sender}-message`;
 
   // Use formatted HTML only for bot responses
   if (sender === 'bot') {
-    messageDiv.innerHTML = formatChatbotResponse(text);
+    safeSetHTML(messageDiv, formatChatbotResponse(text));
   } else {
-    messageDiv.textContent = text;
+    safeSetText(messageDiv, text);
   }
   messagesDiv.appendChild(messageDiv);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-// Initialize with welcome message
+// Smart conversation features
+window.addSmartSuggestions = function() {
+  const suggestionsContainer = document.querySelector('.chatbox-suggestions');
+  if (!suggestionsContainer) return;
+  
+  const suggestions = [
+    "Tell me about Adriel's skills",
+    "What projects has he worked on?",
+    "How can I contact him?",
+    "What's his educational background?",
+    "Show me his achievements"
+  ];
+  
+  // Create suggestion buttons safely
+  suggestionsContainer.innerHTML = ''; // Clear container
+  suggestions.forEach(suggestion => {
+    const button = document.createElement('button');
+    button.className = 'suggestion-btn';
+    button.setAttribute('data-suggestion', suggestion);
+    safeSetText(button, suggestion);
+    suggestionsContainer.appendChild(button);
+  });
+  
+  // Add event listeners to suggestion buttons
+  const suggestionButtons = suggestionsContainer.querySelectorAll('.suggestion-btn');
+  suggestionButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const suggestion = this.getAttribute('data-suggestion');
+      console.log('Button clicked with suggestion:', suggestion);
+      sendSuggestion(suggestion);
+    });
+  });
+}
+
+// Make sendSuggestion globally accessible
+window.sendSuggestion = function(suggestion) {
+  console.log('Suggestion clicked:', suggestion);
+  const input = document.querySelector('.chatbox-input input');
+  if (input) {
+    input.value = suggestion;
+    console.log('Input value set to:', suggestion);
+    // Trigger the message handling
+    handleMessage();
+  } else {
+    console.error('Input field not found');
+  }
+};
+
+// Enhanced message formatting
+function formatMessage(text) {
+  // Convert markdown-style formatting to HTML
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/`(.*?)`/g, '<code>$1</code>')
+    .replace(/\n/g, '<br>');
+}
+
+// Smart typing indicator with personality
+function showTypingIndicator() {
+  const messagesContainer = document.querySelector('.chatbox-messages');
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'message bot-message typing-indicator';
+  // Create typing indicator safely
+  const messageContent = document.createElement('div');
+  messageContent.className = 'message-content';
+  
+  const typingDots = document.createElement('div');
+  typingDots.className = 'typing-dots';
+  
+  // Create three dots
+  for (let i = 0; i < 3; i++) {
+    const span = document.createElement('span');
+    typingDots.appendChild(span);
+  }
+  
+  const typingText = document.createElement('span');
+  typingText.className = 'typing-text';
+  safeSetText(typingText, 'AdrAI is thinking...');
+  
+  messageContent.appendChild(typingDots);
+  messageContent.appendChild(typingText);
+  typingDiv.appendChild(messageContent);
+  messagesContainer.appendChild(typingDiv);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  return typingDiv;
+}
+
+function hideTypingIndicator(typingDiv) {
+  if (typingDiv && typingDiv.parentNode) {
+    typingDiv.parentNode.removeChild(typingDiv);
+  }
+}
+
+// Enhanced message handling with smart features
+window.handleMessage = async function() {
+  const input = document.querySelector('.chatbox-input input');
+  const message = input.value.trim();
+  
+  if (!message) return;
+  
+  // Add user message
+  addMessage(message, 'user');
+  input.value = '';
+  
+  // Show typing indicator
+  const typingDiv = showTypingIndicator();
+  
+  // Hide suggestions after user starts typing
+  const suggestionsContainer = document.querySelector('.chatbox-suggestions');
+  if (suggestionsContainer) {
+    suggestionsContainer.style.display = 'none';
+  }
+  
+  try {
+    // Get AI response
+    const response = await getChatbotResponse(message);
+    
+    // Hide typing indicator
+    hideTypingIndicator(typingDiv);
+    
+    // Add AI response with formatting
+    addMessage(formatMessage(response), 'bot');
+    
+    // Show suggestions again after response
+    setTimeout(() => {
+      if (suggestionsContainer) {
+        suggestionsContainer.style.display = 'block';
+      }
+    }, 1000);
+    
+  } catch (error) {
+    hideTypingIndicator(typingDiv);
+    addMessage("I'm sorry, I encountered an error. Please try again.", 'bot');
+    console.error('Error in handleMessage:', error);
+  }
+}
+
+// Initialize chatbot with enhanced welcome
 window.addEventListener('load', () => {
-  addMessage("Hi! I'm AdrAI, Adriel's digital assistant. How can I help you today?", 'bot');
+  // Add smart suggestions container to chatbox
+  const chatboxMessages = document.querySelector('.chatbox-messages');
+  if (chatboxMessages) {
+    const suggestionsContainer = document.createElement('div');
+    suggestionsContainer.className = 'chatbox-suggestions';
+    chatboxMessages.appendChild(suggestionsContainer);
+  }
+  
+  // Add welcome message with personality
+  setTimeout(() => {
+    addMessage("Hello! I'm AdrAI, Adriel's intelligent digital assistant! 🤖✨ I can help you learn about his skills, projects, education, and experience. What would you like to explore?", 'bot');
+    addSmartSuggestions();
+  }, 500);
 });
 
 // Define an enhanced knowledge base about Adriel
@@ -548,10 +730,141 @@ const knowledge = {
   ]
 };
 
-// Rate limiting protection
+// Enhanced AdrAI System with Intelligence Features
 let lastRequestTime = 0;
 const MIN_REQUEST_INTERVAL = 2000; // 2 seconds between requests
 
+// Conversation memory and context
+let conversationHistory = [];
+let userPreferences = {};
+let currentContext = {};
+
+// Smart response templates for different scenarios
+const responseTemplates = {
+  greeting: [
+    "Hello! I'm AdrAI, Adriel's digital assistant. How can I help you today? 😊",
+    "Hi there! I'm here to help you learn about Adriel and his work. What would you like to know? 🤖",
+    "Greetings! I'm AdrAI, your guide to Adriel's portfolio. What interests you most? ✨"
+  ],
+  followUp: [
+    "Would you like to know more about that?",
+    "Is there anything specific you'd like to explore further?",
+    "Would you like me to elaborate on any particular aspect?",
+    "Are you interested in learning about related topics?"
+  ],
+  clarification: [
+    "Could you be more specific about what you'd like to know?",
+    "I'd be happy to help! Could you clarify what aspect interests you most?",
+    "That's a great question! Could you provide a bit more detail?"
+  ]
+};
+
+// Enhanced knowledge base with better structure
+const enhancedKnowledge = {
+  ...knowledge,
+  personality: {
+    traits: ["helpful", "professional", "friendly", "knowledgeable", "enthusiastic"],
+    communication_style: "conversational yet informative",
+    expertise_areas: ["web development", "computer science", "project management", "UI/UX design"]
+  },
+  conversation_starters: [
+    "Tell me about Adriel's background",
+    "What projects has he worked on?",
+    "What are his technical skills?",
+    "How can I contact him?",
+    "What makes him unique as a developer?"
+  ],
+  smart_suggestions: {
+    after_skills: "Would you like to see examples of his work using these technologies?",
+    after_projects: "Interested in the technical details or the impact of these projects?",
+    after_education: "Would you like to know about his academic achievements or extracurricular activities?"
+  }
+};
+
+// Smart context analysis
+function analyzeUserIntent(message) {
+  const lowerMessage = message.toLowerCase();
+  
+  const intents = {
+    greeting: /^(hi|hello|hey|good morning|good afternoon|good evening)/i.test(message),
+    skills: /(skill|technology|programming|language|framework|tool)/i.test(message),
+    projects: /(project|work|portfolio|github|repository)/i.test(message),
+    education: /(education|school|university|degree|student|academic)/i.test(message),
+    contact: /(contact|email|reach|connect|hire)/i.test(message),
+    experience: /(experience|job|work|internship|position)/i.test(message),
+    personal: /(about|who|background|personal|hobby)/i.test(message),
+    help: /(help|what can you do|capabilities)/i.test(message)
+  };
+  
+  return Object.keys(intents).filter(intent => intents[intent]);
+}
+
+// Generate smart follow-up questions
+function generateFollowUpQuestions(context, userMessage) {
+  const intents = analyzeUserIntent(userMessage);
+  const suggestions = [];
+  
+  if (intents.includes('skills')) {
+    suggestions.push("Would you like to see examples of projects using these technologies?");
+    suggestions.push("Are you interested in learning about his learning journey with these skills?");
+  }
+  
+  if (intents.includes('projects')) {
+    suggestions.push("Would you like to know about the technical challenges he faced?");
+    suggestions.push("Are you curious about the impact and results of these projects?");
+  }
+  
+  if (intents.includes('education')) {
+    suggestions.push("Would you like to know about his academic achievements?");
+    suggestions.push("Are you interested in his extracurricular activities and leadership roles?");
+  }
+  
+  if (intents.includes('contact')) {
+    suggestions.push("Would you like to know about his availability for projects?");
+    suggestions.push("Are you interested in his preferred communication methods?");
+  }
+  
+  return suggestions.length > 0 ? suggestions[Math.floor(Math.random() * suggestions.length)] : null;
+}
+
+// Enhanced prompt engineering
+function createIntelligentPrompt(userMessage, conversationContext) {
+  const intents = analyzeUserIntent(userMessage);
+  const currentTime = new Date().toLocaleTimeString();
+  
+  let systemPrompt = `You are AdrAI, Adriel Magalona's intelligent digital assistant. You are:
+
+PERSONALITY:
+- Friendly, professional, and enthusiastic about technology
+- Knowledgeable about Adriel's background, skills, and projects
+- Helpful and eager to provide detailed, accurate information
+- Conversational yet informative in your responses
+
+CONTEXT AWARENESS:
+- Current time: ${currentTime}
+- User's recent interests: ${intents.join(', ') || 'general inquiry'}
+- Conversation history: ${conversationContext.length > 0 ? 'Previous topics discussed' : 'New conversation'}
+
+KNOWLEDGE BASE:
+${JSON.stringify(enhancedKnowledge, null, 2)}
+
+RESPONSE GUIDELINES:
+1. Be conversational and engaging, not robotic
+2. Provide specific, accurate information from the knowledge base
+3. Use emojis appropriately to make responses friendly
+4. If asked about something not in the knowledge base, be honest about limitations
+5. Offer relevant follow-up suggestions when appropriate
+6. Keep responses concise but informative (2-4 sentences typically)
+7. Use "Adriel" when referring to him, not "he" in every sentence
+
+USER MESSAGE: "${userMessage}"
+
+Respond as AdrAI with personality and intelligence:`;
+
+  return systemPrompt;
+}
+
+// Main intelligent response function
 async function getChatbotResponse(message) {
   // Check rate limiting
   const now = Date.now();
@@ -565,7 +878,21 @@ async function getChatbotResponse(message) {
   
   lastRequestTime = now;
   
+  // Add to conversation history
+  conversationHistory.push({
+    user: message,
+    timestamp: now,
+    intents: analyzeUserIntent(message)
+  });
+  
+  // Keep only last 10 messages for context
+  if (conversationHistory.length > 10) {
+    conversationHistory = conversationHistory.slice(-10);
+  }
+  
   try {
+    const intelligentPrompt = createIntelligentPrompt(message, conversationHistory);
+    
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${window.GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
@@ -574,14 +901,14 @@ async function getChatbotResponse(message) {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `You are AdrAI, Adriel Magalona's digital assistant. Provide concise and relevant answers that directly address the user's question. Avoid overwhelming the response with unnecessary or unrelated details. Use the following data for reference only when needed: ${JSON.stringify(knowledge)}. 
-
-User question: ${message}`
+            text: intelligentPrompt
           }]
         }],
         generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 800
+          temperature: 0.8, // Slightly higher for more personality
+          maxOutputTokens: 1000, // Increased for more detailed responses
+          topP: 0.9,
+          topK: 40
         }
       })
     });
@@ -592,9 +919,19 @@ User question: ${message}`
 
     const data = await response.json();
     
-    // Check if the response has the expected structure
     if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
-      return data.candidates[0].content.parts[0].text;
+      let aiResponse = data.candidates[0].content.parts[0].text;
+      
+      // Add smart follow-up question if appropriate
+      const followUp = generateFollowUpQuestions(currentContext, message);
+      if (followUp && Math.random() > 0.5) { // 50% chance of adding follow-up
+        aiResponse += `\n\n${followUp}`;
+      }
+      
+      // Store the response in conversation history
+      conversationHistory[conversationHistory.length - 1].ai = aiResponse;
+      
+      return aiResponse;
     } else {
       console.error('Unexpected response structure:', data);
       return "I apologize, but I received an unexpected response format. Please try again later.";
@@ -608,7 +945,7 @@ User question: ${message}`
       stack: error.stack
     });
     
-    // More specific error messages
+    // Smart error recovery with context-aware messages
     if (error.message.includes('401') || error.message.includes('403')) {
       return "I'm having trouble with my API access. Please check if the API key is valid and has proper permissions. 🔑";
     } else if (error.message.includes('429')) {
@@ -616,7 +953,15 @@ User question: ${message}`
     } else if (error.message.includes('network') || error.message.includes('fetch')) {
       return "I'm having network connectivity issues. Please check your internet connection. 🌐";
     } else {
-      return "I apologize, but I'm having trouble connecting to my knowledge base right now. Please try again in a moment! 🔄";
+      // Fallback to smart responses based on conversation context
+      const intents = analyzeUserIntent(message);
+      if (intents.includes('greeting')) {
+        return responseTemplates.greeting[Math.floor(Math.random() * responseTemplates.greeting.length)];
+      } else if (intents.includes('help')) {
+        return "I'm AdrAI, Adriel's digital assistant! I can tell you about his skills, projects, education, and experience. What would you like to know? 🤖";
+      } else {
+        return "I apologize, but I'm having trouble connecting to my knowledge base right now. Please try again in a moment! 🔄";
+      }
     }
   }
 }

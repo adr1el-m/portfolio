@@ -10,17 +10,20 @@ import gzip
 import os
 import mimetypes
 from pathlib import Path
+from csp_config import get_security_headers
 
 class ProductionHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory="dist", **kwargs)
         
     def end_headers(self):
-        # Add production headers
+        # Add security headers from centralized configuration
+        security_headers = get_security_headers()
+        for header, value in security_headers.items():
+            self.send_header(header, value)
+        
+        # Production cache headers
         self.send_header('Cache-Control', 'public, max-age=31536000')  # 1 year
-        self.send_header('X-Content-Type-Options', 'nosniff')
-        self.send_header('X-Frame-Options', 'DENY')
-        self.send_header('X-XSS-Protection', '1; mode=block')
         super().end_headers()
         
     def guess_type(self, path):

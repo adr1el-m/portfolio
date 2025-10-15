@@ -4,22 +4,20 @@
   "description": "Adriel Magalona's Personal Portfolio Website",
   "main": "index.html",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "python3 dev-server.py",
-    "serve": "python3 dev-server.py",
-    "start": "python3 dev-server.py",
-    "build": "python3 build-production.py",
-    "build:full": "python3 build-production.py && python3 compress-assets.py",
-    "deploy": "python3 deploy.py",
-    "serve:prod": "python3 production-server.py",
-    "optimize-images": "python3 optimize-images.py",
-    "lint": "echo 'Add linting tools as needed'"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "type-check": "tsc --noEmit"
   },
   "keywords": [
     "portfolio",
     "web-developer",
     "computer-science",
     "student",
+    "typescript",
     "javascript",
     "html",
     "css"
@@ -29,5 +27,19 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/adr1el-m/portfolio"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.21",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.1",
+    "terser": "^5.44.0",
+    "typescript": "^5.9.3",
+    "vite": "^5.4.20"
+  },
+  "dependencies": {
+    "@types/three": "^0.180.0",
+    "three": "^0.180.0",
+    "vanilla-tilt": "^1.8.1"
   }
 }

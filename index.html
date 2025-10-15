@@ -7,8 +7,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Content Security Policy will be set by server headers -->
   <title>Adriel's Portfolio</title>
-  <link rel="shortcut icon" href="public/images/my-avatar.png" type="image/x-icon">
-  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="/images/my-avatar.png" type="image/x-icon">
+
+  <!-- Critical CSS: inline above-the-fold styles -->
+  <style id="critical-css">
+    :root {
+      --bg-gradient-onyx: linear-gradient(to bottom right, hsl(240, 1%, 25%) 3%, hsl(0, 0%, 19%) 97%);
+      --bg-gradient-jet: linear-gradient(to bottom right, hsla(240, 1%, 18%, 0.251) 0%, hsla(240, 2%, 11%, 0) 100%), hsl(240, 2%, 13%);
+      --border-gradient-onyx: linear-gradient(to bottom right, hsl(0, 0%, 25%) 0%, hsla(0, 0%, 25%, 0) 50%);
+      --text-gradient-yellow: linear-gradient(to right, hsl(45, 100%, 72%), hsl(35, 100%, 68%));
+
+      --jet: hsl(0, 0%, 22%);
+      --onyx: hsl(240, 1%, 17%);
+      --eerie-black-1: hsl(240, 2%, 13%);
+      --eerie-black-2: hsl(240, 2%, 12%);
+      --smoky-black: hsl(0, 0%, 7%);
+      --white-1: hsl(0, 0%, 100%);
+      --white-2: hsl(0, 0%, 98%);
+      --orange-yellow-crayola: hsl(45, 100%, 72%);
+
+      --fs-1: 24px; --fs-2: 18px; --fs-3: 17px; --fs-4: 16px; --fs-5: 15px; --fs-6: 14px; --fs-7: 13px; --fs-8: 11px;
+      --fw-300: 300; --fw-400: 400; --fw-500: 500; --fw-600: 600;
+
+      --shadow-1: -4px 8px 24px hsla(0, 0%, 0%, 0.25);
+      --transition-1: 0.25s ease;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    a { text-decoration: none; }
+    li { list-style: none; }
+    img, a, button, time, span { display: block; }
+    button { font: inherit; background: none; border: none; text-align: left; cursor: pointer; }
+    input, textarea { display: block; width: 100%; background: none; font: inherit; }
+
+    ::selection { background: var(--orange-yellow-crayola); color: var(--smoky-black); }
+    :focus { outline-color: var(--orange-yellow-crayola); }
+    html { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif; }
+    body { background: var(--smoky-black); }
+
+    /* Shell containers visible above the fold */
+    .sidebar, article { background: var(--eerie-black-2); border: 1px solid var(--jet); border-radius: 20px; padding: 15px; box-shadow: var(--shadow-1); z-index: 1; }
+    .separator { width: 100%; height: 1px; background: var(--jet); margin: 16px 0; }
+    .icon-box { position: relative; background: var(--border-gradient-onyx); width: 30px; height: 30px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 16px; color: var(--orange-yellow-crayola); box-shadow: var(--shadow-1); z-index: 1; }
+    .icon-box::before { content: ""; position: absolute; inset: 1px; background: var(--eerie-black-1); border-radius: inherit; z-index: -1; }
+
+    /* Typography used in header/about */
+    .h2, .h3, .h4, .h5 { color: var(--white-2); text-transform: capitalize; }
+    .h2 { font-size: var(--fs-1); }
+    .h3 { font-size: var(--fs-2); }
+    .h4 { font-size: var(--fs-4); }
+    .h5 { font-size: var(--fs-7); font-weight: var(--fw-500); }
+    .article-title { position: relative; padding-bottom: 7px; }
+    .article-title::after { content: ""; position: absolute; bottom: 0; left: 0; width: 30px; height: 3px; background: var(--text-gradient-yellow); border-radius: 3px; }
+
+    /* Ensure the initially active article is shown */
+    article { display: none; }
+    article.active { display: block; }
+  </style>
+
+  <!-- Defer non-critical CSS: preload then apply onload; with noscript fallback -->
+  <link rel="preload" href="style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="style.css"></noscript>
 
   <!-- Use system fonts instead of Google Fonts to avoid CSP issues -->
   <style>
@@ -17,7 +76,7 @@
 </head>
 
 <body>
-
+  <canvas id="particle-background"></canvas>
   <main>
     <aside class="sidebar" data-sidebar>
 
@@ -26,12 +85,10 @@
         <figure class="avatar-box">
           <picture>
             <source type="image/webp" 
-                    srcset="public/optimized/images/my-avatar-small.webp 150w, 
-                            public/optimized/images/my-avatar-medium.webp 300w"
+                    srcset="/public/optimized/images/my-avatar-small.webp 150w, 
+                            /public/optimized/images/my-avatar-medium.webp 300w"
                     sizes="(max-width: 768px) 80px, 120px">
-            <img src="public/optimized/images/my-avatar-small.png" 
-                 data-src="public/optimized/images/my-avatar-small.png"
-                 data-webp-src="public/optimized/images/my-avatar-small.webp"
+            <img src="/public/optimized/images/my-avatar-small.png" 
                  alt="Adriel Magalona" 
                  width="80" 
                  height="80"
@@ -59,7 +116,7 @@
         <div class="separator"></div>
 
         <ul class="contacts-list">
-          <a class="resume" href="public/files/MAGALONA-CV.pdf" target="_blank">CV / RESUME</a>
+          <a class="resume" href="/files/MAGALONA-CV.pdf" target="_blank">CV / RESUME</a>
           <li class="contact-item">
 
             <div class="icon-box">
@@ -96,31 +153,31 @@
         <ul class="social-list">
 
           <li class="social-item">
-            <a href="https://www.linkedin.com/in/adriel-magalona-0546b9318/" class="social-link" target="_blank">
+            <a href="https://www.linkedin.com/in/adriel-magalona-0546b9318/" class="social-link" target="_blank" data-tooltip="Connect with me on LinkedIn">
               <ion-icon name="logo-linkedin"></ion-icon>
             </a>
           </li>
 
           <li class="social-item">
-            <a href="https://github.com/adr1el-m" class="social-link" target="_blank">
+            <a href="https://github.com/adr1el-m" class="social-link" target="_blank" data-tooltip="Check out my GitHub">
               <ion-icon name="logo-github"></ion-icon>
             </a>
           </li>
 
           <li class="social-item">
-            <a href="https://www.facebook.com/Traceaz" class="social-link" target="_blank">
+            <a href="https://www.facebook.com/Traceaz" class="social-link" target="_blank" data-tooltip="Follow me on Facebook">
               <ion-icon name="logo-facebook"></ion-icon>
             </a>
           </li>
 
           <li class="social-item">
-            <a href="https://twitter.com/adr1el_m" class="social-link" target="_blank">
+            <a href="https://twitter.com/adr1el_m" class="social-link" target="_blank" data-tooltip="Follow me on X (Twitter)">
               <ion-icon name="logo-twitter"></ion-icon>
             </a>
           </li>
 
           <li class="social-item">
-            <a href="https://www.instagram.com/adr1elllll/" class="social-link" target="_blank">
+            <a href="https://www.instagram.com/adr1elllll/" class="social-link" target="_blank" data-tooltip="Follow me on Instagram">
               <ion-icon name="logo-instagram"></ion-icon>
             </a>
           </li>
@@ -156,10 +213,6 @@
             <button class="navbar-link" data-nav-link>Organizations</button>
           </li>
 
-          <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Contact</button>
-          </li>
-
         </ul>
 
       </nav>
@@ -171,117 +224,261 @@
           <h2 class="h2 article-title">About me</h2>
         </header>
 
-        <section class="about-text">
-          <p>
-            A university student with a passion for technology and computer science. I love diving into new challenges and picking up new skills along the way. Whether it's coding, problem-solving, or exploring the latest tech trends, I'm always eager to learn and grow. As I continue to hone my skills, I'm excited to bring my knowledge into a professional setting, where I can contribute to innovative projects and make a real impact.
-          </p>
+        <!-- What I Do Section -->
+        <section class="service">
+          <h3 class="h3 service-title">What I Do</h3>
+
+          <ul class="service-list">
+            <li class="service-item">
+              <div class="service-icon-box">
+                <div class="service-icon">💻</div>
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Web Development</h4>
+                <p class="service-item-text">
+                  Crafting modern, responsive websites with cutting-edge technologies. From frontend design to backend functionality, I build complete web solutions.
+                </p>
+              </div>
+            </li>
+
+            <li class="service-item">
+              <div class="service-icon-box">
+                <div class="service-icon">🎨</div>
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">UI/UX Design</h4>
+                <p class="service-item-text">
+                  Creating intuitive and visually appealing user interfaces that enhance user experience and drive engagement.
+                </p>
+              </div>
+            </li>
+
+            <li class="service-item">
+              <div class="service-icon-box">
+                <div class="service-icon">🗄️</div>
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Database Management</h4>
+                <p class="service-item-text">
+                  Designing and optimizing database architectures to ensure efficient data storage, retrieval, and scalability.
+                </p>
+              </div>
+            </li>
+
+            <li class="service-item">
+              <div class="service-icon-box">
+                <div class="service-icon">🤖</div>
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">AI Integration</h4>
+                <p class="service-item-text">
+                  Implementing intelligent solutions using machine learning and AI APIs to create smarter, more responsive applications.
+                </p>
+              </div>
+            </li>
+          </ul>
         </section>
 
         <section class="achievements">
-          <h3 class="h3 achievements-title">Achievements</h3>
-          <div class="achievements-panel has-scrollbar">
-            <div class="achievement-item"
-                 onclick="openAchievementModal(this)"
-                 data-images='["public/optimized/achievements/excalicode/cor-medium.jpg", "public/optimized/achievements/excalicode/cop-medium.jpg"]'
-                 data-webp-images='["public/optimized/achievements/excalicode/cor-medium.webp", "public/optimized/achievements/excalicode/cop-medium.webp"]'
-                 data-organizer="Organized by The Programmers' Guild at Polytechnic University of the Philippines, where I won the Knight Category in a Data Structures & Algorithms competition."
-                 data-date="September 2024"
-                 data-location="Polytechnic University of the Philippines">
-                 <h4 class="h4">Excalicode - Data Structures & Algorithms <br> Competition</h4>
-                </div>
+          <h3 class="h3 achievements-title">Honors & Awards</h3>
+          
+          <!-- Awards organized by year with accordion -->
+          <div class="awards-timeline">
 
-            <div class="achievement-item"
-                 onclick="openAchievementModal(this)"
-                 data-images='["public/optimized/achievements/eneda/group-medium.jpg", "public/optimized/achievements/eneda/self-medium.jpg", "public/optimized/achievements/eneda/certs-medium.jpg", "public/optimized/achievements/eneda/group2-medium.jpg", "public/optimized/achievements/eneda/id-medium.jpg"]'
-                 data-webp-images='["public/optimized/achievements/eneda/group-medium.webp", "public/optimized/achievements/eneda/self-medium.webp", "public/optimized/achievements/eneda/certs-medium.webp", "public/optimized/achievements/eneda/group2-medium.webp", "public/optimized/achievements/eneda/id-medium.webp"]'
-                 data-organizer="Placed 3rd out of 6 teams at Miriam College after completing a month-long bootcamp and consulting with UP Diliman professors. Pitched &ldquo;EcoSiklo&rdquo;, a venture repurposing fabric scraps into pet essentials."
-                 data-date="September 2024"
-                 data-location="Miriam College">
-                 <h4 class="h4">Entrepreneurship Educators Association <br>of the Philippines Hackathon</h4>
-                </div>
-                
-                <div class="achievement-item"
-                onclick="openAchievementModal(this)"
-                data-images='["public/optimized/achievements/GP/cert-medium.jpg"]'
-                data-webp-images='["public/optimized/achievements/GP/cert-medium.webp"]'
-                data-organizer="Inline with getting 3rd place in the Entrepreneurship Educators Association of the Philippines Hackathon we were awarded the Gawad Pagkilala 2024 Awardee for joining the hackathon."
-                data-date="November 2024"
-                data-location="Polytechnic University of the Philippines">
-                <h4 class="h4">Gawad Pagkilala 2024 Awardee</h4>
-               </div>
+            <!-- 2025 Awards -->
+            <div class="year-group">
+              <button class="year-header active" data-year-toggle>
+                <span class="year-title">2025</span>
+                <span class="award-count">6 Awards</span>
+                <span class="toggle-icon">▼</span>
+              </button>
+              <div class="year-content active">
+                <ul class="achievements-list">
+                  
+                  <!-- April 2025 -->
+                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
+                    data-images='["/optimized/images/ODRS-medium.png"]'
+                    data-webp-images='["/optimized/images/ODRS-medium.webp"]'
+                    data-organizer="Secured 2nd Runner-Up position in a banking innovation hackathon focused on transforming the future of financial services through technology and innovation."
+                    data-date="April 2025"
+                    data-location="Manila">
+                    <div class="award-badge">🥉</div>
+                    <div class="award-ribbon">2nd Runner-Up</div>
+                    <div class="card-content">
+                      <h4 class="h4 card-title">hack-it! The new Era of Banking Hackathon</h4>
+                      <p class="card-subtitle">Banking Innovation Challenge</p>
+                      <p class="card-date">📅 April 2025</p>
+                      <p class="card-location">📍 Manila</p>
+                    </div>
+                  </li>
+
+                  <!-- May 2025 -->
+                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
+                    data-images='["/optimized/images/GDSC-optimized.png"]'
+                    data-webp-images='["/optimized/images/GDSC-optimized.webp"]'
+                    data-organizer="Competed in Google Developer Groups on Campus: PUP's flagship competition, showcasing technical skills and innovation in a fast-paced development challenge."
+                    data-date="May 2025"
+                    data-location="Polytechnic University of the Philippines">
+                    <div class="award-badge">🥉</div>
+                    <div class="award-ribbon">2nd Runner-Up</div>
+                    <div class="card-content">
+                      <h4 class="h4 card-title">Google Developer Groups on Campus: PUP Spark Rush 2025</h4>
+                      <p class="card-subtitle">Technical Development Challenge</p>
+                      <p class="card-date">📅 May 2025</p>
+                      <p class="card-location">📍 Polytechnic University of the Philippines</p>
+                    </div>
+                  </li>
+
+                  <!-- July 2025 -->
+                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
+                    data-images='["/optimized/images/ODRS-medium.png"]'
+                    data-webp-images='["/optimized/images/ODRS-medium.webp"]'
+                    data-organizer="Ranked 4th Runner-Up among 33 competing teams in an advanced AI hackathon focused on developing autonomous AI agents and intelligent systems."
+                    data-date="July 2025"
+                    data-location="Manila">
+                    <div class="award-badge">🎖️</div>
+                    <div class="award-ribbon">4th Runner-Up</div>
+                    <div class="card-content">
+                      <h4 class="h4 card-title">Agentic AI Hackathon 2025</h4>
+                      <p class="card-subtitle">Autonomous AI Agents Challenge</p>
+                      <p class="card-date">📅 July 2025</p>
+                      <p class="card-location">📍 Manila</p>
+                    </div>
+                  </li>
+
+                  <!-- August 2025 -->
+                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
+                    data-images='["/optimized/images/ODRS-medium.png"]'
+                    data-webp-images='["/optimized/images/ODRS-medium.webp"]'
+                    data-organizer="Placed 9th among 24 teams in De La Salle University's premier hackathon competition, competing against top developers and innovators from various universities."
+                    data-date="August 2025"
+                    data-location="De La Salle University">
+                    <div class="award-badge">🎖️</div>
+                    <div class="award-ribbon">9th Place</div>
+                    <div class="card-content">
+                      <h4 class="h4 card-title">De La Salle University Hackercup</h4>
+                      <p class="card-subtitle">Inter-University Competition</p>
+                      <p class="card-date">📅 August 2025</p>
+                      <p class="card-location">📍 De La Salle University</p>
+                    </div>
+                  </li>
+
+                  <!-- September 2025 -->
+                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
+                    data-images='["/optimized/images/ODRS-medium.png"]'
+                    data-webp-images='["/optimized/images/ODRS-medium.webp"]'
+                    data-organizer="Won 1st place at Technovation Summit 2025's Start-up Hackathon, pitching an innovative startup idea and demonstrating entrepreneurial excellence and technical implementation."
+                    data-date="September 2025"
+                    data-location="Manila">
+                    <div class="award-badge">🏆</div>
+                    <div class="award-ribbon">1st Place</div>
+                    <div class="card-content">
+                      <h4 class="h4 card-title">Technovation Summit 2025 Start-up Hackathon</h4>
+                      <p class="card-subtitle">Champion - Startup Innovation</p>
+                      <p class="card-date">📅 September 2025</p>
+                      <p class="card-location">📍 Manila</p>
+                    </div>
+                  </li>
+
+                  <!-- October 2025 -->
+                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
+                    data-images='["/images/honors/BPIdatawave/teamwithceo.jpeg", "/images/honors/BPIdatawave/mewithcard.jpeg"]'
+                    data-webp-images='["/images/honors/BPIdatawave/teamwithceo.jpeg", "/images/honors/BPIdatawave/mewithcard.jpeg"]'
+                    data-organizer="Our team, 4Sight, secured 3rd place at the BPI DataWave Hackathon 2025 in the Workplace Productivity & Future of Work category. After four months of intense ideation, prototyping, and collaboration, we developed WorkSight - an AI-powered platform that addresses a critical issue: 1 in 3 employees is at high risk of burnout, costing the global economy over $1 trillion annually. WorkSight gives leaders foresight, not hindsight, analyzing behavioral data (workloads, collaboration) combined with psychological science to turn burnout from an invisible threat into a measurable, preventable business risk. Out of 750-900+ learners from across the Philippines, making it to the Top 3 is truly an honor. The awarding ceremony was held on October 1, 2025, at TEBL Hall 1 & 2, AIM Conference Center, where we had the incredible opportunity to meet BPI President and CEO TG Limcaoco."
+                    data-date="October 1, 2025"
+                    data-location="AIM Conference Center, Makati City">
+                    <div class="award-badge">🥉</div>
+                    <div class="award-ribbon">3rd Place</div>
+                    <div class="card-content">
+                      <h4 class="h4 card-title">BPI DataWave Hackathon 2025</h4>
+                      <p class="card-subtitle">Workplace Productivity & Future of Work • Team 4Sight</p>
+                      <p class="card-date">📅 October 1, 2025</p>
+                      <p class="card-location">📍 AIM Conference Center, Makati City</p>
+                    </div>
+                  </li>
+
+                </ul>
+              </div>
+            </div>
+            
+            <!-- 2024 Awards -->
+            <div class="year-group">
+              <button class="year-header" data-year-toggle>
+                <span class="year-title">2024</span>
+                <span class="award-count">3 Awards</span>
+                <span class="toggle-icon">▼</span>
+              </button>
+              <div class="year-content">
+                <ul class="achievements-list">
+                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
+                    data-images='["/optimized/achievements/excalicode/cor-medium.jpg", "/optimized/achievements/excalicode/cop-medium.jpg"]'
+                    data-webp-images='["/optimized/achievements/excalicode/cor-medium.webp", "/optimized/achievements/excalicode/cop-medium.webp"]'
+                    data-organizer="Organized by The Programmers' Guild at Polytechnic University of the Philippines, where I won the Knight Category in a Data Structures & Algorithms competition."
+                    data-date="September 2024"
+                    data-location="Polytechnic University of the Philippines">
+                    <div class="award-badge">�</div>
+                    <div class="award-ribbon">1st Place</div>
+                    <div class="card-content">
+                      <h4 class="h4 card-title">Excalicode - Data Structures & Algorithms Competition</h4>
+                      <p class="card-subtitle">Knight Category Winner</p>
+                      <p class="card-date">📅 September 2024</p>
+                      <p class="card-location">📍 Polytechnic University of the Philippines</p>
+                    </div>
+                  </li>
+
+                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
+                    data-images='["/optimized/achievements/eneda/group-medium.jpg", "/optimized/achievements/eneda/self-medium.jpg", "/optimized/achievements/eneda/certs-medium.jpg", "/optimized/achievements/eneda/group2-medium.jpg", "/optimized/achievements/eneda/id-medium.jpg"]'
+                    data-webp-images='["/optimized/achievements/eneda/group-medium.webp", "/optimized/achievements/eneda/self-medium.webp", "/optimized/achievements/eneda/certs-medium.webp", "/optimized/achievements/eneda/group2-medium.webp", "/optimized/achievements/eneda/id-medium.webp"]'
+                    data-organizer="Placed 3rd out of 6 teams at Miriam College after completing a month-long bootcamp and consulting with UP Diliman professors. Pitched &ldquo;EcoSiklo&rdquo;, a venture repurposing fabric scraps into pet essentials."
+                    data-date="September 2024"
+                    data-location="Miriam College">
+                    <div class="award-badge">🥉</div>
+                    <div class="award-ribbon">3rd Place</div>
+                    <div class="card-content">
+                      <h4 class="h4 card-title">Entrepreneurship Educators Association Hackathon</h4>
+                      <p class="card-subtitle">EcoSiklo Venture Pitch</p>
+                      <p class="card-date">📅 September 2024</p>
+                      <p class="card-location">📍 Miriam College</p>
+                    </div>
+                  </li>
+                  
+                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
+                    data-images='["/optimized/achievements/GP/cert-medium.jpg"]'
+                    data-webp-images='["/optimized/achievements/GP/cert-medium.webp"]'
+                    data-organizer="Inline with getting 3rd place in the Entrepreneurship Educators Association of the Philippines Hackathon we were awarded the Gawad Pagkilala 2024 Awardee for joining the hackathon."
+                    data-date="November 2024"
+                    data-location="Polytechnic University of the Philippines">
+                    <div class="award-badge">🎖️</div>
+                    <div class="award-ribbon">Awardee</div>
+                    <div class="card-content">
+                      <h4 class="h4 card-title">Gawad Pagkilala 2024</h4>
+                      <p class="card-subtitle">Recognition Award</p>
+                      <p class="card-date">📅 November 2024</p>
+                      <p class="card-location">📍 Polytechnic University of the Philippines</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Participations -->
+            <div class="year-group">
+              <button class="year-header" data-year-toggle>
+                <span class="year-title">Participations</span>
+                <span class="award-count">View</span>
+                <span class="toggle-icon">▼</span>
+              </button>
+              <div class="year-content">
+                <ul class="achievements-list">
+                  <!-- Add participation items here -->
+                </ul>
+              </div>
+            </div>
 
           </div>
         </section>
 
-        <section class="certifications">
-
-          <h3 class="h3 certifications-title">Certifications</h3>
-
-          <ul class="certifications-list has-scrollbar">
-
-            <li class="certifications-item">
-              <div class="content-card" data-certifications-item>
-
-                <figure class="certifications-avatar-box">
-                  <picture>
-                    <source type="image/webp" 
-                            srcset="public/optimized/images/MMSC-optimized.webp"
-                            sizes="60px">
-                    <img src="public/optimized/images/MMSC-optimized.jpg" 
-                         data-src="public/optimized/images/MMSC-optimized.jpg"
-                         data-webp-src="public/optimized/images/MMSC-optimized.webp"
-                         alt="MMSC" 
-                         width="60" 
-                         height="60"
-                         loading="lazy"
-                         data-certifications-avatar>
-                  </picture>
-                </figure>
- 
-                <h4 class="h4 certifications-item-title" data-certifications-title>Java OOP Basics Workshop with Microsoft Learn Integration</h4>
-
-                <div class="certifications-text" data-certifications-text>
-                  <p>
-                    A 2-3 hour, 5-day webinar where we learn about Java Object-Oriented Programming. Win prizes, ask questions, and take on challenging tasks.
-                  </p>
-                </div>
-
-              </div>
-            </li>
-
-            <li class="certifications-item">
-              <div class="content-card" data-certifications-item>
-
-                <figure class="certifications-avatar-box">
-                  <picture>
-                    <source type="image/webp" 
-                            srcset="public/optimized/images/MMSC-optimized.webp"
-                            sizes="60px">
-                    <img src="public/optimized/images/MMSC-optimized.jpg" 
-                         data-src="public/optimized/images/MMSC-optimized.jpg"
-                         data-webp-src="public/optimized/images/MMSC-optimized.webp"
-                         alt="MMSC" 
-                         width="60" 
-                         height="60"
-                         loading="lazy"
-                         data-certifications-avatar>
-                  </picture>
-                </figure>
- 
-                <h4 class="h4 certifications-item-title" data-certifications-title>Java OOP Basics Workshop with Microsoft Learn Integration</h4>
-
-                <div class="certifications-text" data-certifications-text>
-                  <p>
-                    A 2-3 hour, 5-day webinar where we learn about Java Object-Oriented Programming. Win prizes, ask questions, and take on challenging tasks.
-                  </p>
-                </div>
-
-              </div>
-            </li>
-
-          </ul>
-
-        </section>
+        
 
 
       </article>
@@ -292,107 +489,153 @@
           <h2 class="h2 article-title">Background</h2>
         </header>
 
-        <section class="timeline">
+        <section class="timeline-section">
 
-          <div class="title-wrapper">
-            <div class="icon-box">
-              <ion-icon name="book-outline"></ion-icon>
-            </div>
-
-            <h3 class="h3">Education</h3>
+          <div class="section-header">
+            <div class="section-icon">🎓</div>
+            <h3 class="h3 section-title">Education Journey</h3>
+            <div class="section-line"></div>
           </div>
 
-          <ol class="timeline-list">
+          <div class="timeline-container">
 
-            <li class="timeline-item">
+            <div class="timeline-item" data-timeline-item>
+              <div class="timeline-content">
+                <div class="timeline-badge current">Current</div>
+                <h4 class="h4 timeline-title">Polytechnic University of the Philippines</h4>
+                <span class="timeline-period">2024 — 2028</span>
+                <div class="timeline-tags">
+                  <span class="tag">Computer Science</span>
+                  <span class="tag">Software Development</span>
+                  <span class="tag">Algorithms</span>
+                </div>
+                <p class="timeline-text">
+                  Embarked on a journey of Computer Science. The program equipped me with cutting-edge skills in software development, algorithms, and data structures, preparing me to be at the forefront of technological innovation.
+                </p>
+              </div>
+            </div>
 
-              <h4 class="h4 timeline-item-title">Polytechnic University of the Philippines</h4>
+            <div class="timeline-item" data-timeline-item>
+              <div class="timeline-content">
+                <h4 class="h4 timeline-title">University of Makati</h4>
+                <span class="timeline-period">2022 — 2024</span>
+                <div class="timeline-tags">
+                  <span class="tag">TVL Programming</span>
+                  <span class="tag">Web Development</span>
+                  <span class="tag">C++</span>
+                  <span class="tag">JAVA</span>
+                </div>
+                <p class="timeline-text">
+                  Delved into the Computer Programming track under the Technical Vocational Livelihood (TVL) strand, where I honed my expertise in essential programming languages and frameworks such as HTML, CSS, PHP, XAMPP, C++, and JAVA.
+                </p>
+              </div>
+            </div>
 
-              <span>2024 — 2028</span>
+            <div class="timeline-item" data-timeline-item>
+              <div class="timeline-content">
+                <h4 class="h4 timeline-title">Benigno "Ninoy" S. Aquino High School</h4>
+                <span class="timeline-period">2018 — 2022</span>
+                <div class="timeline-tags">
+                  <span class="tag">C++</span>
+                  <span class="tag">Visual Basic</span>
+                  <span class="tag">.NET</span>
+                </div>
+                <p class="timeline-text">
+                  Pursued computer programming from 8th to 10th grade, mastering the fundamentals of C++, Visual Basic/.NET, and other core technologies. This early exposure fostered my passion for coding and laid the groundwork for my future in the tech industry.
+                </p>
+              </div>
+            </div>
 
-              <p class="timeline-text">
-                Embarked on a journey of Computer Science. The program equipped me with cutting-edge skills in software development, algorithms, and data structures, preparing me to be at the forefront of technological innovation.
-              </p>
+            <div class="timeline-item" data-timeline-item>
+              <div class="timeline-content">
+                <h4 class="h4 timeline-title">East Rembo Elementary School</h4>
+                <span class="timeline-period">2012 — 2018</span>
+                <p class="timeline-text">
+                  Foundation years where I developed curiosity and passion for learning.
+                </p>
+              </div>
+            </div>
 
-            </li>
-
-            <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">University of Makati</h4>
-
-              <span>2022 — 2024</span>
-
-              <p class="timeline-text">
-                Delved into the Computer Programming track under the Technical Vocational Livelihood (TVL) strand, where I honed my expertise in essential programming languages and frameworks such as HTML, CSS, PHP, XAMPP, C++, and JAVA.
-              </p>
-
-            </li>
-
-            <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">Benigno "Ninoy" S. Aquino High School</h4>
-
-              <span>2018 — 2022</span>
-
-              <p class="timeline-text">
-                Pursued computer programming from 8th to 10th grade, mastering the fundamentals of C++, Visual Basic/.NET, and other core technologies. This early exposure fostered my passion for coding and laid the groundwork for my future in the tech industry.
-              </p>
-
-            </li>
-
-
-            <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">East Rembo Elementary School</h4>
-
-              <span>2012 — 2018</span>
-
-              <p class="timeline-text">
-
-              </p>
-
-            </li>
-          </ol>
+          </div>
 
         </section>
 
-        <section class="timeline">
+        <section class="timeline-section">
 
-          <div class="title-wrapper">
-            <div class="icon-box">
-              <ion-icon name="book-outline"></ion-icon>
-            </div>
-
-            <h3 class="h3">Experience</h3>
+          <div class="section-header">
+            <div class="section-icon">💼</div>
+            <h3 class="h3 section-title">Professional Experience</h3>
+            <div class="section-line"></div>
           </div>
 
-          <ol class="timeline-list">
+          <div class="timeline-container">
 
-            <li class="timeline-item">
+            <div class="timeline-item" data-timeline-item>
+              <div class="timeline-content">
+                <div class="timeline-badge current">Current</div>
+                <h4 class="h4 timeline-title">Intern</h4>
+                <div class="company-name">exkwelabs</div>
+                <span class="timeline-period">2024 — Present</span>
+                <div class="timeline-tags">
+                  <span class="tag">Software Development</span>
+                  <span class="tag">Team Collaboration</span>
+                  <span class="tag">Problem Solving</span>
+                </div>
+                <p class="timeline-text">
+                  Working as an intern at exkwelabs, contributing to innovative projects and gaining hands-on experience in software development. Collaborating with the team to develop solutions and enhance technical skills in a professional environment.
+                </p>
+              </div>
+            </div>
 
-              <h4 class="h4 timeline-item-title">Web Development Team Member</h4>
-              <h1 class="org-name" >PUP Manila Microsoft Student Community</h1>
-              <span>2022 — 2024</span>
+          </div>
 
-              <p class="timeline-text">
-                I am responsible for creating and designing publication materials for posting. This includes laying-out content, brainstorming ideas with co-designers, and assigning tasks to each team member to contribute effectively. On the technical side, I handle livestreaming, and occasionally, video editing to ensure high-quality production.
-              </p>
+        </section>
 
-            </li>
+        <section class="timeline-section">
 
-            <li class="timeline-item">
+          <div class="section-header">
+            <div class="section-icon">🎓</div>
+            <h3 class="h3 section-title">Scholarship</h3>
+            <div class="section-line"></div>
+          </div>
 
-              <h4 class="h4 timeline-item-title">Layout Committee Member, Vice Chairperson, and Chairperson</h4>
-              <h1 class="org-name">Information and Communications Technology Society - Higher School ng UMak</h1>
-              <span>2022 — 2024</span>
+          <div class="timeline-container">
 
-              <p class="timeline-text">
-                I am responsible for creating and designing publication materials for posting. This includes laying-out content, brainstorming ideas with co-designers, and assigning tasks to each team member to contribute effectively. On the technical side, I handle livestreaming, and occasionally, video editing to ensure high-quality production.
-              </p>
+            <div class="timeline-item" data-timeline-item>
+              <div class="timeline-content">
+                <div class="timeline-badge current">Active</div>
+                <h4 class="h4 timeline-title">DOST-SEI Scholar under RA 7687</h4>
+                <div class="company-name">Department of Science and Technology - Science Education Institute</div>
+                <span class="timeline-period">2024 — Present</span>
+                <div class="timeline-tags">
+                  <span class="tag">Merit-Based</span>
+                  <span class="tag">STEM</span>
+                  <span class="tag">Full Scholarship</span>
+                </div>
+                <p class="timeline-text">
+                  Awarded the prestigious DOST-SEI Scholarship under Republic Act 7687, recognizing academic excellence and commitment to science and technology. This merit-based scholarship supports my pursuit of a degree in Computer Science, providing full tuition coverage and academic support to develop future scientists and technologists for the Philippines.
+                </p>
+              </div>
+            </div>
 
-            </li>
+            <div class="timeline-item" data-timeline-item>
+              <div class="timeline-content">
+                <div class="timeline-badge current">Active</div>
+                <h4 class="h4 timeline-title">MACEMCO Scholar</h4>
+                <div class="company-name">Makati City Employees Multi-Purpose Cooperative</div>
+                <span class="timeline-period">2024 — Present</span>
+                <div class="timeline-tags">
+                  <span class="tag">Community Support</span>
+                  <span class="tag">Educational Grant</span>
+                  <span class="tag">Cooperative</span>
+                </div>
+                <p class="timeline-text">
+                  Recognized as a scholar by the Makati City Employees Multi-Purpose Cooperative (MACEMCO), a community-based organization dedicated to supporting the educational advancement of deserving students. This scholarship demonstrates MACEMCO's commitment to fostering academic excellence and empowering the next generation of professionals.
+                </p>
+              </div>
+            </div>
 
-          </ol>
+          </div>
 
         </section>
 
@@ -415,7 +658,35 @@
             </li>
 
             <li class="filter-item">
-              <button data-filter-btn>HTML & CSS</button>
+              <button data-filter-btn>Web Development</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn>Software</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn>Hardware</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn>Web Design</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn>Web Application</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn>Mobile App</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn>AI/ML</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn>Community</button>
             </li>
 
 
@@ -440,7 +711,35 @@
               </li>
 
               <li class="select-item">
-                <button data-select-item>HTML & CSS</button>
+                <button data-select-item>Web Development</button>
+              </li>
+
+              <li class="select-item">
+                <button data-select-item>Software</button>
+              </li>
+
+              <li class="select-item">
+                <button data-select-item>Hardware</button>
+              </li>
+
+              <li class="select-item">
+                <button data-select-item>Web Design</button>
+              </li>
+
+              <li class="select-item">
+                <button data-select-item>Web Application</button>
+              </li>
+
+              <li class="select-item">
+                <button data-select-item>Mobile App</button>
+              </li>
+
+              <li class="select-item">
+                <button data-select-item>AI/ML</button>
+              </li>
+
+              <li class="select-item">
+                <button data-select-item>Community</button>
               </li>
 
 
@@ -451,7 +750,15 @@
           <ul class="project-list">
 
 
-            <li class="project-item  active" data-filter-item data-category="PHP">
+            <li class="project-item active" 
+                data-filter-item 
+                data-category="PHP"
+                data-images='["/optimized/images/ODRS-medium.png"]'
+                data-webp-images='["/optimized/images/ODRS-medium.webp"]'
+                data-description="A comprehensive web-based system for managing and processing document requests online. Built with PHP and MySQL, featuring user authentication, request tracking, and administrative controls."
+                data-technologies="PHP • MySQL • JavaScript • HTML/CSS"
+                data-github=""
+                data-live="">
               <a href="#">
 
                 <figure class="project-img">
@@ -461,12 +768,12 @@
 
                   <picture>
                     <source type="image/webp" 
-                            srcset="public/optimized/images/ODRS-small.webp 400w, 
+                            srcset="/optimized/images/ODRS-small.webp 400w, 
                                     public/optimized/images/ODRS-medium.webp 800w"
                             sizes="(max-width: 400px) 400px, 800px">
-                    <img src="public/optimized/images/ODRS-medium.png" 
-                         data-src="public/optimized/images/ODRS-medium.png"
-                         data-webp-src="public/optimized/images/ODRS-medium.webp"
+                    <img src="/optimized/images/ODRS-medium.png" 
+                         data-src="/optimized/images/ODRS-medium.png"
+                         data-webp-src="/optimized/images/ODRS-medium.webp"
                          alt="Online Document Request System - Project Screenshot" 
                          loading="lazy">
                   </picture>
@@ -478,36 +785,167 @@
 
               </a>
             </li>
-            
-            <li class="project-item" data-filter-item data-category="HTML & CSS">
+
+            <li class="project-item active" data-filter-item data-category="Web Development">
               <a href="#">
-
                 <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-
-                  <picture>
-                    <source type="image/webp" 
-                            srcset="public/optimized/images/ODRS-small.webp 400w, 
-                                    public/optimized/images/ODRS-medium.webp 800w"
-                            sizes="(max-width: 400px) 400px, 800px">
-                    <img src="public/optimized/images/ODRS-medium.png" 
-                         data-src="public/optimized/images/ODRS-medium.png"
-                         data-webp-src="public/optimized/images/ODRS-medium.webp"
-                         alt="Online Document Request System - Project Screenshot" 
-                         loading="lazy">
-                  </picture>
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Merc+Airline" alt="Merc Airline Ticketing System" loading="lazy">
                 </figure>
-
-                <h3 class="project-title">Online Document Request System</h3>
-
-                <p class="project-category">HTML & CSS</p>
-
+                <h3 class="project-title">Merc Airline Ticketing System</h3>
+                <p class="project-category">Web Development</p>
               </a>
             </li>
-
-
+            <li class="project-item active" data-filter-item data-category="Software">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=ATM+System" alt="ATM Transaction system" loading="lazy">
+                </figure>
+                <h3 class="project-title">ATM Transaction system</h3>
+                <p class="project-category">Software</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="Web Development">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Loan+System" alt="PHP-Loan-System" loading="lazy">
+                </figure>
+                <h3 class="project-title">PHP-Loan-System</h3>
+                <p class="project-category">Web Development</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="Hardware">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Fingerprint" alt="finger-recognition-control" loading="lazy">
+                </figure>
+                <h3 class="project-title">finger-recognition-control</h3>
+                <p class="project-category">Hardware</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="Web Design">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=YouTube+Layout" alt="ITC-youtube-layout" loading="lazy">
+                </figure>
+                <h3 class="project-title">ITC-youtube-layout</h3>
+                <p class="project-category">Web Design</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="Web Application">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=FinanceWise" alt="FinanceWise" loading="lazy">
+                </figure>
+                <h3 class="project-title">FinanceWise</h3>
+                <p class="project-category">Web Application</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="Web Application">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Green+Pulse" alt="green-pulse" loading="lazy">
+                </figure>
+                <h3 class="project-title">green-pulse</h3>
+                <p class="project-category">Web Application</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="Mobile App">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Kita-Kita" alt="Kita-Kita" loading="lazy">
+                </figure>
+                <h3 class="project-title">Kita-Kita</h3>
+                <p class="project-category">Mobile App</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="Web Design">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Talambuhay" alt="talambuhay" loading="lazy">
+                </figure>
+                <h3 class="project-title">talambuhay</h3>
+                <p class="project-category">Web Design</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="Web Application">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=BarangayNav" alt="BarangayNav" loading="lazy">
+                </figure>
+                <h3 class="project-title">BarangayNav</h3>
+                <p class="project-category">Web Application</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="AI/ML">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Kita-Kita+AI" alt="Kita-Kita (Agentic)" loading="lazy">
+                </figure>
+                <h3 class="project-title">Kita-Kita (Agentic)</h3>
+                <p class="project-category">AI/ML</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="Web Application">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=WorkSight" alt="WorkSight" loading="lazy">
+                </figure>
+                <h3 class="project-title">WorkSight</h3>
+                <p class="project-category">Web Application</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="Web Application">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Aling+Nena" alt="Tindahan ni Aling Nena" loading="lazy">
+                </figure>
+                <h3 class="project-title">Tindahan ni Aling Nena</h3>
+                <p class="project-category">Web Application</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="Web Application">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=DokQ" alt="DokQ" loading="lazy">
+                </figure>
+                <h3 class="project-title">DokQ</h3>
+                <p class="project-category">Web Application</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="Web Application">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=LingapLink" alt="LingapLink" loading="lazy">
+                </figure>
+                <h3 class="project-title">LingapLink</h3>
+                <p class="project-category">Web Application</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="Community">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Fireside" alt="Fireside september" loading="lazy">
+                </figure>
+                <h3 class="project-title">Fireside september</h3>
+                <p class="project-category">Community</p>
+              </a>
+            </li>
           </ul>
 
         </section>
@@ -521,136 +959,102 @@
     
         <div class="organization-container">
           <!-- Organization 1 -->
-          <div class="organization-block" data-organization="org1">
-            <div class="organization-image">
-              <picture>
-                <source type="image/webp" 
-                        srcset="public/optimized/images/GDSC-optimized.webp"
-                        sizes="100px">
-                <img style="border-radius: 50%;" 
-                     src="public/optimized/images/GDSC-optimized.png" 
-                     data-src="public/optimized/images/GDSC-optimized.png"
-                     data-webp-src="public/optimized/images/GDSC-optimized.webp"
+          <div class="organization-card" data-organization="org1">
+            <div class="org-card-header">
+              <div class="org-logo">
+                <img src="/images/orgs/GDSC.png" 
                      alt="Google Developer Student Clubs PUP" 
-                     width="100" 
-                     height="100"
+                     width="80" 
+                     height="80"
                      loading="lazy" />
-              </picture>
-            </div>
-            <div class="organization-details">
-              <h3 class="org-name">Google Developer Student Clubs - PUP</h3>
-              <p class="org-desc">Focuses on "Helping bridge the gap between theory and practice." This organization empowers students by offering hands-on learning experiences, technical workshops, and collaborative projects, allowing members to apply their theoretical knowledge to real-world challenges. GDSC equips students with the practical skills and industry connections essential for success in tech fields.</p>
-              <div class="organization-buttons">
-                <button class="btn-contributions" data-modal-trigger="contributions">Contributions</button>
-                <button class="btn-participations" data-modal-trigger="participations">Participations</button>
               </div>
+              <div class="org-header-content">
+                <h3 class="org-name">Google Developer Student Clubs - PUP</h3>
+                <span class="org-badge">🎯 Active Member</span>
+              </div>
+            </div>
+            <div class="org-card-body">
+              <p class="org-desc">Focuses on "Helping bridge the gap between theory and practice." This organization empowers students by offering hands-on learning experiences, technical workshops, and collaborative projects, allowing members to apply their theoretical knowledge to real-world challenges. GDSC equips students with the practical skills and industry connections essential for success in tech fields.</p>
             </div>
           </div>
     
           <!-- Organization 2 -->
-          <div class="organization-block" data-organization="org2">
-            <div class="organization-image">
-              <picture>
-                <source type="image/webp" 
-                        srcset="public/optimized/images/AWS-optimized.webp"
-                        sizes="100px">
-                <img style="border-radius: 50%;" 
-                     src="public/optimized/images/AWS-optimized.jpg" 
-                     data-src="public/optimized/images/AWS-optimized.jpg"
-                     data-webp-src="public/optimized/images/AWS-optimized.webp"
+          <div class="organization-card" data-organization="org2">
+            <div class="org-card-header">
+              <div class="org-logo">
+                <img src="/images/orgs/AWS.jpg" 
                      alt="AWS Cloud Club PUP" 
-                     width="100" 
-                     height="100"
+                     width="80" 
+                     height="80"
                      loading="lazy" />
-              </picture>
-            </div>
-            <div class="organization-details">
-              <h3 class="org-name">AWS Cloud Club PUP</h3>
-              <p class="org-desc">The first of its kind in the Philippines, is reshaping campus life with a blend of organized chaos and "AWSomeness." This club provides students with hands-on experience in cloud computing, offering workshops, events, and projects that help members develop their cloud skills, explore Amazon Web Services (AWS) technologies, and build a strong foundation for careers in cloud and tech industries.</p>
-              <div class="organization-buttons">
-                <button class="btn-contributions" data-modal-trigger="contributions">Contributions</button>
-                <button class="btn-participations" data-modal-trigger="participations">Participations</button>
               </div>
+              <div class="org-header-content">
+                <h3 class="org-name">AWS Cloud Club PUP</h3>
+                <span class="org-badge">☁️ Cloud Enthusiast</span>
+              </div>
+            </div>
+            <div class="org-card-body">
+              <p class="org-desc">The first of its kind in the Philippines, is reshaping campus life with a blend of organized chaos and "AWSomeness." This club provides students with hands-on experience in cloud computing, offering workshops, events, and projects that help members develop their cloud skills, explore Amazon Web Services (AWS) technologies, and build a strong foundation for careers in cloud and tech industries.</p>
             </div>
           </div>
     
           <!-- Organization 3 -->
-          <div class="organization-block" data-organization="org3">
-            <div class="organization-image">
-              <picture>
-                <source type="image/webp" 
-                        srcset="public/optimized/images/MMSC-optimized.webp"
-                        sizes="100px">
-                <img src="public/optimized/images/MMSC-optimized.jpg" 
-                     data-src="public/optimized/images/MMSC-optimized.jpg"
-                     data-webp-src="public/optimized/images/MMSC-optimized.webp"
+          <div class="organization-card" data-organization="org3">
+            <div class="org-card-header">
+              <div class="org-logo">
+                <img src="/images/orgs/MMSC.jpg" 
                      alt="PUP Manila Microsoft Student Community" 
-                     width="100" 
-                     height="100"
+                     width="80" 
+                     height="80"
                      loading="lazy"/>
-              </picture>
-            </div>
-            <div class="organization-details">
-              <h3 class="org-name">PUP Manila Microsoft Student Community</h3>
-              <p class="org-desc">A dynamic network of student leaders dedicated to fostering a community where students can learn, innovate, and collaborate on projects using Microsoft technologies. Through workshops, mentorship, and events, PUP MSC empowers members to develop their technical skills, grow their professional network, and prepare for success in the tech industry.</p>
-              <div class="organization-buttons">
-                <button class="btn-contributions" data-modal-trigger="contributions">Contributions</button>
-                <button class="btn-participations" data-modal-trigger="participations">Participations</button>
               </div>
+              <div class="org-header-content">
+                <h3 class="org-name">PUP Manila Microsoft Student Community</h3>
+                <span class="org-badge">💻 Tech Leader</span>
+              </div>
+            </div>
+            <div class="org-card-body">
+              <p class="org-desc">A dynamic network of student leaders dedicated to fostering a community where students can learn, innovate, and collaborate on projects using Microsoft technologies. Through workshops, mentorship, and events, PUP MSC empowers members to develop their technical skills, grow their professional network, and prepare for success in the tech industry.</p>
             </div>
           </div>
     
           <!-- Organization 4 -->
-          <div class="organization-block" data-organization="org4">
-            <div class="organization-image">
-              <picture>
-                <source type="image/webp" 
-                        srcset="public/optimized/images/TPG-optimized.webp"
-                        sizes="100px">
-                <img style="border-radius: 50%;" 
-                     class="tpg-img" 
-                     src="public/optimized/images/TPG-optimized.jpg" 
-                     data-src="public/optimized/images/TPG-optimized.jpg"
-                     data-webp-src="public/optimized/images/TPG-optimized.webp"
+          <div class="organization-card" data-organization="org4">
+            <div class="org-card-header">
+              <div class="org-logo">
+                <img src="/images/orgs/TPG.jpg" 
                      alt="PUP The Programmers' Guild" 
-                     width="100" 
-                     height="100"
+                     width="80" 
+                     height="80"
                      loading="lazy" />
-              </picture>
-            </div>
-            <div class="organization-details">
-              <h3 class="org-name">PUP The Programmers' Guild</h3>
-              <p class="org-desc">A community-based student organization advocating that "Coding is for everyone." Open to all students, TPG fosters an inclusive environment where members can explore programming and technology through hands-on workshops, coding competitions, and community events, supporting students of all backgrounds in building tech skills.</p>
-              <div class="organization-buttons">
-                <button class="btn-contributions" data-modal-trigger="contributions">Contributions</button>
-                <button class="btn-participations" data-modal-trigger="participations">Participations</button>
               </div>
+              <div class="org-header-content">
+                <h3 class="org-name">PUP The Programmers' Guild</h3>
+                <span class="org-badge">⚡ Coding Advocate</span>
+              </div>
+            </div>
+            <div class="org-card-body">
+              <p class="org-desc">A community-based student organization advocating that "Coding is for everyone." Open to all students, TPG fosters an inclusive environment where members can explore programming and technology through hands-on workshops, coding competitions, and community events, supporting students of all backgrounds in building tech skills.</p>
             </div>
           </div>
 
           <!-- Organization 5 -->
-          <div class="organization-block" data-organization="org5">
-            <div class="organization-image">
-              <picture>
-                <source type="image/webp" 
-                        srcset="public/optimized/images/JBECP-optimized.webp"
-                        sizes="100px">
-                <img src="public/optimized/images/JBECP-optimized.jpg" 
-                     data-src="public/optimized/images/JBECP-optimized.jpg"
-                     data-webp-src="public/optimized/images/JBECP-optimized.webp"
+          <div class="organization-card" data-organization="org5">
+            <div class="org-card-header">
+              <div class="org-logo">
+                <img src="/images/orgs/JBECP.jpg" 
                      alt="Junior Blockchain Education Consortium of the Philippines - PUP Manila" 
-                     width="100" 
-                     height="100"
+                     width="80" 
+                     height="80"
                      loading="lazy" />
-              </picture>
-            </div>
-            <div class="organization-details">
-              <h3 class="org-name">Junior Blockchain Education Consortium of the Philippines - PUP Manila</h3>
-              <p class="org-desc">Empowers students to "Win through a chain of learnings." This organization provides a platform for aspiring business leaders to gain practical insights, build professional skills, and connect through events, seminars, and networking opportunities. JBEC supports its members in developing a solid foundation for future careers in business and management.</p>
-              <div class="organization-buttons">
-                <button class="btn-contributions" data-modal-trigger="contributions">Contributions</button>
-                <button class="btn-participations" data-modal-trigger="participations">Participations</button>
               </div>
+              <div class="org-header-content">
+                <h3 class="org-name">Junior Blockchain Education Consortium of the Philippines - PUP Manila</h3>
+                <span class="org-badge">🔗 Blockchain Pioneer</span>
+              </div>
+            </div>
+            <div class="org-card-body">
+              <p class="org-desc">Empowers students to "Win through a chain of learnings." This organization provides a platform for aspiring business leaders to gain practical insights, build professional skills, and connect through events, seminars, and networking opportunities. JBEC supports its members in developing a solid foundation for future careers in business and management.</p>
             </div>
           </div>
         </div>
@@ -661,46 +1065,6 @@
 
 
       
-      <article class="contact" data-page="contact">
-
-        <header>
-          <h2 class="h2 article-title">Contact</h2>
-        </header>
-
-        <section class="mapbox" data-mapbox>
-          <figure>
-            <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3859.8560255199675!2d121.05904901544288!3d14.520689789832778!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c89e1286d2ad%3A0x56db43be7cf7c6e8!2sEast%20Rembo%2C%20Taguig%2C%20Metro%20Manila%2C%20Philippines!5e0!3m2!1sen!2sph!4v1693476075882!5m2!1sen!2sph"
-            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
-          </figure>
-        </section>
-
-        <section class="contact-form">
-
-          <h3 class="h3 form-title">Contact Form</h3>
-
-          <form action="#" class="form" data-form>
-
-            <div class="input-wrapper">
-              <input type="text" name="fullname" class="form-input" placeholder="Full name" required data-form-input>
-
-              <input type="email" name="email" class="form-input" placeholder="Email address" required data-form-input>
-            </div>
-
-            <textarea name="message" class="form-input" placeholder="Your Message" required data-form-input></textarea>
-
-            <button class="form-btn" type="submit" disabled data-form-btn>
-              <span>↑</span>
-              <span>Send Message</span>
-            </button>
-
-          </form>
-
-        </section>
-
-      </article>
-
       <!-- Add this section for FAQ -->
       <article class="faq" data-page="faq">
         <header>
@@ -709,11 +1073,11 @@
 
         <section class="faq-section">
           <div class="faq-item">
-            <h3 class="faq-question" onclick="toggleFAQ(this)">What is your background?</h3>
+            <h3 class="faq-question">What is your background?</h3>
             <p class="faq-answer">I am a Computer Science student with a passion for technology and programming.</p>
           </div>
           <div class="faq-item">
-            <h3 class="faq-question" onclick="toggleFAQ(this)">What services do you offer?</h3>
+            <h3 class="faq-question">What services do you offer?</h3>
             <p class="faq-answer">I offer web development, database administration, graphic design, and UI/UX design services.</p>
           </div>
           <!-- Add more FAQ items as needed -->
@@ -755,11 +1119,6 @@
   <!-- Back-to-top button -->
   <div class="back-to-top" aria-label="Back to top">
     <ion-icon name="arrow-up-outline"></ion-icon>
-  </div>
-
-  <!-- Theme Toggle Button -->
-  <div class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
-    <ion-icon name="sunny-outline"></ion-icon>
   </div>
 
   <!-- Project Modal -->
@@ -808,38 +1167,8 @@
 
   <!-- Font Awesome replaced with Unicode symbols to avoid CSP issues -->
 
-  <script src="config.js"></script>
-  <script src="script.js"></script>
-  <!-- Ionicons replaced with Unicode symbols to avoid CSP issues -->
-  <script>
-    // Replace ion-icons with Unicode equivalents after page loads
-    document.addEventListener('DOMContentLoaded', function() {
-      const iconMap = {
-        'chevron-down': '▼',
-        'mail-outline': '✉️',
-        'location-outline': '📍',
-        'logo-linkedin': '💼',
-        'logo-github': '🔗',
-        'logo-facebook': '📘',
-        'logo-twitter': '🐦',
-        'logo-instagram': '📸',
-        'book-outline': '📚',
-        'arrow-up-outline': '↑',
-        'sunny-outline': '☀️',
-        'eye-outline': '👁️'
-      };
-      
-      document.querySelectorAll('ion-icon').forEach(icon => {
-        const iconName = icon.getAttribute('name');
-        if (iconMap[iconName]) {
-          // Use textContent instead of innerHTML for security
-          icon.textContent = iconMap[iconName];
-          icon.style.fontSize = '1.2em';
-          icon.style.display = 'inline-block';
-        }
-      });
-    });
-  </script>
+  <!-- TypeScript Application Entry Point (Vite will handle bundling) -->
+  <script type="module" src="/src/main.ts"></script>
 
   <style>
   .chatbot-btn {
@@ -887,6 +1216,10 @@
     overflow: hidden;
     border: 1px solid rgba(255, 215, 0, 0.3);
     backdrop-filter: blur(15px);
+  }
+
+  .chatbox.active {
+    display: flex;
   }
 
   .chatbox-header {
@@ -1240,21 +1573,6 @@
   /* Add pointer cursor on achievement items */
   .achievement-item {
     cursor: pointer;
-  }
-
-  /* Updated Theme Toggle Style */
-  .theme-toggle {
-    position: fixed;
-    bottom: 30px;
-    right: 5px; /* increased the right offset so it sits above the scrollbar */
-    background: #1a1a1a;
-    color: #ffdb70;
-    border-radius: 50%;
-    padding: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    z-index: 1001;
   }
 
   </style>

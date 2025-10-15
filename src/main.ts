@@ -2,6 +2,7 @@
  * Main entry point for the TypeScript portfolio
  */
 
+import { inject } from '@vercel/analytics';
 import { NavigationManager } from './modules/navigation';
 import { SecurityManager } from './modules/security';
 import { LoadingManager } from './modules/loading-manager';
@@ -11,6 +12,9 @@ import { IconReplacer } from './modules/icon-replacer';
 import { SidebarAnimations } from './modules/sidebar-animations';
 import { SkeletonLoader } from './modules/skeleton-loader';
 import type { Portfolio } from './types';
+
+// Initialize Vercel Analytics
+inject();
 
 // Declare the global Portfolio namespace on the window object
 declare global {

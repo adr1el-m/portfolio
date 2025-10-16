@@ -1,3 +1,5 @@
+import { logger } from '@/config';
+
 /**
  * Icon Replacer Module
  * Replaces ion-icon elements with Unicode equivalents to avoid external dependencies and CSP issues.
@@ -34,6 +36,6 @@ export class IconReplacer {
         element.style.display = 'inline-block';
       }
     });
-    console.log('✅ Icons replaced with Unicode equivalents.');
+    logger.log('✅ Icons replaced with Unicode equivalents.');
   }
 }

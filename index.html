@@ -4,10 +4,84 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Adriel Magalona - Full-stack Developer, AI/ML Engineer, and Tech Innovator. Specializing in web development, machine learning, and creative technology solutions. View my projects, awards, and achievements.">
+  <meta name="keywords" content="Adriel Magalona, Full-stack Developer, Web Developer, AI Engineer, Machine Learning, Software Engineer, Portfolio, Tech Projects, Innovation, Philippines">
+  <meta name="author" content="Adriel Magalona">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="hsl(240, 2%, 13%)">
+  <link rel="canonical" href="https://adriel.dev">
+  
+  <!-- Open Graph Meta Tags (Facebook, LinkedIn, etc.) -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://adriel.dev">
+  <meta property="og:title" content="Adriel Magalona - Full-stack Developer & AI Engineer">
+  <meta property="og:description" content="Full-stack Developer and AI/ML Engineer specializing in web development, machine learning, and creative technology solutions. Explore my portfolio of innovative projects and achievements.">
+  <meta property="og:image" content="https://adriel.dev/images/my-avatar.png">
+  <meta property="og:image:alt" content="Adriel Magalona Portfolio">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Adriel Magalona Portfolio">
+  <meta property="og:locale" content="en_US">
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://adriel.dev">
+  <meta name="twitter:title" content="Adriel Magalona - Full-stack Developer & AI Engineer">
+  <meta name="twitter:description" content="Full-stack Developer and AI/ML Engineer specializing in web development, machine learning, and creative technology solutions. Explore my portfolio of innovative projects and achievements.">
+  <meta name="twitter:image" content="https://adriel.dev/images/my-avatar.png">
+  <meta name="twitter:image:alt" content="Adriel Magalona Portfolio">
+  <meta name="twitter:creator" content="@adrielmagalona">
+  <meta name="twitter:site" content="@adrielmagalona">
+  
+  <!-- Additional SEO -->
+  <meta name="application-name" content="Adriel Magalona Portfolio">
+  <meta name="apple-mobile-web-app-title" content="Adriel Portfolio">
+  <meta name="format-detection" content="telephone=no">
+  
   <!-- Content Security Policy will be set by server headers -->
-  <title>Adriel's Portfolio</title>
+  <title>Adriel Magalona - Full-stack Developer & AI Engineer | Portfolio</title>
   <link rel="shortcut icon" href="/images/my-avatar.png" type="image/x-icon">
+
+  <!-- JSON-LD Structured Data for Rich Search Results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Adriel Magalona",
+    "url": "https://adriel.dev",
+    "image": "https://adriel.dev/images/my-avatar.png",
+    "sameAs": [
+      "https://github.com/adr1el-m",
+      "https://linkedin.com/in/adrielmagalona"
+    ],
+    "jobTitle": "Full-stack Developer & AI Engineer",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "Freelance"
+    },
+    "alumniOf": "De La Salle University",
+    "knowsAbout": [
+      "Web Development",
+      "Machine Learning",
+      "Artificial Intelligence",
+      "Full-stack Development",
+      "Software Engineering",
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "React",
+      "Node.js"
+    ],
+    "description": "Full-stack Developer and AI/ML Engineer specializing in web development, machine learning, and creative technology solutions.",
+    "nationality": "Filipino"
+  }
+  </script>
 
   <!-- Critical CSS: inline above-the-fold styles -->
   <style id="critical-css">
@@ -39,6 +113,12 @@
     img, a, button, time, span { display: block; }
     button { font: inherit; background: none; border: none; text-align: left; cursor: pointer; }
     input, textarea { display: block; width: 100%; background: none; font: inherit; }
+
+    /* Avatar critical styles */
+    .avatar-box { width: 80px; height: 80px; border-radius: 20px; overflow: hidden; margin: 0 auto; background: var(--bg-gradient-onyx); }
+    .avatar-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 20px; }
+    .sidebar-info { display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center; }
+    .info-content { display: flex; flex-direction: column; align-items: center; }
 
     ::selection { background: var(--orange-yellow-crayola); color: var(--smoky-black); }
     :focus { outline-color: var(--orange-yellow-crayola); }
@@ -72,23 +152,52 @@
   <!-- Use system fonts instead of Google Fonts to avoid CSP issues -->
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif; }
+    
+    /* Visually hidden class for screen readers */
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+    
+    /* Skip to main content link */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--orange-yellow-crayola);
+      color: var(--smoky-black);
+      padding: 8px 16px;
+      text-decoration: none;
+      z-index: 10000;
+      font-weight: 600;
+      border-radius: 0 0 4px 0;
+    }
+    .skip-link:focus {
+      top: 0;
+    }
   </style>
 </head>
 
 <body>
-  <canvas id="particle-background"></canvas>
-  <main>
+  <!-- Skip to main content for keyboard users -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <canvas id="particle-background" aria-hidden="true"></canvas>
+  <main id="main-content">
     <aside class="sidebar" data-sidebar>
 
       <div class="sidebar-info">
 
         <figure class="avatar-box">
           <picture>
-            <source type="image/webp" 
-                    srcset="/public/optimized/images/my-avatar-small.webp 150w, 
-                            /public/optimized/images/my-avatar-medium.webp 300w"
-                    sizes="(max-width: 768px) 80px, 120px">
-            <img src="/public/optimized/images/my-avatar-small.png" 
+            <img src="/images/my-avatar.png" 
                  alt="Adriel Magalona" 
                  width="80" 
                  height="80"
@@ -150,35 +259,35 @@
         <div class="separator"></div>
 
         
-        <ul class="social-list">
+        <ul class="social-list" role="list" aria-label="Social media links">
 
           <li class="social-item">
-            <a href="https://www.linkedin.com/in/adriel-magalona-0546b9318/" class="social-link" target="_blank" data-tooltip="Connect with me on LinkedIn">
-              <ion-icon name="logo-linkedin"></ion-icon>
+            <a href="https://www.linkedin.com/in/adriel-magalona-0546b9318/" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Connect with me on LinkedIn (opens in new tab)" data-tooltip="Connect with me on LinkedIn">
+              <ion-icon name="logo-linkedin" aria-hidden="true"></ion-icon>
             </a>
           </li>
 
           <li class="social-item">
-            <a href="https://github.com/adr1el-m" class="social-link" target="_blank" data-tooltip="Check out my GitHub">
-              <ion-icon name="logo-github"></ion-icon>
+            <a href="https://github.com/adr1el-m" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Check out my GitHub profile (opens in new tab)" data-tooltip="Check out my GitHub">
+              <ion-icon name="logo-github" aria-hidden="true"></ion-icon>
             </a>
           </li>
 
           <li class="social-item">
-            <a href="https://www.facebook.com/Traceaz" class="social-link" target="_blank" data-tooltip="Follow me on Facebook">
-              <ion-icon name="logo-facebook"></ion-icon>
+            <a href="https://www.facebook.com/Traceaz" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Follow me on Facebook (opens in new tab)" data-tooltip="Follow me on Facebook">
+              <ion-icon name="logo-facebook" aria-hidden="true"></ion-icon>
             </a>
           </li>
 
           <li class="social-item">
-            <a href="https://twitter.com/adr1el_m" class="social-link" target="_blank" data-tooltip="Follow me on X (Twitter)">
-              <ion-icon name="logo-twitter"></ion-icon>
+            <a href="https://twitter.com/adr1el_m" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Follow me on X, formerly Twitter (opens in new tab)" data-tooltip="Follow me on X (Twitter)">
+              <ion-icon name="logo-twitter" aria-hidden="true"></ion-icon>
             </a>
           </li>
 
           <li class="social-item">
-            <a href="https://www.instagram.com/adr1elllll/" class="social-link" target="_blank" data-tooltip="Follow me on Instagram">
-              <ion-icon name="logo-instagram"></ion-icon>
+            <a href="https://www.instagram.com/adr1elllll/" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Follow me on Instagram (opens in new tab)" data-tooltip="Follow me on Instagram">
+              <ion-icon name="logo-instagram" aria-hidden="true"></ion-icon>
             </a>
           </li>
 
@@ -193,24 +302,24 @@
     <div class="main-content">
 
 
-      <nav class="navbar">
+      <nav class="navbar" role="navigation" aria-label="Main navigation">
 
         <ul class="navbar-list">
 
           <li class="navbar-item">
-            <button class="navbar-link  active" data-nav-link>About</button>
+            <button class="navbar-link  active" data-nav-link aria-label="Navigate to About section" aria-current="page">About</button>
           </li>
 
           <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Background</button>
+            <button class="navbar-link" data-nav-link aria-label="Navigate to Background section">Background</button>
           </li>
 
           <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Projects</button>
+            <button class="navbar-link" data-nav-link aria-label="Navigate to Projects section">Projects</button>
           </li>
 
           <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Organizations</button>
+            <button class="navbar-link" data-nav-link aria-label="Navigate to Organizations section">Organizations</button>
           </li>
 
         </ul>
@@ -295,98 +404,15 @@
               <div class="year-content active">
                 <ul class="achievements-list">
                   
-                  <!-- April 2025 -->
-                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
-                    data-images='["/optimized/images/ODRS-medium.png"]'
-                    data-webp-images='["/optimized/images/ODRS-medium.webp"]'
-                    data-organizer="Secured 2nd Runner-Up position in a banking innovation hackathon focused on transforming the future of financial services through technology and innovation."
-                    data-date="April 2025"
-                    data-location="Manila">
-                    <div class="award-badge">🥉</div>
-                    <div class="award-ribbon">2nd Runner-Up</div>
-                    <div class="card-content">
-                      <h4 class="h4 card-title">hack-it! The new Era of Banking Hackathon</h4>
-                      <p class="card-subtitle">Banking Innovation Challenge</p>
-                      <p class="card-date">📅 April 2025</p>
-                      <p class="card-location">📍 Manila</p>
-                    </div>
-                  </li>
-
-                  <!-- May 2025 -->
-                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
-                    data-images='["/optimized/images/GDSC-optimized.png"]'
-                    data-webp-images='["/optimized/images/GDSC-optimized.webp"]'
-                    data-organizer="Competed in Google Developer Groups on Campus: PUP's flagship competition, showcasing technical skills and innovation in a fast-paced development challenge."
-                    data-date="May 2025"
-                    data-location="Polytechnic University of the Philippines">
-                    <div class="award-badge">🥉</div>
-                    <div class="award-ribbon">2nd Runner-Up</div>
-                    <div class="card-content">
-                      <h4 class="h4 card-title">Google Developer Groups on Campus: PUP Spark Rush 2025</h4>
-                      <p class="card-subtitle">Technical Development Challenge</p>
-                      <p class="card-date">📅 May 2025</p>
-                      <p class="card-location">📍 Polytechnic University of the Philippines</p>
-                    </div>
-                  </li>
-
-                  <!-- July 2025 -->
-                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
-                    data-images='["/optimized/images/ODRS-medium.png"]'
-                    data-webp-images='["/optimized/images/ODRS-medium.webp"]'
-                    data-organizer="Ranked 4th Runner-Up among 33 competing teams in an advanced AI hackathon focused on developing autonomous AI agents and intelligent systems."
-                    data-date="July 2025"
-                    data-location="Manila">
-                    <div class="award-badge">🎖️</div>
-                    <div class="award-ribbon">4th Runner-Up</div>
-                    <div class="card-content">
-                      <h4 class="h4 card-title">Agentic AI Hackathon 2025</h4>
-                      <p class="card-subtitle">Autonomous AI Agents Challenge</p>
-                      <p class="card-date">📅 July 2025</p>
-                      <p class="card-location">📍 Manila</p>
-                    </div>
-                  </li>
-
-                  <!-- August 2025 -->
-                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
-                    data-images='["/optimized/images/ODRS-medium.png"]'
-                    data-webp-images='["/optimized/images/ODRS-medium.webp"]'
-                    data-organizer="Placed 9th among 24 teams in De La Salle University's premier hackathon competition, competing against top developers and innovators from various universities."
-                    data-date="August 2025"
-                    data-location="De La Salle University">
-                    <div class="award-badge">🎖️</div>
-                    <div class="award-ribbon">9th Place</div>
-                    <div class="card-content">
-                      <h4 class="h4 card-title">De La Salle University Hackercup</h4>
-                      <p class="card-subtitle">Inter-University Competition</p>
-                      <p class="card-date">📅 August 2025</p>
-                      <p class="card-location">📍 De La Salle University</p>
-                    </div>
-                  </li>
-
-                  <!-- September 2025 -->
-                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
-                    data-images='["/optimized/images/ODRS-medium.png"]'
-                    data-webp-images='["/optimized/images/ODRS-medium.webp"]'
-                    data-organizer="Won 1st place at Technovation Summit 2025's Start-up Hackathon, pitching an innovative startup idea and demonstrating entrepreneurial excellence and technical implementation."
-                    data-date="September 2025"
-                    data-location="Manila">
-                    <div class="award-badge">🏆</div>
-                    <div class="award-ribbon">1st Place</div>
-                    <div class="card-content">
-                      <h4 class="h4 card-title">Technovation Summit 2025 Start-up Hackathon</h4>
-                      <p class="card-subtitle">Champion - Startup Innovation</p>
-                      <p class="card-date">📅 September 2025</p>
-                      <p class="card-location">📍 Manila</p>
-                    </div>
-                  </li>
-
                   <!-- October 2025 -->
                   <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
-                    data-images='["/images/honors/BPIdatawave/teamwithceo.jpeg", "/images/honors/BPIdatawave/mewithcard.jpeg"]'
-                    data-webp-images='["/images/honors/BPIdatawave/teamwithceo.jpeg", "/images/honors/BPIdatawave/mewithcard.jpeg"]'
+                    data-images='["/images/honors/BPIdatawave/1.jpeg", "/images/honors/BPIdatawave/2.jpeg", "/images/honors/BPIdatawave/3.jpeg", "/images/honors/BPIdatawave/4.jpeg"]'
+                    data-webp-images='["/images/honors/BPIdatawave/1.jpeg", "/images/honors/BPIdatawave/2.jpeg", "/images/honors/BPIdatawave/3.jpeg", "/images/honors/BPIdatawave/4.jpeg"]'
                     data-organizer="Our team, 4Sight, secured 3rd place at the BPI DataWave Hackathon 2025 in the Workplace Productivity & Future of Work category. After four months of intense ideation, prototyping, and collaboration, we developed WorkSight - an AI-powered platform that addresses a critical issue: 1 in 3 employees is at high risk of burnout, costing the global economy over $1 trillion annually. WorkSight gives leaders foresight, not hindsight, analyzing behavioral data (workloads, collaboration) combined with psychological science to turn burnout from an invisible threat into a measurable, preventable business risk. Out of 750-900+ learners from across the Philippines, making it to the Top 3 is truly an honor. The awarding ceremony was held on October 1, 2025, at TEBL Hall 1 & 2, AIM Conference Center, where we had the incredible opportunity to meet BPI President and CEO TG Limcaoco."
                     data-date="October 1, 2025"
-                    data-location="AIM Conference Center, Makati City">
+                    data-location="AIM Conference Center, Makati City"
+                    data-teammates='[{"name":"Kiel Ethan Lanzanas","role":"Team Member"},{"name":"Ellah Benerado","role":"Team Member"},{"name":"John Carlo Santos","role":"Team Member"}]'
+                    data-github="https://github.com/adr1el-m/worksight">
                     <div class="award-badge">🥉</div>
                     <div class="award-ribbon">3rd Place</div>
                     <div class="card-content">
@@ -394,6 +420,103 @@
                       <p class="card-subtitle">Workplace Productivity & Future of Work • Team 4Sight</p>
                       <p class="card-date">📅 October 1, 2025</p>
                       <p class="card-location">📍 AIM Conference Center, Makati City</p>
+                    </div>
+                  </li>
+
+                  <!-- August 2025 -->
+                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
+                    data-images='["/images/honors/technovation/1.jpeg", "/images/honors/technovation/2.jpeg", "/images/honors/technovation/3.jpeg"]'
+                    data-webp-images='["/images/honors/technovation/1.jpeg", "/images/honors/technovation/2.jpeg", "/images/honors/technovation/3.jpeg"]'
+                    data-organizer="After 3 months of dedication and competing with some of the best techno-scholars across different regions of the country, our team Carmen The ParaSight, representing the National Capital Region, emerged as the Champion at the National Technovation Summit held at Marco Polo Plaza Hotel, Cebu on August 31, 2025. Our project, LingapLink, is an AI-powered healthcare platform designed to address inefficiencies in the Philippine medical system by streamlining triage, booking, communication, and record management, making healthcare more efficient and accessible for all. I contributed by developing the AI triage system, unifying the platform for both stakeholders, and delivering the live demo pitch while handling critical questions from the judges. Organized by Scholars Transforming Advancement and Research for Technology - DOST with support from Department of Science and Technology."
+                    data-date="August 31, 2025"
+                    data-location="Marco Polo Plaza Hotel, Cebu"
+                    data-teammates='[{"name":"Juanito Ramos II","role":"Team Member"},{"name":"Maxxinne Fernandez","role":"Team Member"},{"name":"Threshia Saut","role":"Team Member"},{"name":"Franchezca Natividad Banayad","role":"Team Member"}]'
+                    data-github="https://github.com/adr1el-m/technovation-2025"
+                    role="button"
+                    tabindex="0"
+                    aria-label="View details: Technovation Summit 2025 Start-up Hackathon - National Champion">
+                    <div class="award-badge" role="img" aria-label="Trophy emoji">🏆</div>
+                    <div class="award-ribbon">Champion</div>
+                    <div class="card-content">
+                      <h4 class="h4 card-title">Technovation Summit 2025 Start-up Hackathon</h4>
+                      <p class="card-subtitle">National Champion • Team Carmen The ParaSight • LingapLink</p>
+                      <p class="card-date"><span role="img" aria-label="Calendar">📅</span> August 31, 2025</p>
+                      <p class="card-location"><span role="img" aria-label="Location">📍</span> Marco Polo Plaza Hotel, Cebu</p>
+                    </div>
+                  </li>
+
+                  <!-- August 2025 -->
+                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
+                    data-images='["/images/honors/DLSUHackercup/1.jpeg", "/images/honors/DLSUHackercup/2.jpeg", "/images/honors/DLSUHackercup/3.jpeg", "/images/honors/DLSUHackercup/4.jpeg"]'
+                    data-webp-images='["/images/honors/DLSUHackercup/1.jpeg", "/images/honors/DLSUHackercup/2.jpeg", "/images/honors/DLSUHackercup/3.jpeg", "/images/honors/DLSUHackercup/4.jpeg"]'
+                    data-organizer="Representing Team 4Sight, we competed in the DLSU HackerCup 2025 on August 15–16 at Gokongwei Hall, De La Salle University. We tackled the theme 'Convenience: Hacking Everyday Hassles for Better Communities.' Our project, DokQ, is a smart appointment system featuring both a patient portal and a dashboard for healthcare providers. It is designed to reduce long queues in healthcare facilities while empowering patients with a digital profile to manage appointments and store their health history. Out of 24 participating teams, we proudly placed 9th. Beyond the ranking, it was a truly rewarding experience to innovate, collaborate, and learn together."
+                    data-date="August 15–16, 2025"
+                    data-location="Gokongwei Hall, De La Salle University"
+                    data-teammates='[{"name":"Ellah Benerado","role":"Team Member"},{"name":"Kiel Ethan Lanzanas","role":"Team Member"},{"name":"John Carlo Santos","role":"Team Member"}]'
+                    data-github="https://github.com/adr1el-m/dlsu-hackercup-2025">
+                    <div class="award-badge">🎖️</div>
+                    <div class="award-ribbon">9th Place</div>
+                    <div class="card-content">
+                      <h4 class="h4 card-title">De La Salle University Hackercup</h4>
+                      <p class="card-subtitle">Team 4Sight • DokQ Healthcare System</p>
+                      <p class="card-date">📅 August 15–16, 2025</p>
+                      <p class="card-location">📍 Gokongwei Hall, De La Salle University</p>
+                    </div>
+                  </li>
+
+                  <!-- June 2025 -->
+                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
+                    data-images='["/images/honors/genAI/1.jpeg", "/images/honors/genAI/2.jpeg", "/images/honors/genAI/3.jpeg", "/images/honors/genAI/4.jpeg"]'
+                    data-webp-images='["/images/honors/genAI/1.jpeg", "/images/honors/genAI/2.jpeg", "/images/honors/genAI/3.jpeg", "/images/honors/genAI/4.jpeg"]'
+                    data-organizer="Our team, Deansanitzy, placed Top 5 out of 33 teams at the Agentic AI Hackathon organized by Gen AI Philippines on June 28, 2025, hosted at White Cloak Technologies, Inc. This was our most challenging hackathon so far, balancing academic exams, tight schedules, and limited rest. What made this experience even more meaningful was that it was our first time competing with professionals—having previously participated in student-level competitions, facing off with industry teams gave us a broader perspective and pushed us to operate at a higher standard. Together, we built Kita-Kita: an AI-powered financial management platform designed to help users track expenses, manage bank accounts, forecast financial trends, and make informed decisions through intelligent AI agents. We are still in our first year of college, and reaching this milestone early on motivates us to keep building."
+                    data-date="June 28, 2025"
+                    data-location="White Cloak Technologies, Inc."
+                    data-teammates='[{"name":"James Rafael Mendiola","role":"Team Member"},{"name":"Jude Vincent Puti","role":"Team Member"}]'
+                    data-github="https://github.com/adr1el-m/agentic-ai-hackathon">
+                    <div class="award-badge">🎖️</div>
+                    <div class="award-ribbon">Top 5</div>
+                    <div class="card-content">
+                      <h4 class="h4 card-title">Agentic AI Hackathon 2025</h4>
+                      <p class="card-subtitle">Team Deansanitzy • Kita-Kita Financial Platform</p>
+                      <p class="card-date">📅 June 28, 2025</p>
+                      <p class="card-location">📍 White Cloak Technologies, Inc.</p>
+                    </div>
+                  </li>
+
+                  <!-- May 2025 -->
+                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
+                    data-images='["/images/honors/sparkrush/1.jpeg", "/images/honors/sparkrush/2.jpeg", "/images/honors/sparkrush/3.jpeg"]'
+                    data-webp-images='["/images/honors/sparkrush/1.jpeg", "/images/honors/sparkrush/2.jpeg", "/images/honors/sparkrush/3.jpeg"]'
+                    data-organizer="We clinched Second Runner-Up at Spark Rush 2025! On May 17, 2025, our team raced through the grounds of PUP-Manila for Spark Rush 2025, a station-based competition organized by Google Developer Groups on Campus PUP. From intense sprints and brain-teasing challenges to high-stakes checkpoints, we powered through each station with unwavering grit, seamless teamwork, and strategic coordination—all while pushing our physical and mental limits. Grateful to have experienced this with my amazing team Eba't Adan (E-E-Bat?) consisting of Alvic Decipolo, Russ David, Rheinz Owen Alpon, and Vinzed Diala. Couldn't have done it without you all!"
+                    data-date="May 17, 2025"
+                    data-location="PUP-Manila, Polytechnic University of the Philippines"
+                    data-teammates='[{"name":"Alvic Decipolo","role":"Team Member"},{"name":"Russ David","role":"Team Member"},{"name":"Rheinz Owen Alpon","role":"Team Member"},{"name":"Vinzed Diala","role":"Team Member"}]'>
+                    <div class="award-badge">🥉</div>
+                    <div class="award-ribbon">2nd Runner-Up</div>
+                    <div class="card-content">
+                      <h4 class="h4 card-title">Spark Rush 2025 - Google Developer Groups on Campus: PUP</h4>
+                      <p class="card-subtitle">Station-Based Competition • Team Eba't Adan ⚡</p>
+                      <p class="card-date">📅 May 17, 2025</p>
+                      <p class="card-location">📍 PUP-Manila</p>
+                    </div>
+                  </li>
+
+                  <!-- April 2025 -->
+                  <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
+                    data-images='["/images/honors/springboard/1.jpeg", "/images/honors/springboard/2.jpeg", "/images/honors/springboard/3.jpeg"]'
+                    data-webp-images='["/images/honors/springboard/1.jpeg", "/images/honors/springboard/2.jpeg", "/images/honors/springboard/3.jpeg"]'
+                    data-organizer="Proud to share that Loan Wolves clinched 2nd Runner-Up at the Hack-it: The New Era of Banking Hackathon! Kicked off by SBLabs, the event took place on April 4–5, 2025, at work.able in Exxa and Zeta Towers, Bridgetowne, Quezon City. We were challenged to build an AI-powered fintech solution in just 24 hours, and we created Kita Kita – an app designed to simplify personal finance by helping users track expenses, budget smarter, and make informed investment decisions. Massive shoutout to my amazing teammates – Dean James Salvacion, Jude Vincent Puti, and Mc Henry Sarcia – who've also been with me since my very first hackathon. Grateful to have grown and built with you all! As team captain, I'm incredibly proud of how far we've come, especially going up against such strong and talented teams. Let's keep building!"
+                    data-date="April 4–5, 2025"
+                    data-location="work.able, Exxa and Zeta Towers, Bridgetowne, Quezon City"
+                    data-teammates='[{"name":"Dean James Salvacion","role":"Team Member"},{"name":"Jude Vincent Puti","role":"Team Member"},{"name":"Mc Henry Sarcia","role":"Team Member"}]'
+                    data-github="https://github.com/adr1el-m/hackit-banking">
+                    <div class="award-badge">🥉</div>
+                    <div class="award-ribbon">2nd Runner-Up</div>
+                    <div class="card-content">
+                      <h4 class="h4 card-title">Hack-it: The New Era of Banking Hackathon</h4>
+                      <p class="card-subtitle">AI-Powered Fintech Solution - Team Loan Wolves 🐺</p>
+                      <p class="card-date">📅 April 4–5, 2025</p>
+                      <p class="card-location">📍 work.able, Bridgetowne, Quezon City</p>
                     </div>
                   </li>
 
@@ -427,18 +550,19 @@
                   </li>
 
                   <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
-                    data-images='["/optimized/achievements/eneda/group-medium.jpg", "/optimized/achievements/eneda/self-medium.jpg", "/optimized/achievements/eneda/certs-medium.jpg", "/optimized/achievements/eneda/group2-medium.jpg", "/optimized/achievements/eneda/id-medium.jpg"]'
-                    data-webp-images='["/optimized/achievements/eneda/group-medium.webp", "/optimized/achievements/eneda/self-medium.webp", "/optimized/achievements/eneda/certs-medium.webp", "/optimized/achievements/eneda/group2-medium.webp", "/optimized/achievements/eneda/id-medium.webp"]'
-                    data-organizer="Placed 3rd out of 6 teams at Miriam College after completing a month-long bootcamp and consulting with UP Diliman professors. Pitched &ldquo;EcoSiklo&rdquo;, a venture repurposing fabric scraps into pet essentials."
-                    data-date="September 2024"
-                    data-location="Miriam College">
+                    data-images='["/images/honors/eneda/1.jpeg", "/images/honors/eneda/2.jpeg", "/images/honors/eneda/3.jpeg", "/images/honors/eneda/4.jpeg", "/images/honors/eneda/5.jpeg", "/images/honors/eneda/6.jpeg"]'
+                    data-webp-images='["/images/honors/eneda/1.jpeg", "/images/honors/eneda/2.jpeg", "/images/honors/eneda/3.jpeg", "/images/honors/eneda/4.jpeg", "/images/honors/eneda/5.jpeg", "/images/honors/eneda/6.jpeg"]'
+                    data-organizer="After a month of intense preparation and stress, I'm proud to share that my team, Piyutech, secured 3rd place out of 6 teams at the ENEDA Hackathon, held on September 14, 2024, at Miriam College, Quezon City! A special shoutout to my incredible teammates Mc Henry Sarcia, Sean Russell Villeza, Jermaine Falcutila, and Kenchie Baylon for their unwavering commitment. Together, we developed 'EcoSiklo,' a circular economy solution that transforms fabric scraps into essential pet products—combining sustainability with innovation. We're also deeply thankful to Ms. Margarita Caparas and Dr. Luis Sison from UPSCALE Innovation Hub for their rigorous consultations, grilling us to ensure our pitch and our product were pitch-perfect. As a freshman, this achievement marks the beginning of an exciting journey in tech and sustainability for me. It's a powerful reminder that even at the early stages of our careers, we have the ability to create meaningful change. I'm looking forward to leveraging this experience to further my skills, collaborate on innovative solutions, and contribute to a more sustainable future."
+                    data-date="September 14, 2024"
+                    data-location="Miriam College, Quezon City"
+                    data-teammates='[{"name":"Mc Henry Sarcia","role":"Team Member"},{"name":"Sean Russell Villeza","role":"Team Member"},{"name":"Jermaine Falcutila","role":"Team Member"},{"name":"Kenchie Baylon","role":"Team Member"}]'>
                     <div class="award-badge">🥉</div>
                     <div class="award-ribbon">3rd Place</div>
                     <div class="card-content">
                       <h4 class="h4 card-title">Entrepreneurship Educators Association Hackathon</h4>
-                      <p class="card-subtitle">EcoSiklo Venture Pitch</p>
-                      <p class="card-date">📅 September 2024</p>
-                      <p class="card-location">📍 Miriam College</p>
+                      <p class="card-subtitle">Team Piyutech • EcoSiklo Project</p>
+                      <p class="card-date">📅 September 14, 2024</p>
+                      <p class="card-location">📍 Miriam College, Quezon City</p>
                     </div>
                   </li>
                   
@@ -651,42 +775,42 @@
 
         <section class="projects">
 
-          <ul class="filter-list">
+          <ul class="filter-list" role="tablist" aria-label="Project category filters">
 
             <li class="filter-item">
-              <button class="active" data-filter-btn>All</button>
+              <button class="active" data-filter-btn role="tab" aria-label="Filter projects: Show all" aria-selected="true">All</button>
             </li>
 
             <li class="filter-item">
-              <button data-filter-btn>Web Development</button>
+              <button data-filter-btn role="tab" aria-label="Filter projects: Web Development" aria-selected="false">Web Development</button>
             </li>
 
             <li class="filter-item">
-              <button data-filter-btn>Software</button>
+              <button data-filter-btn role="tab" aria-label="Filter projects: Software" aria-selected="false">Software</button>
             </li>
 
             <li class="filter-item">
-              <button data-filter-btn>Hardware</button>
+              <button data-filter-btn role="tab" aria-label="Filter projects: Hardware" aria-selected="false">Hardware</button>
             </li>
 
             <li class="filter-item">
-              <button data-filter-btn>Web Design</button>
+              <button data-filter-btn role="tab" aria-label="Filter projects: Web Design" aria-selected="false">Web Design</button>
             </li>
 
             <li class="filter-item">
-              <button data-filter-btn>Web Application</button>
+              <button data-filter-btn role="tab" aria-label="Filter projects: Web Application" aria-selected="false">Web Application</button>
             </li>
 
             <li class="filter-item">
-              <button data-filter-btn>Mobile App</button>
+              <button data-filter-btn role="tab" aria-label="Filter projects: Mobile App" aria-selected="false">Mobile App</button>
             </li>
 
             <li class="filter-item">
-              <button data-filter-btn>AI/ML</button>
+              <button data-filter-btn role="tab" aria-label="Filter projects: AI/ML" aria-selected="false">AI/ML</button>
             </li>
 
             <li class="filter-item">
-              <button data-filter-btn>Community</button>
+              <button data-filter-btn role="tab" aria-label="Filter projects: Community" aria-selected="false">Community</button>
             </li>
 
 
@@ -694,52 +818,52 @@
 
           <div class="filter-select-box">
 
-            <button class="filter-select" data-select>
+            <button class="filter-select" data-select aria-label="Select project category" aria-haspopup="listbox" aria-expanded="false">
 
               <div class="select-value" data-select-value>Select category</div>
 
               <div class="select-icon">
-                <ion-icon name="chevron-down"></ion-icon>
+                <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
               </div>
 
             </button>
 
-            <ul class="select-list">
+            <ul class="select-list" role="listbox" aria-label="Project categories">
 
               <li class="select-item">
-                <button data-select-item>All</button>
+                <button data-select-item role="option" aria-label="Show all projects">All</button>
               </li>
 
               <li class="select-item">
-                <button data-select-item>Web Development</button>
+                <button data-select-item role="option" aria-label="Show Web Development projects">Web Development</button>
               </li>
 
               <li class="select-item">
-                <button data-select-item>Software</button>
+                <button data-select-item role="option" aria-label="Show Software projects">Software</button>
               </li>
 
               <li class="select-item">
-                <button data-select-item>Hardware</button>
+                <button data-select-item role="option" aria-label="Show Hardware projects">Hardware</button>
               </li>
 
               <li class="select-item">
-                <button data-select-item>Web Design</button>
+                <button data-select-item role="option" aria-label="Show Web Design projects">Web Design</button>
               </li>
 
               <li class="select-item">
-                <button data-select-item>Web Application</button>
+                <button data-select-item role="option" aria-label="Show Web Application projects">Web Application</button>
               </li>
 
               <li class="select-item">
-                <button data-select-item>Mobile App</button>
+                <button data-select-item role="option" aria-label="Show Mobile App projects">Mobile App</button>
               </li>
 
               <li class="select-item">
-                <button data-select-item>AI/ML</button>
+                <button data-select-item role="option" aria-label="Show AI/ML projects">AI/ML</button>
               </li>
 
               <li class="select-item">
-                <button data-select-item>Community</button>
+                <button data-select-item role="option" aria-label="Show Community projects">Community</button>
               </li>
 
 
@@ -1093,72 +1217,103 @@
   </main>
 
   <!-- Chatbot Button -->
-  <div class="chatbot-btn" aria-label="Chat with AdrAI">
-    <span>💬</span>
-  </div>
+  <button class="chatbot-btn" aria-label="Open chat with AdrAI assistant" aria-haspopup="dialog">
+    <span role="img" aria-label="Chat icon">💬</span>
+  </button>
 
   <!-- Chatbox Container -->
-  <div class="chatbox">
+  <div class="chatbox" role="dialog" aria-labelledby="chatbox-title" aria-modal="true" aria-hidden="true">
     <div class="chatbox-header">
-      <h3>Chat with AdrAI</h3>
-      <span class="close-btn">✕</span>
+      <h3 id="chatbox-title">Chat with AdrAI</h3>
+      <button class="close-btn" aria-label="Close chat" type="button">
+        <span aria-hidden="true">✕</span>
+      </button>
     </div>
     
-    <div class="chatbox-messages">
+    <div class="chatbox-messages" role="log" aria-live="polite" aria-atomic="false" aria-label="Chat messages">
       <!-- Messages will be added here dynamically -->
     </div>
     
-    <div class="chatbox-input">
-      <input type="text" placeholder="Ask me anything..." aria-label="Chat input">
-      <button type="button">
-        <span>↑</span>
+    <form class="chatbox-input" aria-label="Chat input form">
+      <label for="chat-input" class="visually-hidden">Type your message</label>
+      <input 
+        type="text" 
+        id="chat-input"
+        placeholder="Ask me anything..." 
+        aria-label="Type your message to AdrAI"
+        autocomplete="off"
+        aria-describedby="chat-input-hint">
+      <span id="chat-input-hint" class="visually-hidden">Press Enter to send message</span>
+      <button type="submit" aria-label="Send message">
+        <span aria-hidden="true">↑</span>
       </button>
-    </div>
+    </form>
   </div>
 
   <!-- Back-to-top button -->
-  <div class="back-to-top" aria-label="Back to top">
-    <ion-icon name="arrow-up-outline"></ion-icon>
-  </div>
+  <button class="back-to-top" aria-label="Scroll back to top" type="button">
+    <ion-icon name="arrow-up-outline" aria-hidden="true"></ion-icon>
+  </button>
 
   <!-- Project Modal -->
-  <div id="projectModal" class="project-modal">
+  <div id="projectModal" class="project-modal" role="dialog" aria-labelledby="project-modal-title" aria-modal="true" aria-hidden="true">
     <div class="project-modal-content">
-      <span class="project-modal-close">&times;</span>
+      <button class="project-modal-close" aria-label="Close project modal" type="button">
+        <span aria-hidden="true">&times;</span>
+      </button>
       <div class="project-modal-images">
-        <button class="project-modal-prev">&larr;</button>
-        <img src="" alt="Project Image" class="project-modal-current-image">
-        <button class="project-modal-next">&rarr;</button>
+        <button class="project-modal-prev" aria-label="Previous project image" type="button">
+          <span aria-hidden="true">&larr;</span>
+        </button>
+        <img src="" alt="" class="project-modal-current-image" id="project-modal-image">
+        <button class="project-modal-next" aria-label="Next project image" type="button">
+          <span aria-hidden="true">&rarr;</span>
+        </button>
       </div>
+      <h2 id="project-modal-title" class="visually-hidden">Project Details</h2>
       <div class="project-modal-links">
-        <a href="#" class="project-github" target="_blank">GitHub</a>
-        <a href="#" class="project-live" target="_blank">Live Demo</a>
+        <a href="#" class="project-github" target="_blank" rel="noopener noreferrer" aria-label="View project on GitHub (opens in new tab)">GitHub</a>
+        <a href="#" class="project-live" target="_blank" rel="noopener noreferrer" aria-label="View live demo (opens in new tab)">Live Demo</a>
       </div>
     </div>
   </div>
 
   <!-- Updated Achievement Modal -->
-  <div id="achievementModal" class="achievement-modal">
+  <div id="achievementModal" class="achievement-modal" role="dialog" aria-labelledby="achievement-modal-title" aria-modal="true" aria-hidden="true">
     <div class="achievement-modal-content">
-      <span class="achievement-modal-close">&times;</span>
+      <button class="achievement-modal-close" aria-label="Close achievement modal" type="button">
+        <span aria-hidden="true">&times;</span>
+      </button>
       <div class="achievement-modal-body">
         <!-- Left column: Image and slider controls -->
         <div class="achievement-media">
           <div class="achievement-slider">
-            <img class="achievement-slide-image" src="" alt="Achievement Image">
+            <img class="achievement-slide-image" src="" alt="" loading="lazy" id="achievement-slide-image">
           </div>
-          <div class="achievement-slider-controls">
-            <button class="achievement-slider-prev">&larr;</button>
-            <button class="achievement-slider-next">&rarr;</button>
+          <div class="achievement-slider-controls" role="group" aria-label="Achievement image navigation">
+            <button class="achievement-slider-prev" aria-label="Previous achievement image" type="button">
+              <span aria-hidden="true">&larr;</span>
+            </button>
+            <button class="achievement-slider-next" aria-label="Next achievement image" type="button">
+              <span aria-hidden="true">&rarr;</span>
+            </button>
+          </div>
+          <div class="achievement-github" style="display: none;">
+            <!-- GitHub button will be inserted here by JavaScript -->
           </div>
         </div>
         <!-- Right column: Achievement text information -->
         <div class="achievement-info">
-          <h3 class="achievement-title-modal"></h3>
-          <p class="achievement-desc-modal"></p>
+          <h3 class="achievement-title-modal" id="achievement-modal-title"></h3>
           <div class="achievement-details">
             <p class="achievement-organizer"></p>
             <p class="achievement-date-location"></p>
+          </div>
+          <div class="achievement-teammates" style="display: none;">
+            <h4 class="teammates-title">
+              <span role="img" aria-label="Team">🤝</span> Team Members
+            </h4>
+            <div class="teammates-list" role="list"></div>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@
  */
 
 import { inject } from '@vercel/analytics';
+import { injectSpeedInsights } from '@vercel/speed-insights';
 import { NavigationManager } from './modules/navigation';
 import { SecurityManager } from './modules/security';
 import { LoadingManager } from './modules/loading-manager';
@@ -11,10 +12,15 @@ import { ModalManager } from './modules/modal-manager';
 import { IconReplacer } from './modules/icon-replacer';
 import { SidebarAnimations } from './modules/sidebar-animations';
 import { SkeletonLoader } from './modules/skeleton-loader';
+import { PerformanceMonitor } from './modules/performance-monitor';
+import { PerformanceDashboard } from './modules/performance-dashboard';
+import { AccessibilityEnhancer } from './modules/accessibility-enhancer';
+import { logger } from './config';
 import type { Portfolio } from './types';
 
-// Initialize Vercel Analytics
+// Initialize Vercel Analytics & Speed Insights
 inject();
+injectSpeedInsights();
 
 // Declare the global Portfolio namespace on the window object
 declare global {
@@ -35,18 +41,7 @@ class PortfolioApp {
    */
   private async init(): Promise<void> {
     try {
-      console.log('🚀 Initializing Portfolio Application (TypeScript)...');
-
-  // Helper to safely parse JSON array strings from data attributes
-  function safeParseArray(value: string | null): string[] {
-    if (!value) return [];
-    try {
-      const parsed = JSON.parse(value);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
-  }
+      logger.log('🚀 Initializing Portfolio Application (TypeScript)...');
 
       // Wait for DOM to be ready
       if (document.readyState === 'loading') {
@@ -54,6 +49,14 @@ class PortfolioApp {
           document.addEventListener('DOMContentLoaded', resolve);
         });
       }
+
+      // Initialize Performance Monitor first
+      const performanceMonitor = PerformanceMonitor.getInstance();
+      logger.log('📊 Performance monitoring active');
+
+      // Initialize Accessibility Enhancer
+      const accessibilityEnhancer = AccessibilityEnhancer.getInstance();
+      logger.log('♿ Accessibility enhancements active');
 
       // Initialize all modules
       const securityManager = new SecurityManager();
@@ -89,6 +92,9 @@ class PortfolioApp {
 
       // Initialize Sidebar Animations (after skeleton loader)
       new SidebarAnimations();
+
+      // Enhance landmarks after DOM is ready
+      accessibilityEnhancer.enhanceLandmarks();
 
       // Dynamically import and initialize vanilla-tilt
       import('vanilla-tilt').then(module => {
@@ -129,29 +135,28 @@ class PortfolioApp {
         lazy: {},
       };
 
-      // Temporary global fallbacks for any legacy inline handlers still present
-      // Remove once all inline attributes are gone from HTML
-      window.openAchievementModal = (element: HTMLElement) => {
-        // Extract data attributes similar to ModalManager.getAchievementData
-        const title = element.querySelector('h4, .achievement-title')?.textContent?.trim() || 'Achievement';
-        const images = safeParseArray(element.getAttribute('data-images'));
-        const webpImages = safeParseArray(element.getAttribute('data-webp-images'));
-        const organizer = element.getAttribute('data-organizer') || '';
-        const date = element.getAttribute('data-date') || '';
-        const location = element.getAttribute('data-location') || '';
-        modalManager.openAchievementModal({ title, images, webpImages, organizer, date, location });
-      };
-      window.openProjectModal = (_element: HTMLElement) => {
-        // Implement when project items use inline handlers; prefer data attributes + listeners
-        console.warn('openProjectModal global fallback invoked but not implemented');
-      };
+      logger.log('✅ Portfolio Application initialized successfully!');
+      logger.log('📦 Available modules:', Object.keys(window.Portfolio.modules ?? {}));
+      logger.log('📦 Lazy modules:', Object.keys(window.Portfolio.lazy ?? {}));
 
-      console.log('✅ Portfolio Application initialized successfully!');
-      console.log('📦 Available modules:', Object.keys(window.Portfolio.modules ?? {}));
-      console.log('📦 Lazy modules:', Object.keys(window.Portfolio.lazy ?? {}));
+      // Display performance report after page load
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          performanceMonitor.displayPerformanceBadge();
+          if (import.meta.env.DEV) {
+            performanceMonitor.generateReport();
+            // Initialize performance dashboard in dev mode
+            PerformanceDashboard.getInstance({
+              position: 'bottom-right',
+              minimized: true,
+              showInProduction: false
+            });
+          }
+        }, 1000);
+      });
 
     } catch (error) {
-      console.error('❌ Failed to initialize Portfolio Application:', error);
+      logger.error('❌ Failed to initialize Portfolio Application:', error);
     }
   }
 }
@@ -163,6 +168,6 @@ new PortfolioApp();
 // Hot Module Replacement for development
 if (import.meta.hot) {
   import.meta.hot.accept(() => {
-    console.log('🔄 HMR: Module updated');
+    logger.log('🔄 HMR: Module updated');
   });
 }

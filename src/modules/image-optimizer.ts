@@ -1,10 +1,12 @@
+import { logger } from '@/config';
+
 /**
  * Image Optimizer Module
  * Handles lazy loading and responsive images.
  */
 export class ImageOptimizer {
   constructor() {
-    console.log('ImageOptimizer initialized');
+    logger.log('ImageOptimizer initialized');
     this.init();
   }
 

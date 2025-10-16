@@ -1,10 +1,12 @@
+import { logger } from '@/config';
+
 /**
  * Security Module
  * Handles sanitization and other security aspects.
  */
 export class SecurityManager {
   constructor() {
-    console.log('SecurityManager initialized');
+    logger.log('SecurityManager initialized');
   }
 
   public sanitize(input: string): string {

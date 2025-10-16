@@ -1,4 +1,5 @@
 import type { ChatMessage } from '@/types';
+import { logger } from '@/config';
 
 /**
  * Chatbot Manager Module
@@ -23,7 +24,7 @@ export class ChatbotManager {
 
     this.initializeEventListeners();
     this.displayWelcomeMessage();
-    console.log('ChatbotManager initialized');
+    logger.log('ChatbotManager initialized');
   }
 
   private initializeEventListeners(): void {

@@ -10,7 +10,11 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "lighthouse": "lighthouse http://localhost:4173 --view --output=html --output-path=./lighthouse-report.html",
+    "lighthouse:ci": "lhci autorun",
+    "perf:audit": "npm run build && npm run preview & sleep 3 && npm run lighthouse && kill %1",
+    "perf:budget": "lighthouse http://localhost:4173 --budget-path=./performance-budget.json --output=html --output-path=./budget-report.html"
   },
   "keywords": [
     "portfolio",
@@ -29,10 +33,12 @@
     "url": "https://github.com/adr1el-m/portfolio"
   },
   "devDependencies": {
+    "@lhci/cli": "^0.15.1",
     "@types/node": "^20.19.21",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.57.1",
+    "lighthouse": "^13.0.0",
     "terser": "^5.44.0",
     "typescript": "^5.9.3",
     "vite": "^5.4.20"
@@ -40,7 +46,9 @@
   "dependencies": {
     "@types/three": "^0.180.0",
     "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "three": "^0.180.0",
-    "vanilla-tilt": "^1.8.1"
+    "vanilla-tilt": "^1.8.1",
+    "web-vitals": "^5.1.0"
   }
 }

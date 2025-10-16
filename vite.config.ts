@@ -36,6 +36,8 @@ export default defineConfig({
         drop_debugger: true,
       },
     },
+    cssMinify: true,
+    cssCodeSplit: true,
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html')
@@ -43,6 +45,13 @@ export default defineConfig({
       output: {
         manualChunks: {
           three: ['three'],
+        },
+        assetFileNames: (assetInfo) => {
+          // Organize assets by type
+          if (assetInfo.name?.endsWith('.css')) {
+            return 'assets/css/[name]-[hash][extname]';
+          }
+          return 'assets/[name]-[hash][extname]';
         },
       },
     }

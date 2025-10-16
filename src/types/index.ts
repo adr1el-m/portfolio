@@ -15,6 +15,11 @@ export interface ChatMessage {
   timestamp: Date;
 }
 
+export interface Teammate {
+  name: string;
+  role?: string;
+}
+
 export interface AchievementData {
   title: string;
   images: string[];
@@ -22,6 +27,8 @@ export interface AchievementData {
   organizer: string;
   date: string;
   location: string;
+  teammates?: Teammate[];
+  githubUrl?: string;
 }
 
 export interface ProjectData {
@@ -54,9 +61,6 @@ declare global {
   interface Window {
     Portfolio: Portfolio;
     CONFIG?: PortfolioConfig;
-    openAchievementModal?: (element: HTMLElement) => void;
-    openProjectModal?: (element: HTMLElement) => void;
-    toggleFAQ?: (element: HTMLElement) => void;
   }
 }
 

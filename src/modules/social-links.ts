@@ -1,3 +1,5 @@
+import { logger } from '@/config';
+
 /**
  * Social Links Manager Module
  * Handles the copy-to-clipboard functionality for social links.
@@ -5,7 +7,7 @@
 export class SocialLinksManager {
   constructor() {
     this.initializeCopyButtons();
-    console.log('SocialLinksManager initialized');
+    logger.log('SocialLinksManager initialized');
   }
 
   private initializeCopyButtons(): void {
@@ -29,7 +31,7 @@ export class SocialLinksManager {
       await navigator.clipboard.writeText(text);
       this.showSuccessMessage('Link copied to clipboard!');
     } catch (err) {
-      console.error('Failed to copy:', err);
+      logger.error('Failed to copy:', err);
       // Fallback for older browsers
       this.fallbackCopyToClipboard(text);
     }
@@ -47,7 +49,7 @@ export class SocialLinksManager {
       document.execCommand('copy');
       this.showSuccessMessage('Link copied to clipboard!');
     } catch (err) {
-      console.error('Fallback copy failed:', err);
+      logger.error('Fallback copy failed:', err);
       this.showSuccessMessage('Failed to copy link');
     }
     

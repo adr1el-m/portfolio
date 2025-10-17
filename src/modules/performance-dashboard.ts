@@ -357,7 +357,7 @@ export class PerformanceDashboard {
   }
 
   private clearMetrics(): void {
-    console.clear();
+    logger.clear();
     logger.info('🗑️ Performance metrics cleared. Refresh to collect new data.');
   }
 

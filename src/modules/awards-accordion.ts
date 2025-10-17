@@ -44,8 +44,8 @@ export class AwardsAccordion {
     const cards = container.querySelectorAll('.achievement-card');
     
     // Import VanillaTilt dynamically if needed
-    if (typeof window !== 'undefined' && (window as any).VanillaTilt) {
-      const VanillaTilt = (window as any).VanillaTilt;
+    if (typeof window !== 'undefined' && window.VanillaTilt) {
+      const VanillaTilt = window.VanillaTilt;
       VanillaTilt.init(cards, {
         max: 15,
         speed: 400,

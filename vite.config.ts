@@ -28,7 +28,7 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true,
-    sourcemap: true,
+    sourcemap: false, // Disable source maps in production to reduce bundle size
     minify: 'terser',
     terserOptions: {
       compress: {

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="hsl(240, 2%, 13%)">
+  <title>Offline - Adriel Magalona Portfolio</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      background: linear-gradient(135deg, hsl(240, 2%, 13%) 0%, hsl(0, 0%, 7%) 100%);
+      color: hsl(0, 0%, 84%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .offline-container {
+      text-align: center;
+      max-width: 500px;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .icon-container {
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .offline-icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, hsl(45, 100%, 72%), hsl(35, 100%, 68%));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 40px hsla(45, 100%, 72%, 0.3);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 10px 40px hsla(45, 100%, 72%, 0.3);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 15px 50px hsla(45, 100%, 72%, 0.5);
+      }
+    }
+
+    .offline-icon svg {
+      width: 60px;
+      height: 60px;
+      fill: hsl(240, 2%, 13%);
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      background: linear-gradient(to right, hsl(45, 100%, 72%), hsl(35, 100%, 68%));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: hsl(0, 0%, 70%);
+      margin-bottom: 2rem;
+    }
+
+    .retry-button {
+      display: inline-block;
+      padding: 12px 32px;
+      background: linear-gradient(135deg, hsl(45, 100%, 72%), hsl(35, 100%, 68%));
+      color: hsl(240, 2%, 13%);
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+      box-shadow: 0 4px 15px hsla(45, 100%, 72%, 0.3);
+    }
+
+    .retry-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px hsla(45, 100%, 72%, 0.5);
+    }
+
+    .retry-button:active {
+      transform: translateY(0);
+    }
+
+    .info-box {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: hsla(240, 1%, 17%, 0.5);
+      border: 1px solid hsl(0, 0%, 22%);
+      border-radius: 12px;
+      text-align: left;
+    }
+
+    .info-box h3 {
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      color: hsl(45, 100%, 72%);
+    }
+
+    .info-box ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .info-box li {
+      padding: 0.5rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+      color: hsl(0, 0%, 75%);
+      font-size: 0.95rem;
+    }
+
+    .info-box li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: hsl(45, 100%, 72%);
+      font-weight: bold;
+    }
+
+    .connection-status {
+      margin-top: 1.5rem;
+      padding: 0.75rem;
+      background: hsla(0, 43%, 51%, 0.1);
+      border: 1px solid hsl(0, 43%, 51%);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: hsl(0, 43%, 51%);
+    }
+
+    .connection-status.online {
+      background: hsla(142, 76%, 36%, 0.1);
+      border-color: hsl(142, 76%, 36%);
+      color: hsl(142, 76%, 56%);
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+
+      .offline-icon {
+        width: 100px;
+        height: 100px;
+      }
+
+      .offline-icon svg {
+        width: 50px;
+        height: 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-container">
+    <div class="icon-container">
+      <div class="offline-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M23.64 7c-.45-.34-4.93-4-11.64-4-1.5 0-2.89.19-4.15.48L18.18 13.8 23.64 7zm-6.6 8.22L3.27 1.44 2 2.72l2.05 2.06C1.91 5.76.59 6.82.36 7l11.63 14.49.01.01.01-.01 3.9-4.86 3.32 3.32 1.27-1.27-3.46-3.46z"/>
+        </svg>
+      </div>
+    </div>
+
+    <h1>You're Offline</h1>
+    <p>It looks like you've lost your internet connection. Don't worry, you can still view cached content from your previous visits.</p>
+
+    <button class="retry-button" onclick="window.location.reload()">
+      Try Again
+    </button>
+
+    <div class="info-box">
+      <h3>While you're offline:</h3>
+      <ul>
+        <li>Previously viewed pages are still accessible</li>
+        <li>Your browsing history is preserved</li>
+        <li>Come back online to see the latest updates</li>
+      </ul>
+    </div>
+
+    <div class="connection-status" id="status">
+      <span id="status-text">🔴 No internet connection</span>
+    </div>
+  </div>
+
+  <script>
+    // Check connection status
+    function updateConnectionStatus() {
+      const status = document.getElementById('status');
+      const statusText = document.getElementById('status-text');
+      
+      if (navigator.onLine) {
+        status.classList.add('online');
+        statusText.textContent = '🟢 Connection restored! Reloading...';
+        
+        // Automatically reload when connection is restored
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        status.classList.remove('online');
+        statusText.textContent = '🔴 No internet connection';
+      }
+    }
+
+    // Listen for connection changes
+    window.addEventListener('online', updateConnectionStatus);
+    window.addEventListener('offline', updateConnectionStatus);
+
+    // Check on load
+    updateConnectionStatus();
+
+    // Periodic check (every 5 seconds)
+    setInterval(() => {
+      if (navigator.onLine) {
+        updateConnectionStatus();
+      }
+    }, 5000);
+  </script>
+</body>
+</html>

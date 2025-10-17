@@ -1,0 +1,166 @@
+/**
+ * Page Loader Styles
+ * Loading states and transitions for dynamic page loading
+ */
+
+/* Loading Article */
+article.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 1.5rem;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--orange-yellow-crayola, #ffb727);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-container p {
+  color: var(--light-gray, #a0a0a0);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Error Article */
+article.error {
+  padding: 2rem;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.error-content {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: var(--bg-gradient-jet);
+  border-radius: 14px;
+  border: 1px solid var(--jet);
+}
+
+.error-content p {
+  color: var(--light-gray);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.error-content strong {
+  color: var(--orange-yellow-crayola);
+}
+
+.retry-btn {
+  margin-top: 1.5rem;
+  padding: 0.75rem 2rem;
+  background: var(--bg-gradient-yellow-1);
+  color: var(--smoky-black);
+  border: none;
+  border-radius: 14px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.retry-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 183, 39, 0.3);
+}
+
+.retry-btn:active {
+  transform: translateY(0);
+}
+
+/* Page Transition Animations */
+article {
+  animation: fadeIn 0.3s ease-in;
+}
+
+article.active {
+  display: block;
+  animation: slideInUp 0.4s ease-out;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Smooth page transitions */
+.main-content {
+  position: relative;
+}
+
+article[data-page] {
+  display: none;
+}
+
+article[data-page].active {
+  display: block;
+}
+
+/* Loading state overlay (optional enhancement) */
+.page-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-in;
+}
+
+.page-loading-overlay.hidden {
+  display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 580px) {
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border-width: 3px;
+  }
+  
+  .error-content {
+    padding: 2rem 1rem;
+  }
+  
+  .retry-btn {
+    padding: 0.65rem 1.5rem;
+    font-size: 0.8125rem;
+  }
+}

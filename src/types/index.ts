@@ -47,20 +47,53 @@ export interface Portfolio {
     version: string;
     initialized: boolean;
   };
-  modules: {
-    [key: string]: any;
-  };
-  lazy?: {
-    [key: string]: any;
-  };
-  legacy?: Record<string, Function>;
-  utils?: Record<string, Function>;
+  modules: Record<string, unknown>;
+  lazy?: Record<string, unknown>;
+  legacy?: Record<string, (...args: unknown[]) => unknown>;
+  utils?: Record<string, (...args: unknown[]) => unknown>;
 }
 
 declare global {
   interface Window {
     Portfolio: Portfolio;
     CONFIG?: PortfolioConfig;
+  }
+}
+
+// BeforeInstallPromptEvent interface for PWA install prompt
+export interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: string[];
+  readonly userChoice: Promise<{
+    outcome: 'accepted' | 'dismissed';
+    platform: string;
+  }>;
+  prompt(): Promise<void>;
+}
+
+// VanillaTilt options interface
+export interface VanillaTiltOptions {
+  max?: number;
+  speed?: number;
+  glare?: boolean;
+  'max-glare'?: number;
+  scale?: number;
+  reverse?: boolean;
+}
+
+// VanillaTilt library interface
+export interface VanillaTilt {
+  init(elements: NodeListOf<Element> | Element[] | Element, options?: VanillaTiltOptions): void;
+  destroy(): void;
+}
+
+// Extend Window interface with custom properties
+declare global {
+  interface Window {
+    VanillaTilt?: VanillaTilt;
+  }
+  
+  interface Navigator {
+    standalone?: boolean;
   }
 }
 

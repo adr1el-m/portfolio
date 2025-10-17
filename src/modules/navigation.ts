@@ -3,10 +3,14 @@
  * Handles page navigation, sidebar, filters, forms, and scroll effects
  */
 
+import { PageLoader } from './page-loader';
+
 export class NavigationManager {
   private revealObserver: IntersectionObserver | null = null;
+  private pageLoader: PageLoader;
 
   constructor() {
+    this.pageLoader = PageLoader.getInstance();
     this.init();
   }
 
@@ -105,24 +109,28 @@ export class NavigationManager {
    */
   private setupNavigation(): void {
     const navigationLinks = document.querySelectorAll<HTMLButtonElement>("[data-nav-link]");
-    const pages = document.querySelectorAll<HTMLElement>("[data-page]");
 
     navigationLinks.forEach((link) => {
-      link.addEventListener("click", () => {
-        const linkText = link.textContent?.toLowerCase() || '';
+      link.addEventListener("click", async () => {
+        const pageName = link.textContent?.toLowerCase() || '';
         
-        pages.forEach((page, j) => {
-          if (linkText === page.dataset.page) {
-            page.classList.add("active");
-            link.classList.add("active");
-            window.scrollTo(0, 0);
-          } else {
-            page.classList.remove("active");
-            navigationLinks[j]?.classList.remove("active");
-          }
+        // Remove active class from all navigation links
+        navigationLinks.forEach(navLink => {
+          navLink.classList.remove("active");
         });
+        
+        // Add active class to clicked link
+        link.classList.add("active");
+        
+        // Load the page dynamically
+        await this.pageLoader.loadPage(pageName);
       });
     });
+    
+    // Preload commonly accessed pages after initial load
+    setTimeout(() => {
+      this.pageLoader.preloadPages(['background', 'projects']);
+    }, 2000);
   }
 
   /**

@@ -8,8 +8,8 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
   readonly hot?: {
-    accept: (cb?: (mod: any) => void) => void
-    dispose: (cb: (data: any) => void) => void
-    data: any
+    accept: (cb?: (mod: unknown) => void) => void
+    dispose: (cb: (data: unknown) => void) => void
+    data: Record<string, unknown>
   }
 }

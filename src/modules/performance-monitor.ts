@@ -104,7 +104,7 @@ export class PerformanceMonitor {
 
     // Display in console for development
     if (import.meta.env.DEV) {
-      console.table({
+      logger.table({
         Metric: name,
         Value: this.formatValue(name, value),
         Rating: rating,
@@ -164,7 +164,7 @@ export class PerformanceMonitor {
     if (typeof window === 'undefined' || !window.performance) return;
 
     window.addEventListener('load', () => {
-      const resources = performance.getEntriesByType('resource');
+      const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
       const resourceStats = {
         total: resources.length,
         scripts: 0,
@@ -174,7 +174,7 @@ export class PerformanceMonitor {
         totalSize: 0,
       };
 
-      resources.forEach((resource: any) => {
+      resources.forEach((resource) => {
         const type = resource.initiatorType;
         if (type === 'script') resourceStats.scripts++;
         if (type === 'css' || type === 'link') resourceStats.stylesheets++;
@@ -224,8 +224,8 @@ export class PerformanceMonitor {
   private sendToAnalytics(report: PerformanceReport): void {
     // Send to Vercel Analytics (automatically collected)
     // You can also send custom events if needed
-    if (typeof window !== 'undefined' && (window as any).va) {
-      (window as any).va('event', {
+    if (typeof window !== 'undefined' && window.va) {
+      window.va('event', {
         name: 'web_vital',
         data: {
           metric: report.metric,
@@ -273,19 +273,19 @@ export class PerformanceMonitor {
    * Generate performance report
    */
   public generateReport(): void {
-    console.group('📊 Performance Report');
-    console.log('Overall Score:', this.getPerformanceScore() + '/100');
-    console.log('\n--- Core Web Vitals ---');
+    logger.group('📊 Performance Report');
+    logger.log('Overall Score:', this.getPerformanceScore() + '/100');
+    logger.log('\n--- Core Web Vitals ---');
     this.metrics.forEach((report, name) => {
-      console.log(`${name}: ${report.value} (${report.rating})`);
+      logger.log(`${name}: ${report.value} (${report.rating})`);
     });
     if (this.budgetViolations.length > 0) {
-      console.log('\n--- Budget Violations ---');
-      this.budgetViolations.forEach((violation) => console.log(`❌ ${violation}`));
+      logger.log('\n--- Budget Violations ---');
+      this.budgetViolations.forEach((violation) => logger.log(`❌ ${violation}`));
     } else {
-      console.log('\n✅ All metrics within budget!');
+      logger.log('\n✅ All metrics within budget!');
     }
-    console.groupEnd();
+    logger.groupEnd();
   }
 
   /**
@@ -296,7 +296,7 @@ export class PerformanceMonitor {
     const grade = score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : score >= 60 ? 'D' : 'F';
     const color = score >= 90 ? '#00C853' : score >= 80 ? '#64DD17' : score >= 70 ? '#FFD600' : score >= 60 ? '#FF6D00' : '#DD2C00';
 
-    console.log(
+    logger.log(
       `%c 🚀 Performance Score: ${score}/100 (Grade: ${grade}) `,
       `background: ${color}; color: white; font-weight: bold; padding: 8px 16px; border-radius: 4px; font-size: 14px;`
     );

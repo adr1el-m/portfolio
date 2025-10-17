@@ -877,10 +877,10 @@
             <li class="project-item active" 
                 data-filter-item 
                 data-category="PHP"
-                data-images='["/optimized/images/ODRS-medium.png"]'
-                data-webp-images='["/optimized/images/ODRS-medium.webp"]'
-                data-description="A comprehensive web-based system for managing and processing document requests online. Built with PHP and MySQL, featuring user authentication, request tracking, and administrative controls."
-                data-technologies="PHP • MySQL • JavaScript • HTML/CSS"
+                data-images='["/images/projects/ODRS/1.jpeg", "/images/projects/ODRS/2.jpeg", "/images/projects/ODRS/3.jpeg", "/images/projects/ODRS/4.jpeg", "/images/projects/ODRS/5.jpeg", "/images/projects/ODRS/6.jpeg"]'
+                data-webp-images='[]'
+                data-description="Online Document Request System for Grade 12 students at the University of Makati Higher School (HS ng UMak). A comprehensive web-based platform that streamlines the process of requesting and managing school documents, featuring user authentication, request tracking, real-time status updates, and administrative controls for efficient document processing."
+                data-technologies="PHP • MySQL • JavaScript • HTML/CSS • Bootstrap"
                 data-github=""
                 data-live="">
               <a href="#">
@@ -890,17 +890,9 @@
                     <ion-icon name="eye-outline"></ion-icon>
                   </div>
 
-                  <picture>
-                    <source type="image/webp" 
-                            srcset="/optimized/images/ODRS-small.webp 400w, 
-                                    public/optimized/images/ODRS-medium.webp 800w"
-                            sizes="(max-width: 400px) 400px, 800px">
-                    <img src="/optimized/images/ODRS-medium.png" 
-                         data-src="/optimized/images/ODRS-medium.png"
-                         data-webp-src="/optimized/images/ODRS-medium.webp"
-                         alt="Online Document Request System - Project Screenshot" 
-                         loading="lazy">
-                  </picture>
+                  <img src="/images/projects/ODRS/1.jpeg" 
+                       alt="Online Document Request System - University of Makati" 
+                       loading="lazy">
                 </figure>
 
                 <h3 class="project-title">Online Document Request System</h3>
@@ -1257,23 +1249,45 @@
 
   <!-- Project Modal -->
   <div id="projectModal" class="project-modal" role="dialog" aria-labelledby="project-modal-title" aria-modal="true" aria-hidden="true">
-    <div class="project-modal-content">
+    <div class="project-modal-wrapper">
       <button class="project-modal-close" aria-label="Close project modal" type="button">
         <span aria-hidden="true">&times;</span>
       </button>
-      <div class="project-modal-images">
-        <button class="project-modal-prev" aria-label="Previous project image" type="button">
-          <span aria-hidden="true">&larr;</span>
-        </button>
-        <img src="" alt="" class="project-modal-current-image" id="project-modal-image">
-        <button class="project-modal-next" aria-label="Next project image" type="button">
-          <span aria-hidden="true">&rarr;</span>
-        </button>
+      
+      <!-- Image Gallery Section (Top) -->
+      <div class="project-modal-gallery">
+        <div class="project-gallery-slider">
+          <button class="project-gallery-prev" aria-label="Previous project image" type="button">
+            <span aria-hidden="true">‹</span>
+          </button>
+          <div class="project-gallery-image-container">
+            <img src="" alt="" class="project-gallery-image" id="project-modal-image">
+            <div class="project-gallery-counter">
+              <span class="current-image-number">1</span> / <span class="total-images">1</span>
+            </div>
+          </div>
+          <button class="project-gallery-next" aria-label="Next project image" type="button">
+            <span aria-hidden="true">›</span>
+          </button>
+        </div>
       </div>
-      <h2 id="project-modal-title" class="visually-hidden">Project Details</h2>
-      <div class="project-modal-links">
-        <a href="#" class="project-github" target="_blank" rel="noopener noreferrer" aria-label="View project on GitHub (opens in new tab)">GitHub</a>
-        <a href="#" class="project-live" target="_blank" rel="noopener noreferrer" aria-label="View live demo (opens in new tab)">Live Demo</a>
+      
+      <!-- Project Info Section (Bottom) -->
+      <div class="project-modal-info">
+        <h2 id="project-modal-title" class="project-info-title"></h2>
+        <p class="project-info-description"></p>
+        <div class="project-info-tech">
+          <span class="tech-label">Technologies:</span>
+          <span class="tech-stack"></span>
+        </div>
+        <div class="project-info-links">
+          <a href="#" class="project-link project-github" target="_blank" rel="noopener noreferrer" aria-label="View project on GitHub (opens in new tab)" style="display: none;">
+            <span class="link-icon">🔗</span> GitHub
+          </a>
+          <a href="#" class="project-link project-live" target="_blank" rel="noopener noreferrer" aria-label="View live demo (opens in new tab)" style="display: none;">
+            <span class="link-icon">🚀</span> Live Demo
+          </a>
+        </div>
       </div>
     </div>
   </div>

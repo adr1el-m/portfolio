@@ -57,25 +57,25 @@ export class ModalManager {
       }
     });
 
-    // Cache modal elements
+    // Cache achievement modal elements
     this.modalEl = document.getElementById('achievementModal');
     this.imgEl = document.querySelector('.achievement-slide-image');
     this.titleEl = document.querySelector('.achievement-title-modal');
     this.organizerEl = document.querySelector('.achievement-organizer');
     this.dateLocEl = document.querySelector('.achievement-date-location');
 
-    // Close button
-    const closeBtn = document.querySelector('.achievement-modal-close');
-    closeBtn?.addEventListener('click', () => this.closeAchievementModal());
+    // Achievement modal close button
+    const achievementCloseBtn = document.querySelector('.achievement-modal-close');
+    achievementCloseBtn?.addEventListener('click', () => this.closeAchievementModal());
     
-    // Close on backdrop click
+    // Achievement modal backdrop click
     this.modalEl?.addEventListener('click', (e) => {
       if (e.target === this.modalEl) {
         this.closeAchievementModal();
       }
     });
     
-    // Prev/Next
+    // Achievement modal Prev/Next
     document.querySelector('.achievement-slider-prev')?.addEventListener('click', (e) => {
       e.stopPropagation();
       this.navigateAchievementPrevious();
@@ -83,6 +83,38 @@ export class ModalManager {
     document.querySelector('.achievement-slider-next')?.addEventListener('click', (e) => {
       e.stopPropagation();
       this.navigateAchievementNext();
+    });
+
+    // Setup project modal event listeners
+    this.setupProjectModalListeners();
+  }
+
+  private setupProjectModalListeners(): void {
+    const projectModal = document.getElementById('projectModal');
+    const projectCloseBtn = document.querySelector('.project-modal-close');
+    const projectPrevBtn = document.querySelector('.project-gallery-prev');
+    const projectNextBtn = document.querySelector('.project-gallery-next');
+
+    // Project modal close button
+    projectCloseBtn?.addEventListener('click', () => this.closeProjectModal());
+    
+    // Project modal backdrop click
+    projectModal?.addEventListener('click', (e) => {
+      if (e.target === projectModal) {
+        this.closeProjectModal();
+      }
+    });
+
+    // Project modal Previous button
+    projectPrevBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.navigateProjectPrevious();
+    });
+
+    // Project modal Next button
+    projectNextBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.navigateProjectNext();
     });
   }
 
@@ -192,24 +224,119 @@ export class ModalManager {
     this.images = supportsWebp && data.webpImages.length > 0 ? data.webpImages : data.images;
     this.currentIndex = 0;
 
-    if (this.titleEl) this.titleEl.textContent = data.title;
-    if (this.organizerEl) this.organizerEl.textContent = data.category;
-    if (this.dateLocEl) this.dateLocEl.textContent = data.technologies;
+    // Get project modal elements
+    const projectModal = document.getElementById('projectModal');
+    const projectImage = document.getElementById('project-modal-image') as HTMLImageElement;
+    const projectTitle = document.getElementById('project-modal-title');
+    const projectDescription = document.querySelector('.project-info-description');
+    const projectTechStack = document.querySelector('.tech-stack');
+    const projectGithub = document.querySelector('.project-github') as HTMLAnchorElement;
+    const projectLive = document.querySelector('.project-live') as HTMLAnchorElement;
+    const currentImageNum = document.querySelector('.current-image-number');
+    const totalImagesNum = document.querySelector('.total-images');
 
-    // Show/hide slider controls based on number of images
-    const sliderControls = document.querySelector('.achievement-slider-controls') as HTMLElement;
-    if (sliderControls) {
-      sliderControls.style.display = this.images.length > 1 ? 'flex' : 'none';
+    // Set project data
+    if (projectTitle) projectTitle.textContent = data.title;
+    if (projectDescription) projectDescription.textContent = data.description;
+    if (projectTechStack) projectTechStack.textContent = data.technologies;
+    
+    // Update image counter
+    if (currentImageNum) currentImageNum.textContent = '1';
+    if (totalImagesNum) totalImagesNum.textContent = this.images.length.toString();
+
+    // Show/hide navigation buttons
+    const prevBtn = document.querySelector('.project-gallery-prev') as HTMLElement;
+    const nextBtn = document.querySelector('.project-gallery-next') as HTMLElement;
+    const counter = document.querySelector('.project-gallery-counter') as HTMLElement;
+    
+    if (this.images.length > 1) {
+      if (prevBtn) prevBtn.style.display = 'flex';
+      if (nextBtn) nextBtn.style.display = 'flex';
+      if (counter) counter.style.display = 'block';
+    } else {
+      if (prevBtn) prevBtn.style.display = 'none';
+      if (nextBtn) nextBtn.style.display = 'none';
+      if (counter) counter.style.display = 'none';
     }
 
-    this.updateImage();
-    
-    if (this.modalEl) {
-      this.modalEl.classList.add('active');
+    // Handle GitHub link
+    if (projectGithub) {
+      if (data.githubUrl) {
+        projectGithub.href = data.githubUrl;
+        projectGithub.style.display = 'inline-flex';
+      } else {
+        projectGithub.style.display = 'none';
+      }
+    }
+
+    // Handle Live Demo link
+    if (projectLive) {
+      if (data.liveUrl) {
+        projectLive.href = data.liveUrl;
+        projectLive.style.display = 'inline-flex';
+      } else {
+        projectLive.style.display = 'none';
+      }
+    }
+
+    // Set initial image
+    if (projectImage && this.images.length > 0) {
+      projectImage.src = this.images[0];
+      projectImage.alt = `${data.title} - Screenshot 1`;
+    }
+
+    // Show modal
+    if (projectModal) {
+      projectModal.style.display = 'flex';
       logger.log('Modal opened for project:', data.title);
     }
     
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
+  }
+
+  private closeProjectModal(): void {
+    const projectModal = document.getElementById('projectModal');
+    if (projectModal) {
+      projectModal.style.display = 'none';
+    }
+    document.body.style.overflow = ''; // Restore scrolling
+  }
+
+  private navigateProjectPrevious(): void {
+    if (this.images.length === 0) return;
+    this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+    this.updateProjectImage();
+  }
+
+  private navigateProjectNext(): void {
+    if (this.images.length === 0) return;
+    this.currentIndex = (this.currentIndex + 1) % this.images.length;
+    this.updateProjectImage();
+  }
+
+  private updateProjectImage(): void {
+    const projectImage = document.getElementById('project-modal-image') as HTMLImageElement;
+    const currentImageNum = document.querySelector('.current-image-number');
+    
+    if (!projectImage) return;
+    
+    const src = this.images[this.currentIndex] || '';
+    
+    // Update image with fade effect
+    projectImage.style.opacity = '0';
+    setTimeout(() => {
+      projectImage.src = src;
+      projectImage.onload = () => {
+        requestAnimationFrame(() => {
+          projectImage.style.opacity = '1';
+        });
+      };
+    }, 150);
+
+    // Update counter
+    if (currentImageNum) {
+      currentImageNum.textContent = (this.currentIndex + 1).toString();
+    }
   }
 
   private displayTeammates(teammates?: Array<{name: string; role?: string}>): void {

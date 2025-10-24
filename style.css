@@ -1541,8 +1541,14 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   transition: all 0.3s ease;
 }
 
-.timeline-container .timeline-item:hover .timeline-content {
+.timeline-container .timeline-item:hover .timeline-content,
+.timeline-item .timeline-content:focus-visible {
   transform: translateY(-5px);
+}
+
+.timeline-item .timeline-content:focus-visible {
+  outline: 2px solid #ffdb70;
+  outline-offset: 4px;
 }
 
 .timeline-content > * {
@@ -1696,7 +1702,12 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   100% { transform: scale(1); }
 }
 
-.project-item > a { width: 100%; }
+.project-item > a { width: 100%; outline: none; }
+.project-item > a:focus-visible {
+  outline: 2px solid #ffdb70;
+  outline-offset: 4px;
+  border-radius: 12px;
+}
 
 .project-img {
   position: relative;
@@ -1720,6 +1731,7 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 }
 
 .project-item > a:hover .project-img::before { background: hsla(0, 0%, 0%, 0.5); }
+.project-item > a:focus-visible .project-img::before { background: hsla(0, 0%, 0%, 0.5); }
 
 .project-item-icon-box {
   --scale: 0.8;
@@ -1738,7 +1750,8 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   transition: var(--transition-1);
 }
 
-.project-item > a:hover .project-item-icon-box {
+.project-item > a:hover .project-item-icon-box,
+.project-item > a:focus-visible .project-item-icon-box {
   --scale: 1;
   opacity: 1;
 }
@@ -1762,13 +1775,16 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   pointer-events: none; /* do not interfere with hover overlay and clicks */
 }
 
-.project-item > a:hover .project-img img {
+.project-item > a:hover .project-img img,
+.project-item > a:focus-visible .project-img img {
   transform: scale(1.1);
 }
 
 /* Match hover zoom effect for video previews */
 .project-item > a:hover .project-img video,
-.project-item > a:hover .project-card-video {
+.project-item > a:hover .project-card-video,
+.project-item > a:focus-visible .project-img video,
+.project-item > a:focus-visible .project-card-video {
   transform: scale(1.1);
   transition: transform var(--transition-2);
 }
@@ -2832,7 +2848,8 @@ article.active {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.timeline-item:hover {
+.timeline-item:hover,
+.timeline-item:focus-within {
   transform: translateX(5px);
   box-shadow: none;
 }
@@ -4555,6 +4572,26 @@ article.active {
   justify-content: center;
   align-items: center;
 }
+
+/* Use centered pseudo-elements for a perfectly centered X */
+.achievement-modal-close::before,
+.achievement-modal-close::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 2px;
+  background-color: #ffdb70;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+  border-radius: 1px;
+}
+
+.achievement-modal-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.achievement-modal-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+/* Hide the text glyph to prevent visual offset differences across fonts */
+.achievement-modal-close span { display: none; }
 
 .achievement-modal-close:hover {
   transform: scale(1.1);

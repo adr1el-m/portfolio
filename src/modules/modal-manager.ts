@@ -68,6 +68,36 @@ export class ModalManager {
       }
     });
 
+    // Make the entire project card anchor act as a button trigger without fake navigation
+    projectItems.forEach(item => {
+      const trigger = item.querySelector('a[href="#"]') as HTMLAnchorElement | null;
+      if (!trigger) return;
+
+      // Improve semantics for assistive technologies
+      trigger.setAttribute('role', 'button');
+      trigger.setAttribute('aria-haspopup', 'dialog');
+      trigger.setAttribute('aria-controls', 'projectModal');
+      const projectTitle = item.querySelector('.project-title')?.textContent?.trim();
+      trigger.setAttribute('aria-label', projectTitle ? `View details for ${projectTitle}` : 'View project details');
+
+      const openFromTrigger = (e: Event) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const projectData = this.getProjectData(item as HTMLElement);
+        if (projectData) {
+          this.openProjectModal(projectData);
+        }
+      };
+
+      trigger.addEventListener('click', openFromTrigger);
+      trigger.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openFromTrigger(e);
+        }
+      });
+    });
+
     // Cache achievement modal elements
     this.modalEl = document.getElementById('achievementModal');
     this.imgEl = document.querySelector('.achievement-slide-image');
@@ -443,7 +473,11 @@ export class ModalManager {
         <hr class="desc-divider" />
         <div class="desc-section"><h4>Technical Details</h4><h5>Python Code</h5><ul><li><strong>Hand Gesture Detection:</strong> Identifies the positions of key hand landmarks and determines if each finger is up or down based on landmark positions.</li><li><strong>Serial Communication:</strong> Sends the detected finger states to the Arduino in a comma-separated format.</li></ul><h5>Arduino Code</h5><ul><li><strong>Serial Parsing:</strong> Reads the incoming string and extracts finger states.</li><li><strong>LED Control:</strong> Updates the state of LEDs based on finger states.</li><li><strong>LCD Feedback:</strong> Dynamically displays the number of fingers up and down.</li><li><strong>Servo Motor:</strong> Maps finger count to servo angles for proportional movement.</li></ul></div>
         <hr class="desc-divider" />
-        <div class="desc-section"><h4>Future Improvements</h4><ol><li><strong>Gesture Customization:</strong> Add recognition for specific hand gestures (e.g., thumbs-up, peace sign).</li><li><strong>Wireless Communication:</strong> Replace the serial connection with Bluetooth or Wi‑Fi for greater flexibility.</li><li><strong>Expand Hardware Interactions:</strong> Control more devices like robotic arms or IoT appliances.</li><li><strong>Enhanced Visual Feedback:</strong> Overlay detected finger states directly onto the webcam feed.</li></ol></div>`;
+        <div class="desc-section"><h4>Future Improvements</h4><ol><li><strong>Gesture Customization:</strong> Add recognition for specific hand gestures (e.g., thumbs-up, peace sign).</li><li><strong>Wireless Communication:</strong> Replace the serial connection with Bluetooth or Wi‑Fi for greater flexibility.</li><li><strong>Expand Hardware Interactions:</strong> Control more devices like robotic arms or IoT appliances.</li><li><strong>Enhanced Visual Feedback:</strong> Overlay detected finger states directly onto the webcam feed.</li></ol></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Future Enhancements</h4><ul><li>Integration with a database (MySQL) for persistent storage</li><li>Implementation of transaction history logs</li><li>Improved user interface design with custom forms</li><li>Multi-language or localization support</li><li>Enhanced security features like encryption for PIN storage</li></ul></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Conclusion</h4><p>The <strong>RGBC ATM Transaction System</strong> is a comprehensive Java Swing project that effectively simulates real‑world ATM functionalities. It highlights the technical implementation of user authentication, transactions, and admin management while emphasizing robust input validation, user experience, and program reliability — a strong foundation for more advanced banking systems.</p></div>`;
       } else if (data.title.trim() === 'FinanceWise') {
         projectDescription.classList.add('rich');
         projectDescription.innerHTML = `<div class="desc-section"><p>FinanceWise is a comprehensive financial advisory platform designed to help users make informed decisions about spending, investments, and loans. Our platform combines modern design with practical financial tools to provide a seamless user experience.</p></div>
@@ -469,8 +503,10 @@ export class ModalManager {
         <hr class="desc-divider" />
         <div class="desc-section"><h4>Technologies Used</h4><ul><li><strong>Frontend:</strong> HTML, CSS, JavaScript</li><li><strong>Frameworks:</strong> React, Vite</li><li><strong>APIs:</strong> Google Generative AI for eco-tips and chatbot responses</li><li><strong>Charting:</strong> Chart.js for visualizing data</li><li><strong>Styling:</strong> Tailwind CSS for responsive design</li></ul></div>
         <hr class="desc-divider" />
-        <div class="desc-section"><h4>Usage</h4><ul><li><strong>Sustainability Calculator:</strong> Fill in the form with your daily activities to calculate your carbon footprint.</li><li><strong>Eco Tips:</strong> Click on the \"Get Eco Tip\" button to receive a personalized tip.</li><li><strong>Chatbot:</strong> Use the chat feature to ask questions and get instant responses.</li></ul></div>`;
-      } else if (data.title.trim() === 'Kita-Kita (Agentic)' || data.title.trim() === 'Kita-Kita' || data.title.includes('Agentic')) {
+        <div class="desc-section"><h4>Usage</h4><ul><li><strong>Sustainability Calculator:</strong> Fill in the form with your daily activities to calculate your carbon footprint.</li><li><strong>Eco Tips:</strong> Click on the \"Get Eco Tip\" button to receive a personalized tip.</li><li><strong>Chatbot:</strong> Use the chat feature to ask questions and get instant responses.</li></ul></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Database Details</h4><p>The database schema includes a table for user accounts and a reference loan table for calculations. Below are sample values:</p><table><thead><tr><th>User Type</th><th>Loan Amount</th><th>Interest (%)</th><th>Total Amount</th><th>Monthly Dues (6 mos)</th><th>Monthly Dues (12 mos)</th><th>Monthly Dues (24 mos)</th></tr></thead><tbody><tr><td>Officer</td><td>5,000.00</td><td>5%</td><td>5,250.00</td><td>875.00</td><td>437.50</td><td>218.75</td></tr><tr><td>Member</td><td>10,000.00</td><td>10%</td><td>11,000.00</td><td>1,833.33</td><td>916.67</td><td>458.33</td></tr></tbody></table></div>`;
+      } else if (data.title.trim() === 'Kita-Kita (Agentic)' || data.title.includes('Agentic')) {
         projectDescription.classList.add('rich');
         projectDescription.innerHTML = `
         <div class="desc-section"><h4>The Challenge: Financial Empowerment for Every Filipino</h4>
@@ -599,7 +635,168 @@ export class ModalManager {
             </ul>
           </div>
         </div>`;
-      } else if (data.title.trim() === 'DokQ' || data.title.includes('DokQ')) {
+      } else if (data.title.trim() === 'Kita-Kita') {
+  projectDescription.classList.add('rich');
+  projectDescription.innerHTML = `
+    <div class="desc-section"><h4>Overview</h4>
+      <p>Kita-Kita is an AI-powered banking platform that combines secure financial services with intelligent chatbot assistance. It features six specialized AI companions that collaborate to deliver comprehensive financial guidance, security, and personalized insights.</p>
+    </div>
+    <hr class="desc-divider" />
+    <div class="desc-section"><h4>🌟 Core Features</h4>
+      <div class="desc-subsection"><h5>🤖 The Kita Companions</h5>
+        <ol>
+          <li><strong>Gabay Gastos</strong>
+            <ul>
+              <li>Advanced AI financial behavior analysis</li>
+              <li>Intelligent spending pattern detection</li>
+              <li>Real-time spending insights and analytics</li>
+            </ul>
+            <p><strong>Features:</strong></p>
+            <ul>
+              <li>Monthly spending overview with trend analysis</li>
+              <li>Category-based expense tracking</li>
+              <li>Savings rate monitoring</li>
+              <li>Recurring expense identification</li>
+              <li>AI-powered personalized insights</li>
+              <li>Smart budget recommendations</li>
+            </ul>
+          </li>
+          <li><strong>Dunong Puhunan</strong>
+            <ul>
+              <li>Investment trend analysis</li>
+              <li>Market opportunity identification</li>
+              <li>Portfolio performance tracking</li>
+            </ul>
+            <p><strong>Features:</strong></p>
+            <ul>
+              <li>Sector-specific trend monitoring</li>
+              <li>Investment recommendations</li>
+              <li>Risk-adjusted return analysis</li>
+              <li>Market insights and alerts</li>
+            </ul>
+          </li>
+          <li><strong>Bantay Utang</strong>
+            <ul>
+              <li>Comprehensive financial metrics analysis</li>
+              <li>Income stability assessment</li>
+              <li>Credit behavior monitoring</li>
+            </ul>
+            <p><strong>Features:</strong></p>
+            <ul>
+              <li>Income source categorization</li>
+              <li>Expense pattern analysis</li>
+              <li>Cash flow volatility tracking</li>
+              <li>Loan recommendations</li>
+              <li>Budget insights</li>
+              <li>Payment history analysis</li>
+            </ul>
+          </li>
+          <li><strong>Iwas Scam</strong>
+            <ul>
+              <li>AI-powered fraud detection</li>
+              <li>Transaction pattern monitoring</li>
+              <li>Security risk assessment</li>
+            </ul>
+            <p><strong>Features:</strong></p>
+            <ul>
+              <li>Real-time transaction monitoring</li>
+              <li>Location-based security checks</li>
+              <li>Merchant category monitoring</li>
+              <li>Device and session tracking</li>
+              <li>Risk scoring system</li>
+              <li>Security recommendations</li>
+            </ul>
+          </li>
+          <li><strong>Tiwala Score</strong>
+            <ul>
+              <li>Credit score optimization</li>
+              <li>Payment history tracking</li>
+              <li>Financial behavior analysis</li>
+            </ul>
+            <p><strong>Features:</strong></p>
+            <ul>
+              <li>Credit analysis engine</li>
+              <li>Payment history monitoring</li>
+              <li>Income stability tracking</li>
+              <li>Saving habits assessment</li>
+              <li>Smart budget creation</li>
+              <li>Automatic payment setup</li>
+            </ul>
+          </li>
+          <li><strong>Patunay Check</strong>
+            <ul>
+              <li>KYC (Know Your Customer) management</li>
+              <li>Regulatory compliance monitoring</li>
+              <li>Document verification system</li>
+            </ul>
+            <p><strong>Features:</strong></p>
+            <ul>
+              <li>Document validity tracking</li>
+              <li>Compliance status monitoring</li>
+              <li>Required action notifications</li>
+              <li>Income-based requirements</li>
+              <li>Security status overview</li>
+              <li>Document verification workflow</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <hr class="desc-divider" />
+    <div class="desc-section"><h4>📊 Financial Health Analysis</h4>
+      <ul>
+        <li><strong>Real-time Analytics:</strong> Continuous monitoring of all financial activities</li>
+        <li><strong>Risk Assessment:</strong> Multi-factor risk analysis across all companions</li>
+        <li><strong>Personalized Insights:</strong> AI-driven recommendations based on financial patterns</li>
+        <li><strong>Security Monitoring:</strong> Integrated security and fraud prevention</li>
+        <li><strong>Compliance Tracking:</strong> Automated regulatory compliance monitoring</li>
+      </ul>
+    </div>
+    <hr class="desc-divider" />
+    <div class="desc-section"><h4>🧠 AI-Powered Integration</h4>
+      <p>Each companion features:</p>
+      <ul>
+        <li><strong>Natural Language Processing:</strong> Understands complex financial queries</li>
+        <li><strong>Contextual Awareness:</strong> Remembers preferences and history</li>
+        <li><strong>Real-time Updates:</strong> Instant notifications for important events</li>
+        <li><strong>Cross-companion Communication:</strong> Integrated insights across all tools</li>
+        <li><strong>Secure Authentication:</strong> Protected access to sensitive financial data</li>
+      </ul>
+    </div>
+    <hr class="desc-divider" />
+    <div class="desc-section"><h4>🚀 Features</h4>
+      <ul>
+        <li><strong>AI-Powered Chatbot:</strong> Intelligent assistance for banking queries and financial advice</li>
+        <li><strong>Secure Banking Integration:</strong> Safe and reliable banking operations</li>
+        <li><strong>Real-time Analytics:</strong> Data visualization powered by Chart.js</li>
+        <li><strong>Firebase Backend:</strong> Robust and scalable cloud infrastructure</li>
+        <li><strong>Responsive Design:</strong> Seamless experience across devices</li>
+        <li><strong>Error Tracking:</strong> Integrated Sentry for robust error monitoring</li>
+      </ul>
+    </div>
+    <hr class="desc-divider" />
+    <div class="desc-section"><h4>🛠️ Technology Stack</h4>
+      <ul>
+        <li><strong>Frontend:</strong> React.js with custom CSS styling</li>
+        <li><strong>Backend:</strong> Node.js, Express.js</li>
+        <li><strong>Database:</strong> Firebase</li>
+        <li><strong>Authentication:</strong> Firebase Auth</li>
+        <li><strong>Analytics:</strong> Chart.js</li>
+        <li><strong>Error Tracking:</strong> Sentry</li>
+        <li><strong>Other Tools:</strong> CORS, dotenv, node-fetch</li>
+      </ul>
+    </div>
+    <hr class="desc-divider" />
+    <div class="desc-section"><h4>📋 Prerequisites</h4>
+      <ul>
+        <li>Node.js (v14 or higher)</li>
+        <li>npm or yarn</li>
+        <li>Firebase account</li>
+        <li>Sentry account (for error tracking)</li>
+      </ul>
+    </div>
+  `;
+} else if (data.title.trim() === 'DokQ' || data.title.includes('DokQ')) {
         projectDescription.classList.add('rich');
         projectDescription.innerHTML = `
         <div class="desc-section"><h4>DokQ — Smart Queuing and Appointments for Healthcare</h4>
@@ -647,7 +844,10 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
             <li>ESLint, Prettier, Vitest</li>
             <li>Vercel / Docker for deployment</li>
           </ul>
-        </div>`;
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Database Details</h4>
+          <p>The database schema includes a table for user accounts and a reference loan table for calculations. Below are sample values:</p><table><thead><tr><th>User Type</th><th>Loan Amount</th><th>Interest (%)</th><th>Total Amount</th><th>Monthly Dues (6 mos)</th><th>Monthly Dues (12 mos)</th><th>Monthly Dues (24 mos)</th></tr></thead><tbody><tr><td>Officer</td><td>5,000.00</td><td>5%</td><td>5,250.00</td><td>875.00</td><td>437.50</td><td>218.75</td></tr><tr><td>Member</td><td>10,000.00</td><td>10%</td><td>11,000.00</td><td>1,833.33</td><td>916.67</td><td>458.33</td></tr></tbody></table></div>`;
       } else if (data.title.trim() === 'Tindahan ni Aling Nena' || data.title.includes('Aling Nena')) {
         projectDescription.classList.add('rich');
         projectDescription.innerHTML = `

@@ -24,6 +24,8 @@ export class AccessibilityEnhancer {
     this.enhanceModalKeyboardNavigation();
     this.enhanceChatbotKeyboardSupport();
     this.enhanceFilterTabBehavior();
+    // Add keyboard focusability and labels to timeline content
+    this.enhanceTimelineFocusStates();
     this.announcePageChanges();
     logger.info('✅ Accessibility enhancements initialized');
   }
@@ -305,5 +307,30 @@ export class AccessibilityEnhancer {
     }
 
     logger.info('✅ Landmark roles enhanced');
+  }
+
+  private enhanceTimelineFocusStates(): void {
+    const items = document.querySelectorAll('.timeline-item .timeline-content');
+
+    items.forEach((content) => {
+      const el = content as HTMLElement;
+      if (!el.hasAttribute('tabindex')) {
+        el.setAttribute('tabindex', '0');
+      }
+      if (!el.hasAttribute('role')) {
+        el.setAttribute('role', 'group');
+      }
+      if (!el.hasAttribute('aria-label')) {
+        const title = el.querySelector('.timeline-title')?.textContent?.trim() || '';
+        const period = el.querySelector('.timeline-period')?.textContent?.trim() || '';
+        const badge = el.querySelector('.timeline-badge')?.textContent?.trim() || '';
+        const parts = [title];
+        if (period) parts.push(period);
+        if (badge) parts.push(badge);
+        el.setAttribute('aria-label', parts.filter(Boolean).join(' — '));
+      }
+    });
+
+    logger.info(`✅ Timeline items enhanced for keyboard focus: ${items.length}`);
   }
 }

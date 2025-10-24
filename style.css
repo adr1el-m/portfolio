@@ -3840,6 +3840,11 @@ article.active {
   padding: 0;
 }
 
+/* Space when multiple action buttons are present */
+.achievement-github .github-button + .github-button {
+  margin-top: 12px;
+}
+
 .github-button {
   display: inline-flex;
   align-items: center;

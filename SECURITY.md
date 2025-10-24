@@ -39,11 +39,12 @@ All servers include comprehensive security headers:
 ```
 X-Content-Type-Options: nosniff
 X-Frame-Options: DENY
-X-XSS-Protection: 1; mode=block
 Referrer-Policy: strict-origin-when-cross-origin
 Permissions-Policy: geolocation=(), microphone=(), camera=()
 Strict-Transport-Security: max-age=31536000; includeSubDomains
 ```
+
+> Note: `X-XSS-Protection` was deprecated by all major browsers and removed to avoid noise. Modern protections include strong CSP, DOM sanitization, and browser-native XSS mitigations.
 
 ### 4. Input Validation
 - **Type Checking**: All sanitization functions validate input types
@@ -66,7 +67,6 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains
 - Content Security Policy
 - X-Content-Type-Options
 - X-Frame-Options
-- X-XSS-Protection
 - Referrer-Policy
 - Permissions-Policy
 - Strict-Transport-Security
@@ -115,7 +115,7 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains
 
 ### After Security Implementation
 - **XSS Vulnerabilities**: 0 (all fixed)
-- **Security Headers**: 7 comprehensive headers
+- **Security Headers**: 6 comprehensive headers
 - **CSP Protection**: Full implementation
 - **Input Sanitization**: Complete coverage
 

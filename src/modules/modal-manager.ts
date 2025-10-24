@@ -186,6 +186,7 @@ export class ModalManager {
     const githubUrl = element.getAttribute('data-github') || '';
     const description = element.getAttribute('data-description') || '';
     const projectTitle = element.getAttribute('data-project-title') || '';
+    const linkedinUrl = element.getAttribute('data-linkedin') || '';
 
     try {
       const images = JSON.parse(imagesStr);
@@ -203,6 +204,7 @@ export class ModalManager {
         githubUrl: githubUrl || undefined,
         description: description || undefined,
         projectTitle: projectTitle || undefined,
+        linkedinUrl: linkedinUrl || undefined,
       };
     } catch (e) {
       logger.error('Error parsing achievement data:', e);
@@ -286,24 +288,47 @@ export class ModalManager {
     // Handle teammates section
     this.displayTeammates(data.teammates);
 
-    // Handle GitHub button (fallback to related project's GitHub if missing)
+    // Handle action buttons
     {
-      let gh = data.githubUrl;
-      if (!gh && data.projectTitle) {
-        const items = document.querySelectorAll('.project-item');
-        items.forEach((item) => {
-          const t = item.querySelector('.project-title')?.textContent?.trim();
-          if (!gh && t === data.projectTitle) {
-            // Prefer attribute directly to avoid parsing entire project data
-            gh = (item as HTMLElement).getAttribute('data-github') || '';
-            if (!gh) {
-              const pd = this.getProjectData(item as HTMLElement);
-              gh = pd?.githubUrl || '';
+      const isHackIt = data.title.trim() === 'Hack-it: The New Era of Banking Hackathon';
+      const isBpi = data.title.trim() === 'BPI DataWave Hackathon 2025';
+      const isTechnovation = data.title.trim() === 'Technovation Summit 2025 Start-up Hackathon';
+      const isDlsu = data.title.trim() === 'De La Salle University Hackercup';
+      const isAgentic = data.title.trim() === 'Agentic AI Hackathon 2025';
+      if (isHackIt || isBpi || isTechnovation || isDlsu || isAgentic) {
+        this.displayHackItActions(data);
+      } else {
+        let gh = data.githubUrl;
+        if (!gh && data.projectTitle) {
+          const items = document.querySelectorAll('.project-item');
+          items.forEach((item) => {
+            const t = item.querySelector('.project-title')?.textContent?.trim();
+            if (!gh && t === data.projectTitle) {
+              // Prefer attribute directly to avoid parsing entire project data
+              gh = (item as HTMLElement).getAttribute('data-github') || '';
+              if (!gh) {
+                const pd = this.getProjectData(item as HTMLElement);
+                gh = pd?.githubUrl || '';
+              }
             }
+          });
+        }
+        // Render GitHub if available
+        this.displayGithubButton(gh || undefined);
+        // Also render LinkedIn if present
+        if (data.linkedinUrl) {
+          const githubSection = document.querySelector('.achievement-github') as HTMLElement;
+          if (githubSection) {
+            githubSection.style.display = 'block';
+            githubSection.textContent = '';
+            const link = SecurityManager.createSafeAnchor(data.linkedinUrl, 'View LinkedIn Post', 'github-button', true);
+            const icon = document.createElement('ion-icon');
+            icon.setAttribute('name', 'logo-linkedin');
+            link.prepend(icon);
+            githubSection.appendChild(link);
           }
-        });
+        }
       }
-      this.displayGithubButton(gh || undefined);
     }
 
     const mediaSection = document.querySelector('.achievement-media') as HTMLElement;
@@ -1291,6 +1316,52 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
     icon.setAttribute('name', 'logo-github');
     link.prepend(icon);
     githubSection.appendChild(link);
+  }
+
+  private displayHackItActions(data: AchievementData): void {
+    const section = document.querySelector('.achievement-github') as HTMLElement;
+    if (!section) return;
+
+    section.style.display = 'block';
+    section.textContent = '';
+
+    // Visit Project button
+    const visit = document.createElement('a');
+    visit.href = '#projects';
+    visit.className = 'github-button';
+    visit.setAttribute('role', 'button');
+    visit.setAttribute('aria-label', 'Visit project modal');
+    visit.innerHTML = '<span class="link-icon">🚀</span> Visit Project';
+    visit.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetTitle = (data.projectTitle || 'Kita-Kita').trim();
+      const items = document.querySelectorAll('.project-item');
+      let target: HTMLElement | null = null;
+      items.forEach((item) => {
+        const t = item.querySelector('.project-title')?.textContent?.trim();
+        if (t === targetTitle) target = item as HTMLElement;
+      });
+      if (target) {
+        const pd = this.getProjectData(target);
+        if (pd) {
+          this.closeAchievementModal();
+          this.openProjectModal(pd);
+        }
+      } else {
+        logger.warn(`Project "${targetTitle}" not found in list.`);
+      }
+    });
+    section.appendChild(visit);
+
+    // LinkedIn Post link
+    if (data.linkedinUrl) {
+      const link = SecurityManager.createSafeAnchor(data.linkedinUrl, 'View LinkedIn Post', 'github-button', true);
+      const iconSpan = document.createElement('span');
+      iconSpan.className = 'link-icon';
+      iconSpan.textContent = '🔗';
+      link.prepend(iconSpan);
+      section.appendChild(link);
+    }
   }
 
   public closeAchievementModal(): void {

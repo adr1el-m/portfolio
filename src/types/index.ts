@@ -31,6 +31,7 @@ export interface AchievementData {
   githubUrl?: string;
   description?: string;
   projectTitle?: string;
+  linkedinUrl?: string;
 }
 
 export interface ProjectData {

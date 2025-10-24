@@ -83,6 +83,154 @@
   }
   </script>
 
+  <!-- Additional JSON-LD: WebSite and WebPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Adriel Magalona Portfolio",
+    "url": "https://adriel.dev",
+    "description": "Full-stack Developer & AI Engineer portfolio.",
+    "inLanguage": "en",
+    "publisher": {
+      "@type": "Person",
+      "name": "Adriel Magalona",
+      "url": "https://adriel.dev"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://adriel.dev/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": ["WebPage", "ProfilePage"],
+    "name": "Adriel Magalona - Full-stack Developer & AI Engineer",
+    "url": "https://adriel.dev",
+    "isPartOf": {"@type": "WebSite", "url": "https://adriel.dev"},
+    "about": {"@type": "Person", "name": "Adriel Magalona", "url": "https://adriel.dev"},
+    "primaryImageOfPage": "https://adriel.dev/images/my-avatar.png",
+    "inLanguage": "en"
+  }
+  </script>
+
+  <!-- Projects JSON-LD: ItemList of key portfolio entries -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Highlighted Projects",
+    "itemListOrder": "http://schema.org/ItemListOrderAscending",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@type": "SoftwareApplication",
+          "name": "FinanceWise",
+          "applicationCategory": "WebApplication",
+          "url": "https://github.com/adr1el-m/finance-and-ai",
+          "description": "Financial advisory platform with analytics, agents, and forecasting.",
+          "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+          "video": {
+            "@type": "VideoObject",
+            "contentUrl": "https://adriel.dev/images/projects/financeWise/fw.mp4",
+            "name": "FinanceWise demo",
+            "thumbnailUrl": "https://adriel.dev/images/my-avatar.png"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "item": {
+          "@type": "SoftwareApplication",
+          "name": "Green Pulse",
+          "applicationCategory": "WebApplication",
+          "url": "https://github.com/adr1el-m/green-pulse",
+          "description": "Interactive sustainability app with AI eco-tips and tracking.",
+          "video": {
+            "@type": "VideoObject",
+            "contentUrl": "https://adriel.dev/images/projects/greenPulse/GP-opt.mp4",
+            "name": "Green Pulse demo",
+            "thumbnailUrl": "https://adriel.dev/images/my-avatar.png"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@type": "CreativeWork",
+          "name": "Hand Gesture Recognition and Arduino Integration",
+          "url": "https://github.com/adr1el-m/Hand-Gesture-Arduino",
+          "description": "Computer vision gesture recognition integrated with Arduino control.",
+          "image": "https://adriel.dev/images/projects/handGesture/thumbnail.png"
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "item": {
+          "@type": "CreativeWork",
+          "name": "YouTube Layout",
+          "url": "https://adriel-itc-assignment.vercel.app",
+          "codeRepository": "https://github.com/adr1el-m/ITC-youtube-layout",
+          "description": "Responsive HTML/CSS recreation of YouTube layout.",
+          "image": "https://adriel.dev/images/projects/ytLayout/clone.jpg"
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "item": {
+          "@type": "SoftwareApplication",
+          "name": "DokQ",
+          "applicationCategory": "WebApplication",
+          "url": "https://github.com/4sightorg/dokq",
+          "description": "Smart queuing and appointments for healthcare facilities."
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 6,
+        "item": {
+          "@type": "SoftwareApplication",
+          "name": "Agentic Banking Co-pilot",
+          "applicationCategory": "WebApplication",
+          "url": "https://github.com/adr1el-m/team-Deansanitzy-2025",
+          "description": "AI-powered banking companion with agents, analytics, and forecasting."
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 7,
+        "item": {
+          "@type": "MobileApplication",
+          "name": "LoanWolves - KitaKita",
+          "operatingSystem": "Android",
+          "url": "https://github.com/adr1el-m/LoanWolves-KitaKita",
+          "description": "Mobile loan app prototype with guided flows."
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 8,
+        "item": {
+          "@type": "CreativeWork",
+          "name": "Talambuhay ni Adriel",
+          "url": "https://talambuhay-ni-adriel.vercel.app",
+          "codeRepository": "https://github.com/adr1el-m/talambuhay",
+          "description": "Personal timeline and profile app."
+        }
+      }
+    ]
+  }
+  </script>
+
   <!-- Critical CSS: inline above-the-fold styles -->
   <style id="critical-css">
     :root {

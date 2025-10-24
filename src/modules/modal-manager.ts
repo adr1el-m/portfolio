@@ -9,10 +9,8 @@ import { SecurityManager } from '@/modules/security';
 export class ModalManager {
   private modalEl: HTMLElement | null = null;
   private imgEl: HTMLImageElement | null = null;
-  private achievementPictureEl: HTMLPictureElement | null = null;
   private achievementSourceWebpEl: HTMLSourceElement | null = null;
   private achievementSourceJpegEl: HTMLSourceElement | null = null;
-  private projectPictureEl: HTMLPictureElement | null = null;
   private projectSourceWebpEl: HTMLSourceElement | null = null;
   private projectSourceJpegEl: HTMLSourceElement | null = null;
   private titleEl: HTMLElement | null = null;
@@ -80,6 +78,22 @@ export class ModalManager {
       const projectTitle = item.querySelector('.project-title')?.textContent?.trim();
       trigger.setAttribute('aria-label', projectTitle ? `View details for ${projectTitle}` : 'View project details');
 
+      // Resolve placeholder href to a meaningful destination for SEO
+      const liveUrl = (item as HTMLElement).getAttribute('data-live')?.trim() || '';
+      const githubUrl = (item as HTMLElement).getAttribute('data-github')?.trim() || '';
+      const isHttp = (u: string) => /^https?:\/\//i.test(u);
+      let canonicalHref = '#projects';
+      if (isHttp(liveUrl)) {
+        canonicalHref = liveUrl;
+      } else if (isHttp(githubUrl)) {
+        canonicalHref = githubUrl;
+      }
+      trigger.setAttribute('href', canonicalHref);
+      if (isHttp(canonicalHref)) {
+        trigger.setAttribute('target', '_blank');
+        trigger.setAttribute('rel', 'noopener noreferrer');
+      }
+
       const openFromTrigger = (e: Event) => {
         e.preventDefault();
         e.stopPropagation();
@@ -101,7 +115,6 @@ export class ModalManager {
     // Cache achievement modal elements
     this.modalEl = document.getElementById('achievementModal');
     this.imgEl = document.querySelector('.achievement-slide-image');
-    this.achievementPictureEl = document.querySelector('.achievement-slide-picture');
     this.achievementSourceWebpEl = document.querySelector('.achievement-image-webp');
     this.achievementSourceJpegEl = document.querySelector('.achievement-image-jpeg');
     this.titleEl = document.querySelector('.achievement-title-modal');
@@ -389,7 +402,6 @@ export class ModalManager {
     // Get project modal elements
     const projectModal = document.getElementById('projectModal');
     const projectImage = document.getElementById('project-modal-image') as HTMLImageElement;
-    this.projectPictureEl = document.querySelector('.project-modal-picture');
     this.projectSourceWebpEl = document.querySelector('.project-image-webp');
     this.projectSourceJpegEl = document.querySelector('.project-image-jpeg');
     const projectTitle = document.getElementById('project-modal-title');
@@ -426,6 +438,26 @@ export class ModalManager {
 
     // Set project data
     if (projectTitle) projectTitle.textContent = data.title;
+
+    // Update modal link buttons (GitHub/Live) based on project data
+    const ghLink = document.querySelector('.project-link.project-github') as HTMLAnchorElement | null;
+    const liveLink = document.querySelector('.project-link.project-live') as HTMLAnchorElement | null;
+    if (ghLink) {
+      if (data.githubUrl) {
+        ghLink.href = data.githubUrl;
+        ghLink.style.display = '';
+      } else {
+        ghLink.style.display = 'none';
+      }
+    }
+    if (liveLink) {
+      if (data.liveUrl) {
+        liveLink.href = data.liveUrl;
+        liveLink.style.display = '';
+      } else {
+        liveLink.style.display = 'none';
+      }
+    }
     if (projectDescription) {
       // Render rich HTML for RGBC ATM project
       const rgTitleMatch = data.title.startsWith('RGBC: Richard Gwapo Banking Corporation');

@@ -29,6 +29,8 @@ export interface AchievementData {
   location: string;
   teammates?: Teammate[];
   githubUrl?: string;
+  description?: string;
+  projectTitle?: string;
 }
 
 export interface ProjectData {
@@ -41,6 +43,7 @@ export interface ProjectData {
   videoUrl?: string;
   githubUrl?: string;
   liveUrl?: string;
+  codedexUrl?: string;
 }
 
 export interface Portfolio {

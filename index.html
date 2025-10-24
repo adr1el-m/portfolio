@@ -535,12 +535,12 @@
               <div class="year-content">
                 <ul class="achievements-list">
                   <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
-                    data-images='["/optimized/achievements/excalicode/cor-medium.jpg", "/optimized/achievements/excalicode/cop-medium.jpg"]'
-                    data-webp-images='["/optimized/achievements/excalicode/cor-medium.webp", "/optimized/achievements/excalicode/cop-medium.webp"]'
+                    data-images='["/images/honors/excalicode/1.jpeg", "/images/honors/excalicode/2.jpeg"]'
+                    data-webp-images='[]'
                     data-organizer="Organized by The Programmers' Guild at Polytechnic University of the Philippines, where I won the Knight Category in a Data Structures & Algorithms competition."
                     data-date="September 2024"
                     data-location="Polytechnic University of the Philippines">
-                    <div class="award-badge">�</div>
+                    <div class="award-badge">🥇</div>
                     <div class="award-ribbon">1st Place</div>
                     <div class="card-content">
                       <h4 class="h4 card-title">Excalicode - Data Structures & Algorithms Competition</h4>
@@ -597,7 +597,7 @@
                 <ul class="achievements-list">
                   <!-- Add participation items here -->
                   <li class="achievement-item">
-                    <div class="achievement-card visible" data-achievement-card data-title="Sparkfest 2025" data-date="2025" data-location="Google Developers Group PUP" data-description="" data-image="">
+                    <div class="achievement-card visible" data-achievement-card data-title="Sparkfest 2025" data-date="2025" data-location="Google Developers Group PUP" data-description="A 1-week hackathon that is designed to bring together students to tackle real-world challenges with innovative tech solutions. The hackathon aims to address challenges by developing innovative solutions aligned with the Sustainable Development Goals (SDGs)." data-image="" data-project-title="BarangayNav">
                       <h4 class="card-title">Sparkfest 2025</h4>
                       <p class="card-date">📅 2025</p>
                       <p class="card-location">📍 Google Developers Group PUP</p>
@@ -917,31 +917,115 @@
               </a>
             </li>
 
-            <li class="project-item active" data-filter-item data-category="Web Development">
+            <li class="project-item active" data-filter-item data-category="Software"
+              data-images='[]'
+              data-webp-images='[]'
+              data-description="Merc Airline Ticketing System is a student-built C++ console application that implements a complete airline reservation workflow: search and book flights, manage passenger records, calculate fares including taxes/VAT and discounts, and simulate payment transactions. The project is implemented mainly as a single-source file for learning purposes and demonstrates end-to-end booking and pricing logic suitable for study, refactoring, or extension."
+              data-technologies="C++"
+              data-github="https://github.com/adr1el-m/merc-airline-ticketing-system">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Merc+Airline" alt="Merc Airline Ticketing System" loading="lazy">
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Merc+Airline+Ticketing+System" alt="Merc Airline Ticketing System" loading="lazy">
                 </figure>
                 <h3 class="project-title">Merc Airline Ticketing System</h3>
-                <p class="project-category">Web Development</p>
-              </a>
-            </li>
-            <li class="project-item active" data-filter-item data-category="Software">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=ATM+System" alt="ATM Transaction system" loading="lazy">
-                </figure>
-                <h3 class="project-title">ATM Transaction system</h3>
                 <p class="project-category">Software</p>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Development">
+            <li class="project-item active"
+                data-filter-item 
+                data-category="Software"
+                data-images='[]'
+                data-webp-images='[]'
+                data-description="Project Overview:
+The ATM Transaction System is a Java-based graphical application that simulates the core functionalities of an Automated Teller Machine (ATM). Developed using Java Swing, this program allows users to perform basic banking operations such as balance inquiry, withdrawal, deposit, and fund transfer, while also incorporating an administrator interface for managing customer accounts.
+
+This project demonstrates concepts of object-oriented programming, GUI design with Swing, data validation, and user input handling. It aims to provide a realistic banking experience in a controlled simulation, integrating both user and admin functionalities within a secure system.
+
+Key Features:
+
+User Features:
+1. Login Authentication:
+Users must enter their account number and corresponding 4-digit PIN to access their account. The system allows 3 login attempts before locking the account for security.
+2. Balance Inquiry:
+Displays the current balance and account details of the user.
+3. Withdrawal:
+Allows users to withdraw funds if sufficient balance is available.
+Minimum withdrawal amount: ₱100.00
+4. Deposit:
+Users can deposit funds into their account.
+Minimum deposit amount: ₱100.00
+5. Fund Transfer:
+Enables users to transfer funds to another account within the system.
+Minimum transfer amount: ₱1,000.00
+A service fee of ₱25.00 is automatically deducted from the sender's balance.
+6. Error Handling:
+Invalid inputs, insufficient balance, and invalid account numbers are handled gracefully with informative prompts.
+
+Administrator Features:
+1. Admin Login:
+The admin uses a dedicated account (Account No: 0000, PIN: 0000) to access management features.
+2. View Customer Information:
+Displays a customer's account number, name, balance, and account status.
+3. Add New Customer:
+Allows the admin to register a new customer by entering details such as account number, name, balance, PIN, and status.
+Input validations ensure all fields are correctly formatted (e.g., 5-digit account numbers, 4-digit PINs).
+4. Edit Customer Information:
+Enables the admin to update a customer's name and account status (Active or Locked).
+5. Change Customer PIN:
+Provides the option to reset or update a customer's 4-digit PIN.
+6. Account Locking Mechanism:
+Accounts are automatically locked after multiple failed login attempts, protecting users from unauthorized access.
+
+System Design and Logic:
+• Data Storage:
+Account details are stored in a 2D string array (ACCOUNT_TABLE), where each row represents an account containing the following fields:
+[Account Number, Account Name, Balance, PIN, Status]
+• User Interface:
+The program utilizes Java Swing's JOptionPane for GUI-based interactions, making it intuitive and user-friendly.
+• Program Flow:
+1. Main Menu: Start transaction or quit.
+2. Login Validation: Checks credentials with a 3-attempt limit.
+3. Transaction Menu: Displays available operations depending on user type (Customer or Admin).
+4. Transaction Execution: Performs selected action with data validation and updates in real-time.
+
+Error Handling and Validation:
+• Input validation ensures correct data formats for account numbers, PINs, and monetary amounts.
+• Prevents empty inputs and invalid operations (e.g., overdrafts, non-numeric inputs).
+• Locked accounts are prevented from accessing any transaction.
+
+Educational Value:
+This project is ideal for students learning Java fundamentals, particularly:
+• GUI-based applications using Swing
+• Arrays and data management
+• Conditional logic and looping
+• Error handling and validation
+• Program modularization and code reusability
+
+Future Enhancements:
+• Integration with a database (MySQL) for persistent storage
+• Implementation of transaction history logs
+• Improved user interface design with custom forms
+• Multi-language or localization support
+• Enhanced security features like encryption for PIN storage
+
+Conclusion:
+The RGBC ATM Transaction System is a comprehensive Java Swing project that effectively simulates real-world ATM functionalities. It not only highlights the technical implementation of user authentication, transactions, and admin management but also emphasizes robust input validation, user experience, and program reliability — making it a strong foundation for more advanced banking systems in the future."
+                data-technologies="Java • Java Swing • OOP • GUI">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Loan+System" alt="PHP-Loan-System" loading="lazy">
+                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=RGBC+ATM+System" alt="RGBC: Richard Gwapo Banking Corporation (ATM Transaction System)" loading="lazy">
+                </figure>
+                <h3 class="project-title">RGBC: Richard Gwapo Banking Corporation (ATM Transaction System)</h3>
+                <p class="project-category">Software</p>
+              </a>
+            </li>
+            <li class="project-item active" data-filter-item data-category="Web Development" data-images='["/images/projects/loan/1.png", "/images/projects/loan/2.png", "/images/projects/loan/3.png", "/images/projects/loan/4.png"]' data-webp-images='[]' data-technologies="PHP • MySQL • HTML/CSS • Bootstrap" data-github="https://github.com/adr1el-m/PHP-Loan-System">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="/images/projects/loan/1.png" alt="PHP-Loan-System login page" loading="lazy">
                 </figure>
                 <h3 class="project-title">PHP-Loan-System</h3>
                 <p class="project-category">Web Development</p>
@@ -972,7 +1056,7 @@
                 <p class="project-category">Web Design</p>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application">
+            <li class="project-item active" data-filter-item data-category="Web Application" data-images="[]" data-webp-images="[]" data-description="LingapLink is a comprehensive, modern healthcare platform designed to revolutionize the connection between patients and healthcare providers. Built with cutting-edge web technologies and a focus on security, accessibility, and user experience, LingapLink streamlines healthcare delivery through intelligent automation and seamless digital workflows." data-technologies="<strong class='section-title'>Frontend</strong><table class='tech-table'><thead><tr><th>Technology</th><th>Version</th><th>Purpose</th></tr></thead><tbody><tr><td>React</td><td>18.3.1</td><td>Modern UI framework with hooks and context</td></tr><tr><td>TypeScript</td><td>5.8.3</td><td>Type‑safe JavaScript development</td></tr><tr><td>Vite</td><td>6.3.5</td><td>Fast build tool and dev server</td></tr><tr><td>React Router</td><td>6.24.1</td><td>Client‑side routing and navigation</td></tr><tr><td>Lucide</td><td>0.523.0</td><td>Modern icon library</td></tr><tr><td>Recharts</td><td>3.0.0</td><td>Data visualization and analytics</td></tr></tbody></table><strong class='section-title'>Backend & Services</strong><table class='tech-table'><thead><tr><th>Technology</th><th>Version</th><th>Purpose</th></tr></thead><tbody><tr><td>Node.js</td><td>20+</td><td>JavaScript runtime environment</td></tr><tr><td>Express</td><td>4.19.2</td><td>Web application framework</td></tr><tr><td>Firebase</td><td>11.9.1</td><td>Backend‑as‑a‑Service platform</td></tr><tr><td>Firestore</td><td>11.9.1</td><td>NoSQL document database</td></tr><tr><td>Gemini</td><td>0.24.1</td><td>AI/ML services and natural language processing</td></tr></tbody></table>" data-github="https://github.com/adr1el-m/carmen-the-parasight" data-video="/images/projects/lingapLink/lingaplinkks.mp4">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
@@ -1012,11 +1096,13 @@
                 <p class="project-category">Web Design</p>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application">
+            <li class="project-item active" data-filter-item data-category="Web Application"
+              data-video="/images/projects/barangayNav/BarangayNav-opt.mp4"
+              data-description="BarangayNav is a transparent platform for navigating barangay services, powered by AI assistance and real-time tracking to support accountable governance. Features include: AI guidance via Gemini for service inquiries; clear requirements, fees, and processing timelines; responsive design across devices; a modern dark theme with glassmorphism; 24/7 automated support; and secure environment-based API key management.">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=BarangayNav" alt="BarangayNav" loading="lazy">
+                  <video class="project-card-video" src="/images/projects/barangayNav/BarangayNav-opt.mp4" muted autoplay loop playsinline preload="metadata"></video>
                 </figure>
                 <h3 class="project-title">BarangayNav</h3>
                 <p class="project-category">Web Application</p>
@@ -1062,17 +1148,17 @@
                 <p class="project-category">Web Application</p>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application">
+            <li class="project-item active" data-filter-item data-category="Web Application" data-images="[]" data-webp-images="[]" data-description="LingapLink is a comprehensive, modern healthcare platform designed to revolutionize the connection between patients and healthcare providers. Built with cutting-edge web technologies and a focus on security, accessibility, and user experience, LingapLink streamlines healthcare delivery through intelligent automation and seamless digital workflows." data-technologies="<strong class='section-title'>Frontend</strong><table class='tech-table'><thead><tr><th>Technology</th><th>Version</th><th>Purpose</th></tr></thead><tbody><tr><td>React</td><td>18.3.1</td><td>Modern UI framework with hooks and context</td></tr><tr><td>TypeScript</td><td>5.8.3</td><td>Type‑safe JavaScript development</td></tr><tr><td>Vite</td><td>6.3.5</td><td>Fast build tool and dev server</td></tr><tr><td>React Router</td><td>6.24.1</td><td>Client‑side routing and navigation</td></tr><tr><td>Lucide</td><td>0.523.0</td><td>Modern icon library</td></tr><tr><td>Recharts</td><td>3.0.0</td><td>Data visualization and analytics</td></tr></tbody></table><strong class='section-title'>Backend & Services</strong><table class='tech-table'><thead><tr><th>Technology</th><th>Version</th><th>Purpose</th></tr></thead><tbody><tr><td>Node.js</td><td>20+</td><td>JavaScript runtime environment</td></tr><tr><td>Express</td><td>4.19.2</td><td>Web application framework</td></tr><tr><td>Firebase</td><td>11.9.1</td><td>Backend‑as‑a‑Service platform</td></tr><tr><td>Firestore</td><td>11.9.1</td><td>NoSQL document database</td></tr><tr><td>Gemini</td><td>0.24.1</td><td>AI/ML services and natural language processing</td></tr></tbody></table>" data-github="https://github.com/adr1el-m/carmen-the-parasight" data-video="/images/projects/lingapLink/lingaplinkks.mp4">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=LingapLink" alt="LingapLink" loading="lazy">
+                  <video class="project-card-video" src="/images/projects/lingapLink/lingaplinkks.mp4" muted autoplay loop playsinline preload="metadata"></video>
                 </figure>
                 <h3 class="project-title">LingapLink</h3>
                 <p class="project-category">Web Application</p>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Community" data-images="[]" data-webp-images="[]" data-description="Fireside September is a compact autumn-themed mobile experience that blends seasonal warmth with productivity. It includes flip-style trivia cards with subtle reveal animations, a configurable Pomodoro timer with ambient sounds such as rain and crackling fire, mood-based recipes via the Honey Hazel assistant powered by Gemini, a gamified autumn bucket list that awards points for completed activities, and a customizable fireplace with sound and visual modes including a colorful magic mode. Built with Flutter and Dart, leveraging audioplayers and flutter_launcher_icons. The interface features parallax leaves, scatter effects, pixel-art accents, smooth animations, and a custom autumn icon." data-technologies="Flutter, Dart, Gemini (Honey Hazel), audioplayers, flutter_launcher_icons" data-github="https://github.com/adr1el-m/codedex-SeptemberChallenge" data-video="/images/projects/Fireside/fireside.mp4">
+            <li class="project-item active" data-filter-item data-category="Community" data-images="[]" data-webp-images="[]" data-description="Fireside September is a compact autumn-themed mobile experience that blends seasonal warmth with productivity. It includes flip-style trivia cards with subtle reveal animations, a configurable Pomodoro timer with ambient sounds such as rain and crackling fire, mood-based recipes via the Honey Hazel assistant powered by Gemini, a gamified autumn bucket list that awards points for completed activities, and a customizable fireplace with sound and visual modes including a colorful magic mode. Built with Flutter and Dart, leveraging audioplayers and flutter_launcher_icons. The interface features parallax leaves, scatter effects, pixel-art accents, smooth animations, and a custom autumn icon." data-technologies="Flutter, Dart, Gemini (Honey Hazel), audioplayers, flutter_launcher_icons" data-github="https://github.com/adr1el-m/codedex-SeptemberChallenge" data-video="/images/projects/Fireside/fireside.mp4" data-codedex="https://www.codedex.io/community/monthly-challenge/submission/LBsElEkx1LCAa6uIYd6y">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
@@ -1275,7 +1361,7 @@
       </button>
       
       <!-- Image Gallery Section (Top) -->
-      <div class="project-modal-gallery">
+      <div>
         <div class="project-gallery-slider">
           <button class="project-gallery-prev" aria-label="Previous project image" type="button">
             <span aria-hidden="true">‹</span>
@@ -1283,9 +1369,7 @@
           <div class="project-gallery-image-container">
             <img src="" alt="" class="project-gallery-image" id="project-modal-image">
             <video id="project-modal-video" class="project-gallery-video" controls playsinline preload="metadata" style="display: none;"></video>
-            <div class="project-gallery-counter">
-              <span class="current-image-number">1</span> / <span class="total-images">1</span>
-            </div>
+            <!-- project-gallery-counter removed as requested -->
           </div>
           <button class="project-gallery-next" aria-label="Next project image" type="button">
             <span aria-hidden="true">›</span>
@@ -1343,6 +1427,7 @@
           <div class="achievement-details">
             <p class="achievement-organizer"></p>
             <p class="achievement-date-location"></p>
+            <p class="achievement-description"></p>
           </div>
           <div class="achievement-teammates" style="display: none;">
             <h4 class="teammates-title">

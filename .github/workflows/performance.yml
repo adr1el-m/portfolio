@@ -94,6 +94,9 @@ jobs:
       - name: Wait for Server
         run: sleep 5
 
+      - name: Install Lighthouse CLI
+        run: npm install -g lighthouse
+
       - name: Check Performance Budget
         run: |
           lighthouse http://localhost:4173 \

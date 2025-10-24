@@ -128,6 +128,8 @@ export class ModalManager {
     const location = element.getAttribute('data-location') || '';
     const teammatesStr = element.getAttribute('data-teammates') || '[]';
     const githubUrl = element.getAttribute('data-github') || '';
+    const description = element.getAttribute('data-description') || '';
+    const projectTitle = element.getAttribute('data-project-title') || '';
 
     try {
       const images = JSON.parse(imagesStr);
@@ -143,6 +145,8 @@ export class ModalManager {
         location,
         teammates: teammates.length > 0 ? teammates : undefined,
         githubUrl: githubUrl || undefined,
+        description: description || undefined,
+        projectTitle: projectTitle || undefined,
       };
     } catch (e) {
       logger.error('Error parsing achievement data:', e);
@@ -165,20 +169,81 @@ export class ModalManager {
     if (this.organizerEl) this.organizerEl.textContent = data.organizer;
     if (this.dateLocEl) this.dateLocEl.textContent = `${data.date}${data.location ? ' • ' + data.location : ''}`;
 
+    // New: add description content if present
+    const descriptionEl = document.querySelector('.achievement-description') as HTMLElement;
+    if (descriptionEl) {
+      descriptionEl.textContent = data.description || '';
+      descriptionEl.style.display = data.description ? '' : 'none';
+    }
+
+    // New: render a related project button when projectTitle is available
+    const infoSection = document.querySelector('.achievement-info') as HTMLElement;
+    if (infoSection) {
+      const existing = infoSection.querySelector('.related-project-button');
+      if (existing) existing.remove();
+
+      if (data.projectTitle) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'related-project-button';
+        btn.textContent = `View project: ${data.projectTitle}`;
+        btn.addEventListener('click', () => {
+          const items = document.querySelectorAll('.project-item');
+          let target: HTMLElement | null = null;
+          items.forEach((item) => {
+            const t = item.querySelector('.project-title')?.textContent?.trim();
+            if (t === data.projectTitle) target = item as HTMLElement;
+          });
+
+          if (target) {
+            const pd = this.getProjectData(target);
+            if (pd) {
+              // Close achievement modal before opening the project modal
+              this.closeAchievementModal();
+              this.openProjectModal(pd);
+            }
+          } else {
+            logger.warn(`Project "${data.projectTitle}" not found in list.`);
+          }
+        });
+        // Insert after the details block for better context
+        const detailsBlock = infoSection.querySelector('.achievement-details');
+        if (detailsBlock && detailsBlock.parentElement) {
+          detailsBlock.parentElement.insertBefore(btn, detailsBlock.nextSibling);
+        } else {
+          infoSection.appendChild(btn);
+        }
+      }
+    }
+
     // Handle teammates section
     this.displayTeammates(data.teammates);
 
-    // Handle GitHub button
-    this.displayGithubButton(data.githubUrl);
-
-    // Show/hide slider controls based on number of images
-    const sliderControls = document.querySelector('.achievement-slider-controls') as HTMLElement;
-    if (sliderControls) {
-      sliderControls.style.display = this.images.length > 1 ? 'flex' : 'none';
+    // Handle GitHub button (fallback to related project's GitHub if missing)
+    {
+      let gh = data.githubUrl;
+      if (!gh && data.projectTitle) {
+        const items = document.querySelectorAll('.project-item');
+        items.forEach((item) => {
+          const t = item.querySelector('.project-title')?.textContent?.trim();
+          if (!gh && t === data.projectTitle) {
+            // Prefer attribute directly to avoid parsing entire project data
+            gh = (item as HTMLElement).getAttribute('data-github') || '';
+            if (!gh) {
+              const pd = this.getProjectData(item as HTMLElement);
+              gh = pd?.githubUrl || '';
+            }
+          }
+        });
+      }
+      this.displayGithubButton(gh || undefined);
     }
 
-    // Ensure the image container is clean from any previous error/skeleton overlays
+    const mediaSection = document.querySelector('.achievement-media') as HTMLElement;
+    const sliderControls = document.querySelector('.achievement-slider-controls') as HTMLElement;
     const sliderContainer = document.querySelector('.achievement-slider') as HTMLElement;
+
+    // Ensure the image container is clean from any previous error/skeleton overlays
     if (sliderContainer) {
       const errorPlaceholder = sliderContainer.querySelector('.image-error-placeholder');
       if (errorPlaceholder) errorPlaceholder.remove();
@@ -188,15 +253,32 @@ export class ModalManager {
       if (globalSkeleton) globalSkeleton.remove();
     }
 
-    // Reset image element state and force eager loading while modal is visible
-    if (this.imgEl) {
-      this.imgEl.style.display = 'block';
-      this.imgEl.classList.remove('image-error');
-      this.imgEl.setAttribute('loading', 'eager');
-      this.imgEl.alt = `${data.title} - Image ${this.currentIndex + 1}`;
-    }
+    if (this.images.length === 0) {
+      // No images: hide media column and controls
+      if (mediaSection) mediaSection.style.display = 'none';
+      if (sliderControls) sliderControls.style.display = 'none';
+      if (this.imgEl) {
+        this.imgEl.style.display = 'none';
+        this.imgEl.src = '';
+        this.imgEl.alt = '';
+        this.imgEl.classList.remove('image-error');
+        this.imgEl.removeAttribute('loading');
+      }
+    } else {
+      // Images present: show media and initialize first image
+      if (mediaSection) mediaSection.style.display = '';
+      if (sliderControls) sliderControls.style.display = this.images.length > 1 ? 'flex' : 'none';
 
-    this.updateImage();
+      // Reset image element state and force eager loading while modal is visible
+      if (this.imgEl) {
+        this.imgEl.style.display = 'block';
+        this.imgEl.classList.remove('image-error');
+        this.imgEl.setAttribute('loading', 'eager');
+        this.imgEl.alt = `${data.title} - Image ${this.currentIndex + 1}`;
+      }
+
+      this.updateImage();
+    }
     
     if (this.modalEl) {
       this.modalEl.classList.add('active');
@@ -215,6 +297,7 @@ export class ModalManager {
     const technologies = element.getAttribute('data-technologies') || '';
     const githubUrl = element.getAttribute('data-github') || '';
     const liveUrl = element.getAttribute('data-live') || '';
+    const codedexUrl = element.getAttribute('data-codedex') || '';
     const videoUrl = element.getAttribute('data-video') || '';
 
     try {
@@ -231,6 +314,7 @@ export class ModalManager {
         videoUrl: videoUrl || undefined,
         githubUrl,
         liveUrl,
+        codedexUrl: codedexUrl || undefined,
       };
     } catch (e) {
       logger.error('Error parsing project data:', e);
@@ -254,6 +338,21 @@ export class ModalManager {
     const projectTechStack = document.querySelector('.tech-stack');
     const projectGithub = document.querySelector('.project-github') as HTMLAnchorElement;
     const projectLive = document.querySelector('.project-live') as HTMLAnchorElement;
+
+    // Ensure Codédex button exists in links container
+    const linksContainer = document.querySelector('.project-info-links') as HTMLElement;
+    let projectCodedex = document.querySelector('.project-codedex') as HTMLAnchorElement | null;
+    if (linksContainer && !projectCodedex) {
+      projectCodedex = document.createElement('a');
+      projectCodedex.className = 'project-link project-codedex';
+      projectCodedex.target = '_blank';
+      projectCodedex.rel = 'noopener noreferrer';
+      projectCodedex.setAttribute('aria-label', 'View Codédex post (opens in new tab)');
+      projectCodedex.style.display = 'none';
+      projectCodedex.innerHTML = '<span class="link-icon">📝</span> View Codédex Post';
+      linksContainer.appendChild(projectCodedex);
+    }
+
     const currentImageNum = document.querySelector('.current-image-number');
     const totalImagesNum = document.querySelector('.total-images');
     const imageContainer = document.querySelector('.project-gallery-image-container') as HTMLElement;
@@ -268,8 +367,47 @@ export class ModalManager {
 
     // Set project data
     if (projectTitle) projectTitle.textContent = data.title;
-    if (projectDescription) projectDescription.textContent = data.description;
-    if (projectTechStack) projectTechStack.textContent = data.technologies;
+    if (projectDescription) {
+      // Render rich HTML for RGBC ATM project
+      const rgTitleMatch = data.title.startsWith('RGBC: Richard Gwapo Banking Corporation');
+      if (rgTitleMatch) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `<div class="desc-section"><h4>Project Overview</h4><p>The ATM Transaction System is a Java-based graphical application that simulates the core functionalities of an Automated Teller Machine (ATM). Developed using <strong>Java Swing</strong>, this program allows users to perform basic banking operations such as <strong>balance inquiry</strong>, <strong>withdrawal</strong>, <strong>deposit</strong>, and <strong>fund transfer</strong>, while also incorporating an <strong>administrator interface</strong> for managing customer accounts.</p><p>This project demonstrates concepts of <strong>object-oriented programming</strong>, <strong>GUI design with Swing</strong>, <strong>data validation</strong>, and <strong>user input handling</strong>. It aims to provide a realistic banking experience in a controlled simulation, integrating both <strong>user</strong> and <strong>admin</strong> functionalities within a secure system.</p></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Key Features</h4><h5>User Features</h5><ol><li><strong>Login Authentication</strong><br><span>Users must enter their account number and corresponding 4‑digit PIN to access their account. The system allows <strong>3 login attempts</strong> before locking the account for security.</span></li><li><strong>Balance Inquiry</strong><br><span>Displays the current balance and account details of the user.</span></li><li><strong>Withdrawal</strong><br><span>Allows users to withdraw funds if sufficient balance is available.</span><br><em>Minimum withdrawal amount:</em> ₱100.00</li><li><strong>Deposit</strong><br><span>Users can deposit funds into their account.</span><br><em>Minimum deposit amount:</em> ₱100.00</li><li><strong>Fund Transfer</strong><br><span>Enables users to transfer funds to another account within the system.</span><br><em>Minimum transfer amount:</em> ₱1,000.00<br><span>A service fee of ₱25.00 is automatically deducted from the sender's balance.</span></li><li><strong>Error Handling</strong><br><span>Invalid inputs, insufficient balance, and invalid account numbers are handled gracefully with informative prompts.</span></li></ol></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h5>Administrator Features</h5><ol><li><strong>Admin Login</strong><br><span>The admin uses a dedicated account (<code>Account No: 0000</code>, <code>PIN: 0000</code>) to access management features.</span></li><li><strong>View Customer Information</strong><br><span>Displays a customer's account number, name, balance, and account status.</span></li><li><strong>Add New Customer</strong><br><span>Allows the admin to register a new customer by entering details such as account number, name, balance, PIN, and status.</span><br><span>Input validations ensure all fields are correctly formatted (e.g., 5‑digit account numbers, 4‑digit PINs).</span></li><li><strong>Edit Customer Information</strong><br><span>Enables the admin to update a customer's name and account status (Active or Locked).</span></li><li><strong>Change Customer PIN</strong><br><span>Provides the option to reset or update a customer's 4‑digit PIN.</span></li><li><strong>Account Locking Mechanism</strong><br><span>Accounts are automatically locked after multiple failed login attempts, protecting users from unauthorized access.</span></li></ol></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>System Design and Logic</h4><ul><li><strong>Data Storage:</strong> Account details are stored in a 2D string array (<code>ACCOUNT_TABLE</code>), where each row represents an account containing: <code>[Account Number, Account Name, Balance, PIN, Status]</code>.</li><li><strong>User Interface:</strong> The program utilizes Java Swing's <code>JOptionPane</code> for GUI-based interactions, making it intuitive and user-friendly.</li><li><strong>Program Flow:</strong> <ol><li>Main Menu: Start transaction or quit.</li><li>Login Validation: Checks credentials with a 3-attempt limit.</li><li>Transaction Menu: Displays available operations depending on user type (Customer or Admin).</li><li>Transaction Execution: Performs selected action with data validation and updates in real-time.</li></ol></li></ul></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Error Handling and Validation</h4><ul><li>Input validation ensures correct data formats for account numbers, PINs, and monetary amounts.</li><li>Prevents empty inputs and invalid operations (e.g., overdrafts, non-numeric inputs).</li><li>Locked accounts are prevented from accessing any transaction.</li></ul></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Educational Value</h4><ul><li>GUI-based applications using Swing</li><li>Arrays and data management</li><li>Conditional logic and looping</li><li>Error handling and validation</li><li>Program modularization and code reusability</li></ul></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Future Enhancements</h4><ul><li>Integration with a database (MySQL) for persistent storage</li><li>Implementation of transaction history logs</li><li>Improved user interface design with custom forms</li><li>Multi-language or localization support</li><li>Enhanced security features like encryption for PIN storage</li></ul></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Conclusion</h4><p>The <strong>RGBC ATM Transaction System</strong> is a comprehensive Java Swing project that effectively simulates real‑world ATM functionalities. It highlights the technical implementation of user authentication, transactions, and admin management while emphasizing robust input validation, user experience, and program reliability — a strong foundation for more advanced banking systems.</p></div>`;
+      } else if (data.title.trim() === 'PHP-Loan-System' || data.title.includes('PHP Loan System')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `<div class="desc-section"><p>This repository contains a PHP/MySQL project focused on creating a loan management system. It was completed during my Grade 12 year at the University of Makati as part of the Laboratory Exercises for COMPROG 3 under the supervision of Mr. Roel Richard C. Traballo, a faculty member of the College of Computer Science. The system is a simulation of a basic loan application process, including user authentication, loan calculation, and loan confirmation functionalities.</p></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Project Overview</h4><p>The PHP Loan System Project is a dynamic web application that guides users through the loan application process. The system includes multiple pages to ensure that the user experience is intuitive and structured. This includes:</p><ul><li><strong>A Login Page</strong> where users authenticate their credentials.</li><li><strong>A Loan Amount Page</strong> for users to input loan details.</li><li><strong>A Loan Information Page</strong> to display computed loan data and monthly dues.</li><li><strong>A Loan Confirmation Page</strong> for finalizing the application process.</li></ul></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Features</h4><ol><li><strong>Login System</strong><ul><li>Validates username and password (limited to 5 characters).</li><li>Displays appropriate error messages for invalid inputs.</li><li>Proceeds to the loan process upon successful authentication.</li></ul></li><li><strong>Loan Amount Input</strong><ul><li>Users specify the loan amount and repayment term (6, 12, or 24 months).</li><li>Interest rates differ based on user type (Officer: 5%, Member: 10%).</li></ul></li><li><strong>Loan Information Display</strong><ul><li>Computes total interest, total payable amount, and monthly dues.</li><li>Offers options to confirm or reset entries.</li></ul></li><li><strong>Loan Confirmation</strong><ul><li>Summarizes the loan details.</li><li>Provides a "Back to Login Page" button to restart the process.</li></ul></li><li><strong>Interactive Buttons</strong><ul><li><em>Accept:</em> Processes user login and navigates to the next page.</li><li><em>Clear All:</em> Resets user input fields.</li><li><em>Submit:</em> Finalizes loan application details.</li><li><em>Back:</em> Navigates to the previous step.</li></ul></li></ol></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>System Workflow</h4><div class="desc-subsection"><h5>Page 1: Login Page</h5><ul><li><strong>Input Fields:</strong> Username and Password (maximum of 5 characters each).</li><li><strong>Outputs:</strong><ul><li><em>Error Message for Empty Values:</em> Prompts users to fill in all fields.</li><li><em>Error Message for Incorrect Credentials:</em> Displays "Incorrect Username or Password."</li><li><em>Success:</em> Displays "Password Accepted" and navigates to the Loan Amount page.</li></ul></li></ul></div><div class="desc-subsection"><h5>Page 2: Loan Amount Page</h5><ul><li><strong>Input Fields:</strong> Loan Amount, Repayment Term (6, 12, or 24 months).</li><li><strong>Buttons:</strong> <em>Confirm Loan</em> (proceeds to the Loan Information page), <em>Clear All</em> (resets inputs).</li></ul></div><div class="desc-subsection"><h5>Page 3: Loan Information Page</h5><ul><li><strong>Outputs:</strong> Computed interest, total payable amount, and monthly dues.</li><li><strong>Buttons:</strong> <em>Submit</em> (navigates to Loan Confirmation), <em>Back</em> (returns to Loan Amount).</li></ul></div><div class="desc-subsection"><h5>Page 4: Loan Confirmation Page</h5><ul><li><strong>Outputs:</strong> Final loan details including interest, total payable amount, and monthly dues.</li><li><strong>Button:</strong> <em>Back to Login Page</em> (restarts the application process).</li></ul></div></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Technologies Used</h4><ul><li><strong>Backend:</strong> PHP</li><li><strong>Database:</strong> MySQL</li><li><strong>Frontend:</strong> HTML, CSS, Bootstrap</li><li><strong>Tools:</strong> XAMPP/WAMP (for local server setup)</li></ul></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Setup Instructions</h4><ol><li><strong>Clone the repository:</strong><pre><code>git clone https://github.com/your-username/PHP-Loan-System.git</code></pre></li><li><strong>Import the Database:</strong><ul><li>Use the <code>.sql</code> file included in the repository.</li><li>Import it into your MySQL database via PHPMyAdmin or a terminal.</li></ul></li><li><strong>Configure Database Connection:</strong><ul><li>Locate the database configuration section in the PHP files.</li><li>Update credentials to match your local MySQL setup.</li></ul></li><li><strong>Run the Project:</strong><ul><li>Start a local server using XAMPP or WAMP.</li><li>Access the project in your browser at <code>http://localhost/PHP-Loan-System</code>.</li></ul></li></ol></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Database Details</h4><p>The database schema includes a table for user accounts and a reference loan table for calculations. Below are sample values:</p><table><thead><tr><th>User Type</th><th>Loan Amount</th><th>Interest (%)</th><th>Total Amount</th><th>Monthly Dues (6 mos)</th><th>Monthly Dues (12 mos)</th><th>Monthly Dues (24 mos)</th></tr></thead><tbody><tr><td>Officer</td><td>5,000.00</td><td>5%</td><td>5,250.00</td><td>875.00</td><td>437.50</td><td>218.75</td></tr><tr><td>Member</td><td>10,000.00</td><td>10%</td><td>11,000.00</td><td>1,833.33</td><td>916.67</td><td>458.33</td></tr></tbody></table></div>`;
+      } else {
+        projectDescription.classList.remove('rich');
+        projectDescription.textContent = data.description;
+      }
+    }
+    if (projectTechStack) projectTechStack.innerHTML = data.technologies;
     
     // Update image counter
     if (currentImageNum) currentImageNum.textContent = '1';
@@ -315,6 +453,17 @@ export class ModalManager {
         projectLive.style.display = 'inline-flex';
       } else {
         projectLive.style.display = 'none';
+      }
+    }
+
+    // Handle Codédex link (dynamic button)
+    const codedexAnchor = document.querySelector('.project-codedex') as HTMLAnchorElement | null;
+    if (codedexAnchor) {
+      if (data.codedexUrl) {
+        codedexAnchor.href = data.codedexUrl;
+        codedexAnchor.style.display = 'inline-flex';
+      } else {
+        codedexAnchor.style.display = 'none';
       }
     }
 

@@ -2,8 +2,15 @@
  * Main entry point for the TypeScript portfolio
  */
 
-import { inject } from '@vercel/analytics';
-import { injectSpeedInsights } from '@vercel/speed-insights';
+// Load Vercel Analytics & Speed Insights only in production
+if (import.meta.env.PROD) {
+  import('@vercel/analytics').then(({ inject }) => {
+    try { inject(); } catch (err) { console.warn('Vercel Analytics injection failed:', err); }
+  });
+  import('@vercel/speed-insights').then(({ injectSpeedInsights }) => {
+    try { injectSpeedInsights(); } catch (err) { console.warn('Vercel Speed Insights injection failed:', err); }
+  });
+}
 import { NavigationManager } from './modules/navigation';
 import { SecurityManager } from './modules/security';
 import { LoadingManager } from './modules/loading-manager';
@@ -18,9 +25,7 @@ import { AccessibilityEnhancer } from './modules/accessibility-enhancer';
 import { logger } from './config';
 import type { Portfolio } from './types';
 
-// Initialize Vercel Analytics & Speed Insights
-inject();
-injectSpeedInsights();
+// Vercel Analytics & Speed Insights are loaded conditionally in production (see top of file);
 
 // Declare the global Portfolio namespace on the window object
 declare global {
@@ -88,6 +93,19 @@ class PortfolioApp {
       // Initialize Tooltip Portal to prevent sidebar tooltip clipping
       import('./modules/tooltip-portal').then(({ TooltipPortal }) => {
         new TooltipPortal();
+      });
+
+      // Initialize video thumbnails manager (defer playback, posters, pause off-screen)
+      import('./modules/video-thumbnails').then(({ VideoThumbnails }) => {
+        const vt = new VideoThumbnails();
+        if (window.Portfolio?.lazy) {
+          window.Portfolio.lazy.VideoThumbnails = vt;
+        }
+      });
+
+      // Sort project cards by thumbnail type (video > image > none)
+      import('./modules/projects-sort').then(({ ProjectsSorter }) => {
+        new ProjectsSorter().sort();
       });
 
       // Initialize Icon Replacer

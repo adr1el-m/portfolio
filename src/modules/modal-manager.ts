@@ -9,11 +9,21 @@ import { SecurityManager } from '@/modules/security';
 export class ModalManager {
   private modalEl: HTMLElement | null = null;
   private imgEl: HTMLImageElement | null = null;
+  private achievementPictureEl: HTMLPictureElement | null = null;
+  private achievementSourceWebpEl: HTMLSourceElement | null = null;
+  private achievementSourceJpegEl: HTMLSourceElement | null = null;
+  private projectPictureEl: HTMLPictureElement | null = null;
+  private projectSourceWebpEl: HTMLSourceElement | null = null;
+  private projectSourceJpegEl: HTMLSourceElement | null = null;
   private titleEl: HTMLElement | null = null;
   private organizerEl: HTMLElement | null = null;
   private dateLocEl: HTMLElement | null = null;
   private images: string[] = [];
   private currentIndex = 0;
+  private achievementWebpImages: string[] = [];
+  private achievementJpegImages: string[] = [];
+  private projectWebpImages: string[] = [];
+  private projectJpegImages: string[] = [];
 
   constructor() {
     this.init();
@@ -61,6 +71,9 @@ export class ModalManager {
     // Cache achievement modal elements
     this.modalEl = document.getElementById('achievementModal');
     this.imgEl = document.querySelector('.achievement-slide-image');
+    this.achievementPictureEl = document.querySelector('.achievement-slide-picture');
+    this.achievementSourceWebpEl = document.querySelector('.achievement-image-webp');
+    this.achievementSourceJpegEl = document.querySelector('.achievement-image-jpeg');
     this.titleEl = document.querySelector('.achievement-title-modal');
     this.organizerEl = document.querySelector('.achievement-organizer');
     this.dateLocEl = document.querySelector('.achievement-date-location');
@@ -157,9 +170,20 @@ export class ModalManager {
   public openAchievementModal(data: AchievementData): void {
     logger.log('Opening achievement modal with data:', data);
     
+    // Ensure ARIA linkage between modal and title
+    if (this.titleEl && !this.titleEl.id) {
+      this.titleEl.id = 'achievement-modal-title';
+    }
+    if (this.modalEl) {
+      this.modalEl.setAttribute('aria-labelledby', this.titleEl?.id || 'achievement-modal-title');
+      this.modalEl.setAttribute('aria-hidden', 'false');
+    }
+
     // Use WebP if supported, fallback to regular images
     const supportsWebp = document.documentElement.classList.contains('webp');
-    this.images = supportsWebp && data.webpImages.length > 0 ? data.webpImages : data.images;
+    this.achievementWebpImages = (data.webpImages || []).filter((p) => p.endsWith('.webp') || p.endsWith('.avif'));
+    this.achievementJpegImages = (data.images || []);
+    this.images = supportsWebp && this.achievementWebpImages.length > 0 ? this.achievementWebpImages : this.achievementJpegImages;
     this.currentIndex = 0;
 
     logger.log('Modal element:', this.modalEl);
@@ -273,7 +297,7 @@ export class ModalManager {
       if (this.imgEl) {
         this.imgEl.style.display = 'block';
         this.imgEl.classList.remove('image-error');
-        this.imgEl.setAttribute('loading', 'eager');
+        this.imgEl.setAttribute('loading', 'lazy');
         this.imgEl.alt = `${data.title} - Image ${this.currentIndex + 1}`;
       }
 
@@ -327,12 +351,17 @@ export class ModalManager {
     
     // Use WebP if supported, fallback to regular images
     const supportsWebp = document.documentElement.classList.contains('webp');
-    this.images = supportsWebp && data.webpImages.length > 0 ? data.webpImages : data.images;
+    this.projectWebpImages = (data.webpImages || []).filter((p) => p.endsWith('.webp') || p.endsWith('.avif'));
+    this.projectJpegImages = (data.images || []);
+    this.images = supportsWebp && this.projectWebpImages.length > 0 ? this.projectWebpImages : this.projectJpegImages;
     this.currentIndex = 0;
 
     // Get project modal elements
     const projectModal = document.getElementById('projectModal');
     const projectImage = document.getElementById('project-modal-image') as HTMLImageElement;
+    this.projectPictureEl = document.querySelector('.project-modal-picture');
+    this.projectSourceWebpEl = document.querySelector('.project-image-webp');
+    this.projectSourceJpegEl = document.querySelector('.project-image-jpeg');
     const projectTitle = document.getElementById('project-modal-title');
     const projectDescription = document.querySelector('.project-info-description');
     const projectTechStack = document.querySelector('.tech-stack');
@@ -619,6 +648,144 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
             <li>Vercel / Docker for deployment</li>
           </ul>
         </div>`;
+      } else if (data.title.trim() === 'Tindahan ni Aling Nena' || data.title.includes('Aling Nena')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `
+        <div class="desc-section"><h4>Campus Mini App Challenge 2025 Submission</h4>
+          <p>Submission: <strong>Tindahan ni Aling Nena</strong></p>
+          <p>A blockchain-powered loyalty tracking system for Filipino sari-sari stores built on the <strong>Base</strong> network.</p>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Project Concept</h4>
+          <p><strong>"Tindahan ni Aling Nena"</strong> reimagines the traditional Filipino sari-sari store experience through Web3 technology. Every barangay has a beloved sari-sari store — this project tokenizes the loyalty experience, bringing blockchain benefits to local Filipino businesses.</p>
+        </div>
+        <div class="desc-section"><h4>Why Sari-Sari Stores?</h4>
+          <ul>
+            <li><strong>Cultural Relevance:</strong> Authentic Filipino business model</li>
+            <li><strong>Real-World Impact:</strong> Practical application for local communities</li>
+            <li><strong>Innovation:</strong> Traditional business meets modern Web3 technology</li>
+            <li><strong>Scalability:</strong> Can be adopted by thousands of sari-sari stores nationwide</li>
+          </ul>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Core Features</h4>
+          <div class="desc-subsection"><h5>🛍️ Store Management</h5>
+            <ul>
+              <li><strong>Inventory Tracking:</strong> Real-time product management with stock levels</li>
+              <li><strong>Category Organization:</strong> Food, drinks, snacks, household items</li>
+              <li><strong>Search & Filter:</strong> Easy product discovery</li>
+              <li><strong>Price Management:</strong> Dynamic pricing with peso display</li>
+            </ul>
+          </div>
+          <div class="desc-subsection"><h5>🛒 Shopping Experience</h5>
+            <ul>
+              <li><strong>Smart Cart:</strong> Quantity management with real-time calculations</li>
+              <li><strong>Digital Receipts:</strong> Onchain transaction records</li>
+              <li><strong>Checkout Process:</strong> Simulated blockchain transactions</li>
+              <li><strong>Order History:</strong> Complete purchase tracking</li>
+            </ul>
+          </div>
+          <div class="desc-subsection"><h5>⭐ Loyalty System</h5>
+            <ul>
+              <li><strong>Points Earning:</strong> 1 point per peso spent (configurable)</li>
+              <li><strong>Tier Progression:</strong> Bronze → Silver → Gold → Platinum</li>
+              <li><strong>Progress Tracking:</strong> Visual progress bars to next tier</li>
+              <li><strong>Rewards Analytics:</strong> Shopping statistics and trends</li>
+            </ul>
+          </div>
+          <div class="desc-subsection"><h5>💳 Wallet Integration</h5>
+            <ul>
+              <li><strong>MiniKit Integration:</strong> Seamless wallet connection</li>
+              <li><strong>Multi-Wallet Support:</strong> Compatible with popular Web3 wallets</li>
+              <li><strong>Transaction Simulation:</strong> Realistic blockchain interactions</li>
+              <li><strong>Address Management:</strong> Secure wallet address handling</li>
+            </ul>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Technical Implementation</h4>
+          <div class="desc-subsection"><h5>🧰 Tech Stack</h5>
+            <ul>
+              <li><strong>Frontend:</strong> React 18 + TypeScript</li>
+              <li><strong>Styling:</strong> Tailwind CSS with custom Filipino theme</li>
+              <li><strong>Blockchain:</strong> Base Network (Ethereum L2)</li>
+              <li><strong>Wallet Integration:</strong> MiniKit + Wagmi + Viem</li>
+              <li><strong>State Management:</strong> React Context + React Query</li>
+              <li><strong>Build Tool:</strong> Vite</li>
+              <li><strong>Testing:</strong> Vitest + Testing Library</li>
+              <li><strong>Linting:</strong> ESLint + TypeScript ESLint</li>
+            </ul>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Design System</h4>
+          <div class="desc-subsection"><h5>🎨 Filipino-Inspired Theme</h5>
+            <ul>
+              <li><strong>Colors:</strong> Orange, red, and pink gradient theme</li>
+              <li><strong>Typography:</strong> System fonts with proper hierarchy</li>
+              <li><strong>Components:</strong> Reusable card and button components</li>
+              <li><strong>Icons:</strong> Lucide React icons for consistency</li>
+            </ul>
+          </div>
+          <div class="desc-subsection"><h5>♿ Accessibility Features</h5>
+            <ul>
+              <li>ARIA labels for screen readers</li>
+              <li>Keyboard navigation support</li>
+              <li>High contrast color scheme</li>
+              <li>Semantic HTML structure</li>
+              <li>Focus management</li>
+            </ul>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Mobile Experience</h4>
+          <p>The application is designed as a mini-app for mobile integration:</p>
+          <ul>
+            <li><strong>Responsive Design:</strong> Optimized for all screen sizes</li>
+            <li><strong>Touch-Friendly:</strong> Large buttons and touch targets</li>
+            <li><strong>Fast Performance:</strong> Efficient rendering and smooth animations</li>
+            <li><strong>Offline-Ready:</strong> Graceful handling of connection issues</li>
+          </ul>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Security & Performance</h4>
+          <div class="desc-subsection"><h5>🔒 Security Features</h5>
+            <ul>
+              <li>Input validation and sanitization</li>
+              <li>Error boundaries for graceful error handling</li>
+              <li>Type-safe development with TypeScript</li>
+              <li>Secure wallet connection handling</li>
+            </ul>
+          </div>
+          <div class="desc-subsection"><h5>🚀 Performance Optimizations</h5>
+            <ul>
+              <li>Code splitting with dynamic imports</li>
+              <li>Optimized bundle size</li>
+              <li>Lazy loading of components</li>
+              <li>Efficient state management</li>
+              <li>Memoized calculations</li>
+            </ul>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Challenge Compliance</h4>
+          <div class="desc-subsection"><h5>✅ Requirements Met</h5>
+            <ul>
+              <li><strong>MiniKit Integration:</strong> Complete implementation with error handling</li>
+              <li><strong>Base Network:</strong> Properly configured for Base (Ethereum L2)</li>
+              <li><strong>Functionality:</strong> Full sari-sari store with loyalty system</li>
+              <li><strong>Usability:</strong> Intuitive, responsive, and accessible design</li>
+              <li><strong>Creativity:</strong> Authentic Filipino concept with cultural relevance</li>
+            </ul>
+          </div>
+          <div class="desc-subsection"><h5>🎯 Judging Criteria Alignment</h5>
+            <ul>
+              <li><strong>Functionality:</strong> Complete working application with all features</li>
+              <li><strong>Creativity:</strong> Unique sari-sari store concept with Filipino culture</li>
+              <li><strong>Usability:</strong> Beautiful, intuitive interface with excellent UX</li>
+            </ul>
+          </div>
+        </div>`;
       } else {
         projectDescription.classList.remove('rich');
         projectDescription.textContent = data.description;
@@ -704,7 +871,32 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
         projectVideo.style.display = 'none';
       }
       projectImage.style.display = 'block';
-      projectImage.src = this.images[0];
+      const firstSrc = this.images[0];
+      const firstWebp = this.projectWebpImages[0] || '';
+      const firstJpeg = this.projectJpegImages[0] || firstSrc;
+
+      if (this.projectSourceWebpEl) {
+        if (firstWebp) {
+          this.projectSourceWebpEl.srcset = firstWebp;
+          this.projectSourceWebpEl.sizes = '(max-width: 768px) 95vw, 70vw';
+        } else {
+          this.projectSourceWebpEl.removeAttribute('srcset');
+          this.projectSourceWebpEl.removeAttribute('sizes');
+        }
+      }
+      if (this.projectSourceJpegEl) {
+        if (firstJpeg) {
+          this.projectSourceJpegEl.srcset = firstJpeg;
+          this.projectSourceJpegEl.sizes = '(max-width: 768px) 95vw, 70vw';
+        } else {
+          this.projectSourceJpegEl.removeAttribute('srcset');
+          this.projectSourceJpegEl.removeAttribute('sizes');
+        }
+      }
+
+      projectImage.src = firstSrc;
+      projectImage.srcset = firstJpeg;
+      projectImage.sizes = '(max-width: 768px) 95vw, 70vw';
       projectImage.alt = `${data.title} - Screenshot 1`;
     }
 
@@ -719,6 +911,21 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
 
   private closeProjectModal(): void {
     const projectModal = document.getElementById('projectModal');
+    const projectVideo = document.getElementById('project-modal-video') as HTMLVideoElement | null;
+
+    // Stop and reset video audio when closing modal
+    if (projectVideo) {
+      try {
+        projectVideo.pause();
+        projectVideo.currentTime = 0;
+        projectVideo.removeAttribute('src');
+        projectVideo.load();
+        projectVideo.style.display = 'none';
+      } catch (e) {
+        logger.error('Error stopping project video on close:', e);
+      }
+    }
+
     if (projectModal) {
       projectModal.style.display = 'none';
     }
@@ -744,11 +951,34 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
     if (!projectImage) return;
     
     const src = this.images[this.currentIndex] || '';
+    const webpSrc = this.projectWebpImages[this.currentIndex] || '';
+    const jpegSrc = this.projectJpegImages[this.currentIndex] || src;
     
     // Update image with fade effect
     projectImage.style.opacity = '0';
     setTimeout(() => {
+      if (this.projectSourceWebpEl) {
+        if (webpSrc) {
+          this.projectSourceWebpEl.srcset = webpSrc;
+          this.projectSourceWebpEl.sizes = '(max-width: 768px) 95vw, 70vw';
+        } else {
+          this.projectSourceWebpEl.removeAttribute('srcset');
+          this.projectSourceWebpEl.removeAttribute('sizes');
+        }
+      }
+      if (this.projectSourceJpegEl) {
+        if (jpegSrc) {
+          this.projectSourceJpegEl.srcset = jpegSrc;
+          this.projectSourceJpegEl.sizes = '(max-width: 768px) 95vw, 70vw';
+        } else {
+          this.projectSourceJpegEl.removeAttribute('srcset');
+          this.projectSourceJpegEl.removeAttribute('sizes');
+        }
+      }
+
       projectImage.src = src;
+      projectImage.srcset = jpegSrc;
+      projectImage.sizes = '(max-width: 768px) 95vw, 70vw';
       projectImage.onload = () => {
         requestAnimationFrame(() => {
           projectImage.style.opacity = '1';
@@ -833,6 +1063,9 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
 
   public closeAchievementModal(): void {
     this.modalEl?.classList.remove('active');
+    if (this.modalEl) {
+      this.modalEl.setAttribute('aria-hidden', 'true');
+    }
     document.body.style.overflow = ''; // Restore scrolling
   }
 
@@ -852,6 +1085,8 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
     if (!this.imgEl) return;
     const img = this.imgEl;
     const src = this.images[this.currentIndex] || '';
+    const webpSrc = this.achievementWebpImages[this.currentIndex] || '';
+    const jpegSrc = this.achievementJpegImages[this.currentIndex] || src;
     
     // Show loading skeleton
     const slider = img.parentElement;
@@ -862,11 +1097,34 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
       if (errorPlaceholder) errorPlaceholder.remove();
     }
     
+    // Update <picture> sources before swapping image
+    if (this.achievementSourceWebpEl) {
+      if (webpSrc) {
+        this.achievementSourceWebpEl.srcset = webpSrc;
+        this.achievementSourceWebpEl.sizes = '(max-width: 768px) 90vw, 50vw';
+      } else {
+        this.achievementSourceWebpEl.removeAttribute('srcset');
+        this.achievementSourceWebpEl.removeAttribute('sizes');
+      }
+    }
+    if (this.achievementSourceJpegEl) {
+      if (jpegSrc) {
+        this.achievementSourceJpegEl.srcset = jpegSrc;
+        this.achievementSourceJpegEl.sizes = '(max-width: 768px) 90vw, 50vw';
+      } else {
+        this.achievementSourceJpegEl.removeAttribute('srcset');
+        this.achievementSourceJpegEl.removeAttribute('sizes');
+      }
+    }
+    
     // Fade out, swap, fade in
     img.style.opacity = '0';
     img.style.display = 'block';
     setTimeout(() => {
+      // Set fallback <img> for browsers without <picture> support
       img.src = src;
+      img.srcset = jpegSrc;
+      img.sizes = '(max-width: 768px) 90vw, 50vw';
       img.onload = () => {
         this.hideImageLoader(slider);
         requestAnimationFrame(() => (img.style.opacity = '1'));

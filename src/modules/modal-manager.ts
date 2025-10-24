@@ -402,6 +402,223 @@ export class ModalManager {
         <div class="desc-section"><h4>Setup Instructions</h4><ol><li><strong>Clone the repository:</strong><pre><code>git clone https://github.com/your-username/PHP-Loan-System.git</code></pre></li><li><strong>Import the Database:</strong><ul><li>Use the <code>.sql</code> file included in the repository.</li><li>Import it into your MySQL database via PHPMyAdmin or a terminal.</li></ul></li><li><strong>Configure Database Connection:</strong><ul><li>Locate the database configuration section in the PHP files.</li><li>Update credentials to match your local MySQL setup.</li></ul></li><li><strong>Run the Project:</strong><ul><li>Start a local server using XAMPP or WAMP.</li><li>Access the project in your browser at <code>http://localhost/PHP-Loan-System</code>.</li></ul></li></ol></div>
         <hr class="desc-divider" />
         <div class="desc-section"><h4>Database Details</h4><p>The database schema includes a table for user accounts and a reference loan table for calculations. Below are sample values:</p><table><thead><tr><th>User Type</th><th>Loan Amount</th><th>Interest (%)</th><th>Total Amount</th><th>Monthly Dues (6 mos)</th><th>Monthly Dues (12 mos)</th><th>Monthly Dues (24 mos)</th></tr></thead><tbody><tr><td>Officer</td><td>5,000.00</td><td>5%</td><td>5,250.00</td><td>875.00</td><td>437.50</td><td>218.75</td></tr><tr><td>Member</td><td>10,000.00</td><td>10%</td><td>11,000.00</td><td>1,833.33</td><td>916.67</td><td>458.33</td></tr></tbody></table></div>`;
+      } else if (data.title.trim() === 'Hand Gesture Recognition and Arduino Integration' || data.title.includes('Hand Gesture Recognition')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `<div class="desc-section"><p>This project combines computer vision and embedded systems to detect hand gestures and control various outputs using an Arduino. It leverages Python for hand gesture detection with the Mediapipe library and Arduino to process the received data for hardware interfacing.</p></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Features</h4><ol><li><strong>Real-Time Hand Gesture Detection</strong><ul><li>Detects individual fingers' states (up or down) using Mediapipe's Hand Tracking module.</li><li>Outputs the state of each finger as a binary array (e.g., <code>[1, 0, 1, 1, 0]</code> ).</li></ul></li><li><strong>Hardware Integration</strong><ul><li>Sends the detected finger states to an Arduino over a serial connection.</li><li>Controls LEDs and a servo motor based on the detected gestures.</li></ul></li><li><strong>User Feedback</strong><ul><li>Provides real-time updates on an I2C LCD display connected to the Arduino.</li><li>Indicates the number of fingers up and down dynamically.</li></ul></li><li><strong>Servo Motor Control</strong><ul><li>Maps the number of fingers detected as "up" to servo angles (0° to 180°).</li></ul></li></ol></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Project Architecture</h4><h5>Software Components</h5><ol><li><strong>Python Script</strong><ul><li>Uses OpenCV to capture video and process hand gestures.</li><li>Utilizes Mediapipe for detecting and classifying finger positions.</li><li>Sends gesture data to Arduino via serial communication.</li></ul></li><li><strong>Arduino Code</strong><ul><li>Receives gesture data from Python.</li><li>Controls LEDs to indicate individual finger states.</li><li>Updates an LCD display with the number of fingers "up" and "down."</li><li>Moves a servo motor based on the number of fingers "up."</li></ul></li></ol></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Installation and Setup</h4><h5>Hardware Requirements</h5><ul><li>Arduino Uno or compatible microcontroller</li><li>5 LEDs with resistors</li><li>Servo motor</li><li>I2C-compatible LCD (e.g., 16x2 display with I2C module)</li><li>Breadboard and connecting wires</li><li>Webcam for video input</li></ul><h5>Software Requirements</h5><ul><li>Python 3.7+</li><li>Mediapipe</li><li>OpenCV</li><li>PySerial</li><li>Arduino IDE</li></ul><h5>Wiring Diagram</h5><ol><li><strong>LEDs:</strong> <ul><li>Connect LEDs to Arduino pins (8–12).</li><li>Ensure proper grounding with resistors.</li></ul></li><li><strong>Servo Motor:</strong> <ul><li>Signal pin connected to pin 13 on Arduino.</li><li>Power and ground connected appropriately.</li></ul></li><li><strong>I2C LCD:</strong> <ul><li>SDA and SCL connected to Arduino's A4 and A5 pins (for Uno).</li><li>Ensure proper power connections.</li></ul></li></ol></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Technical Details</h4><h5>Python Code</h5><ul><li><strong>Hand Gesture Detection:</strong> Identifies the positions of key hand landmarks and determines if each finger is up or down based on landmark positions.</li><li><strong>Serial Communication:</strong> Sends the detected finger states to the Arduino in a comma-separated format.</li></ul><h5>Arduino Code</h5><ul><li><strong>Serial Parsing:</strong> Reads the incoming string and extracts finger states.</li><li><strong>LED Control:</strong> Updates the state of LEDs based on finger states.</li><li><strong>LCD Feedback:</strong> Dynamically displays the number of fingers up and down.</li><li><strong>Servo Motor:</strong> Maps finger count to servo angles for proportional movement.</li></ul></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Future Improvements</h4><ol><li><strong>Gesture Customization:</strong> Add recognition for specific hand gestures (e.g., thumbs-up, peace sign).</li><li><strong>Wireless Communication:</strong> Replace the serial connection with Bluetooth or Wi‑Fi for greater flexibility.</li><li><strong>Expand Hardware Interactions:</strong> Control more devices like robotic arms or IoT appliances.</li><li><strong>Enhanced Visual Feedback:</strong> Overlay detected finger states directly onto the webcam feed.</li></ol></div>`;
+      } else if (data.title.trim() === 'FinanceWise') {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `<div class="desc-section"><p>FinanceWise is a comprehensive financial advisory platform designed to help users make informed decisions about spending, investments, and loans. Our platform combines modern design with practical financial tools to provide a seamless user experience.</p></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Features</h4>
+          <div class="desc-subsection"><h5>SpendWise</h5><ul><li>Personalized spending advice based on your financial circumstances</li><li>Smart budgeting recommendations</li><li>Expense tracking and analysis</li></ul></div>
+          <div class="desc-subsection"><h5>InvestWise</h5><ul><li>Customized investment suggestions</li><li>Risk assessment tools</li><li>Portfolio diversification guidance</li></ul></div>
+          <div class="desc-subsection"><h5>LoanWise</h5><ul><li>Loan eligibility assessment</li><li>Interest rate comparisons</li><li>Repayment strategy planning</li></ul></div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Technologies Used</h4><ul><li>HTML5</li><li>CSS3</li><li>JavaScript</li><li>Particles.js for interactive background</li><li>Modern UI/UX principles</li><li>Responsive Design</li></ul></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Design Features</h4><ul><li>Modern and intuitive user interface</li><li>Responsive design for all devices</li><li>Interactive particle background</li><li>Smooth animations and transitions</li><li>Professional color scheme</li></ul></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Configuration</h4><p>The project uses <strong>Particles.js</strong> for the interactive background. You can customize particle behavior by modifying the <code>particlesjs-config.json</code> file in the <code>loading</code> directory.</p></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Responsive Design</h4><p>FinanceWise is built with a mobile-first approach, ensuring a seamless experience across all devices:</p><ul><li>Desktop</li><li>Tablet</li><li>Mobile phones</li></ul></div>`;
+      } else if (data.title.trim() === 'green-pulse' || data.title.includes('GreenPulse') || data.title.includes('Green Pulse')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `<div class="desc-section"><p>GreenPulse is an interactive web application designed to promote sustainability and eco-friendly practices. It provides users with tools to calculate their environmental impact, offers personalized eco-tips, and features various sustainability-related functionalities.</p></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Features</h4><ul><li><strong>Sustainability Calculator:</strong> Calculate your carbon footprint based on daily activities.</li><li><strong>Eco Tips:</strong> Get personalized eco-friendly tips generated by AI.</li><li><strong>Chat Functionality:</strong> Engage with a chatbot for instant responses and support.</li><li><strong>Progress Tracking:</strong> Visualize your progress towards sustainability goals.</li><li><strong>Interactive UI:</strong> Enjoy a user-friendly interface with animations and effects.</li></ul></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Technologies Used</h4><ul><li><strong>Frontend:</strong> HTML, CSS, JavaScript</li><li><strong>Frameworks:</strong> React, Vite</li><li><strong>APIs:</strong> Google Generative AI for eco-tips and chatbot responses</li><li><strong>Charting:</strong> Chart.js for visualizing data</li><li><strong>Styling:</strong> Tailwind CSS for responsive design</li></ul></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Usage</h4><ul><li><strong>Sustainability Calculator:</strong> Fill in the form with your daily activities to calculate your carbon footprint.</li><li><strong>Eco Tips:</strong> Click on the \"Get Eco Tip\" button to receive a personalized tip.</li><li><strong>Chatbot:</strong> Use the chat feature to ask questions and get instant responses.</li></ul></div>`;
+      } else if (data.title.trim() === 'Kita-Kita (Agentic)' || data.title.trim() === 'Kita-Kita' || data.title.includes('Agentic')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `
+        <div class="desc-section"><h4>The Challenge: Financial Empowerment for Every Filipino</h4>
+          <p>In the Philippines, millions lack access to personalized financial guidance, making it difficult to manage debt, optimize cash flow, and build long-term wealth. Kita-kita was born out of a need to bridge this gap, providing a sophisticated yet accessible AI-powered financial co-pilot tailored to the unique economic landscape of the Philippines.</p>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Our Solution: Key Features</h4>
+          <div class="desc-subsection"><p>🤖 <strong>AI Financial Agents:</strong> A suite of intelligent assistants designed to tackle specific financial goals:</p>
+            <ul>
+              <li><strong>Debt Demolisher:</strong> Creates a personalized, automated debt-elimination plan.</li>
+              <li><strong>Cashflow Optimizer:</strong> Analyzes spending habits and identifies opportunities to save.</li>
+              <li><strong>Wealth Builder:</strong> Provides long-term investment guidance with a focus on the Philippine market.</li>
+            </ul>
+          </div>
+          <div class="desc-subsection"><p>💰 <strong>Unified Financial Hub:</strong></p>
+            <ul>
+              <li>Manage all your bank accounts and e-wallets in one place.</li>
+              <li>Track transactions, categorize spending, and monitor recurring subscriptions seamlessly.</li>
+            </ul>
+          </div>
+          <div class="desc-subsection"><p>📈 <strong>Advanced Analytics & Forecasting:</strong></p>
+            <ul>
+              <li>Visualize your financial health with real-time charts and dashboards.</li>
+              <li>Leverage AI-powered predictions to anticipate future expenses and make informed decisions.</li>
+            </ul>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>How We Built It: Tech Stack</h4>
+          <table>
+            <thead><tr><th>Category</th><th>Technologies</th></tr></thead>
+            <tbody>
+              <tr><td>Frontend</td><td>HTML5, CSS3, JavaScript (ES6+)</td></tr>
+              <tr><td>Backend</td><td>Node.js, Express.js</td></tr>
+              <tr><td>Database</td><td>Firebase Firestore</td></tr>
+              <tr><td>AI</td><td>Llama 3 (running locally)</td></tr>
+              <tr><td>Platform</td><td>Firebase (Auth, Hosting)</td></tr>
+              <tr><td>Libraries</td><td>Chart.js, Helmet, Express Rate Limit</td></tr>
+              <tr><td>Dev Tools</td><td>Jest, Nodemon, Sentry</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Project Overview</h4>
+          <p>Kita-kita is a comprehensive AI-powered banking and financial management platform that helps users track expenses, manage bank accounts, forecast financial trends, and make informed financial decisions through intelligent AI agents.</p>
+          <div class="desc-subsection"><h5>Key Features</h5>
+            <ul>
+              <li>🤖 <strong>AI Financial Agents:</strong> Multiple specialized AI assistants for different financial needs</li>
+              <li>💳 <strong>Transaction Management:</strong> Add, track, and categorize income/expense transactions</li>
+              <li>🏦 <strong>Bank Account Integration:</strong> Manage multiple bank accounts and e-wallets</li>
+              <li>📊 <strong>Financial Analytics:</strong> Real-time charts and financial health monitoring</li>
+              <li>🔮 <strong>Expense Forecasting:</strong> AI-powered predictions for future expenses</li>
+              <li>📱 <strong>Subscription Management:</strong> Track and optimize recurring payments</li>
+              <li>🕰️ <strong>Financial Time Machine:</strong> Explore alternate financial scenarios</li>
+              <li>💡 <strong>Ipon Coach:</strong> Personalized savings guidance and tips</li>
+            </ul>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Usage Guide</h4>
+          <div class="desc-subsection"><h5>Getting Started</h5>
+            <ol>
+              <li><strong>Sign Up/Login:</strong> Create an account or login with existing credentials</li>
+              <li><strong>Dashboard Overview:</strong> View your financial summary and recent transactions</li>
+              <li><strong>Add Bank Accounts:</strong> Set up your bank accounts and e-wallets</li>
+              <li><strong>Record Transactions:</strong> Add income and expense transactions</li>
+              <li><strong>Explore AI Agents:</strong> Use specialized AI assistants for financial guidance</li>
+            </ol>
+          </div>
+          <div class="desc-subsection"><h5>AI Agents & How to Use Them</h5>
+            <ol>
+              <li><strong>Debt Demolisher</strong>
+                <p><em>Purpose:</em> Creates a personalized and automated debt-elimination plan. It analyzes your liabilities and simulates the most effective payoff strategies (like the Avalanche and Snowball methods) to help you become debt-free faster.</p>
+                <p><em>How to Test:</em></p>
+                <ul>
+                  <li>Link accounts that have a negative balance (e.g., credit cards, loans).</li>
+                  <li>Navigate to the "Debt Demolisher" agent from the dashboard.</li>
+                  <li>The agent will automatically analyze your debt and present you with a tailored repayment plan, showing you the estimated payoff date and potential interest savings.</li>
+                </ul>
+              </li>
+              <li><strong>Cashflow Optimizer</strong>
+                <p><em>Purpose:</em> Analyzes your spending habits to identify opportunities for improvement. It automatically detects recurring subscriptions, highlights areas of high spending, and provides actionable tips to help you increase your savings.</p>
+                <p><em>How to Test:</em></p>
+                <ul>
+                  <li>Ensure you have a variety of transactions logged, including recurring ones (like Netflix or Spotify).</li>
+                  <li>Access the "Cashflow Optimizer" from the dashboard.</li>
+                  <li>Review the agent's findings, which will include a list of your subscriptions and personalized recommendations for reducing expenses.</li>
+                </ul>
+              </li>
+              <li><strong>Wealth Builder</strong>
+                <p><em>Purpose:</em> Acts as your long-term investment and wealth-growth assistant. It provides guidance on building a diversified portfolio with a focus on the Philippine financial context, suggesting investments like index funds, UITFs, and Pag-IBIG MP2.</p>
+                <p><em>How to Test:</em></p>
+                <ul>
+                  <li>Make sure your income, savings, and investment accounts are set up.</li>
+                  <li>Open the "Wealth Builder" agent.</li>
+                  <li>Ask for an investment plan, and the agent will provide personalized recommendations based on your financial profile and long-term goals.</li>
+                </ul>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Philippine Financial Context</h4>
+          <p>Kita-Kita is specifically designed to address the unique financial challenges and opportunities in the Philippines:</p>
+          <div class="desc-subsection"><h5>Financial Inclusion</h5>
+            <ul>
+              <li><strong>Unbanked Population:</strong> Helps the 51.2 million unbanked Filipinos (BSP, 2021) access financial services</li>
+              <li><strong>Digital Adoption:</strong> Bridges the gap between traditional banking and digital finance adoption</li>
+              <li><strong>Rural Access:</strong> Provides financial services to underserved rural communities</li>
+            </ul>
+          </div>
+          <div class="desc-subsection"><h5>Philippine-Specific Features</h5>
+            <ul>
+              <li><strong>Local Financial Products:</strong> Integration with popular Philippine e-wallets (GCash, Maya, etc.)</li>
+              <li><strong>Peso-Optimized Budgeting:</strong> Budgeting templates tailored to Philippine cost of living</li>
+              <li><strong>BSP Compliance:</strong> All advice follows Bangko Sentral ng Pilipinas regulations</li>
+              <li><strong>Tax Optimization:</strong> Guidance on Philippine tax laws and BIR requirements</li>
+              <li><strong>OFW Support:</strong> Specialized advice for Overseas Filipino Workers on remittances and investments</li>
+            </ul>
+          </div>
+          <div class="desc-subsection"><h5>Economic Impact</h5>
+            <ul>
+              <li><strong>Financial Literacy:</strong> Addresses the critical need for improved financial education</li>
+              <li><strong>MSME Support:</strong> Specialized guidance for micro, small, and medium enterprises</li>
+              <li><strong>Sustainable Development:</strong> Aligned with Philippine Development Plan 2023–2028</li>
+            </ul>
+          </div>
+        </div>`;
+      } else if (data.title.trim() === 'DokQ' || data.title.includes('DokQ')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `
+        <div class="desc-section"><h4>DokQ — Smart Queuing and Appointments for Healthcare</h4>
+          <p>DokQ is an integrated platform for discovering healthcare facilities and managing appointments. It focuses on reducing wait times, improving clinic efficiency, and giving patients a simple, modern experience on web and mobile.</p>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Highlights</h4>
+          <ul>
+            <li>Simple and secure authentication (email or Google)</li>
+            <li>Fast appointment booking and editing</li>
+            <li>Patient dashboard with consult history and documents</li>
+            <li>Facility discovery with filters and details</li>
+            <li>Accessible UI, responsive across devices</li>
+          </ul>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Environment variables</h4>
+          <p>Create an <code>.env.local</code> (used by Vite) with the following keys:</p>
+          <pre><code>VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+VITE_FIREBASE_MEASUREMENT_ID=</code></pre>
+          <p>You can verify your environment locally:</p>
+          <pre><code>npm run verify-env</code></pre>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Project scripts</h4>
+          <pre><code>npm run dev        # Start Vite dev server
+npm run build      # Build frontend
+npm run build:all  # Build frontend + API
+npm run start      # Start API/server (production)
+npm run test       # Run unit tests (Vitest)
+npm run lint       # Lint + Prettier check
+npm run lint:fix   # Autofix lint errors & format</code></pre>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Tech stack</h4>
+          <ul>
+            <li>React, TypeScript, Vite</li>
+            <li>Node.js/Express for API</li>
+            <li>Firebase (Auth, Firestore, Storage)</li>
+            <li>ESLint, Prettier, Vitest</li>
+            <li>Vercel / Docker for deployment</li>
+          </ul>
+        </div>`;
       } else {
         projectDescription.classList.remove('rich');
         projectDescription.textContent = data.description;

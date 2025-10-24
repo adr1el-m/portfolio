@@ -320,6 +320,9 @@ main {
     inset 0 0 30px rgba(255, 219, 112, 0.02);
 }
 
+/* Removed :has() overflow toggle to prevent sidebar width jump */
+/* (Tooltips now render via a body-level portal) */
+
 @keyframes sidebarGradient {
   0% {
     background-position: 0% 50%;
@@ -1024,6 +1027,8 @@ main {
   gap: 15px;
   padding-bottom: 4px;
   padding-left: 7px;
+  position: relative;
+  z-index: 2;
 }
 
 .social-item {
@@ -1069,8 +1074,8 @@ main {
   content: attr(data-tooltip);
   position: absolute;
   bottom: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%) translateY(-5px);
+  left: 0;
+  transform: translateY(-5px);
   background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
   color: #fff;
   padding: 8px 12px;
@@ -1083,27 +1088,37 @@ main {
   transition: all 0.3s ease;
   border: 1px solid rgba(255, 219, 112, 0.3);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  z-index: 100;
+  z-index: 10000;
 }
 
 [data-tooltip]::after {
   content: '';
   position: absolute;
   bottom: calc(100% + 4px);
-  left: 50%;
-  transform: translateX(-50%);
+  left: 12px;
+  transform: none;
   border: 6px solid transparent;
   border-top-color: #2c2c2c;
   opacity: 0;
   pointer-events: none;
   transition: all 0.3s ease;
-  z-index: 100;
+  z-index: 10000;
 }
 
-[data-tooltip]:hover::before,
+[data-tooltip]:hover::before {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 [data-tooltip]:hover::after {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transform: none;
+}
+
+/* Disable pseudo-element tooltips when portal is active */
+body.has-tooltip-portal .sidebar [data-tooltip]::before,
+body.has-tooltip-portal .sidebar [data-tooltip]::after {
+  content: none !important;
 }
 
 .navbar {
@@ -1737,8 +1752,25 @@ main {
   transition: transform var(--transition-2);
 }
 
+/* Ensure video previews in project cards match image styling */
+.project-img video,
+.project-card-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none; /* do not interfere with hover overlay and clicks */
+}
+
 .project-item > a:hover .project-img img {
   transform: scale(1.1);
+}
+
+/* Match hover zoom effect for video previews */
+.project-item > a:hover .project-img video,
+.project-item > a:hover .project-card-video {
+  transform: scale(1.1);
+  transition: transform var(--transition-2);
 }
 
 .project-title,
@@ -2979,9 +3011,9 @@ article.active {
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
+  line-height: 1;
   font-size: 28px;
   cursor: pointer;
   color: #ffdb70;
@@ -3017,6 +3049,7 @@ article.active {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible;
 }
 
 .project-gallery-image-container {
@@ -3025,8 +3058,9 @@ article.active {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px 60px;
+  padding: 20px 100px; /* extra horizontal space so buttons don’t overlap media */
   position: relative;
+  box-sizing: border-box;
 }
 
 .project-gallery-image {
@@ -3044,19 +3078,39 @@ article.active {
   transform: scale(1.02);
 }
 
+/* Video element styles for project modal */
+.project-gallery-video {
+  position: relative;
+  z-index: 1;
+  display: block;
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  object-fit: contain;
+  background: #000;
+}
+
 .project-gallery-counter {
   position: absolute;
-  bottom: 30px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(26, 26, 26, 0.9);
   color: #ffdb70;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 0.9rem;
+  padding: 8px 14px;
+  border-radius: 18px;
+  font-size: 0.95rem;
   font-weight: 600;
   border: 1px solid rgba(255, 219, 112, 0.3);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  writing-mode: horizontal-tb; /* ensure horizontal layout */
+  white-space: nowrap;
 }
 
 .project-gallery-prev,
@@ -3064,8 +3118,8 @@ article.active {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(26, 26, 26, 0.8);
-  border: 1px solid rgba(255, 219, 112, 0.4);
+  background: rgba(26, 26, 26, 0.85);
+  border: 1px solid rgba(255, 219, 112, 0.35);
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -3074,19 +3128,19 @@ article.active {
   justify-content: center;
   cursor: pointer;
   color: #ffdb70;
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 300;
-  transition: all 0.3s ease;
-  z-index: 2;
+  transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+  z-index: 5; /* ensure above container but placed outside edges */
   backdrop-filter: blur(10px);
 }
 
 .project-gallery-prev {
-  left: 15px;
+  left: -22px; /* sit just outside the gallery edge */
 }
 
 .project-gallery-next {
-  right: 15px;
+  right: -22px; /* sit just outside the gallery edge */
 }
 
 .project-gallery-prev:hover,
@@ -4051,6 +4105,11 @@ article.active {
   padding: 0;
 }
 
+.achievement-card.visible {
+  opacity: 1;
+  transform: translateY(0) rotateX(0);
+}
+
 .achievement-card {
   background: linear-gradient(145deg, var(--eerie-black-2), var(--eerie-black-1));
   border: 2px solid transparent;
@@ -4064,6 +4123,7 @@ article.active {
   opacity: 0;
   transform: translateY(50px) rotateX(-10deg);
   animation: awardEntrance 0.8s ease-out forwards;
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .achievement-card:nth-child(1) { animation-delay: 0.1s; }
@@ -4255,8 +4315,8 @@ article.active {
   cursor: pointer;
   width: 400px;      /* Fixed width */
   min-width: 600px;  /* Fixed minimum width */
-  height: 50px;      /* Fixed height */
-  overflow: hidden;  /* Hide any overflowing content */
+  height: auto;      /* Allow card content to be fully visible */
+  overflow: visible; /* Show full content */
   box-sizing: border-box;
   width: auto !important; min-width: 0 !important; /* Let width adapt to content */
   flex: 0 0 auto; /* New line: prevent the panel from shrinking */

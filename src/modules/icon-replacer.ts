@@ -17,7 +17,8 @@ export class IconReplacer {
     'book-outline': '📚',
     'arrow-up-outline': '↑',
     'sunny-outline': '☀️',
-    'eye-outline': '👁️'
+    'eye-outline': '👁️',
+    'checkmark-circle': '✅'
   };
 
   constructor() {

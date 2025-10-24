@@ -273,19 +273,18 @@ export class PerformanceMonitor {
    * Generate performance report
    */
   public generateReport(): void {
-    console.group('📊 Performance Report');
-    console.log('Overall Score:', this.getPerformanceScore() + '/100');
-    console.log('\n--- Core Web Vitals ---');
+    logger.log('📊 Performance Report');
+    logger.log('Overall Score:', this.getPerformanceScore() + '/100');
+    logger.log('\n--- Core Web Vitals ---');
     this.metrics.forEach((report, name) => {
-      console.log(`${name}: ${report.value} (${report.rating})`);
+      logger.log(`${name}: ${report.value} (${report.rating})`);
     });
     if (this.budgetViolations.length > 0) {
-      console.log('\n--- Budget Violations ---');
-      this.budgetViolations.forEach((violation) => console.log(`❌ ${violation}`));
+      logger.log('\n--- Budget Violations ---');
+      this.budgetViolations.forEach((violation) => logger.log(`❌ ${violation}`));
     } else {
-      console.log('\n✅ All metrics within budget!');
+      logger.log('\n✅ All metrics within budget!');
     }
-    console.groupEnd();
   }
 
   /**
@@ -296,7 +295,7 @@ export class PerformanceMonitor {
     const grade = score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : score >= 60 ? 'D' : 'F';
     const color = score >= 90 ? '#00C853' : score >= 80 ? '#64DD17' : score >= 70 ? '#FFD600' : score >= 60 ? '#FF6D00' : '#DD2C00';
 
-    console.log(
+    logger.log(
       `%c 🚀 Performance Score: ${score}/100 (Grade: ${grade}) `,
       `background: ${color}; color: white; font-weight: bold; padding: 8px 16px; border-radius: 4px; font-size: 14px;`
     );

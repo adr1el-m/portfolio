@@ -71,10 +71,11 @@ class PortfolioApp {
       });
 
       import('./modules/chatbot').then(({ ChatbotManager }) => {
-        if (window.Portfolio.lazy) {
+        if (window.Portfolio?.lazy) {
           window.Portfolio.lazy.ChatbotManager = new ChatbotManager();
         }
       });
+
 
       import('./modules/about-enhancements').then(({ AboutEnhancements }) => {
         new AboutEnhancements();
@@ -82,6 +83,11 @@ class PortfolioApp {
 
       import('./modules/awards-accordion').then(({ AwardsAccordion }) => {
         new AwardsAccordion();
+      });
+
+      // Initialize Tooltip Portal to prevent sidebar tooltip clipping
+      import('./modules/tooltip-portal').then(({ TooltipPortal }) => {
+        new TooltipPortal();
       });
 
       // Initialize Icon Replacer

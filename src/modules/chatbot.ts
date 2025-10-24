@@ -138,8 +138,8 @@ export class ChatbotManager {
       botResponse = "Adriel has won multiple hackathons and competitions! He placed 1st in Technovation Summit 2025, 3rd in BPI DataWave 2025, and has many other achievements. Check the About section for the full list!";
     } else if (message.includes('contact') || message.includes('email') || message.includes('reach')) {
       botResponse = "You can reach Adriel at dagsmagalona@gmail.com or connect on LinkedIn, GitHub, or other social platforms. Check the sidebar for all contact links!";
-    } else if (message.includes('experience') || message.includes('intern')) {
-      botResponse = "Adriel is currently an intern at exkwelabs, where he's gaining hands-on experience in software development and working on innovative projects.";
+    } else if (message.includes('experience') || message.includes('intern') || message.includes('workflow')) {
+      botResponse = "Adriel is currently a Workflow Architect at Eskwelabs, focusing on designing and optimizing team workflows, automation, and operational documentation.";
     } else if (message.includes('scholarship')) {
       botResponse = "Adriel is a DOST-SEI Scholar under RA 7687 and a MACEMCO Scholar, recognizing his academic excellence and commitment to science and technology.";
     } else if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {

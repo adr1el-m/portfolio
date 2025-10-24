@@ -66,10 +66,15 @@ export class SocialLinksManager {
     // Create new success message
     const successDiv = document.createElement('div');
     successDiv.className = 'copy-success';
-    successDiv.innerHTML = `
-      <ion-icon name="checkmark-circle"></ion-icon>
-      <span>${message}</span>
-    `;
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'success-icon';
+    iconSpan.textContent = '✅';
+    iconSpan.setAttribute('aria-hidden', 'true');
+
+    const textSpan = document.createElement('span');
+    textSpan.textContent = message;
+
+    successDiv.append(iconSpan, textSpan);
     
     document.body.appendChild(successDiv);
     

@@ -38,6 +38,7 @@ export interface ProjectData {
   webpImages: string[];
   description: string;
   technologies: string;
+  videoUrl?: string;
   githubUrl?: string;
   liveUrl?: string;
 }

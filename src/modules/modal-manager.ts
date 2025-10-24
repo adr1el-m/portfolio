@@ -1,5 +1,6 @@
 import type { AchievementData, ProjectData } from '@/types';
 import { logger } from '@/config';
+import { SecurityManager } from '@/modules/security';
 
 /**
  * Modal Manager Module
@@ -176,6 +177,25 @@ export class ModalManager {
       sliderControls.style.display = this.images.length > 1 ? 'flex' : 'none';
     }
 
+    // Ensure the image container is clean from any previous error/skeleton overlays
+    const sliderContainer = document.querySelector('.achievement-slider') as HTMLElement;
+    if (sliderContainer) {
+      const errorPlaceholder = sliderContainer.querySelector('.image-error-placeholder');
+      if (errorPlaceholder) errorPlaceholder.remove();
+      const loadingSkeleton = sliderContainer.querySelector('.image-loading-skeleton');
+      if (loadingSkeleton) loadingSkeleton.remove();
+      const globalSkeleton = sliderContainer.querySelector('.image-skeleton');
+      if (globalSkeleton) globalSkeleton.remove();
+    }
+
+    // Reset image element state and force eager loading while modal is visible
+    if (this.imgEl) {
+      this.imgEl.style.display = 'block';
+      this.imgEl.classList.remove('image-error');
+      this.imgEl.setAttribute('loading', 'eager');
+      this.imgEl.alt = `${data.title} - Image ${this.currentIndex + 1}`;
+    }
+
     this.updateImage();
     
     if (this.modalEl) {
@@ -195,6 +215,7 @@ export class ModalManager {
     const technologies = element.getAttribute('data-technologies') || '';
     const githubUrl = element.getAttribute('data-github') || '';
     const liveUrl = element.getAttribute('data-live') || '';
+    const videoUrl = element.getAttribute('data-video') || '';
 
     try {
       const images = JSON.parse(imagesStr);
@@ -207,6 +228,7 @@ export class ModalManager {
         webpImages,
         description,
         technologies,
+        videoUrl: videoUrl || undefined,
         githubUrl,
         liveUrl,
       };
@@ -234,6 +256,15 @@ export class ModalManager {
     const projectLive = document.querySelector('.project-live') as HTMLAnchorElement;
     const currentImageNum = document.querySelector('.current-image-number');
     const totalImagesNum = document.querySelector('.total-images');
+    const imageContainer = document.querySelector('.project-gallery-image-container') as HTMLElement;
+
+    // Clean up any image error placeholders that may overlay the media container
+    if (imageContainer) {
+      const errorPlaceholder = imageContainer.querySelector('.image-error-placeholder');
+      if (errorPlaceholder) errorPlaceholder.remove();
+      const skeleton = imageContainer.querySelector('.image-loading-skeleton');
+      if (skeleton) skeleton.remove();
+    }
 
     // Set project data
     if (projectTitle) projectTitle.textContent = data.title;
@@ -244,19 +275,27 @@ export class ModalManager {
     if (currentImageNum) currentImageNum.textContent = '1';
     if (totalImagesNum) totalImagesNum.textContent = this.images.length.toString();
 
-    // Show/hide navigation buttons
+    // Show media controls (image slider or video)
     const prevBtn = document.querySelector('.project-gallery-prev') as HTMLElement;
     const nextBtn = document.querySelector('.project-gallery-next') as HTMLElement;
     const counter = document.querySelector('.project-gallery-counter') as HTMLElement;
-    
-    if (this.images.length > 1) {
-      if (prevBtn) prevBtn.style.display = 'flex';
-      if (nextBtn) nextBtn.style.display = 'flex';
-      if (counter) counter.style.display = 'block';
-    } else {
+    const projectVideo = document.getElementById('project-modal-video') as HTMLVideoElement;
+
+    if (data.videoUrl) {
+      // Hide slider controls when video is present
       if (prevBtn) prevBtn.style.display = 'none';
       if (nextBtn) nextBtn.style.display = 'none';
       if (counter) counter.style.display = 'none';
+    } else {
+      if (this.images.length > 1) {
+        if (prevBtn) prevBtn.style.display = 'flex';
+        if (nextBtn) nextBtn.style.display = 'flex';
+        if (counter) counter.style.display = 'block';
+      } else {
+        if (prevBtn) prevBtn.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = 'none';
+        if (counter) counter.style.display = 'none';
+      }
     }
 
     // Handle GitHub link
@@ -279,8 +318,26 @@ export class ModalManager {
       }
     }
 
-    // Set initial image
-    if (projectImage && this.images.length > 0) {
+    // Set initial media (video or image)
+    if (data.videoUrl && projectVideo) {
+      // Show video, hide image
+      if (projectImage) {
+        projectImage.style.display = 'none';
+        projectImage.src = '';
+        projectImage.classList.remove('image-error');
+      }
+      projectVideo.style.display = 'block';
+      projectVideo.src = data.videoUrl;
+      projectVideo.load();
+    } else if (projectImage && this.images.length > 0) {
+      // Show image, hide video
+      if (projectVideo) {
+        projectVideo.pause();
+        projectVideo.removeAttribute('src');
+        projectVideo.load();
+        projectVideo.style.display = 'none';
+      }
+      projectImage.style.display = 'block';
       projectImage.src = this.images[0];
       projectImage.alt = `${data.title} - Screenshot 1`;
     }
@@ -351,8 +408,8 @@ export class ModalManager {
     }
     
     teammatesSection.style.display = 'block';
-    teammatesList.innerHTML = '';
-    
+    teammatesList.textContent = '';
+    // Build teammate items using safe DOM APIs
     teammates.forEach((teammate) => {
       const initials = teammate.name
         .split(' ')
@@ -363,14 +420,28 @@ export class ModalManager {
       
       const teammateEl = document.createElement('div');
       teammateEl.className = 'teammate-item';
-      teammateEl.innerHTML = `
-        <div class="teammate-avatar">${initials}</div>
-        <div class="teammate-info">
-          <h5 class="teammate-name">${teammate.name}</h5>
-          ${teammate.role ? `<p class="teammate-role">${teammate.role}</p>` : ''}
-        </div>
-      `;
       
+      const avatarEl = document.createElement('div');
+      avatarEl.className = 'teammate-avatar';
+      avatarEl.textContent = initials;
+      
+      const infoEl = document.createElement('div');
+      infoEl.className = 'teammate-info';
+      
+      const nameEl = document.createElement('h5');
+      nameEl.className = 'teammate-name';
+      nameEl.textContent = teammate.name;
+      infoEl.appendChild(nameEl);
+      
+      if (teammate.role) {
+        const roleEl = document.createElement('p');
+        roleEl.className = 'teammate-role';
+        roleEl.textContent = teammate.role;
+        infoEl.appendChild(roleEl);
+      }
+      
+      teammateEl.appendChild(avatarEl);
+      teammateEl.appendChild(infoEl);
       teammatesList.appendChild(teammateEl);
     });
   }
@@ -386,12 +457,12 @@ export class ModalManager {
     }
     
     githubSection.style.display = 'block';
-    githubSection.innerHTML = `
-      <a href="${githubUrl}" target="_blank" rel="noopener noreferrer" class="github-button">
-        <ion-icon name="logo-github"></ion-icon>
-        <span>Visit Project on GitHub</span>
-      </a>
-    `;
+    githubSection.textContent = '';
+    const link = SecurityManager.createSafeAnchor(githubUrl, 'Visit Project on GitHub', 'github-button', true);
+    const icon = document.createElement('ion-icon');
+    icon.setAttribute('name', 'logo-github');
+    link.prepend(icon);
+    githubSection.appendChild(link);
   }
 
   public closeAchievementModal(): void {
@@ -420,10 +491,14 @@ export class ModalManager {
     const slider = img.parentElement;
     if (slider) {
       this.showImageLoader(slider);
+      // Also ensure any lingering error placeholders are removed
+      const errorPlaceholder = slider.querySelector('.image-error-placeholder');
+      if (errorPlaceholder) errorPlaceholder.remove();
     }
     
     // Fade out, swap, fade in
     img.style.opacity = '0';
+    img.style.display = 'block';
     setTimeout(() => {
       img.src = src;
       img.onload = () => {
@@ -433,6 +508,8 @@ export class ModalManager {
       img.onerror = () => {
         this.hideImageLoader(slider);
         logger.error('Failed to load image:', src);
+        // Make sure image remains visible for a retry if needed
+        img.style.display = 'block';
       };
     }, 120);
   }

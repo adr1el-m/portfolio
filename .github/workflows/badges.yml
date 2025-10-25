@@ -10,6 +10,8 @@ on:
 jobs:
   generate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -43,11 +45,12 @@ jobs:
         run: npx vitest run --coverage.enabled --coverage.reporter json-summary --coverage.reporter text-summary
 
       - name: Generate coverage badge
-        uses: wjervis7/vitest-badge-action@v1.1.0
+        uses: wjervis7/vitest-badge-action@v1.0.0
         with:
-          json-summary-path: coverage/coverage-summary.json
+          summary-path: coverage/coverage-summary.json
           badge-path: public/badges/coverage.svg
-          label: Coverage
+          badge-text: Coverage
+          upload-badge: false
 
       - name: Commit badges
         uses: stefanzweifel/git-auto-commit-action@v5

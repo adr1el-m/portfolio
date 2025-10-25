@@ -22,6 +22,7 @@ export class ModalManager {
   private achievementJpegImages: string[] = [];
   private projectWebpImages: string[] = [];
   private projectJpegImages: string[] = [];
+  private previousFocus: HTMLElement | null = null;
 
   constructor() {
     this.init();
@@ -216,6 +217,7 @@ export class ModalManager {
 
   public openAchievementModal(data: AchievementData): void {
     logger.log('Opening achievement modal with data:', data);
+    this.previousFocus = document.activeElement as HTMLElement | null;
     
     // Ensure ARIA linkage between modal and title
     if (this.titleEl && !this.titleEl.id) {
@@ -224,6 +226,8 @@ export class ModalManager {
     if (this.modalEl) {
       this.modalEl.setAttribute('aria-labelledby', this.titleEl?.id || 'achievement-modal-title');
       this.modalEl.setAttribute('aria-hidden', 'false');
+      this.modalEl.setAttribute('tabindex', '-1');
+      (this.modalEl as HTMLElement).focus();
     }
 
     // Use WebP if supported, fallback to regular images
@@ -418,6 +422,7 @@ export class ModalManager {
 
   public openProjectModal(data: ProjectData): void {
     logger.log('Opening project modal for:', data.title);
+    this.previousFocus = document.activeElement as HTMLElement | null;
     
     // Use WebP if supported, fallback to regular images
     const supportsWebp = document.documentElement.classList.contains('webp');
@@ -1162,6 +1167,9 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
     // Show modal
     if (projectModal) {
       projectModal.style.display = 'flex';
+      projectModal.setAttribute('aria-hidden', 'false');
+      projectModal.setAttribute('tabindex', '-1');
+      (projectModal as HTMLElement).focus();
       logger.log('Modal opened for project:', data.title);
     }
     
@@ -1185,9 +1193,20 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
       }
     }
 
+    // Restore focus before hiding to avoid aria-hidden on focused descendants
+    const active = document.activeElement as HTMLElement | null;
+    if (projectModal && active && projectModal.contains(active)) {
+      active.blur();
+    }
+    if (this.previousFocus) {
+      try { this.previousFocus.focus(); } catch {}
+    }
+
     if (projectModal) {
+      projectModal.setAttribute('aria-hidden', 'true');
       projectModal.style.display = 'none';
     }
+    this.previousFocus = null;
     document.body.style.overflow = ''; // Restore scrolling
   }
 
@@ -1377,10 +1396,20 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
   }
 
   public closeAchievementModal(): void {
+    // Move focus back to the element that opened the modal before hiding
+    const active = document.activeElement as HTMLElement | null;
+    if (this.modalEl && active && this.modalEl.contains(active)) {
+      active.blur();
+    }
+    if (this.previousFocus) {
+      try { this.previousFocus.focus(); } catch {}
+    }
+
     this.modalEl?.classList.remove('active');
     if (this.modalEl) {
       this.modalEl.setAttribute('aria-hidden', 'true');
     }
+    this.previousFocus = null;
     document.body.style.overflow = ''; // Restore scrolling
   }
 
@@ -1442,6 +1471,8 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
       img.sizes = '(max-width: 768px) 90vw, 50vw';
       img.onload = () => {
         this.hideImageLoader(slider);
+        // Apply adaptive fit on mobile to avoid letterboxing/cropping
+        this.applyAchievementImageFit(img, slider as HTMLElement | null);
         requestAnimationFrame(() => (img.style.opacity = '1'));
       };
       img.onerror = () => {
@@ -1493,5 +1524,18 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
       skeleton.classList.add('fade-out');
       setTimeout(() => skeleton.remove(), 300);
     }
+  }
+
+  /**
+   * Dynamically choose contain vs cover for mobile images to fill space without odd bars.
+   */
+  private applyAchievementImageFit(img: HTMLImageElement, slider: HTMLElement | null): void {
+    if (!slider) return;
+    const isMobile = window.innerWidth <= 600;
+    if (!isMobile) return;
+
+    // Always prioritize showing the full image on mobile
+    img.classList.remove('fit-cover', 'fit-contain');
+    img.classList.add('fit-contain');
   }
 }

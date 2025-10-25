@@ -4626,9 +4626,10 @@ article.active {
 }
 
 .achievement-slide-image {
-  width: 600px;       /* Fixed width – adjust as needed */
-  height: 400px;      /* Fixed height – adjust as needed */
-  object-fit: contain;/* Scale the image without cropping it */
+  width: 100%;
+  height: auto;
+  max-height: min(58vh, 620px);
+  object-fit: contain;
   border-radius: 4px;
   display: block;
 }
@@ -4760,12 +4761,15 @@ article.active {
     padding: 15px;
     margin: 0 10px;
     flex-direction: column;
+    max-height: 98vh;
+    height: auto;
   }
 
   /* Stack the left (media) and right (info) columns vertically */
   .achievement-modal-body {
     flex-direction: column;
     gap: 15px;
+    overflow-y: auto;
   }
 
   /* Make sure the media section spans the full width */
@@ -4774,13 +4778,20 @@ article.active {
     min-height: 200px;
   }
 
-  /* Adjust the image size to use the available width and auto height */
+  /* Responsive image sizing: adapt based on aspect ratio */
+  .achievement-slider {
+    height: 65vh;
+    max-height: 65vh;
+    overflow: visible;
+  }
   .achievement-slide-image {
     width: 100%;
     height: auto;
-    max-height: 250px;
-    object-fit: contain;
+    max-height: 65vh;
+    border-radius: 14px;
   }
+  .achievement-slide-image.fit-contain { object-fit: contain; height: auto; max-height: 65vh; }
+  .achievement-slide-image.fit-cover { object-fit: cover; height: 100%; max-height: 100%; }
 
   /* Adjust the info section for better readability */
   .achievement-info {
@@ -4826,9 +4837,20 @@ article.active {
     margin: 0 5px;
   }
 
-  .achievement-slide-image {
-    max-height: 200px;
+  .achievement-slider {
+    height: 60vh;
+    max-height: 60vh;
+    overflow: visible;
   }
+  .achievement-slide-image {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    border-radius: 14px;
+    object-fit: contain;
+  }
+  .achievement-slide-image.fit-contain { object-fit: contain; }
+  .achievement-slide-image.fit-cover { object-fit: cover; height: 100%; max-height: 100%; }
 
   .achievement-info h3 {
     font-size: 14px;
@@ -5079,9 +5101,7 @@ picture img {
   }
 
   .award-badge {
-    font-size: 24px;
-    top: 8px;
-    left: 8px;
+    display: none !important;
   }
 
   .award-ribbon {
@@ -5224,6 +5244,10 @@ picture img {
 
   .achievements-list {
     gap: 12px;
+  }
+
+  .award-badge {
+    display: none !important;
   }
 }
 

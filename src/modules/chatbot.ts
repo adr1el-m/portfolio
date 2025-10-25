@@ -210,8 +210,9 @@ export class ChatbotManager {
         this.focusTrapHandler = undefined;
       }
 
-      // Return focus to the trigger button to avoid aria-hidden focus violations
-      try { this.chatbotBtn?.focus({ preventScroll: true }); } catch {}
+      // Restore focus to the trigger or previous element
+      const restoreTarget = this.chatbotBtn ?? this.previouslyFocusedElement;
+      try { restoreTarget?.focus({ preventScroll: true }); } catch {}
     }
   }
 

@@ -2,6 +2,9 @@ import type { ChatMessage } from '@/types';
 import { logger } from '@/config';
 import { KB } from '@/data/knowledge-base';
 
+type ProjectItem = (typeof KB.projects)[number];
+type AchievementItem = (typeof KB.achievements)[number];
+
 /**
  * Chatbot Manager Module
  * Handles the chatbot functionality.
@@ -14,19 +17,91 @@ export class ChatbotManager {
   private messagesContainer: HTMLElement | null;
   private inputField: HTMLInputElement | null;
   private sendButton: HTMLElement | null;
-  private persona = {
-    name: 'AdrAI',
-    identity: "I'm AdrAI, Adriel's helpful, professional portfolio assistant.",
-    tone: 'friendly, concise, and pragmatic',
-    guardrails: [
-      'No medical, legal, or financial advice beyond portfolio context',
-      'No personal data handling beyond public info',
-      'Avoid offensive, unsafe, or disallowed content',
-    ],
-  };
+
   private conversationSummary: string = '';
   private summaryEveryTurns = 10;
   private lastUserMessage: string | null = null;
+  private detailedMode: boolean = false;
+
+  // --- Smart helpers for matching and detail preference ---
+  private normalize(text: string): string {
+    return text.toLowerCase().replace(/[^a-z0-9\s\-]/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  private prefersDetailed(userMessage: string): boolean {
+    return /(detail|deep|explain|elaborate|comprehensive|thorough|more info|tell me more|smart)/i.test(userMessage);
+  }
+
+  private findProject(userMessage: string) {
+    const m = this.normalize(userMessage);
+    let bestScore = -Infinity;
+    let bestProject: ProjectItem | null = null;
+    KB.projects.forEach((p) => {
+      const t = this.normalize(p.title);
+      let score = 0;
+      if (m.includes(t)) score += 3;
+      t.split(' ').forEach((tok) => { if (tok && m.includes(tok)) score += 1; });
+      if (/ai|agent|ml/.test(m) && /ai|agent|ml/i.test(p.description + ' ' + p.technologies)) score += 2;
+      if (score > bestScore) { bestScore = score; bestProject = p; }
+    });
+    if (bestScore >= 2 && bestProject) return bestProject;
+    return null;
+  }
+
+  private findAchievement(userMessage: string) {
+    const m = this.normalize(userMessage);
+    let bestScore = -Infinity;
+    let bestAchievement: AchievementItem | null = null;
+    KB.achievements.forEach((a) => {
+      const t = this.normalize(a.title + ' ' + (a.projectTitle || ''));
+      let score = 0;
+      if (m.includes(t)) score += 3;
+      t.split(' ').forEach((tok) => { if (tok && m.includes(tok)) score += 1; });
+      if (score > bestScore) { bestScore = score; bestAchievement = a; }
+    });
+    if (bestScore >= 2 && bestAchievement) return bestAchievement;
+    return null;
+  }
+
+  private buildProjectDetailsHTML(p: ProjectItem): string {
+    const links: string[] = [];
+    if (p.liveUrl) links.push(`Live: <a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer">${p.liveUrl}</a>`);
+    if (p.githubUrl) links.push(`GitHub: <a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer">repo</a>`);
+    if (p.videoUrl) links.push(`Demo: <a href="${p.videoUrl}" target="_blank" rel="noopener noreferrer">video</a>`);
+    if (p.codedexUrl) links.push(`Codedex: <a href="${p.codedexUrl}" target="_blank" rel="noopener noreferrer">profile</a>`);
+
+    return [
+      `<strong>${p.title}</strong> — ${p.category}`,
+      `${p.description}`,
+      `<em>Stack:</em> ${p.technologies}`,
+      links.length ? links.join(' | ') : 'No external links available',
+    ].join('<br>');
+  }
+
+  private buildSkillsHTML(): string {
+    const s = KB.skills;
+    return [
+      `<strong>Core Skills</strong>: ${s.core.join(', ')}`,
+      `<strong>Technologies</strong>: ${s.technologies.join(', ')}`,
+    ].join('<br>');
+  }
+
+  private buildAchievementsHTML(a?: AchievementItem): string {
+    if (a) {
+      const links: string[] = [];
+      if (a.githubUrl) links.push(`GitHub: <a href="${a.githubUrl}" target="_blank" rel="noopener noreferrer">repo</a>`);
+      if (a.linkedinUrl) links.push(`Post: <a href="${a.linkedinUrl}" target="_blank" rel="noopener noreferrer">LinkedIn</a>`);
+      return [
+        `<strong>${a.title}</strong> — ${a.location} (${a.date})`,
+        `${a.description || 'Achievement details available on the honors section.'}`,
+        links.length ? links.join(' | ') : 'Links: n/a',
+      ].join('<br>');
+    }
+    const top = KB.achievements.slice(0, 3)
+      .map((ach) => `${ach.title} — ${ach.location}`)
+      .join('; ');
+    return `Top achievements: ${top}. Explore About → Honors & Awards for more.`;
+  }
 
   constructor() {
     this.chatbox = document.querySelector('.chatbox');
@@ -190,21 +265,43 @@ export class ChatbotManager {
     this.sendMessage();
   }
 
-  private detectIntent(userMessage: string): 'FAQ' | 'PROJECTS' | 'CONTACT' | 'SKILLS' | 'EDUCATION' | 'ACHIEVEMENTS' | 'GENERAL' {
+  private detectIntent(userMessage: string): 'FAQ' | 'PROJECTS' | 'PROJECT_DETAILS' | 'CONTACT' | 'SKILLS' | 'EDUCATION' | 'ACHIEVEMENTS' | 'ACHIEVEMENT_DETAILS' | 'RESUME' | 'ORGANIZATIONS' | 'GENERAL' {
     const m = userMessage.toLowerCase();
     if (/(faq|question|how|what|why)/.test(m)) return 'FAQ';
-    if (/(project|portfolio|work)/.test(m)) return 'PROJECTS';
+    if (/(resume|cv)/.test(m)) return 'RESUME';
+    if (/(org|organization|community|club)/.test(m)) return 'ORGANIZATIONS';
+    if (/(project|portfolio|work)/.test(m)) {
+      // If a specific project seems referenced, route to detail
+      const p = this.findProject(userMessage);
+      return p ? 'PROJECT_DETAILS' : 'PROJECTS';
+    }
     if (/(contact|email|reach|message)/.test(m)) return 'CONTACT';
     if (/(skill|tech|technology|stack)/.test(m)) return 'SKILLS';
     if (/(education|school|university|study)/.test(m)) return 'EDUCATION';
-    if (/(award|achievement|hackathon|win)/.test(m)) return 'ACHIEVEMENTS';
+    if (/(award|achievement|hackathon|win)/.test(m)) {
+      const a = this.findAchievement(userMessage);
+      return a ? 'ACHIEVEMENT_DETAILS' : 'ACHIEVEMENTS';
+    }
     return 'GENERAL';
   }
 
   private getSuggestions(intent: ReturnType<typeof this.detectIntent>): string[] {
+    const last = this.lastUserMessage || '';
+    const p = this.findProject(last);
+    const a = this.findAchievement(last);
+    if (intent === 'PROJECT_DETAILS' && p) {
+      const proj = p as ProjectItem;
+      const sugg = ['Open Projects section', 'Show tech stack', 'Any live demo?'];
+      if (proj.githubUrl) sugg.unshift('Open GitHub repo');
+      if (proj.liveUrl) sugg.unshift('Open live site');
+      return sugg;
+    }
+    if (intent === 'ACHIEVEMENT_DETAILS' && a) {
+      return ['Show awards timeline', 'Any related project?', 'Open honors section'];
+    }
     switch (intent) {
       case 'PROJECTS':
-        return ['Show recent projects', 'Link to Projects section', 'Which project used AI?'];
+        return ['Show recent projects', 'Which project used AI?', 'Link to Projects section'];
       case 'CONTACT':
         return ['What is your email?', 'How to connect on LinkedIn?', 'Share GitHub link'];
       case 'SKILLS':
@@ -215,6 +312,10 @@ export class ChatbotManager {
         return ['Top hackathon wins', 'Details on Technovation 2025', 'Show awards timeline'];
       case 'FAQ':
         return ['What can you do?', 'How is the site built?', 'Is there a resume?'];
+      case 'RESUME':
+        return ['Open resume', 'Share contact info', 'List skills'];
+      case 'ORGANIZATIONS':
+        return ['Show organizations', 'Any leadership roles?', 'Related achievements?'];
       default:
         return ['Show projects', 'Share contact info', 'List skills'];
     }
@@ -233,16 +334,23 @@ export class ChatbotManager {
   }
 
   private formatResponse(text: string, tone: 'concise'|'detailed'|'playful' = 'concise'): string {
-    const prefix = `${this.persona.identity}`;
     if (tone === 'concise') return `${text}`;
     if (tone === 'playful') return `${text} 🎉`;
-    // detailed
-    return `${text}${this.conversationSummary ? `\n\nBased on our chat: ${this.conversationSummary}` : ''}`;
+    return `${text}${this.conversationSummary ? `<br><em>Based on our chat:</em> ${this.conversationSummary}` : ''}`;
   }
 
 
   private routeIntent(intent: ReturnType<typeof this.detectIntent>, message: string): string {
     switch (intent) {
+      case 'PROJECT_DETAILS': {
+        const p = this.findProject(message);
+        if (p) return this.buildProjectDetailsHTML(p);
+        // Fallback
+        const top = KB.projects.slice(0, 3)
+          .map((p) => `${p.title} — ${p.technologies.split(';')[0]}`)
+          .join('; ');
+        return `Highlighted projects: ${top}. See Projects section for details and links.`;
+      }
       case 'PROJECTS': {
         const top = KB.projects.slice(0, 3)
           .map((p) => `${p.title} — ${p.technologies.split(';')[0]}`)
@@ -258,9 +366,12 @@ export class ChatbotManager {
           `Resume: <a href="${c.resumeUrl}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>.`,
         ].join('<br>');
       }
+      case 'RESUME': {
+        const c = KB.contact;
+        return `Resume: <a href="${c.resumeUrl}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>. For a quick glance, ask "skills" or "projects".`;
+      }
       case 'SKILLS': {
-        const s = KB.skills;
-        return `Core: ${s.core.join(', ')}. Technologies: ${s.technologies.join(', ')}.`;
+        return this.buildSkillsHTML();
       }
       case 'EDUCATION': {
         const e = KB.education
@@ -268,11 +379,15 @@ export class ChatbotManager {
           .join('; ');
         return `Education: ${e}.`;
       }
+      case 'ACHIEVEMENT_DETAILS': {
+        const a = this.findAchievement(message);
+        return this.buildAchievementsHTML(a || undefined);
+      }
       case 'ACHIEVEMENTS': {
-        const a = KB.achievements.slice(0, 3)
-          .map((ach) => `${ach.title} — ${ach.location}`)
-          .join('; ');
-        return `Top achievements: ${a}. Explore About → Honors & Awards for more.`;
+        return this.buildAchievementsHTML();
+      }
+      case 'ORGANIZATIONS': {
+        return `Organizations: ${KB.organizations.join('; ')}.`;
       }
       case 'FAQ': {
         return `I can help you navigate sections, share highlights, and surface links (e.g., resume, projects, achievements). Ask me anything about the portfolio!`;
@@ -322,8 +437,9 @@ export class ChatbotManager {
       return;
     }
 
+    this.detailedMode = this.prefersDetailed(userMessage) || this.detailedMode;
     const intent = this.detectIntent(userMessage);
     const botResponse = this.routeIntent(intent, userMessage);
-    this.addMessage(this.formatResponse(botResponse, 'concise'), 'bot');
+    this.addMessage(this.formatResponse(botResponse, this.detailedMode ? 'detailed' : 'concise'), 'bot');
   }
 }

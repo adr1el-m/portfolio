@@ -37,10 +37,9 @@
       ]
     }
   ],
-  "routes": [
-    { "src": "/offline", "dest": "/offline.html" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/offline", "destination": "/offline.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "redirects": [
     { "source": "/index.html", "destination": "/", "statusCode": 308 },

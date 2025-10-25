@@ -2,8 +2,8 @@
  * Main entry point for the TypeScript portfolio
  */
 
-// Load Vercel Analytics & Speed Insights only in production
-if (import.meta.env.PROD) {
+// Load Vercel Analytics & Speed Insights only in production on non-localhost
+if (import.meta.env.PROD && typeof window !== 'undefined' && !/^(localhost|127\.0\.0\.1)/.test(window.location.hostname)) {
   import('@vercel/analytics').then(({ inject }) => {
     try { inject(); } catch (err) { console.warn('Vercel Analytics injection failed:', err); }
   });

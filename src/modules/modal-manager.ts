@@ -1253,7 +1253,7 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
 
   private displayTeammates(teammates?: Array<{name: string; role?: string}>): void {
     const teammatesSection = document.querySelector('.achievement-teammates') as HTMLElement;
-    const teammatesList = document.querySelector('.teammates-list') as HTMLElement;
+    const teammatesList = document.querySelector('.teammates-list') as HTMLUListElement;
     
     if (!teammatesSection || !teammatesList) return;
     
@@ -1273,7 +1273,7 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
         .toUpperCase()
         .slice(0, 2);
       
-      const teammateEl = document.createElement('div');
+      const teammateEl = document.createElement('li');
       teammateEl.className = 'teammate-item';
       
       const avatarEl = document.createElement('div');
@@ -1331,8 +1331,8 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
     const visit = document.createElement('a');
     visit.href = '#projects';
     visit.className = 'github-button';
-    visit.setAttribute('role', 'button');
-    visit.setAttribute('aria-label', 'Visit project modal');
+    // accessibility: rely on link semantics and visible label
+    // remove role and aria-label to avoid label/content mismatch
     visit.innerHTML = '<span class="link-icon">🚀</span> Visit Project';
     visit.addEventListener('click', (e) => {
       e.preventDefault();

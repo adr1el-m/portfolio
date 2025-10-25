@@ -37,10 +37,7 @@ export class AccessibilityEnhancer {
     const achievementCards = document.querySelectorAll('.achievement-card');
     
     achievementCards.forEach((card) => {
-      // Add role and tabindex if not already present
-      if (!card.hasAttribute('role')) {
-        card.setAttribute('role', 'button');
-      }
+      // Ensure focusability without misusing roles
       if (!card.hasAttribute('tabindex')) {
         card.setAttribute('tabindex', '0');
       }
@@ -54,12 +51,9 @@ export class AccessibilityEnhancer {
         }
       });
 
-      // Add aria-label based on card content
-      if (!card.hasAttribute('aria-label')) {
-        const title = card.querySelector('.card-title')?.textContent || '';
-        const subtitle = card.querySelector('.card-subtitle')?.textContent || '';
-        const ariaLabel = `View details: ${title}${subtitle ? ' - ' + subtitle : ''}`;
-        card.setAttribute('aria-label', ariaLabel);
+      // Do not force aria-labels; rely on visible text for accessible names
+      if (card.hasAttribute('aria-label')) {
+        card.removeAttribute('aria-label');
       }
 
       // Add role="img" and aria-label to emojis

@@ -124,7 +124,6 @@ export class NavigationManager {
         navigationLinks.forEach((l) => l.classList.remove('active'));
         link.classList.add('active');
 
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         const finalize = () => {
           if (!this.isTransitioning) return;

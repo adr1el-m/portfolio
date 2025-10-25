@@ -24,6 +24,7 @@ import { PerformanceDashboard } from './modules/performance-dashboard';
 import { AccessibilityEnhancer } from './modules/accessibility-enhancer';
 import { logger } from './config';
 import type { Portfolio } from './types';
+import { TextPlaceholders } from './modules/text-placeholders';
 
 // Vercel Analytics & Speed Insights are loaded conditionally in production (see top of file);
 
@@ -65,6 +66,8 @@ class PortfolioApp {
 
       // Initialize all modules
       const securityManager = new SecurityManager();
+      // Apply text placeholders early to avoid image errors
+      new TextPlaceholders().init();
       const loadingManager = new LoadingManager();
       const imageOptimizer = new ImageOptimizer();
       const modalManager = new ModalManager();

@@ -39,8 +39,12 @@ jobs:
         run: |
           npx -y vitest --version || npm i -D vitest
           npm i -D @vitest/coverage-v8
-          echo "// generated for CI badge" > src/ci-badge-placeholder.ts
-          echo "import { describe, it, expect } from 'vitest';\ndescribe('ci badge', () => { it('ok', () => expect(true).toBe(true)); });" > src/ci-badge-placeholder.test.ts
+          mkdir -p src
+          # Write a minimal test using heredoc to avoid echo escape issues
+          cat > src/ci-badge-placeholder.test.ts << 'EOF'
+          import { describe, it, expect } from 'vitest';
+          describe('ci badge', () => { it('ok', () => expect(true).toBe(true)); });
+          EOF
 
       - name: Run tests with coverage
         run: npx vitest run --coverage.enabled --coverage.provider v8 --coverage.reporter json-summary --coverage.reporter text-summary

@@ -317,28 +317,12 @@
     }
     
     /* Skip to main content link */
-    .skip-link {
-      position: absolute;
-      top: -40px;
-      left: 0;
-      background: var(--orange-yellow-crayola);
-      color: var(--smoky-black);
-      padding: 8px 16px;
-      text-decoration: none;
-      z-index: 10000;
-      font-weight: 600;
-      border-radius: 0 0 4px 0;
-    }
-    .skip-link:focus {
-      top: 0;
-    }
+    /* skip-link styles removed per request */
   </style>
 </head>
 
 <body>
-  <!-- Skip to main content for keyboard users -->
-  <a href="#main-content" class="skip-link">Skip to main content</a>
-  
+  <!-- Skip link removed per request -->
   <canvas id="particle-background" aria-hidden="true"></canvas>
   <main id="main-content">
     <aside class="sidebar" data-sidebar>
@@ -347,6 +331,8 @@
 
         <figure class="avatar-box">
           <picture>
+            <source type="image/avif" srcset="/images/my-avatar.avif 80w, /images/my-avatar@2x.avif 160w" sizes="80px">
+            <source type="image/webp" srcset="/images/my-avatar.webp 80w, /images/my-avatar@2x.webp 160w" sizes="80px">
             <img src="/images/my-avatar.png" 
                  alt="Adriel Magalona" 
                  width="80" 
@@ -354,6 +340,8 @@
                  loading="eager"
                  fetchpriority="high"
                  decoding="async"
+                 srcset="/images/my-avatar.png 80w, /images/my-avatar@2x.png 160w"
+                 sizes="80px"
                  class="critical-image">
           </picture>
         </figure>
@@ -364,11 +352,7 @@
           <p class="title">Computer Science Student</p>
         </div>
 
-        <button class="info_more-btn" data-sidebar-btn>
-          <span>Show Contacts</span>
-
-          <ion-icon name="chevron-down"></ion-icon>
-        </button>
+        <!-- Show Contacts button removed per request -->
 
       </div>
 
@@ -1184,13 +1168,17 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
             </li>
             <li class="project-item active" data-filter-item data-category="Web Application"
               data-images='["/images/projects/worksight/1.jpg", "/images/projects/worksight/2.jpg", "/images/projects/worksight/3.jpg"]'
-              data-webp-images='[]'
+              data-webp-images='["/images/projects/worksight/1-1200.avif", "/images/projects/worksight/2-1200.avif", "/images/projects/worksight/3-1200.avif"]'
               data-description="WorkSight is an employee well-being analytics platform built with Next.js and Supabase. This monorepo contains the web application, documentation, and shared packages." data-github="https://github.com/4sightorg/worksight"
               data-technologies="<strong class='section-title'>Web Application (apps/web)</strong><ul class='tech-list'><li><strong>Framework:</strong> Next.js 14 (App Router)</li><li><strong>Language:</strong> TypeScript</li><li><strong>Styling:</strong> Tailwind CSS + shadcn/ui</li><li><strong>Database:</strong> Supabase (PostgreSQL)</li><li><strong>Authentication:</strong> Supabase Auth</li><li><strong>State Management:</strong> React Server Components + Client Components</li><li><strong>Testing:</strong> Jest + React Testing Library</li><li><strong>Deployment:</strong> Vercel</li></ul><strong class='section-title'>Documentation (apps/docs)</strong><ul class='tech-list'><li><strong>Framework:</strong> VitePress</li><li><strong>Language:</strong> TypeScript</li><li><strong>Styling:</strong> Default VitePress theme</li><li><strong>Deployment:</strong> GitHub Pages</li></ul><strong class='section-title'>Development Tools</strong><ul class='tech-list'><li><strong>Package Manager:</strong> pnpm with workspaces</li><li><strong>Monorepo:</strong> Turbo for build orchestration</li><li><strong>Linting:</strong> ESLint + Prettier</li><li><strong>Type Checking:</strong> TypeScript</li><li><strong>Git Hooks:</strong> Husky (optional)</li><li><strong>CI/CD:</strong> GitHub Actions</li></ul><strong class='section-title'>References</strong><ul class='tech-list'><li><a href='https://nextjs.org' target='_blank' rel='noopener noreferrer'>Next.js</a> – React framework</li><li><a href='https://supabase.com' target='_blank' rel='noopener noreferrer'>Supabase</a> – Backend as a Service</li><li><a href='https://tailwindcss.com' target='_blank' rel='noopener noreferrer'>Tailwind CSS</a> – Utility-first CSS</li><li><a href='https://ui.shadcn.com' target='_blank' rel='noopener noreferrer'>shadcn/ui</a> – UI component library</li><li><a href='https://vitepress.dev' target='_blank' rel='noopener noreferrer'>VitePress</a> – Documentation framework</li><li><a href='https://turbo.build' target='_blank' rel='noopener noreferrer'>Turbo</a> – Monorepo build system</li></ul>">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="/images/projects/worksight/1.jpg" alt="WorkSight" loading="lazy" width="400" height="300">
+                  <picture>
+                    <source type="image/avif" srcset="/images/projects/worksight/1-400.avif 400w, /images/projects/worksight/1-800.avif 800w, /images/projects/worksight/1-1200.avif 1200w" sizes="(max-width: 768px) 95vw, 400px">
+                    <source type="image/webp" srcset="/images/projects/worksight/1-400.webp 400w, /images/projects/worksight/1-800.webp 800w, /images/projects/worksight/1-1200.webp 1200w" sizes="(max-width: 768px) 95vw, 400px">
+                    <img src="/images/projects/worksight/1.jpg" alt="WorkSight" loading="lazy" width="400" height="300">
+                  </picture>
                 </figure>
                 <h3 class="project-title">WorkSight</h3>
               </a>
@@ -1206,13 +1194,17 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
             </li>
             <li class="project-item active" data-filter-item data-category="Web Application"
               data-images='["/images/projects/DokQ/1.jpg", "/images/projects/DokQ/2.jpg"]'
-              data-webp-images='["/images/projects/DokQ/1.jpg", "/images/projects/DokQ/2.jpg"]'
+              data-webp-images='["/images/projects/DokQ/1-1200.avif", "/images/projects/DokQ/2-1200.avif"]'
               data-description="DokQ — Smart Queuing and Appointments for Healthcare" data-github="https://github.com/4sightorg/dokq"
               data-technologies="React • TypeScript • Vite • Node.js • Express • Firebase (Auth, Firestore, Storage) • ESLint • Prettier • Vitest • Vercel/Docker">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="/images/projects/DokQ/1.jpg" alt="DokQ thumbnail" loading="lazy" width="400" height="300">
+                  <picture>
+                    <source type="image/avif" srcset="/images/projects/DokQ/1-400.avif 400w, /images/projects/DokQ/1-800.avif 800w, /images/projects/DokQ/1-1200.avif 1200w" sizes="(max-width: 768px) 95vw, 400px">
+                    <source type="image/webp" srcset="/images/projects/DokQ/1-400.webp 400w, /images/projects/DokQ/1-800.webp 800w, /images/projects/DokQ/1-1200.webp 1200w" sizes="(max-width: 768px) 95vw, 400px">
+                    <img src="/images/projects/DokQ/1.jpg" alt="DokQ thumbnail" loading="lazy" width="400" height="300">
+                  </picture>
                 </figure>
                 <h3 class="project-title">DokQ</h3>
               </a>
@@ -1848,6 +1840,40 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
   /* Keep achievement item pointer styling */
   .achievement-item {
     cursor: pointer;
+  }
+
+  /* Mobile project title overlay */
+  @media (max-width: 600px) {
+    
+
+    article.projects ul.project-list li.project-item a {
+      position: relative;
+      display: block;
+    }
+    article.projects ul.project-list li.project-item .project-img {
+      position: relative;
+    }
+    /* Center the eye icon overlay on mobile */
+    article.projects ul.project-list li.project-item .project-item-icon-box {
+      inset: 0;
+      margin: auto;
+      transform: scale(var(--scale)); /* remove translate to avoid offset */
+      z-index: 3;
+    }
+    article.projects ul.project-list li.project-item .project-title {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      margin: 0;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: rgba(26, 26, 26, 0.65);
+      color: var(--white-1);
+      z-index: 2;
+      font-size: 0.95rem;
+      line-height: 1.2;
+      pointer-events: none;
+    }
   }
 
   </style>

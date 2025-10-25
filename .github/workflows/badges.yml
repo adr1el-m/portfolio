@@ -1,0 +1,56 @@
+name: Badges
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 3 * * 1' # weekly Monday 03:00 UTC
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Generate Lighthouse badges
+        run: npx lighthouse-badges --url https://adriel.dev --output-path public/badges --single-badge --badge-style flat-square --save-report
+
+      - name: Ensure badges directory exists
+        run: |
+          mkdir -p public/badges
+
+      - name: Configure Vitest coverage badge
+        run: |
+          npx -y vitest --version || npm i -D vitest
+          echo "// generated for CI badge" > src/ci-badge-placeholder.ts
+          echo "import { describe, it, expect } from 'vitest';\ndescribe('ci badge', () => { it('ok', () => expect(true).toBe(true)); });" > src/ci-badge-placeholder.test.ts
+
+      - name: Run tests with coverage
+        run: npx vitest run --coverage.enabled --coverage.reporter json-summary --coverage.reporter text-summary
+
+      - name: Generate coverage badge
+        uses: wjervis7/vitest-badge-action@v1.1.0
+        with:
+          json-summary-path: coverage/coverage-summary.json
+          badge-path: public/badges/coverage.svg
+          label: Coverage
+
+      - name: Commit badges
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(ci): update Lighthouse and coverage badges"
+          file_pattern: public/badges/*

@@ -18,8 +18,9 @@ export class SidebarAnimations {
     this.sidebar = document.querySelector<HTMLElement>("[data-sidebar]");
     this.sidebarBtn = document.querySelector<HTMLButtonElement>("[data-sidebar-btn]");
 
-    if (this.sidebar && this.sidebarBtn) {
+    if (this.sidebar) {
       this.setupEntryAnimations();
+      this.animateSidebarContent();
       this.setupBounceEffect();
       this.setupRippleEffect();
     }
@@ -75,22 +76,7 @@ export class SidebarAnimations {
    * Animate sidebar content (contacts and social links) with stagger
    */
   private animateSidebarContent(): void {
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.target instanceof HTMLElement && 
-            mutation.target.classList.contains("sidebar") &&
-            mutation.target.classList.contains("active")) {
-          this.staggerAnimateContent();
-        }
-      });
-    });
-
-    if (this.sidebar) {
-      observer.observe(this.sidebar, {
-        attributes: true,
-        attributeFilter: ["class"],
-      });
-    }
+    this.staggerAnimateContent();
   }
 
   /**

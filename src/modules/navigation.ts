@@ -112,9 +112,9 @@ export class NavigationManager {
       link.addEventListener("click", () => {
         if (this.isTransitioning) return;
 
-        const targetKey = link.textContent?.toLowerCase() || '';
+        const targetKey = (link.textContent || '').toLowerCase().trim();
         const currentPage = document.querySelector<HTMLElement>('[data-page].active');
-        const targetPage = Array.from(pages).find(p => p.dataset.page === targetKey);
+        const targetPage = Array.from(pages).find(p => ((p.dataset.page || '').trim() === targetKey));
 
         if (!targetPage || targetPage === currentPage) return;
 
@@ -124,28 +124,21 @@ export class NavigationManager {
         navigationLinks.forEach((l) => l.classList.remove('active'));
         link.classList.add('active');
 
-        // Animate current page leaving, then activate target
-        if (currentPage) {
-          const onLeaveEnd = () => {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        const finalize = () => {
+          if (!this.isTransitioning) return;
+          if (currentPage) {
             currentPage.classList.remove('page-leave');
             currentPage.classList.remove('active');
-
-            // Activate target page (will run slideFadeIn via CSS)
-            targetPage.classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'auto' });
-
-            this.isTransitioning = false;
-            currentPage.removeEventListener('animationend', onLeaveEnd);
-          };
-
-          currentPage.classList.add('page-leave');
-          currentPage.addEventListener('animationend', onLeaveEnd);
-        } else {
-          // No current page; just activate target
+          }
           targetPage.classList.add('active');
           window.scrollTo({ top: 0, behavior: 'auto' });
           this.isTransitioning = false;
-        }
+        };
+
+        // Activate target immediately for snappy navigation
+        finalize();
       });
     });
   }

@@ -1546,6 +1546,10 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 .timeline-container .timeline-item:hover .timeline-content,
 .timeline-item .timeline-content:focus-visible {
   transform: translateY(-5px);
+  box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.35),
+              0 8px 24px rgba(255, 215, 0, 0.18),
+              0 0 16px rgba(255, 215, 0, 0.35);
+  border-color: rgba(255, 215, 0, 0.4);
 }
 
 .timeline-item .timeline-content:focus-visible {

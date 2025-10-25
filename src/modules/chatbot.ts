@@ -327,24 +327,73 @@ export class ChatbotManager {
     if (this.inputField) this.inputField.value = text;
     this.sendMessage();
   }
+  // === New: DOM-driven Projects extraction and listing ===
+  private getProjectsFromDOM(): Array<{
+    title: string;
+    category: string;
+    description?: string;
+    technologies?: string;
+    githubUrl?: string;
+    liveUrl?: string;
+    videoUrl?: string;
+  }> {
+    const items = Array.from(document.querySelectorAll('article.projects ul.project-list li.project-item')) as HTMLElement[];
+    return items.map((el) => {
+      const title = el.querySelector('.project-title')?.textContent?.trim() || 'Untitled Project';
+      return {
+        title,
+        category: el.getAttribute('data-category') || 'Project',
+        description: el.getAttribute('data-description') || undefined,
+        technologies: el.getAttribute('data-technologies') || undefined,
+        githubUrl: el.getAttribute('data-github') || undefined,
+        liveUrl: el.getAttribute('data-live') || undefined,
+        videoUrl: el.getAttribute('data-video') || undefined,
+      };
+    });
+  }
+
+  private buildProjectsListHTML(projects: ReturnType<typeof this.getProjectsFromDOM>): string {
+    if (!projects.length) {
+      // Fallback to KB projects (all)
+      const all = KB.projects
+        .map((p) => `<strong>${p.title}</strong> — ${p.category}`)
+        .join('<br>');
+      return `Projects overview:<br>${all}`;
+    }
+
+    const header = `<strong>Projects (${projects.length})</strong> — from the Projects section`;
+    const body = projects.map((p) => {
+      const links: string[] = [];
+      if (p.liveUrl) links.push(`<a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer">Live</a>`);
+      if (p.githubUrl) links.push(`<a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer">GitHub</a>`);
+      if (p.videoUrl) links.push(`<a href="${p.videoUrl}" target="_blank" rel="noopener noreferrer">Demo</a>`);
+      const linkStr = links.length ? ` — ${links.join(' | ')}` : '';
+      const tech = p.technologies ? `<br><em>Stack:</em> ${p.technologies}` : '';
+      const desc = p.description ? `<br>${p.description}` : '';
+      return `<strong>${p.title}</strong> — ${p.category}${linkStr}${tech}${desc}`;
+    }).join('<br><br>');
+
+    return `${header}<br>${body}`;
+  }
+  // === End new ===
 
   private detectIntent(userMessage: string): 'FAQ' | 'PROJECTS' | 'PROJECT_DETAILS' | 'CONTACT' | 'SKILLS' | 'EDUCATION' | 'ACHIEVEMENTS' | 'ACHIEVEMENT_DETAILS' | 'RESUME' | 'ORGANIZATIONS' | 'GENERAL' {
     const m = userMessage.toLowerCase();
-    if (/(faq|question|how|what|why)/.test(m)) return 'FAQ';
-    if (/(resume|cv)/.test(m)) return 'RESUME';
-    if (/(org|organization|community|club)/.test(m)) return 'ORGANIZATIONS';
-    if (/(project|portfolio|work)/.test(m)) {
-      // If a specific project seems referenced, route to detail
+    // Prioritize specific intents first, and use word boundaries to avoid substring collisions (e.g., 'how' in 'show')
+    if (/(project|projects|portfolio|work)\b/.test(m)) {
       const p = this.findProject(userMessage);
       return p ? 'PROJECT_DETAILS' : 'PROJECTS';
     }
-    if (/(contact|email|reach|message)/.test(m)) return 'CONTACT';
-    if (/(skill|tech|technology|stack)/.test(m)) return 'SKILLS';
-    if (/(education|school|university|study)/.test(m)) return 'EDUCATION';
-    if (/(award|achievement|hackathon|win)/.test(m)) {
+    if (/(contact|email|reach|message)\b/.test(m)) return 'CONTACT';
+    if (/(skill|skills|tech|technology|stack)\b/.test(m)) return 'SKILLS';
+    if (/(education|school|university|study)\b/.test(m)) return 'EDUCATION';
+    if (/(award|awards|achievement|achievements|hackathon|win)\b/.test(m)) {
       const a = this.findAchievement(userMessage);
       return a ? 'ACHIEVEMENT_DETAILS' : 'ACHIEVEMENTS';
     }
+    if (/(resume|cv)\b/.test(m)) return 'RESUME';
+    if (/(org|organization|organizations|community|club)\b/.test(m)) return 'ORGANIZATIONS';
+    if (/\b(faq|question|how|what|why)\b/.test(m)) return 'FAQ';
     return 'GENERAL';
   }
 
@@ -364,7 +413,7 @@ export class ChatbotManager {
     }
     switch (intent) {
       case 'PROJECTS':
-        return ['Show recent projects', 'Which project used AI?', 'Link to Projects section'];
+        return ['Open Projects section', 'Show AI/ML projects', 'List GitHub repos'];
       case 'CONTACT':
         return ['What is your email?', 'How to connect on LinkedIn?', 'Share GitHub link'];
       case 'SKILLS':
@@ -415,10 +464,8 @@ export class ChatbotManager {
         return `Highlighted projects: ${top}. See Projects section for details and links.`;
       }
       case 'PROJECTS': {
-        const top = KB.projects.slice(0, 3)
-          .map((p) => `${p.title} — ${p.technologies.split(';')[0]}`)
-          .join('; ');
-        return `Highlighted projects: ${top}. See Projects section for details and links.`;
+        const fromDom = this.getProjectsFromDOM();
+        return this.buildProjectsListHTML(fromDom);
       }
       case 'CONTACT': {
         const c = KB.contact;

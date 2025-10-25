@@ -299,6 +299,11 @@
   <link rel="preload" href="style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="style.css"></noscript>
 
+  <!-- Preload hero avatar with responsive sources -->
+  <link rel="preload" as="image" href="/images/my-avatar.avif"
+        imagesrcset="/images/my-avatar.avif 80w, /images/my-avatar@2x.avif 160w"
+        imagesizes="80px" fetchpriority="high">
+
   <!-- Use system fonts instead of Google Fonts to avoid CSP issues -->
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif; }
@@ -330,16 +335,20 @@
       <div class="sidebar-info">
 
         <figure class="avatar-box">
-          <img src="/images/my-avatar.png" 
-               alt="Adriel Magalona" 
-               width="80" 
-               height="80"
-               loading="eager"
-               fetchpriority="high"
-               decoding="async"
-               srcset="/images/my-avatar.png 80w, /images/my-avatar@2x.png 160w"
-               sizes="80px"
-               class="critical-image">
+          <picture>
+            <source type="image/avif" srcset="/images/my-avatar.avif 80w, /images/my-avatar@2x.avif 160w" sizes="80px">
+            <source type="image/webp" srcset="/images/my-avatar.webp 80w, /images/my-avatar@2x.webp 160w" sizes="80px">
+            <img src="/images/my-avatar.png" 
+                 alt="Adriel Magalona" 
+                 width="80" 
+                 height="80"
+                 loading="eager"
+                 fetchpriority="high"
+                 decoding="async"
+                 srcset="/images/my-avatar.png 80w, /images/my-avatar@2x.png 160w"
+                 sizes="80px"
+                 class="critical-image">
+          </picture>
         </figure>
 
         <div class="info-content">
@@ -1130,7 +1139,8 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
             </li>
             <li class="project-item active" data-filter-item data-category="Web Design" 
               data-video="/images/projects/talambuhay/talambuhay.mp4"
-              data-description="I made this project for our Filipinolohiya subject in my first year of college"
+              data-description="Talambuhay is a web-based translation platform primarily developed using JavaScript, with supplementary TypeScript components and standard web markup and styling. The project is deployed on Vercel and structured as a frontend web application. For detailed information on the frameworks, libraries, and runtime environment, refer to the package.json file and explore the source directories (e.g., src/, pages/, app/, api/, etc.)."
+              data-technologies="JavaScript • TypeScript • HTML • CSS • Node.js • Vercel"
               data-github="https://github.com/adr1el-m/talambuhay"
               data-live="https://talambuhay-ni-adriel.vercel.app">
               <a href="#">
@@ -1144,6 +1154,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
             <li class="project-item active" data-filter-item data-category="Web Application"
               data-video="/images/projects/barangayNav/BarangayNav-opt.mp4"
               data-description="BarangayNav is a transparent platform for navigating barangay services, powered by AI assistance and real-time tracking to support accountable governance. Features include: AI guidance via Gemini for service inquiries; clear requirements, fees, and processing timelines; responsive design across devices; a modern dark theme with glassmorphism; 24/7 automated support; and secure environment-based API key management."
+              data-technologies="HTML, CSS, TypeScript, Angular, Gemini"
               data-github="https://github.com/adr1el-m/sparkfest">
               <a href="#">
                 <figure class="project-img">

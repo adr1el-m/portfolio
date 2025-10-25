@@ -5,6 +5,7 @@
 
 export class NavigationManager {
   private revealObserver: IntersectionObserver | null = null;
+  private isTransitioning: boolean = false;
 
   constructor() {
     this.init();
@@ -109,18 +110,42 @@ export class NavigationManager {
 
     navigationLinks.forEach((link) => {
       link.addEventListener("click", () => {
-        const linkText = link.textContent?.toLowerCase() || '';
-        
-        pages.forEach((page, j) => {
-          if (linkText === page.dataset.page) {
-            page.classList.add("active");
-            link.classList.add("active");
-            window.scrollTo(0, 0);
-          } else {
-            page.classList.remove("active");
-            navigationLinks[j]?.classList.remove("active");
-          }
-        });
+        if (this.isTransitioning) return;
+
+        const targetKey = link.textContent?.toLowerCase() || '';
+        const currentPage = document.querySelector<HTMLElement>('[data-page].active');
+        const targetPage = Array.from(pages).find(p => p.dataset.page === targetKey);
+
+        if (!targetPage || targetPage === currentPage) return;
+
+        this.isTransitioning = true;
+
+        // Update nav active state
+        navigationLinks.forEach((l) => l.classList.remove('active'));
+        link.classList.add('active');
+
+        // Animate current page leaving, then activate target
+        if (currentPage) {
+          const onLeaveEnd = () => {
+            currentPage.classList.remove('page-leave');
+            currentPage.classList.remove('active');
+
+            // Activate target page (will run slideFadeIn via CSS)
+            targetPage.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'auto' });
+
+            this.isTransitioning = false;
+            currentPage.removeEventListener('animationend', onLeaveEnd);
+          };
+
+          currentPage.classList.add('page-leave');
+          currentPage.addEventListener('animationend', onLeaveEnd);
+        } else {
+          // No current page; just activate target
+          targetPage.classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'auto' });
+          this.isTransitioning = false;
+        }
       });
     });
   }

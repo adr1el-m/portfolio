@@ -50,6 +50,14 @@
   --shadow-3: 0 12px 32px rgba(0, 0, 0, 0.45);
   --shadow-gold: 0 0 0 1px rgba(255, 219, 112, 0.3), 0 6px 20px rgba(255, 219, 112, 0.25);
 
+  /* Elevation (0/1/2) aliases for cards */
+  --elevation-0: var(--shadow-0);
+  --elevation-1: var(--shadow-1);
+  --elevation-2: var(--shadow-2);
+
+  /* Border ring for subtle emphasis */
+  --ring-muted: 0 0 0 1px var(--color-border);
+
   /* Motion */
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-snappy: cubic-bezier(0.22, 1, 0.36, 1);

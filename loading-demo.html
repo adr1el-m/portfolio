@@ -37,6 +37,10 @@
   <meta name="twitter:site" content="@adrielmagalona">
 
   <style>
+    :root {
+      /* Minimal local token to ensure demo page renders if main CSS is absent */
+      --type-2xl: clamp(1.375rem, 1.1rem + 1.2vw, 1.75rem);
+    }
     body {
       padding: 20px;
       background: var(--smoky-black);
@@ -52,7 +56,7 @@
     
     .demo-title {
       color: var(--orange-yellow-crayola);
-      font-size: 24px;
+      font-size: var(--type-2xl);
       margin-bottom: 20px;
     }
     

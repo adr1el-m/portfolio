@@ -1,0 +1,81 @@
+:root {
+  /* Brand Colors */
+  --color-bg: #0f0f10;
+  --color-surface: #1a1a1a;
+  --color-surface-2: #222325;
+  --color-border: #2c2c2c;
+  --color-text: #ffffff;
+  --color-text-muted: #d6d6d6;
+  --color-accent: #ffdb70; /* Gold accent */
+  --color-accent-weak: rgba(255, 219, 112, 0.3);
+  --color-primary: #f5576c; /* Brand primary (pink-red) */
+  --color-primary-weak: rgba(245, 87, 108, 0.25);
+  --color-success: #3ddc97;
+  --color-warning: #fbbf24;
+  --color-danger: #ef4444;
+
+  /* Neutrals Scale */
+  --neutral-0: #0b0b0c;
+  --neutral-1: #141416;
+  --neutral-2: #1d1f21;
+  --neutral-3: #26282b;
+  --neutral-4: #2f3236;
+  --neutral-5: #393d42;
+
+  /* Spacing Scale (8pt base with half-steps via clamp for fluidity) */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+
+  /* Radii Scale */
+  --radius-0: 0;
+  --radius-1: 6px;
+  --radius-2: 8px;
+  --radius-3: 12px;
+  --radius-4: 16px;
+  --radius-5: 20px;
+
+  /* Shadow Tiers */
+  --shadow-0: 0 0 0 rgba(0, 0, 0, 0);
+  --shadow-1: 0 6px 16px rgba(0, 0, 0, 0.25);
+  --shadow-2: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-3: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --shadow-gold: 0 0 0 1px rgba(255, 219, 112, 0.3), 0 6px 20px rgba(255, 219, 112, 0.25);
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-snappy: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-1: 160ms;
+  --duration-2: 220ms;
+  --duration-3: 300ms;
+}
+
+/* Dark scheme refinements */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0c0c0d;
+    --color-surface: #171718;
+    --color-border: #2a2a2b;
+    --shadow-1: 0 6px 16px rgba(0, 0, 0, 0.30);
+    --shadow-2: 0 8px 24px rgba(0, 0, 0, 0.40);
+  }
+}
+
+/* Utility aliases mapping existing variables to tokens for gradual adoption */
+:root {
+  --accent-gold: var(--color-accent);
+  --surface: var(--color-surface);
+  --surface-2: var(--color-surface-2);
+  --text-primary: var(--color-text);
+  --text-muted: var(--color-text-muted);
+  --primary: var(--color-primary);
+  --primary-weak: var(--color-primary-weak);
+}

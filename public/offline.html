@@ -36,10 +36,15 @@
   <meta name="twitter:site" content="@adrielmagalona">
 
   <style>
+    :root {
+      /* Minimal local tokens to ensure offline page renders without main CSS */
+      --type-2xl: clamp(1.375rem, 1.1rem + 1.2vw, 1.75rem);
+      --type-4xl: clamp(2.25rem, 1.8rem + 2vw, 3rem);
+    }
     body { margin:0; display:flex; align-items:center; justify-content:center; min-height:100vh; background:#0f0f10; color:#f5f5f7; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; }
     .offline { text-align:center; padding:24px; border:1px solid #2a2a2b; border-radius:12px; background:#141416; max-width:540px; }
-    .emoji { font-size:48px; margin-bottom:12px; }
-    .title { font-size:24px; margin:8px 0 4px; }
+    .emoji { font-size: var(--type-4xl); margin-bottom:12px; }
+    .title { font-size: var(--type-2xl); margin:8px 0 4px; }
     .desc { color:#adb0b6; margin:0 0 16px; }
     .actions a { display:inline-block; margin:6px; padding:10px 16px; border-radius:8px; text-decoration:none; color:#0f0f10; background:#f0c36a; font-weight:600; }
     .actions a.secondary { background:#e5e7eb; }

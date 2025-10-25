@@ -203,3 +203,4 @@ if (import.meta.hot) {
     logger.log('🔄 HMR: Module updated');
   });
 }
+import './styles/main.css';

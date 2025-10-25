@@ -297,7 +297,7 @@ export class PerformanceMonitor {
 
     logger.log(
       `%c 🚀 Performance Score: ${score}/100 (Grade: ${grade}) `,
-      `background: ${color}; color: white; font-weight: bold; padding: 8px 16px; border-radius: 4px; font-size: 14px;`
+      `background: ${color}; color: white; font-weight: bold; padding: 8px 16px; border-radius: 4px; font-size: var(--type-sm);`
     );
   }
 }

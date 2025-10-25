@@ -138,14 +138,14 @@ export class PerformanceDashboard {
 
       .perf-title {
         font-weight: 600;
-        font-size: 14px;
+        font-size: var(--type-sm);
         color: #fff;
       }
 
       .perf-toggle {
         background: none;
         border: none;
-        font-size: 16px;
+        font-size: var(--type-base);
         cursor: pointer;
         padding: 4px;
         transition: transform 0.2s;
@@ -193,13 +193,13 @@ export class PerformanceDashboard {
       .score-value {
         position: relative;
         z-index: 1;
-        font-size: 28px;
+        font-size: var(--type-3xl);
         font-weight: 700;
         color: #fff;
       }
 
       .score-label {
-        font-size: 12px;
+        font-size: var(--type-xs);
         color: rgba(255, 255, 255, 0.7);
         font-weight: 500;
       }
@@ -218,7 +218,7 @@ export class PerformanceDashboard {
         padding: 8px 12px;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 6px;
-        font-size: 13px;
+        font-size: var(--type-xs);
       }
 
       .metric-name {
@@ -256,7 +256,7 @@ export class PerformanceDashboard {
         border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 6px;
         color: #fff;
-        font-size: 12px;
+        font-size: var(--type-xs);
         cursor: pointer;
         transition: all 0.2s;
       }

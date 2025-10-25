@@ -1277,13 +1277,15 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: var(--fw-500);
+  font-size: var(--type-sm);
+  line-height: var(--lh-tight);
 }
 
 .service-item-text {
   color: var(--light-gray);
-  font-size: var(--fs-6);
+  font-size: var(--type-xs);
   font-weight: var(--fw-300);
-  line-height: 1.6;
+  line-height: var(--lh-relaxed);
 }
 
 .certifications { margin-bottom: 30px; }
@@ -1376,13 +1378,13 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 .timeline-item:not(:last-child) { margin-bottom: 20px; }
 
 .timeline-item-title {
-  font-size: var(--fs-6);
-  line-height: 1.3;
+  font-size: var(--type-sm);
+  line-height: var(--lh-tight);
   margin-bottom: 7px;
 }
 
 .org-name {
-  font-size: 12px;
+  font-size: var(--type-xs);
   padding-top:-50vh ;
 }
 
@@ -1417,7 +1419,8 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 .timeline-text {
   color: var(--light-gray);
   font-weight: var(--fw-300);
-  line-height: 1.6;
+  font-size: var(--type-sm);
+  line-height: var(--lh-relaxed);
 }
 
 /* New Enhanced Timeline Styles */
@@ -1800,16 +1803,17 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 
 .project-title {
   color: var(--white-2);
-  font-size: var(--fs-5);
+  font-size: var(--type-sm);
   font-weight: var(--fw-400);
   text-transform: capitalize;
-  line-height: 1.3;
+  line-height: var(--lh-tight);
 }
 
 .project-category {
   color: var(--light-gray-70);
-  font-size: var(--fs-6);
+  font-size: var(--type-xs);
   font-weight: var(--fw-300);
+  line-height: var(--lh-base);
 }
 
 /* Enhanced Organizations Section */
@@ -1931,10 +1935,10 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 
 .org-name {
   color: var(--white-2);
-  font-size: var(--fs-4);
+  font-size: var(--type-base);
   font-weight: var(--fw-600);
   margin-bottom: 8px;
-  line-height: 1.3;
+  line-height: var(--lh-tight);
   transition: color 0.3s ease;
 }
 
@@ -3330,12 +3334,12 @@ article.active {
 .tech-label {
   font-weight: 600;
   color: #ffdb70;
-  font-size: 0.95rem;
+  font-size: var(--type-sm);
 }
 
 .tech-stack {
   color: #b0b0b0;
-  font-size: 0.95rem;
+  font-size: var(--type-sm);
   display: block;
   width: 100%;
 }
@@ -3359,7 +3363,7 @@ article.active {
   border-bottom: 1px solid rgba(255, 219, 112, 0.15);
   color: #e0e0e0;
   text-align: left;
-  font-size: 0.9rem;
+  font-size: var(--type-xs);
 }
 
 .tech-stack .tech-table th {
@@ -4045,6 +4049,8 @@ article.active {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: var(--fw-500);
+  font-size: var(--type-sm);
+  line-height: var(--lh-tight);
 }
 
 .service-item-text {
@@ -4964,14 +4970,14 @@ picture img {
 /* Extra small devices (phones, less than 480px) */
 @media (max-width: 479px) {
   :root {
-    --fs-1: 22px;
-    --fs-2: 16px;
-    --fs-3: 15px;
-    --fs-4: 14px;
-    --fs-5: 13px;
-    --fs-6: 12px;
-    --fs-7: 11px;
-    --fs-8: 10px;
+    --fs-1: var(--type-xl);
+    --fs-2: var(--type-base);
+    --fs-3: var(--type-sm);
+    --fs-4: var(--type-sm);
+    --fs-5: var(--type-xs);
+    --fs-6: var(--type-xs);
+    --fs-7: var(--type-xs);
+    --fs-8: var(--type-xs);
   }
 
   main {
@@ -4990,9 +4996,9 @@ picture img {
     padding-bottom: 10px;
   }
 
-  .h2 { font-size: 20px; }
-  .h3 { font-size: 16px; }
-  .h4 { font-size: 14px; }
+  .h2 { font-size: var(--type-xl); }
+  .h3 { font-size: var(--type-base); }
+  .h4 { font-size: var(--type-sm); }
 
   /* Sidebar adjustments */
   .sidebar-info {
@@ -5007,12 +5013,12 @@ picture img {
   }
 
   .info-content .name {
-    font-size: 16px;
+    font-size: var(--type-base);
     text-align: center;
   }
 
   .info-content .title {
-    font-size: 11px;
+    font-size: var(--type-xs);
     padding: 3px 10px;
   }
 
@@ -5033,11 +5039,11 @@ picture img {
   }
 
   .contact-title {
-    font-size: 11px;
+    font-size: var(--type-xs);
   }
 
   .contact-info {
-    font-size: 12px;
+    font-size: var(--type-xs);
   }
 
   /* Navigation */
@@ -5051,7 +5057,7 @@ picture img {
   }
 
   .navbar-link {
-    font-size: 12px;
+    font-size: var(--type-xs);
     padding: 12px 10px;
   }
 
@@ -5062,7 +5068,7 @@ picture img {
 
   .filter-select {
     padding: 10px 12px;
-    font-size: 13px;
+    font-size: var(--type-xs);
   }
 
   /* Cards and content */
@@ -5074,7 +5080,7 @@ picture img {
   /* Form inputs */
   .form-input {
     padding: 10px 15px;
-    font-size: 13px;
+    font-size: var(--type-xs);
   }
 
   textarea.form-input {
@@ -5083,14 +5089,14 @@ picture img {
 
   .form-btn {
     padding: 10px 16px;
-    font-size: 13px;
+    font-size: var(--type-xs);
   }
 
   /* Icon boxes */
   .icon-box {
     width: 24px;
     height: 24px;
-    font-size: 14px;
+    font-size: var(--type-sm);
   }
 
   /* Scrollbar adjustments */
@@ -5109,7 +5115,7 @@ picture img {
   }
 
   .award-ribbon {
-    font-size: 10px;
+    font-size: var(--type-xs);
     padding: 4px 10px;
     top: 8px;
     right: 8px;
@@ -5120,16 +5126,17 @@ picture img {
   }
 
   .card-title {
-    font-size: 13px;
+    font-size: var(--type-xs);
   }
 
   .card-subtitle {
-    font-size: 11px;
+    font-size: var(--type-xs);
   }
 
   .card-date,
   .card-location {
-    font-size: 10px;
+    font-size: var(--type-xs);
+    line-height: var(--lh-tight);
   }
 }
 
@@ -5162,11 +5169,11 @@ picture img {
   }
 
   .timeline-item-title {
-    font-size: 13px;
+    font-size: var(--type-xs);
   }
 
   .timeline-text {
-    font-size: 12px;
+    font-size: var(--type-xs);
   }
 
   /* Service items */
@@ -5185,11 +5192,11 @@ picture img {
   }
 
   .service-item-title {
-    font-size: 13px;
+    font-size: var(--type-xs);
   }
 
   .service-item-text {
-    font-size: 12px;
+    font-size: var(--type-xs);
   }
 
   /* Project cards */
@@ -5202,11 +5209,11 @@ picture img {
   }
 
   .project-title {
-    font-size: 13px;
+    font-size: var(--type-xs);
   }
 
   .project-category {
-    font-size: 11px;
+    font-size: var(--type-xs);
   }
 
   /* Modal adjustments */
@@ -5219,7 +5226,8 @@ picture img {
   }
 
   .modal-title {
-    font-size: 16px;
+    font-size: var(--type-base);
+    line-height: var(--lh-tight);
   }
 
   /* Year accordion */
@@ -5230,16 +5238,17 @@ picture img {
   }
 
   .year-title {
-    font-size: 16px;
+    font-size: var(--type-base);
+    line-height: var(--lh-tight);
   }
 
   .award-count {
-    font-size: 10px;
+    font-size: var(--type-xs);
     padding: 3px 8px;
   }
 
   .toggle-icon {
-    font-size: 12px;
+    font-size: var(--type-xs);
   }
 
   .year-content {
@@ -5374,7 +5383,7 @@ picture img {
   p,
   .timeline-text,
   .service-item-text {
-    line-height: 1.6;
+    line-height: var(--lh-relaxed);
   }
 
   /* Stack elements vertically */
@@ -5452,17 +5461,17 @@ picture img {
   }
 
   .timeline-item-title {
-    font-size: 14px;
+    font-size: var(--type-sm);
     margin-bottom: 6px;
   }
 
   .timeline-text {
-    font-size: 13px;
-    line-height: 1.6;
+    font-size: var(--type-xs);
+    line-height: var(--lh-relaxed);
   }
 
   .timeline-list span {
-    font-size: 12px;
+    font-size: var(--type-xs);
   }
 }
 
@@ -5483,11 +5492,11 @@ picture img {
   }
 
   .timeline-item-title {
-    font-size: 13px;
+    font-size: var(--type-xs);
   }
 
   .timeline-text {
-    font-size: 12px;
+    font-size: var(--type-xs);
   }
 }
 
@@ -5506,7 +5515,8 @@ picture img {
   }
 
   .skills-item .title-wrapper .h5 {
-    font-size: 13px;
+    font-size: var(--type-xs);
+    line-height: var(--lh-tight);
   }
 
   .skill-progress-bg {
@@ -5518,7 +5528,7 @@ picture img {
   }
 
   .progress-value {
-    font-size: 12px;
+    font-size: var(--type-xs);
   }
 }
 
@@ -5532,7 +5542,7 @@ picture img {
   }
 
   .skills-item .title-wrapper .h5 {
-    font-size: 12px;
+    font-size: var(--type-xs);
   }
 
   .skill-progress-bg {
@@ -5540,7 +5550,7 @@ picture img {
   }
 
   .progress-value {
-    font-size: 11px;
+    font-size: var(--type-xs);
   }
 }
 
@@ -5556,12 +5566,12 @@ picture img {
   }
 
   .testimonials-item-title {
-    font-size: 13px;
+    font-size: var(--type-xs);
   }
 
   .testimonials-text {
-    font-size: 12px;
-    line-height: 1.6;
+    font-size: var(--type-xs);
+    line-height: var(--lh-relaxed);
   }
 }
 
@@ -5576,11 +5586,11 @@ picture img {
   }
 
   .testimonials-item-title {
-    font-size: 12px;
+    font-size: var(--type-xs);
   }
 
   .testimonials-text {
-    font-size: 11px;
+    font-size: var(--type-xs);
   }
 }
 
@@ -5601,11 +5611,11 @@ picture img {
   }
 
   .certifications-item-title {
-    font-size: 13px;
+    font-size: var(--type-xs);
   }
 
   .certifications-text {
-    font-size: 12px;
+    font-size: var(--type-xs);
   }
 }
 
@@ -5625,11 +5635,11 @@ picture img {
   }
 
   .certifications-item-title {
-    font-size: 12px;
+    font-size: var(--type-xs);
   }
 
   .certifications-text {
-    font-size: 11px;
+    font-size: var(--type-xs);
   }
 }
 
@@ -5648,7 +5658,7 @@ picture img {
   }
 
   .chatbox-header h3 {
-    font-size: 14px;
+    font-size: var(--type-sm);
   }
 
   .chatbox-messages {
@@ -5658,7 +5668,7 @@ picture img {
 
   .message {
     padding: 10px 12px;
-    font-size: 13px;
+    font-size: var(--type-xs);
     max-width: 85%;
   }
 
@@ -5668,12 +5678,12 @@ picture img {
 
   .chatbox-input {
     padding: 10px 12px;
-    font-size: 13px;
+    font-size: var(--type-xs);
   }
 
   .chatbox-send-btn {
     padding: 10px 12px;
-    font-size: 13px;
+    font-size: var(--type-xs);
   }
 
   .chatbox-toggle {
@@ -5698,23 +5708,23 @@ picture img {
   }
 
   .chatbox-header h3 {
-    font-size: 13px;
+    font-size: var(--type-xs);
   }
 
   .message {
     padding: 8px 10px;
-    font-size: 12px;
+    font-size: var(--type-xs);
     max-width: 90%;
   }
 
   .chatbox-input {
     padding: 8px 10px;
-    font-size: 12px;
+    font-size: var(--type-xs);
   }
 
   .chatbox-send-btn {
     padding: 8px 10px;
-    font-size: 12px;
+    font-size: var(--type-xs);
   }
 
   .chatbox-toggle {
@@ -5739,7 +5749,8 @@ picture img {
 
   .form-title {
     margin-bottom: 15px;
-    font-size: 16px;
+    font-size: var(--type-base);
+    line-height: var(--lh-tight);
   }
 }
 
@@ -5751,7 +5762,8 @@ picture img {
   }
 
   .form-title {
-    font-size: 15px;
+    font-size: var(--type-sm);
+    line-height: var(--lh-tight);
   }
 }
 

@@ -1,0 +1,41 @@
+:root {
+  /* Line-height tokens */
+  --lh-tight: 1.25;
+  --lh-base: 1.6;
+  --lh-relaxed: 1.75;
+
+  /* Fluid type scale using clamp(min, preferred, max) */
+  --type-xs: clamp(0.75rem, 0.70rem + 0.20vw, 0.85rem);
+  --type-sm: clamp(0.875rem, 0.83rem + 0.28vw, 0.98rem);
+  --type-md: clamp(1rem, 0.95rem + 0.30vw, 1.15rem);
+  --type-lg: clamp(1.125rem, 1.05rem + 0.45vw, 1.35rem);
+  --type-xl: clamp(1.25rem, 1.15rem + 0.70vw, 1.60rem);
+  --type-2xl: clamp(1.5rem, 1.35rem + 1.10vw, 2.00rem);
+  --type-3xl: clamp(1.75rem, 1.55rem + 1.45vw, 2.40rem);
+  --type-4xl: clamp(2rem, 1.80rem + 2.00vw, 3rem);
+
+  /* Alias for existing references */
+  --type-base: var(--type-md);
+}
+
+/* Base typography application */
+html { font-size: 100%; }
+body { color: var(--text-primary); line-height: var(--lh-base); }
+
+p, li { line-height: var(--lh-base); }
+small { font-size: var(--type-xs); }
+
+/* Heading utilities (match existing .h1–.h5 classes) */
+.h1 { font-size: var(--type-3xl); line-height: var(--lh-tight); }
+.h2 { font-size: var(--type-2xl); line-height: var(--lh-tight); }
+.h3 { font-size: var(--type-xl);  line-height: var(--lh-tight); }
+.h4 { font-size: var(--type-lg);  line-height: var(--lh-tight); }
+.h5 { font-size: var(--type-md);  line-height: var(--lh-tight); }
+
+/* Section titles and common title elements */
+.article-title { font-size: var(--type-xl); line-height: var(--lh-tight); }
+.section-title { font-size: var(--type-xl); line-height: var(--lh-tight); }
+
+/* Content and UI text helpers */
+.content-text { font-size: var(--type-md); line-height: var(--lh-base); }
+.caption { font-size: var(--type-sm); line-height: var(--lh-relaxed); color: var(--text-muted); }

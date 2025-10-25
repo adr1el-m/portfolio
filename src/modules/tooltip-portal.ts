@@ -30,7 +30,7 @@ export class TooltipPortal {
         color: #fff;
         padding: 8px 12px;
         border-radius: 8px;
-        font-size: 11px;
+        font-size: var(--type-xs);
         font-weight: 500;
         white-space: nowrap;
         border: 1px solid rgba(255, 219, 112, 0.3);
@@ -58,7 +58,7 @@ export class TooltipPortal {
         filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
       }
       @media (pointer: coarse) {
-        #tooltip-portal { font-size: 12px; }
+        #tooltip-portal { font-size: var(--type-xs); }
       }
       @media (prefers-reduced-motion: reduce) {
         #tooltip-portal { transition: opacity 1ms linear; transform: none; }

@@ -1370,12 +1370,12 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
   </main>
 
   <!-- Chatbot Button -->
-  <button class="chatbot-btn" aria-label="Open chat with AdrAI assistant" aria-haspopup="dialog">
+  <button class="chatbot-btn" aria-label="Open chat with AdrAI assistant" aria-haspopup="dialog" aria-controls="chatbox">
     <span role="img" aria-label="Chat icon">💬</span>
   </button>
 
   <!-- Chatbox Container -->
-  <div class="chatbox" role="dialog" aria-labelledby="chatbox-title" aria-modal="true" aria-hidden="true">
+  <div id="chatbox" class="chatbox" role="dialog" aria-labelledby="chatbox-title" aria-modal="true" aria-hidden="true">
     <div class="chatbox-header">
       <h3 id="chatbox-title">Chat with AdrAI</h3>
       <button class="close-btn" aria-label="Close chat" type="button">

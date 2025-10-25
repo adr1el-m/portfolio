@@ -17,12 +17,16 @@ export class ChatbotManager {
   private messagesContainer: HTMLElement | null;
   private inputField: HTMLInputElement | null;
   private sendButton: HTMLElement | null;
-
+  
   private conversationSummary: string = '';
   private summaryEveryTurns = 10;
   private lastUserMessage: string | null = null;
   private detailedMode: boolean = false;
-
+  
+  // Add focus management state
+  private previouslyFocusedElement: HTMLElement | null = null;
+  private focusTrapHandler?: (e: KeyboardEvent) => void;
+  
   // --- Smart helpers for matching and detail preference ---
   private normalize(text: string): string {
     return text.toLowerCase().replace(/[^a-z0-9\s\-]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -111,6 +115,14 @@ export class ChatbotManager {
     this.inputField = document.querySelector('.chatbox-input input') as HTMLInputElement;
     this.sendButton = document.querySelector('.chatbox-input button');
 
+    // Initialize ARIA state
+    if (this.chatbotBtn) this.chatbotBtn.setAttribute('aria-expanded', 'false');
+    if (this.chatbox) {
+      const isActive = this.chatbox.classList.contains('active');
+      this.chatbox.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+      if (!isActive) this.chatbox.setAttribute('inert', '');
+    }
+
     this.initializeEventListeners();
     this.displayWelcomeMessage();
     logger.log('ChatbotManager initialized');
@@ -148,8 +160,58 @@ export class ChatbotManager {
   }
 
   private toggleChatbox(): void {
-    if (this.chatbox) {
-      this.chatbox.classList.toggle('active');
+    if (!this.chatbox) return;
+
+    const isOpen = this.chatbox.classList.contains('active');
+
+    if (!isOpen) {
+      // Open dialog
+      this.previouslyFocusedElement = document.activeElement as HTMLElement;
+      this.chatbox.classList.add('active');
+      this.chatbox.setAttribute('aria-hidden', 'false');
+      this.chatbox.removeAttribute('inert');
+      if (this.chatbotBtn) this.chatbotBtn.setAttribute('aria-expanded', 'true');
+
+      // Focus the first interactive element inside the dialog
+      const focusTarget = this.inputField || this.closeBtn || this.chatbox;
+      try { (focusTarget as HTMLElement)?.focus({ preventScroll: true }); } catch {}
+
+      // Trap focus within the dialog and handle Escape
+      this.focusTrapHandler = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          this.toggleChatbox();
+          return;
+        }
+        if (e.key !== 'Tab') return;
+        const focusables = Array.from(this.chatbox!.querySelectorAll<HTMLElement>(
+          'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])'
+        )).filter(el => !el.hasAttribute('disabled'));
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+        } else {
+          if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      };
+      this.chatbox.addEventListener('keydown', this.focusTrapHandler);
+    } else {
+      // Close dialog
+      this.chatbox.classList.remove('active');
+      this.chatbox.setAttribute('aria-hidden', 'true');
+      this.chatbox.setAttribute('inert', '');
+      if (this.chatbotBtn) this.chatbotBtn.setAttribute('aria-expanded', 'false');
+
+      // Remove focus trap
+      if (this.focusTrapHandler) {
+        this.chatbox.removeEventListener('keydown', this.focusTrapHandler);
+        this.focusTrapHandler = undefined;
+      }
+
+      // Return focus to the trigger button to avoid aria-hidden focus violations
+      try { this.chatbotBtn?.focus({ preventScroll: true }); } catch {}
     }
   }
 

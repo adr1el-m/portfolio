@@ -5823,13 +5823,21 @@ picture img {
   .project-item {
     will-change: auto;
   }
+}
 
-  /* Reduce animation complexity on low-end devices */
-  @media (prefers-reduced-motion: no-preference) and (max-width: 479px) {
-    * {
-      animation-duration: 0.2s !important;
-      transition-duration: 0.2s !important;
-    }
+/* Respect reduced motion: disable/slow animations when requested */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Slow down shimmer effects on very small screens */
+@media (max-width: 479px) {
+  .shimmer, .shimmer-overlay {
+    animation-duration: 2.5s !important;
   }
 }
 

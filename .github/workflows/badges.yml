@@ -38,11 +38,12 @@ jobs:
       - name: Configure Vitest coverage badge
         run: |
           npx -y vitest --version || npm i -D vitest
+          npm i -D @vitest/coverage-v8
           echo "// generated for CI badge" > src/ci-badge-placeholder.ts
           echo "import { describe, it, expect } from 'vitest';\ndescribe('ci badge', () => { it('ok', () => expect(true).toBe(true)); });" > src/ci-badge-placeholder.test.ts
 
       - name: Run tests with coverage
-        run: npx vitest run --coverage.enabled --coverage.reporter json-summary --coverage.reporter text-summary
+        run: npx vitest run --coverage.enabled --coverage.provider v8 --coverage.reporter json-summary --coverage.reporter text-summary
 
       - name: Generate coverage badge
         uses: wjervis7/vitest-badge-action@v1.0.0

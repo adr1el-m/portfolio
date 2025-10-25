@@ -117,6 +117,11 @@ class PortfolioApp {
       // Initialize Sidebar Animations (after skeleton loader)
       new SidebarAnimations();
 
+      // Register PWA service worker
+      import('./modules/pwa-manager').then(({ PwaManager }) => {
+        PwaManager.register();
+      });
+
       // Enhance landmarks after DOM is ready
       accessibilityEnhancer.enhanceLandmarks();
 

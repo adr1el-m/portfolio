@@ -20,6 +20,7 @@ export default defineConfig({
       'Report-To': '{"group":"csp-endpoint","max_age":10886400,"endpoints":[{"url":"/api/csp-report"}]}',
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'SAMEORIGIN',
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
       // 'X-XSS-Protection': '1; mode=block', // removed deprecated header
       'Referrer-Policy': 'strict-origin-when-cross-origin',
       'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
@@ -41,7 +42,9 @@ export default defineConfig({
     cssCodeSplit: true,
     rollupOptions: {
       input: {
-        main: path.resolve(__dirname, 'index.html')
+        main: path.resolve(__dirname, 'index.html'),
+        loadingDemo: path.resolve(__dirname, 'loading-demo.html'),
+        mobileTestGuide: path.resolve(__dirname, 'mobile-test-guide.html')
       },
       output: {
         manualChunks: {

@@ -32,6 +32,7 @@ export interface AchievementData {
   description?: string;
   projectTitle?: string;
   linkedinUrl?: string;
+  blogUrl?: string;
 }
 
 export interface ProjectData {

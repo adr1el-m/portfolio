@@ -187,6 +187,7 @@ export class ModalManager {
     const description = element.getAttribute('data-description') || '';
     const projectTitle = element.getAttribute('data-project-title') || '';
     const linkedinUrl = element.getAttribute('data-linkedin') || '';
+    const blogUrl = element.getAttribute('data-blog') || '';
 
     try {
       const images = JSON.parse(imagesStr);
@@ -205,6 +206,7 @@ export class ModalManager {
         description: description || undefined,
         projectTitle: projectTitle || undefined,
         linkedinUrl: linkedinUrl || undefined,
+        blogUrl: blogUrl || undefined,
       };
     } catch (e) {
       logger.error('Error parsing achievement data:', e);
@@ -1361,6 +1363,16 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
       iconSpan.textContent = '🔗';
       link.prepend(iconSpan);
       section.appendChild(link);
+    }
+
+    // Blog link (below existing buttons)
+    if (data.blogUrl) {
+      const blog = SecurityManager.createSafeAnchor(data.blogUrl, 'View Blog', 'github-button', true);
+      const blogIcon = document.createElement('span');
+      blogIcon.className = 'link-icon';
+      blogIcon.textContent = '📰';
+      blog.prepend(blogIcon);
+      section.appendChild(blog);
     }
   }
 

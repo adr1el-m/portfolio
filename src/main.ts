@@ -25,6 +25,7 @@ import { AccessibilityEnhancer } from './modules/accessibility-enhancer';
 import { logger } from './config';
 import type { Portfolio } from './types';
 import { TextPlaceholders } from './modules/text-placeholders';
+import { Search } from './modules/search';
 
 // Vercel Analytics & Speed Insights are loaded conditionally in production (see top of file);
 
@@ -72,6 +73,8 @@ class PortfolioApp {
       const imageOptimizer = new ImageOptimizer();
       const modalManager = new ModalManager();
       const navigationManager = new NavigationManager();
+      // Initialize client-side search (activates when URL has ?q=)
+      const search = new Search();
 
       // Dynamically import and initialize non-critical modules
       import('./modules/particle-background').then(({ ParticleBackground }) => {
@@ -162,6 +165,7 @@ class PortfolioApp {
           ImageOptimizer: imageOptimizer,
           ModalManager: modalManager,
           NavigationManager: navigationManager,
+          Search: search,
           SkeletonLoader: skeletonLoader,
         },
         lazy: {},

@@ -1,0 +1,18 @@
+{
+  "defaults": {
+    "timeout": 30000,
+    "standard": "WCAG2AA",
+    "includeWarnings": false,
+    "includeNotices": false,
+    "threshold": 0,
+    "chromeLaunchConfig": {
+      "args": ["--no-sandbox", "--disable-dev-shm-usage"]
+    }
+  },
+  "urls": [
+    "http://localhost:4173/",
+    "http://localhost:4173/?perf=1",
+    "http://localhost:4173/loading-demo.html",
+    "http://localhost:4173/mobile-test-guide.html"
+  ]
+}

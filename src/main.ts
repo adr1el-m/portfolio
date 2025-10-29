@@ -179,13 +179,18 @@ class PortfolioApp {
       window.addEventListener('load', () => {
         setTimeout(() => {
           performanceMonitor.displayPerformanceBadge();
-          if (import.meta.env.DEV) {
-            performanceMonitor.generateReport();
-            // Initialize performance dashboard in dev mode
+          const params = new URLSearchParams(window.location.search);
+          const flag = (params.get('perf') || params.get('dashboard') || '').toLowerCase();
+          const showPerfDashboard = import.meta.env.DEV || flag === '1' || flag === 'true' || flag === 'yes';
+
+          if (showPerfDashboard) {
+            if (import.meta.env.DEV) {
+              performanceMonitor.generateReport();
+            }
             PerformanceDashboard.getInstance({
               position: 'bottom-right',
               minimized: true,
-              showInProduction: false
+              showInProduction: !import.meta.env.DEV
             });
           }
         }, 1000);

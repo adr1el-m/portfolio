@@ -102,6 +102,15 @@ export class PerformanceMonitor {
     // Send to analytics (if available)
     this.sendToAnalytics(report);
 
+    // Notify listeners (e.g., on-site dashboard) that metrics have updated
+    if (typeof window !== 'undefined') {
+      try {
+        window.dispatchEvent(new CustomEvent('portfolio:web-vitals', { detail: { report } }));
+      } catch (e) {
+        // no-op: CustomEvent may not be available in some environments
+      }
+    }
+
     // Display in console for development
     if (import.meta.env.DEV) {
       console.table({

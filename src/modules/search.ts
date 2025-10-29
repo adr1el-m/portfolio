@@ -1,4 +1,4 @@
-import { logger } from '@/config';
+// No logger needed for search overlay
 
 interface SearchResult {
   title: string;
@@ -10,7 +10,6 @@ interface SearchResult {
 export class Search {
   private overlayEl: HTMLElement | null = null;
   private resultsEl: HTMLElement | null = null;
-  private inputEl: HTMLInputElement | null = null;
 
   constructor() {
     this.init();
@@ -72,7 +71,6 @@ export class Search {
 
     this.overlayEl = overlay;
     this.resultsEl = results;
-    this.inputEl = input;
 
     input.addEventListener('keydown', (e) => {
       if ((e as KeyboardEvent).key === 'Enter') {
@@ -91,7 +89,6 @@ export class Search {
       this.overlayEl?.remove();
       this.overlayEl = null;
       this.resultsEl = null;
-      this.inputEl = null;
       // Remove ?q from URL
       try {
         const url = new URL(window.location.href);
@@ -161,7 +158,6 @@ export class Search {
         this.overlayEl?.remove();
         this.overlayEl = null;
         this.resultsEl = null;
-        this.inputEl = null;
         this.updateQueryParam('');
       });
 

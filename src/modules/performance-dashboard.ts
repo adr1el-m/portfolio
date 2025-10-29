@@ -48,6 +48,7 @@ export class PerformanceDashboard {
       setTimeout(() => {
         this.createDashboard();
         this.updateMetrics();
+        this.bindMetricUpdates();
         logger.info('✅ Performance Dashboard initialized');
       }, 2000);
     });
@@ -91,6 +92,13 @@ export class PerformanceDashboard {
     this.attachEventListeners();
 
     document.body.appendChild(this.container);
+  }
+
+  private bindMetricUpdates(): void {
+    // Listen for live metric updates from PerformanceMonitor
+    window.addEventListener('portfolio:web-vitals', () => {
+      this.updateMetrics();
+    });
   }
 
   private injectStyles(): void {

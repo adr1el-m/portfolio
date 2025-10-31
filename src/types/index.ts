@@ -52,6 +52,7 @@ export interface Portfolio {
   core?: {
     version: string;
     initialized: boolean;
+    auditMode?: boolean;
   };
   modules: {
     [key: string]: any;

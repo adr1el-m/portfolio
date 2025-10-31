@@ -31,6 +31,8 @@ export class IconReplacer {
       if (iconName && this.iconMap[iconName]) {
         // Use textContent for security
         icon.textContent = this.iconMap[iconName];
+        // Hide decorative icons from assistive technologies
+        icon.setAttribute('aria-hidden', 'true');
         // Apply some basic styling to make them look right
         const element = icon as HTMLElement;
         element.style.fontSize = '1.2em';

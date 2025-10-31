@@ -33,14 +33,15 @@
     "url": "https://github.com/adr1el-m/portfolio"
   },
   "devDependencies": {
+    "@axe-core/cli": "^4.8.2",
     "@lhci/cli": "^0.15.1",
     "@types/node": "^20.19.21",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.57.1",
-    "@axe-core/cli": "^4.8.2",
-    "pa11y-ci": "^3.0.0",
     "lighthouse": "^13.0.0",
+    "pa11y-ci": "^3.0.0",
+    "puppeteer": "^24.27.0",
     "sharp": "^0.34.4",
     "terser": "^5.44.0",
     "typescript": "^5.9.3",

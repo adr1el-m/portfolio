@@ -189,7 +189,8 @@
         }
         
         .tip strong {
-            color: #856404;
+            color: inherit;
+            font-weight: 600;
         }
         
         @media (max-width: 768px) {
@@ -206,6 +207,11 @@
             }
         }
     </style>
+    <style>
+        /* Accessibility overrides */
+        .test-button { color: #333333; }
+        .test-button:focus-visible { outline: 3px solid #4f46e5; outline-offset: 2px; }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -217,7 +223,7 @@
             <div class="quick-test">
                 <h3>Test Your Portfolio Now!</h3>
                 <p>Open your portfolio and resize the browser window to test responsiveness.</p>
-                <a href="index.html" class="test-button" target="_blank">Open Portfolio →</a>
+                <a href="index.html" class="test-button" target="_blank" rel="noopener noreferrer">Open Portfolio →</a>
             </div>
         </div>
         
@@ -433,9 +439,9 @@
             <h3>📊 Performance Testing</h3>
             <p>Test your site's mobile performance with these tools:</p>
             <div style="margin-top: 15px;">
-                <a href="https://pagespeed.web.dev/" class="test-button" target="_blank" style="margin-right: 10px; margin-bottom: 10px; display: inline-block;">PageSpeed Insights</a>
-                <a href="https://www.webpagetest.org/" class="test-button" target="_blank" style="margin-right: 10px; margin-bottom: 10px; display: inline-block;">WebPageTest</a>
-                <a href="https://developers.google.com/web/tools/lighthouse" class="test-button" target="_blank" style="margin-bottom: 10px; display: inline-block;">Lighthouse</a>
+                <a href="https://pagespeed.web.dev/" class="test-button" target="_blank" rel="noopener noreferrer" style="margin-right: 10px; margin-bottom: 10px; display: inline-block;">PageSpeed Insights</a>
+                <a href="https://www.webpagetest.org/" class="test-button" target="_blank" rel="noopener noreferrer" style="margin-right: 10px; margin-bottom: 10px; display: inline-block;">WebPageTest</a>
+                <a href="https://developers.google.com/web/tools/lighthouse" class="test-button" target="_blank" rel="noopener noreferrer" style="margin-bottom: 10px; display: inline-block;">Lighthouse</a>
             </div>
         </div>
         

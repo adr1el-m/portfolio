@@ -567,9 +567,7 @@ export class ModalManager {
         <hr class="desc-divider" />
         <div class="desc-section"><h4>Technologies Used</h4><ul><li><strong>Frontend:</strong> HTML, CSS, JavaScript</li><li><strong>Frameworks:</strong> React, Vite</li><li><strong>APIs:</strong> Google Generative AI for eco-tips and chatbot responses</li><li><strong>Charting:</strong> Chart.js for visualizing data</li><li><strong>Styling:</strong> Tailwind CSS for responsive design</li></ul></div>
         <hr class="desc-divider" />
-        <div class="desc-section"><h4>Usage</h4><ul><li><strong>Sustainability Calculator:</strong> Fill in the form with your daily activities to calculate your carbon footprint.</li><li><strong>Eco Tips:</strong> Click on the \"Get Eco Tip\" button to receive a personalized tip.</li><li><strong>Chatbot:</strong> Use the chat feature to ask questions and get instant responses.</li></ul></div>
-        <hr class="desc-divider" />
-        <div class="desc-section"><h4>Database Details</h4><p>The database schema includes a table for user accounts and a reference loan table for calculations. Below are sample values:</p><table><thead><tr><th>User Type</th><th>Loan Amount</th><th>Interest (%)</th><th>Total Amount</th><th>Monthly Dues (6 mos)</th><th>Monthly Dues (12 mos)</th><th>Monthly Dues (24 mos)</th></tr></thead><tbody><tr><td>Officer</td><td>5,000.00</td><td>5%</td><td>5,250.00</td><td>875.00</td><td>437.50</td><td>218.75</td></tr><tr><td>Member</td><td>10,000.00</td><td>10%</td><td>11,000.00</td><td>1,833.33</td><td>916.67</td><td>458.33</td></tr></tbody></table></div>`;
+        <div class="desc-section"><h4>Usage</h4><ul><li><strong>Sustainability Calculator:</strong> Fill in the form with your daily activities to calculate your carbon footprint.</li><li><strong>Eco Tips:</strong> Click on the \"Get Eco Tip\" button to receive a personalized tip.</li><li><strong>Chatbot:</strong> Use the chat feature to ask questions and get instant responses.</li></ul></div>`;
       } else if (data.title.trim() === 'Kita-Kita (Agentic)' || data.title.includes('Agentic')) {
         projectDescription.classList.add('rich');
         projectDescription.innerHTML = `
@@ -908,10 +906,7 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
             <li>ESLint, Prettier, Vitest</li>
             <li>Vercel / Docker for deployment</li>
           </ul>
-        </div>
-        <hr class="desc-divider" />
-        <div class="desc-section"><h4>Database Details</h4>
-          <p>The database schema includes a table for user accounts and a reference loan table for calculations. Below are sample values:</p><table><thead><tr><th>User Type</th><th>Loan Amount</th><th>Interest (%)</th><th>Total Amount</th><th>Monthly Dues (6 mos)</th><th>Monthly Dues (12 mos)</th><th>Monthly Dues (24 mos)</th></tr></thead><tbody><tr><td>Officer</td><td>5,000.00</td><td>5%</td><td>5,250.00</td><td>875.00</td><td>437.50</td><td>218.75</td></tr><tr><td>Member</td><td>10,000.00</td><td>10%</td><td>11,000.00</td><td>1,833.33</td><td>916.67</td><td>458.33</td></tr></tbody></table></div>`;
+        </div>`;
       } else if (data.title.trim() === 'Tindahan ni Aling Nena' || data.title.includes('Aling Nena')) {
         projectDescription.classList.add('rich');
         projectDescription.innerHTML = `

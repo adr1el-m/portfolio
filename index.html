@@ -311,9 +311,8 @@
     article.active { display: block; }
   </style>
 
-  <!-- Defer non-critical CSS: preload then apply onload; with noscript fallback -->
-  <link rel="preload" href="style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="style.css"></noscript>
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="/style.css">
 
   <!-- Preload hero avatar with responsive sources -->
   <link rel="preload" as="image" href="/images/my-avatar.avif"
@@ -543,6 +542,27 @@
               </div>
             </li>
           </ul>
+        </section>
+
+        <!-- Tech Stack Section -->
+        <section class="tech-stack-section" aria-labelledby="tech-stack-title">
+          <h3 id="tech-stack-title" class="h3 tech-stack-title">Tech Stack & Tools</h3>
+          <div class="stack-controls" role="toolbar" aria-label="Filter tech stack">
+            <div class="filter-chips" aria-label="Categories">
+              <button class="chip active" data-chip="all" aria-pressed="true">All</button>
+              <button class="chip" data-chip="Languages">Languages</button>
+              <button class="chip" data-chip="Frontend">Frontend</button>
+              <button class="chip" data-chip="Backend">Backend</button>
+              <button class="chip" data-chip="Database">Database</button>
+              <button class="chip" data-chip="Mobile">Mobile</button>
+              <button class="chip" data-chip="AI & IoT">AI & IoT</button>
+              <button class="chip" data-chip="Tools">Tools</button>
+            </div>
+            <div class="stack-search-wrapper">
+              <input type="search" class="stack-search" placeholder="Search technologies" aria-label="Search technologies" autocomplete="off">
+            </div>
+          </div>
+          <ul id="stack-grid" class="stack-grid" role="list" aria-label="Technology items"></ul>
         </section>
 
         <section class="achievements">
@@ -887,7 +907,7 @@
                   <span class="tag">Problem Solving</span>
                 </div>
                 <p class="timeline-text">
-                  Working as a Workflow Architect at Eskwelabs, designing and optimizing cross-team workflows and automations. Collaborating with stakeholders to streamline processes, improve reliability, and document standards that enhance operational efficiency.
+                  Workflow Architect at Eskwelabs, automating pitch‑deck creation and investor outreach for funding. I design cross‑team workflows using Google technologies and n8n to streamline processes, improve reliability, and document standards that enhance operational efficiency.
                 </p>
               </div>
             </div>
@@ -997,7 +1017,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Merc+Airline+Ticketing+System" alt="Merc Airline Ticketing System" loading="lazy">
+                  <img alt="Merc Airline Ticketing System" loading="lazy">
                 </figure>
                 <h3 class="project-title">Merc Airline Ticketing System</h3>
               </a>
@@ -1085,7 +1105,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=RGBC+ATM+System" alt="RGBC: Richard Gwapo Banking Corporation (ATM Transaction System)" loading="lazy">
+                  <img alt="RGBC: Richard Gwapo Banking Corporation (ATM Transaction System)" loading="lazy">
                 </figure>
                 <h3 class="project-title">RGBC: Richard Gwapo Banking Corporation (ATM Transaction System)</h3>
               </a>
@@ -1147,7 +1167,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Kita-Kita" alt="Kita-Kita" loading="lazy" width="400" height="300">
+                  <img alt="Kita-Kita" loading="lazy" width="400" height="300">
                 </figure>
                 <h3 class="project-title">Kita-Kita</h3>
               </a>
@@ -1209,7 +1229,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="https://placehold.co/400x300/1a1a1a/ffdb70?text=Aling+Nena" alt="Tindahan ni Aling Nena" loading="lazy" width="400" height="300">
+                  <img alt="Tindahan ni Aling Nena" loading="lazy" width="400" height="300">
                 </figure>
                 <h3 class="project-title">Tindahan ni Aling Nena</h3>
               </a>

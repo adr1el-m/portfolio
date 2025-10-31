@@ -26,8 +26,8 @@ export class TextPlaceholders {
         const img = item.querySelector<HTMLImageElement>('.project-img img');
         const video = item.querySelector<HTMLVideoElement>('.project-img video');
 
-        // Replace external placeholder IMG
-        if (img && /placehold\.co/.test(img.src)) {
+        // Replace missing/external placeholder IMG early to avoid network requests
+        if (img && (!img.src || /placehold\.co/.test(img.src))) {
           img.src = svgDataUri(title);
           img.classList.remove('image-error');
           const parent = img.parentElement;

@@ -70,7 +70,7 @@ export const KB: KnowledgeBase = {
       company: 'Eskwelabs',
       period: '2024 — Present',
       summary:
-        'Designing and optimizing cross-team workflows and automations; collaborating with stakeholders to streamline processes and document standards.',
+        'Automating pitch‑deck creation and investor outreach for funding; designing cross‑team workflows with Google technologies and n8n to streamline processes, improve reliability, and document standards.',
     },
   ],
   skills: {

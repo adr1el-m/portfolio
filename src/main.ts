@@ -101,6 +101,11 @@ class PortfolioApp {
         new AboutEnhancements();
       });
 
+      // Initialize interactive Tech Stack section
+      import('./modules/tech-stack').then(({ TechStack }) => {
+        new TechStack();
+      });
+
       import('./modules/awards-accordion').then(({ AwardsAccordion }) => {
         new AwardsAccordion();
       });

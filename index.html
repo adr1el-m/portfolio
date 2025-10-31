@@ -352,16 +352,15 @@
 
         <figure class="avatar-box">
           <picture>
-            <source type="image/avif" srcset="/images/my-avatar.avif 80w, /images/my-avatar@2x.avif 160w" sizes="80px">
-            <source type="image/webp" srcset="/images/my-avatar.webp 80w, /images/my-avatar@2x.webp 160w" sizes="80px">
-            <img src="/images/my-avatar.png" 
-                 alt="Adriel Magalona" 
-                 width="80" 
+            <!-- Use high-quality PNG from PWA images folder -->
+            <img src="/images/pwa/my-avatar.png"
+                 alt="Adriel Magalona"
+                 width="80"
                  height="80"
                  loading="eager"
                  fetchpriority="high"
                  decoding="async"
-                 srcset="/images/my-avatar.png 80w, /images/my-avatar@2x.png 160w"
+                 srcset="/images/pwa/my-avatar.png 80w, /images/pwa/my-avatar.png 160w"
                  sizes="80px"
                  class="critical-image">
           </picture>

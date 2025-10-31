@@ -60,8 +60,8 @@ export interface Portfolio {
   lazy?: {
     [key: string]: any;
   };
-  legacy?: Record<string, Function>;
-  utils?: Record<string, Function>;
+  legacy?: Record<string, (...args: unknown[]) => unknown>;
+  utils?: Record<string, (...args: unknown[]) => unknown>;
 }
 
 declare global {

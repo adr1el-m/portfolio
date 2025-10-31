@@ -21,6 +21,14 @@ export class TechStack {
   private chips: NodeListOf<HTMLButtonElement> | null = null;
   private searchInput: HTMLInputElement | null = null;
   private activeCategories: Set<Category> = new Set();
+  private showAll = false;
+  private toggleBtn: HTMLButtonElement | null = null;
+  private essentialNames: string[] = [
+    'JavaScript', 'TypeScript', 'HTML', 'CSS',
+    'React', 'Vite', 'Tailwind CSS',
+    'Node.js', 'Express.js',
+    'Git', 'GitHub', 'Firebase', 'MySQL'
+  ];
 
   constructor() {
     this.bootstrap();
@@ -32,7 +40,8 @@ export class TechStack {
     if (!this.grid || !section) return; // abort silently if not on page
 
     this.items = this.getData();
-    this.render(this.items);
+    this.setupToggle();
+    this.filter();
     this.bindEvents(section);
     this.observeReveal(section);
   }
@@ -202,13 +211,17 @@ export class TechStack {
   private filter(): void {
     const q = (this.searchInput?.value || '').toLowerCase();
     const cats = this.activeCategories;
-    const res = this.items.filter(i => {
+    const filtered = this.items.filter(i => {
       const matchesCat = cats.size === 0 ? true : cats.has(i.category);
       const hay = (i.name + ' ' + (i.description || '')).toLowerCase();
       const matchesQuery = q ? hay.includes(q) : true;
       return matchesCat && matchesQuery;
     });
-    this.render(res);
+    const final = (!this.showAll)
+      ? this.sampleEssentials(filtered)
+      : filtered;
+    this.render(final);
+    this.updateToggleButtonText(filtered.length);
   }
 
   private observeReveal(section: Element): void {
@@ -221,5 +234,60 @@ export class TechStack {
       });
     }, { threshold: 0.15 });
     io.observe(section);
+  }
+
+  private setupToggle(): void {
+    // See All / Show fewer toggle — guard against duplicates across the document
+    const existingToggles = document.querySelectorAll<HTMLButtonElement>('.stack-toggle');
+    if (existingToggles.length > 1) {
+      existingToggles.forEach((btn, i) => { if (i > 0) btn.remove(); });
+    }
+    const existing = existingToggles[0] || null;
+    if (existing) {
+      this.toggleBtn = existing;
+    } else {
+      this.toggleBtn = document.createElement('button');
+      this.toggleBtn.className = 'stack-toggle';
+      this.toggleBtn.type = 'button';
+      this.toggleBtn.textContent = 'See all';
+      this.toggleBtn.setAttribute('aria-expanded', 'false');
+      // Insert after the grid
+      this.grid?.insertAdjacentElement('afterend', this.toggleBtn);
+    }
+    // Bind click (overwrite any previous handler to avoid stacking)
+    this.toggleBtn.onclick = () => {
+      this.showAll = !this.showAll;
+      this.toggleBtn?.setAttribute('aria-expanded', String(this.showAll));
+      this.toggleBtn!.textContent = this.showAll ? 'Show fewer' : 'See all';
+      this.filter();
+    };
+    // Re-evaluate on resize (bind once)
+    const w = window as any;
+    if (!w.__techStackResizeBound) {
+      window.addEventListener('resize', () => this.filter());
+      w.__techStackResizeBound = true;
+    }
+  }
+
+  private updateToggleButtonText(total: number): void {
+    if (!this.toggleBtn) return;
+    // Hide toggle when there are 10 or fewer items
+    if (total <= 10) {
+      this.toggleBtn.style.display = 'none';
+      return;
+    } else {
+      this.toggleBtn.style.display = '';
+    }
+    this.toggleBtn.textContent = this.showAll ? 'Show fewer' : `See all (${total})`;
+  }
+
+
+  private sampleEssentials(list: TechItem[]): TechItem[] {
+    // Prefer essentials, fallback to provided list if filters exclude essentials
+    const nameSet = new Set(this.essentialNames);
+    const essentials = list.filter(i => nameSet.has(i.name));
+    const pool = essentials.length ? essentials : list;
+    const shuffled = pool.slice().sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, Math.min(10, shuffled.length));
   }
 }

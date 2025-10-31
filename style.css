@@ -2978,6 +2978,20 @@ article.active {
   transform: translateY(-15px);
 }
 
+/* Mobile-specific tweaks */
+@media (max-width: 767px) {
+  /* Center the RESUME link within the sidebar contacts */
+  .contacts-list .resume {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  /* Hide back-to-top on mobile to avoid overlapping chatbot */
+  .back-to-top { display: none !important; }
+}
+
 /* Enhanced sliding animation for FAQ answers */
 .faq-answer {
   max-height: 0;
@@ -6099,6 +6113,9 @@ picture img {
   .stack-controls { flex-direction: column; align-items: stretch; gap: 10px; }
   .stack-search-wrapper { justify-content: stretch; }
   .stack-search { width: 100%; }
+  /* Let chips wrap into multiple rows on small screens */
+  .filter-chips { flex-wrap: wrap; overflow-x: visible; gap: 10px; padding-inline: 0; }
+  .chip { flex: 0 0 auto; white-space: nowrap; }
 }
 
 /* Gold glow hover for Projects (match timeline-content aesthetic) */
@@ -6111,3 +6128,26 @@ article.projects ul.project-list li.project-item:focus-within {
 }
 .filter-chips { -ms-overflow-style: none; }
 .filter-chips::-webkit-scrollbar { display: none; }
+
+/* See All toggle (visible on all viewports) */
+.stack-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  align-self: center;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: var(--border-gradient-onyx);
+  border: 1px solid var(--color-border);
+  color: var(--white-2);
+  box-shadow: var(--elevation-1);
+}
+.stack-toggle[aria-expanded="true"] {
+  color: var(--orange-yellow-crayola);
+  border-color: rgba(255, 219, 112, 0.4);
+}
+
+@media (max-width: 767px) {
+  .stack-toggle { align-self: center; }
+}

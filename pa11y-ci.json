@@ -10,8 +10,8 @@
     }
   },
   "urls": [
-    { "url": "http://localhost:4173/?audit=1", "actions": ["wait 3000"] },
-    { "url": "http://localhost:4173/?perf=1&audit=1", "actions": ["wait 3000"] },
+    "http://localhost:4173/?audit=1",
+    "http://localhost:4173/?perf=1&audit=1",
     "http://localhost:4173/loading-demo.html",
     "http://localhost:4173/mobile-test-guide.html"
   ]

@@ -81,52 +81,53 @@ class PortfolioApp {
       // Initialize client-side search (activates when URL has ?q=)
       const search = new Search();
 
-      // Dynamically import and initialize non-critical modules (skip in audit mode)
-      if (!auditMode) {
-        import('./modules/particle-background').then(({ ParticleBackground }) => {
-          new ParticleBackground('particle-background');
+      // Helper to defer non-critical work to after first paint
+      const defer = (cb: () => void, delay = 0) => {
+        requestAnimationFrame(() => { setTimeout(cb, delay); });
+      };
+
+      // Defer non-essential modules until after first paint/idle
+      defer(() => {
+        import('./modules/about-enhancements').then(({ AboutEnhancements }) => {
+          new AboutEnhancements();
         });
-      }
+      }, 0);
 
-      if (!auditMode) {
-        import('./modules/chatbot').then(({ ChatbotManager }) => {
-          if (window.Portfolio?.lazy) {
-            window.Portfolio.lazy.ChatbotManager = new ChatbotManager();
-          }
+      defer(() => {
+        import('./modules/awards-accordion').then(({ AwardsAccordion }) => {
+          new AwardsAccordion();
         });
-      }
+      }, 50);
 
+      defer(() => {
+        import('./modules/tooltip-portal').then(({ TooltipPortal }) => {
+          new TooltipPortal();
+        });
+      }, 100);
 
-      import('./modules/about-enhancements').then(({ AboutEnhancements }) => {
-        new AboutEnhancements();
-      });
-
-      // Initialize interactive Tech Stack section
-      import('./modules/tech-stack').then(({ TechStack }) => {
-        new TechStack();
-      });
-
-      import('./modules/awards-accordion').then(({ AwardsAccordion }) => {
-        new AwardsAccordion();
-      });
-
-      // Initialize Tooltip Portal to prevent sidebar tooltip clipping
-      import('./modules/tooltip-portal').then(({ TooltipPortal }) => {
-        new TooltipPortal();
-      });
+      // Initialize interactive Tech Stack section a bit later
+      defer(() => {
+        import('./modules/tech-stack').then(({ TechStack }) => {
+          new TechStack();
+        });
+      }, 150);
 
       // Initialize video thumbnails manager (defer playback, posters, pause off-screen)
-      import('./modules/video-thumbnails').then(({ VideoThumbnails }) => {
-        const vt = new VideoThumbnails();
-        if (window.Portfolio?.lazy) {
-          window.Portfolio.lazy.VideoThumbnails = vt;
-        }
-      });
+      defer(() => {
+        import('./modules/video-thumbnails').then(({ VideoThumbnails }) => {
+          const vt = new VideoThumbnails();
+          if (window.Portfolio?.lazy) {
+            window.Portfolio.lazy.VideoThumbnails = vt;
+          }
+        });
+      }, 200);
 
       // Sort project cards by thumbnail type (video > image > none)
-      import('./modules/projects-sort').then(({ ProjectsSorter }) => {
-        new ProjectsSorter().sort();
-      });
+      defer(() => {
+        import('./modules/projects-sort').then(({ ProjectsSorter }) => {
+          new ProjectsSorter().sort();
+        });
+      }, 250);
 
       // Initialize Icon Replacer
       new IconReplacer();
@@ -137,39 +138,62 @@ class PortfolioApp {
       // Initialize Sidebar Animations (after skeleton loader)
       new SidebarAnimations();
 
-      // Register PWA service worker (skip in audit mode to avoid SW interference)
-      if (!auditMode) {
-        import('./modules/pwa-manager').then(({ PwaManager }) => {
-          PwaManager.register();
-        });
-      }
+      // Register PWA service worker (skip in audit mode to avoid SW interference) — defer
+      defer(() => {
+        if (!auditMode) {
+          import('./modules/pwa-manager').then(({ PwaManager }) => {
+            PwaManager.register();
+          });
+        }
+      }, 400);
 
       // Enhance landmarks after DOM is ready
       accessibilityEnhancer.enhanceLandmarks();
 
-      // Dynamically import and initialize vanilla-tilt (skip in audit mode)
-      if (!auditMode) {
-        import('vanilla-tilt').then(module => {
-          const VanillaTilt = module.default;
-          const cards = document.querySelectorAll('.achievement-card');
-          VanillaTilt.init(cards as any, {
-            max: 15,
-            speed: 400,
-            glare: true,
-            "max-glare": 0.1,
-          });
+      // Dynamically import and initialize vanilla-tilt (skip in audit mode) — defer
+      defer(() => {
+        if (!auditMode) {
+          import('vanilla-tilt').then(module => {
+            const VanillaTilt = module.default;
+            const cards = document.querySelectorAll('.achievement-card');
+            VanillaTilt.init(cards as any, {
+              max: 15,
+              speed: 400,
+              glare: true,
+              "max-glare": 0.1,
+            });
 
-          cards.forEach(card => {
-            card.addEventListener('mousemove', (e: Event) => {
-              const rect = (card as HTMLElement).getBoundingClientRect();
-              const x = (e as MouseEvent).clientX - rect.left;
-              const y = (e as MouseEvent).clientY - rect.top;
-              (card as HTMLElement).style.setProperty('--mouse-x', `${x}px`);
-              (card as HTMLElement).style.setProperty('--mouse-y', `${y}px`);
+            cards.forEach(card => {
+              card.addEventListener('mousemove', (e: Event) => {
+                const rect = (card as HTMLElement).getBoundingClientRect();
+                const x = (e as MouseEvent).clientX - rect.left;
+                const y = (e as MouseEvent).clientY - rect.top;
+                (card as HTMLElement).style.setProperty('--mouse-x', `${x}px`);
+                (card as HTMLElement).style.setProperty('--mouse-y', `${y}px`);
+              });
             });
           });
-        });
-      }
+        }
+      }, 350);
+
+      // Chatbot and particle background — heavier modules, defer slightly more
+      defer(() => {
+        if (!auditMode) {
+          import('./modules/chatbot').then(({ ChatbotManager }) => {
+            if (window.Portfolio?.lazy) {
+              window.Portfolio.lazy.ChatbotManager = new ChatbotManager();
+            }
+          });
+        }
+      }, 300);
+
+      defer(() => {
+        if (!auditMode) {
+          import('./modules/particle-background').then(({ ParticleBackground }) => {
+            new ParticleBackground('particle-background');
+          });
+        }
+      }, 450);
 
       // Initialize core components
       window.Portfolio = {

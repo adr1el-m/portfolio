@@ -120,6 +120,15 @@ export class LoadingManager {
     const images = document.querySelectorAll<HTMLImageElement>('img:not([loading="eager"])');
     
     images.forEach((img) => {
+      // Ensure lazy-loading on non-critical images
+      if (!img.classList.contains('critical-image') && !img.hasAttribute('loading')) {
+        img.setAttribute('loading', 'lazy');
+      }
+      // Prefer async decoding
+      if (!img.hasAttribute('decoding')) {
+        img.setAttribute('decoding', 'async');
+      }
+
       // Add loading skeleton
       if (!img.complete && !img.classList.contains('critical-image')) {
         this.addImageSkeleton(img);
@@ -134,6 +143,18 @@ export class LoadingManager {
       img.addEventListener('load', () => {
         this.removeImageSkeleton(img);
         img.classList.add('image-loaded');
+
+        // After image loads, set width/height if missing to reduce CLS
+        if (!img.hasAttribute('width') && img.naturalWidth > 0) {
+          img.setAttribute('width', String(img.naturalWidth));
+        }
+        if (!img.hasAttribute('height') && img.naturalHeight > 0) {
+          img.setAttribute('height', String(img.naturalHeight));
+        }
+        // Provide aspect-ratio hint when possible
+        if (!img.style.aspectRatio && img.naturalWidth > 0 && img.naturalHeight > 0) {
+          img.style.aspectRatio = `${img.naturalWidth}/${img.naturalHeight}`;
+        }
       });
 
       // Handle error event

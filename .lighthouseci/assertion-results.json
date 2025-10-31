@@ -2,11 +2,11 @@
   {
     "name": "maxNumericValue",
     "expected": 3000,
-    "actual": 16671.5253,
+    "actual": 16528.0089,
     "values": [
-      16754.5968,
-      16688.5806,
-      16671.5253
+      16672.7773,
+      16528.0089,
+      16673.519699999997
     ],
     "operator": "<=",
     "passed": false,
@@ -19,11 +19,11 @@
   {
     "name": "maxNumericValue",
     "expected": 15000,
-    "actual": 16671.5253,
+    "actual": 16528.0089,
     "values": [
-      16754.5968,
-      16688.5806,
-      16671.5253
+      16672.7773,
+      16528.0089,
+      16673.519699999997
     ],
     "operator": "<=",
     "passed": false,
@@ -36,11 +36,11 @@
   {
     "name": "maxNumericValue",
     "expected": 5120,
-    "actual": 3078471,
+    "actual": 3086664,
     "values": [
-      3078471,
-      3113752,
-      3113752
+      3125552,
+      3086664,
+      3123410
     ],
     "operator": "<=",
     "passed": false,
@@ -70,11 +70,11 @@
   {
     "name": "minScore",
     "expected": 0.9,
-    "actual": 0.36,
+    "actual": 0.74,
     "values": [
-      0.36,
-      0.06,
-      0.08
+      0.19,
+      0.74,
+      0.24
     ],
     "operator": ">=",
     "passed": false,

@@ -5,11 +5,4 @@ interface ImportMetaEnv {
   // Add more env variables as needed
 }
 
-interface ImportMeta {
-  readonly env: ImportMetaEnv
-  readonly hot?: {
-    accept: (cb?: (mod: any) => void) => void
-    dispose: (cb: (data: any) => void) => void
-    data: any
-  }
-}
+// Use default Vite-provided ImportMeta/ImportMetaHot types from vite/client

@@ -154,13 +154,6 @@ function nextjsLogo(): SVGSVGElement {
   return svg;
 }
 
-function expressLogo(): SVGSVGElement {
-  const svg = baseSvg();
-  const ring = svgEl('circle', { cx: 12, cy: 12, r: 9, fill: 'none', stroke: '#444', 'stroke-width': 2 });
-  const x = svgEl('path', { d: 'M8 8l8 8M16 8l-8 8', stroke: '#444', 'stroke-width': 2, 'stroke-linecap': 'round' });
-  svg.append(ring, x);
-  return svg;
-}
 
 export function createBrandLogo(name: string): SVGSVGElement | null {
   const key = name.trim().toLowerCase();

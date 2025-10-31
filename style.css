@@ -4803,38 +4803,53 @@ article.active {
     height: auto;
   }
 
-  /* Stack the left (media) and right (info) columns vertically */
+  /* Force vertical stacking and isolate columns to avoid overlap */
   .achievement-modal-body {
-    flex-direction: column;
-    gap: 15px;
+    display: grid !important;
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    gap: 16px;
     overflow-y: auto;
   }
 
-  /* Make sure the media section spans the full width */
+  /* Make sure the media section spans the full width and doesn't overflow */
   .achievement-media {
     width: 100%;
     min-height: 200px;
+    position: relative;
+    z-index: auto;
+    overflow: hidden;
   }
 
-  /* Responsive image sizing: adapt based on aspect ratio */
+  /* Responsive image sizing: adapt based on aspect ratio without spilling */
   .achievement-slider {
-    height: 65vh;
-    max-height: 65vh;
-    overflow: visible;
+    height: auto;
+    max-height: 55vh;
+    overflow: hidden;
   }
   .achievement-slide-image {
     width: 100%;
     height: auto;
-    max-height: 65vh;
+    max-height: 55vh;
     border-radius: 14px;
   }
-  .achievement-slide-image.fit-contain { object-fit: contain; height: auto; max-height: 65vh; }
+  .achievement-slide-image.fit-contain { object-fit: contain; height: auto; max-height: 55vh; }
   .achievement-slide-image.fit-cover { object-fit: cover; height: 100%; max-height: 100%; }
+
+  /* Action buttons section: ensure it sits below the image cleanly */
+  .achievement-media .achievement-github {
+    position: relative;
+    z-index: 0;
+    margin-top: 12px;
+  }
+  .github-button { display: inline-flex; width: 100%; }
 
   /* Adjust the info section for better readability */
   .achievement-info {
     width: 100%;
     padding: 10px;
+    position: relative;
+    z-index: 0;
   }
 
   .achievement-info h3 {
@@ -5035,9 +5050,19 @@ picture img {
     gap: 10px;
   }
 
+  /* Ensure avatar is perfectly centered on small screens */
+  .avatar-box {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .avatar-box img {
-    width: 70px !important;
-    height: 70px !important;
+    width: 100% !important;
+    height: 100% !important;
   }
 
   .info-content .name {

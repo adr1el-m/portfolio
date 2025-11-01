@@ -53,6 +53,7 @@ export interface Portfolio {
     version: string;
     initialized: boolean;
     auditMode?: boolean;
+    prefersReducedMotion?: boolean;
   };
   modules: {
     [key: string]: any;

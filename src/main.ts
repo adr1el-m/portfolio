@@ -54,6 +54,10 @@ class PortfolioApp {
       const qs = new URLSearchParams(window.location.search);
       const auditFlag = (qs.get('audit') || '').toLowerCase();
       const auditMode = auditFlag === '1' || auditFlag === 'true' || auditFlag === 'yes';
+      // Respect user system preference for reduced motion
+      const prefersReducedMotion = typeof window !== 'undefined' &&
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       // Wait for DOM to be ready
       if (document.readyState === 'loading') {
@@ -152,7 +156,7 @@ class PortfolioApp {
 
       // Dynamically import and initialize vanilla-tilt (skip in audit mode) — defer
       defer(() => {
-        if (!auditMode) {
+        if (!auditMode && !prefersReducedMotion) {
           import('vanilla-tilt').then(module => {
             const VanillaTilt = module.default;
             const cards = document.querySelectorAll('.achievement-card');
@@ -188,6 +192,14 @@ class PortfolioApp {
       }, 300);
 
       defer(() => {
+        const canvas = document.getElementById('particle-background') as HTMLCanvasElement | null;
+        if (prefersReducedMotion) {
+          if (canvas) {
+            canvas.style.display = 'none';
+            canvas.setAttribute('aria-hidden', 'true');
+          }
+          return;
+        }
         if (!auditMode) {
           import('./modules/particle-background').then(({ ParticleBackground }) => {
             new ParticleBackground('particle-background');
@@ -201,6 +213,7 @@ class PortfolioApp {
           version: '2.0.0',
           initialized: true,
           auditMode,
+          prefersReducedMotion,
         },
         modules: {
           SecurityManager: securityManager,

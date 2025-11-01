@@ -311,8 +311,9 @@
     article.active { display: block; }
   </style>
 
-  <!-- Main stylesheet -->
-  <link rel="stylesheet" href="/style.css">
+  <!-- Preload and load main stylesheet -->
+  <link rel="preload" href="/style.purged.css" as="style" crossorigin="anonymous">
+  <link rel="stylesheet" href="/style.purged.css">
 
   <!-- Preload hero avatar with responsive sources -->
   <link rel="preload" as="image" href="/images/my-avatar.avif"
@@ -343,6 +344,51 @@
 
 <body>
   <!-- Skip link removed per request -->
+  <noscript>
+    <style>
+      /* Show content without JS; hide interactive UI */
+      article { display: block !important; }
+      .navbar, .chatbox, .chatbot-btn, .back-to-top, #particle-background, .info_more-btn { display: none !important; }
+      .project-card-video { display: none !important; }
+      .noscript-banner { background: #1a1a1a; color: #fff; border: 1px solid var(--jet); border-radius: 10px; padding: 12px; margin: 12px 0; }
+      .noscript-banner h2 { font-size: var(--fs-2); margin-bottom: 8px; }
+      .noscript-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+      .noscript-nav a { color: var(--orange-yellow-crayola); border: 1px solid var(--jet); border-radius: 8px; padding: 6px 10px; }
+      .noscript-links { margin-top: 10px; }
+      .noscript-links li { margin: 4px 0; }
+    </style>
+    <div class="noscript-banner" role="alert" aria-live="polite">
+      <h2>Basic View Loaded</h2>
+      <p>JavaScript is disabled or failed to load. You can still browse the main sections and project links below.</p>
+      <nav class="noscript-nav" aria-label="Fallback navigation">
+        <a href="#about">About</a>
+        <a href="#background">Background</a>
+        <a href="#projects">Projects</a>
+        <a href="#organizations">Organizations</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="noscript-section">
+        <h3 class="h3" style="margin-top:10px">Project Links</h3>
+        <ul class="noscript-links" aria-label="Project repositories and live demos">
+          <li><a href="https://github.com/adr1el-m/Online-Document-Request-System" target="_blank" rel="noopener">ODRS (PHP)</a></li>
+          <li><a href="https://github.com/adr1el-m/merc-airline-ticketing-system" target="_blank" rel="noopener">Merc Airline Ticketing System (C++)</a></li>
+          <li><a href="https://github.com/adr1el-m/PHP-Loan-System" target="_blank" rel="noopener">PHP-Loan-System</a></li>
+          <li><a href="https://github.com/adr1el-m/ITC-youtube-layout" target="_blank" rel="noopener">YouTube Layout</a> • <a href="https://adriel-itc-assignment.vercel.app" target="_blank" rel="noopener">Live</a></li>
+          <li><a href="https://github.com/adr1el-m/finance-and-ai" target="_blank" rel="noopener">FinanceWise</a></li>
+          <li><a href="https://github.com/adr1el-m/green-pulse" target="_blank" rel="noopener">Green Pulse</a></li>
+          <li><a href="https://github.com/adr1el-m/LoanWolves-KitaKita" target="_blank" rel="noopener">Kita-Kita (Mobile)</a></li>
+          <li><a href="https://github.com/adr1el-m/talambuhay" target="_blank" rel="noopener">Talambuhay</a> • <a href="https://talambuhay-ni-adriel.vercel.app" target="_blank" rel="noopener">Live</a></li>
+          <li><a href="https://github.com/adr1el-m/sparkfest" target="_blank" rel="noopener">BarangayNav</a></li>
+          <li><a href="https://github.com/adr1el-m/team-Deansanitzy-2025" target="_blank" rel="noopener">Kita-Kita (Agentic)</a></li>
+          <li><a href="https://github.com/4sightorg/worksight" target="_blank" rel="noopener">WorkSight</a></li>
+          <li><a href="https://github.com/adr1el-m/mini-app" target="_blank" rel="noopener">Tindahan ni Aling Nena</a></li>
+          <li><a href="https://github.com/4sightorg/dokq" target="_blank" rel="noopener">DokQ</a></li>
+          <li><a href="https://github.com/adr1el-m/carmen-the-parasight" target="_blank" rel="noopener">LingapLink</a></li>
+          <li><a href="https://github.com/adr1el-m/codedex-SeptemberChallenge" target="_blank" rel="noopener">Fireside September</a></li>
+        </ul>
+      </div>
+    </div>
+  </noscript>
   <canvas id="particle-background" aria-hidden="true"></canvas>
   <main id="main-content">
     <aside class="sidebar" data-sidebar>
@@ -483,7 +529,7 @@
       </nav>
 
 
-      <article class="about active" data-page="about">
+      <article id="about" class="about active" data-page="about">
 
         <header>
           <h2 class="h2 article-title">About me</h2>
@@ -808,7 +854,7 @@
 
       </article>
 
-      <article class="background" data-page="background">
+      <article id="background" class="background" data-page="background">
 
         <header>
           <h2 class="h2 article-title">Background</h2>
@@ -1275,7 +1321,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
 
       </article>
 
-      <article class="organizations" data-page="organizations">
+      <article id="organizations" class="organizations" data-page="organizations">
         <header>
           <h2 class="h2 article-title">Organizations</h2>
         </header>
@@ -1388,7 +1434,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
 
       
       <!-- Add this section for FAQ -->
-      <article class="faq" data-page="faq">
+      <article id="faq" class="faq" data-page="faq">
         <header>
           <h2 class="h2 article-title">Frequently Asked Questions</h2>
         </header>
@@ -1406,7 +1452,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
         </section>
       </article>
 
-      <article class="achievements" data-page="achievements">
+      <article id="achievements" class="achievements" data-page="achievements">
         <!-- All achievements content removed -->
       </article>
 

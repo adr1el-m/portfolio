@@ -9,6 +9,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "deploy": "vercel --prod --confirm",
+    "deploy:preview": "vercel --confirm",
     "purge:css": "purgecss --css style.css --content index.html 'src/**/*.ts' --output ./public --safelist active open modal show hide loading article about background projects organizations faq achievements responsive-img-container progressive-img timeline-item timeline-list navbar-list sidebar-info",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit",

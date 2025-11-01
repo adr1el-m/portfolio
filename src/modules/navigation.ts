@@ -134,11 +134,28 @@ export class NavigationManager {
           targetPage.classList.add('active');
           window.scrollTo({ top: 0, behavior: 'auto' });
           this.isTransitioning = false;
+
+        // Push SPA route for the active section and update canonical
+          const path = this.pathFromKey(targetKey);
+          this.updateCanonical(path);
+          try {
+            window.history.pushState({}, '', path);
+          } catch (err) {
+            console.warn('History pushState failed', err);
+          }
         };
 
         // Activate target immediately for snappy navigation
         finalize();
       });
+    });
+
+    // Initialize active section based on URL path
+    this.applyRoute(window.location.pathname);
+
+    // Handle back/forward navigation
+    window.addEventListener('popstate', () => {
+      this.applyRoute(window.location.pathname);
     });
   }
 
@@ -220,6 +237,100 @@ export class NavigationManager {
     const answer = element.nextElementSibling as HTMLElement;
     if (answer) {
       answer.classList.toggle("show");
+    }
+  }
+
+  /**
+   * Derive navigation key from pathname
+   */
+  private keyFromPath(pathname: string): string {
+    const path = (pathname || '/').replace(/\/+$/, '');
+    if (path === '' || path === '/') return 'about';
+    switch (path) {
+      case '/about': return 'about';
+      case '/background': return 'background';
+      case '/projects': return 'projects';
+      case '/organizations': return 'organizations';
+      case '/contact': return 'contact';
+      default: return 'about';
+    }
+  }
+
+  /**
+   * Map navigation key to SPA path
+   */
+  private pathFromKey(key: string): string {
+    switch ((key || '').trim().toLowerCase()) {
+      case 'about': return '/about';
+      case 'background': return '/background';
+      case 'projects': return '/projects';
+      case 'organizations': return '/organizations';
+      case 'contact': return '/contact';
+      default: return '/';
+    }
+  }
+
+  /**
+   * Apply route: set active section and handle special anchors
+   */
+  private applyRoute(pathname: string): void {
+    const key = this.keyFromPath(pathname);
+
+    // Toggle active section (contact reuses about page)
+    const pages = document.querySelectorAll<HTMLElement>('[data-page]');
+    const targetPage = Array.from(pages).find(p => ((p.dataset.page || '').trim() === (key === 'contact' ? 'about' : key)));
+    const currentPage = document.querySelector<HTMLElement>('[data-page].active');
+
+    if (targetPage && targetPage !== currentPage) {
+      currentPage?.classList.remove('active');
+      targetPage.classList.add('active');
+    }
+
+    // Update nav button active state
+    const navigationLinks = document.querySelectorAll<HTMLButtonElement>('[data-nav-link]');
+    navigationLinks.forEach((btn) => {
+      const label = (btn.textContent || '').trim().toLowerCase();
+      const activeLabel = key === 'contact' ? 'about' : key;
+      btn.classList.toggle('active', label === activeLabel);
+    });
+
+    // Scroll to contact anchor if /contact, else to top
+    if (key === 'contact') {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      const el = document.getElementById('contact');
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 60);
+      }
+    } else {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    // Update canonical
+    const path = (pathname || '/').replace(/\/+$/, '') || '/';
+    this.updateCanonical(path);
+  }
+
+  /**
+   * Update canonical link based on route
+   */
+  private updateCanonical(path: string): void {
+    try {
+      const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+      if (canonical) {
+        const base = 'https://adriel.dev';
+        const href = path === '/' ? base : `${base}${path}`;
+        canonical.setAttribute('href', href);
+
+        // Update Open Graph and Twitter URL to mirror canonical
+        const ogUrl = document.querySelector<HTMLMetaElement>('meta[property="og:url"]');
+        if (ogUrl) ogUrl.setAttribute('content', href);
+        const twUrl = document.querySelector<HTMLMetaElement>('meta[name="twitter:url"]');
+        if (twUrl) twUrl.setAttribute('content', href);
+      }
+    } catch (err) {
+      console.warn('Meta/canonical update failed', err);
     }
   }
 

@@ -39,6 +39,11 @@
   ],
   "rewrites": [
     { "source": "/offline", "destination": "/offline.html" },
+    { "source": "/about", "destination": "/index.html" },
+    { "source": "/background", "destination": "/index.html" },
+    { "source": "/projects", "destination": "/index.html" },
+    { "source": "/organizations", "destination": "/index.html" },
+    { "source": "/contact", "destination": "/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "redirects": [

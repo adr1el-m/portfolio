@@ -48,4 +48,29 @@ export class SecurityManager {
     }
     return a;
   }
+
+  /**
+   * Ensure all external links opened in a new tab are safe.
+   * - Adds rel="noopener noreferrer" to anchors with target="_blank"
+   * - Disables dangerous javascript: URLs
+   */
+  public ensureSafeExternalLinks(): void {
+    const anchors = Array.from(document.querySelectorAll('a[href]')) as HTMLAnchorElement[];
+    anchors.forEach(a => {
+      const href = a.getAttribute('href') || '';
+      // Disable dangerous javascript: URLs
+      if (/^\s*javascript:/i.test(href)) {
+        a.setAttribute('href', '#');
+        a.setAttribute('aria-disabled', 'true');
+      }
+      // Enforce safe rel on new-tab links
+      if (a.target === '_blank') {
+        const rel = (a.getAttribute('rel') || '').toLowerCase();
+        const needed = ['noopener', 'noreferrer'];
+        const parts = new Set(rel.split(/\s+/).filter(Boolean));
+        needed.forEach(t => parts.add(t));
+        a.setAttribute('rel', Array.from(parts).join(' '));
+      }
+    });
+  }
 }

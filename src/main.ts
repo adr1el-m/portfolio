@@ -76,6 +76,8 @@ class PortfolioApp {
 
       // Initialize all modules
       const securityManager = new SecurityManager();
+      // Harden external links (adds rel noopener/noreferrer and disables javascript: URLs)
+      securityManager.ensureSafeExternalLinks();
       // Apply text placeholders early to avoid image errors
       new TextPlaceholders().init();
       const loadingManager = new LoadingManager();

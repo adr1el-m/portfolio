@@ -4,6 +4,7 @@ const PRECACHE_ASSETS = [
   '/',
   ...OFFLINE_URLS,
   '/style.css',
+  '/style.purged.css',
   '/index.html',
   '/images/my-avatar.png',
   '/images/pwa/icon-192x192.png',

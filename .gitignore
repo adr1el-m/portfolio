@@ -100,3 +100,14 @@ Desktop.ini
 # Temporary files
 *.tmp
 *.temp
+
+# Python artifacts
+__pycache__/
+*.pyc
+.venv/
+
+# Lighthouse CI artifacts
+.lighthouseci/
+
+# Backup files
+*.backup

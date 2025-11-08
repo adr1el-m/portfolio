@@ -77,7 +77,9 @@ class PortfolioApp {
       // Initialize all modules
       const securityManager = new SecurityManager();
       // Harden external links (adds rel noopener/noreferrer and disables javascript: URLs)
-      securityManager.ensureSafeExternalLinks();
+      if (typeof (securityManager as any).ensureSafeExternalLinks === 'function') {
+        securityManager.ensureSafeExternalLinks();
+      }
       // Apply text placeholders early to avoid image errors
       new TextPlaceholders().init();
       const loadingManager = new LoadingManager();
@@ -118,7 +120,7 @@ class PortfolioApp {
         });
       }, 150);
 
-      // Initialize video thumbnails manager (defer playback, posters, pause off-screen)
+      // Initialize video thumbnails manager earlier for faster poster setup
       defer(() => {
         import('./modules/video-thumbnails').then(({ VideoThumbnails }) => {
           const vt = new VideoThumbnails();
@@ -126,7 +128,7 @@ class PortfolioApp {
             window.Portfolio.lazy.VideoThumbnails = vt;
           }
         });
-      }, 200);
+      }, 0);
 
       // Sort project cards by thumbnail type (video > image > none)
       defer(() => {
@@ -192,6 +194,18 @@ class PortfolioApp {
           });
         }
       }, 300);
+
+      // Optional dev-only stress test: run when URL has ?stress=1
+      defer(() => {
+        const qs2 = new URLSearchParams(window.location.search);
+        const stressFlag = (qs2.get('stress') || '').toLowerCase();
+        const doStress = !import.meta.env.PROD && (stressFlag === '1' || stressFlag === 'true' || stressFlag === 'yes');
+        if (!auditMode && doStress) {
+          import('./modules/chatbot-stress').then(({ runChatbotStressTests }) => {
+            runChatbotStressTests();
+          });
+        }
+      }, 650);
 
       defer(() => {
         const canvas = document.getElementById('particle-background') as HTMLCanvasElement | null;

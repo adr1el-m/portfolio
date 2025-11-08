@@ -70,8 +70,9 @@ export class VideoThumbnails {
       },
       {
         root: null,
-        rootMargin: '100px',
-        threshold: 0.25,
+        // Start earlier for faster first paint when scrolling
+        rootMargin: '300px',
+        threshold: 0.01,
       }
     );
   }
@@ -162,10 +163,38 @@ export class VideoThumbnails {
       }
 
       if (poster) {
+        // Warm the cache for the poster image to reduce time-to-first-paint
+        this.preloadPoster(poster);
         video.poster = poster;
       }
     } catch (e) {
       logger.warn('VideoThumbnails: failed to assign poster', e);
+    }
+  }
+
+  /**
+   * Preload poster image via <link rel="preload"> to accelerate rendering
+   */
+  private preloadPoster(url: string): void {
+    try {
+      if (!url) return;
+      const head = document.head;
+      const id = `poster-${url}`;
+      if (head.querySelector(`link[data-id="${CSS.escape(id)}"]`)) return;
+
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = url;
+      // Raise priority for above-the-fold thumbnails
+      link.setAttribute('fetchpriority', 'high');
+      link.setAttribute('data-id', id);
+      if (/^https?:\/\//i.test(url)) {
+        link.setAttribute('crossorigin', 'anonymous');
+      }
+      head.appendChild(link);
+    } catch (e) {
+      logger.warn('VideoThumbnails: failed to preload poster', e);
     }
   }
 

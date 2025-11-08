@@ -229,13 +229,47 @@ export class LoadingManager {
    * Handle image loading errors
    */
   private handleImageError(img: HTMLImageElement): void {
+    const isPicture = img.parentElement?.tagName.toLowerCase() === 'picture';
+    const hasSources = isPicture && !!img.parentElement?.querySelector('source');
+    const isDocumentUrl = img.src === window.location.href || img.src === '';
+
+    // In a <picture> element, the browser may cancel the fallback <img> request
+    // when a <source> is selected. That cancellation can surface as an error.
+    // We treat those as benign and avoid showing an error placeholder.
+    if (isDocumentUrl) {
+      // Ignore images pointing to the current document or empty src
+      logger.warn('Ignoring image error with document/empty src:', img.src);
+      return;
+    }
+
+    if (hasSources) {
+      // Defer a microtask to verify if the image has actually rendered via a source
+      setTimeout(() => {
+        if (img.complete && img.naturalWidth > 0) {
+          // Image loaded from a source; no error UI needed
+          return;
+        }
+        // Proceed with error handling if still not loaded
+        this.applyImageErrorUI(img);
+      }, 50);
+      return;
+    }
+
+    // Non-picture images: apply error UI immediately
+    this.applyImageErrorUI(img);
+  }
+
+  /**
+   * Apply error UI to an image element
+   */
+  private applyImageErrorUI(img: HTMLImageElement): void {
     logger.error('Image failed to load:', img.src);
-    
+
     this.removeImageSkeleton(img);
-    
+
     // Add error class
     img.classList.add('image-error');
-    
+
     // Create fallback placeholder
     const parent = img.parentElement;
     if (parent && !parent.querySelector('.image-error-placeholder')) {

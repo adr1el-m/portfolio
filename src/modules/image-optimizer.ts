@@ -14,6 +14,7 @@ export class ImageOptimizer {
     try {
       this.optimizeProjectThumbnails();
       this.optimizeAvatar();
+      this.optimizeOrgLogos();
       this.applyDefaultSizes();
       logger.log('🖼️ ImageOptimizer: responsive images applied');
     } catch (e) {
@@ -121,6 +122,52 @@ export class ImageOptimizer {
           ? '(max-width: 768px) 95vw, 400px'
           : '(max-width: 480px) 90vw, (max-width: 768px) 70vw, 50vw';
         img.setAttribute('sizes', defaultSizes);
+      }
+    });
+  }
+
+  /**
+   * Optimize organization logos with AVIF/WEBP sources
+   */
+  private optimizeOrgLogos(): void {
+    const logos = Array.from(document.querySelectorAll<HTMLImageElement>('.org-logo img'));
+    logos.forEach((img) => {
+      const parentTag = img.parentElement?.tagName.toLowerCase() || '';
+      if (parentTag === 'picture') return;
+
+      const src = img.getAttribute('src') || '';
+      const match = src.match(/^(.*\/images\/orgs\/)([^/.]+)\.(jpg|jpeg|png)$/i);
+      if (!match) return;
+
+      const baseDir = match[1];
+      const name = match[2];
+
+      const avifSrcset = `${baseDir}${name}-80.avif 80w, ${baseDir}${name}-160.avif 160w`;
+      const webpSrcset = `${baseDir}${name}-80.webp 80w, ${baseDir}${name}-160.webp 160w`;
+      const sizes = '80px';
+
+      const picture = document.createElement('picture');
+      const avifSource = document.createElement('source');
+      avifSource.type = 'image/avif';
+      avifSource.srcset = avifSrcset;
+      avifSource.sizes = sizes;
+
+      const webpSource = document.createElement('source');
+      webpSource.type = 'image/webp';
+      webpSource.srcset = webpSrcset;
+      webpSource.sizes = sizes;
+
+      img.sizes = sizes;
+      if (!img.hasAttribute('decoding')) img.setAttribute('decoding', 'async');
+
+      picture.appendChild(avifSource);
+      picture.appendChild(webpSource);
+      picture.appendChild(img.cloneNode(true));
+
+      const original = img;
+      const parent = original.parentElement as HTMLElement | null;
+      if (parent) {
+        parent.replaceChild(picture, original);
       }
     });
   }

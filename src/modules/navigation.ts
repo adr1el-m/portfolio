@@ -310,6 +310,13 @@ export class NavigationManager {
     // Update canonical
     const path = (pathname || '/').replace(/\/+$/, '') || '/';
     this.updateCanonical(path);
+
+    // Adjust image loading priority for organizations page
+    if (key === 'organizations') {
+      this.prioritizeOrganizationLogos();
+    } else {
+      this.deprioritizeOrganizationLogos();
+    }
   }
 
   /**
@@ -332,6 +339,54 @@ export class NavigationManager {
     } catch (err) {
       console.warn('Meta/canonical update failed', err);
     }
+  }
+
+  /**
+   * Increase loading priority for organization logos when the page is active
+   */
+  private prioritizeOrganizationLogos(): void {
+    const logos = document.querySelectorAll<HTMLImageElement>('.org-logo img');
+    const head = document.head;
+    logos.forEach((img) => {
+      // Set eager loading and high fetch priority for above-the-fold logos
+      img.setAttribute('loading', 'eager');
+      img.setAttribute('fetchpriority', 'high');
+      if (!img.hasAttribute('decoding')) {
+        img.setAttribute('decoding', 'async');
+      }
+      // Preload to warm the cache and avoid delayed fetch
+      const src = img.currentSrc || img.src;
+      if (src) {
+        const id = `preload-${src}`;
+        if (!head.querySelector(`link[data-id="${CSS.escape(id)}"]`)) {
+          const link = document.createElement('link');
+          link.rel = 'preload';
+          link.as = 'image';
+          link.href = src;
+          link.setAttribute('fetchpriority', 'high');
+          link.setAttribute('data-id', id);
+          head.appendChild(link);
+        }
+      }
+      // Trigger decoding as soon as data is available
+      if (typeof img.decode === 'function') {
+        img.decode().catch(() => {});
+      }
+    });
+  }
+
+  /**
+   * Restore lazy loading for organization logos when leaving the page
+   */
+  private deprioritizeOrganizationLogos(): void {
+    const logos = document.querySelectorAll<HTMLImageElement>('.org-logo img');
+    logos.forEach((img) => {
+      img.setAttribute('loading', 'lazy');
+      img.setAttribute('fetchpriority', 'low');
+      if (!img.hasAttribute('decoding')) {
+        img.setAttribute('decoding', 'async');
+      }
+    });
   }
 
   /**

@@ -6,6 +6,7 @@ import sharp from 'sharp';
 const root = process.cwd();
 const imagesDir = path.join(root, 'public', 'images');
 const projectsDir = path.join(imagesDir, 'projects');
+const orgsDir = path.join(imagesDir, 'orgs');
 
 async function ensureFileExists(filePath) {
   try {
@@ -101,9 +102,47 @@ async function convertProjectImages() {
 async function main() {
   await convertAvatar();
   await convertProjectImages();
+  await convertOrgLogos();
 }
 
 main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
+
+// Convert organization logos to lightweight AVIF/WEBP (80px/160px)
+async function convertOrgLogos() {
+  try {
+    const entries = await fs.readdir(orgsDir, { withFileTypes: true });
+    const exts = new Set(['.jpg', '.jpeg', '.png']);
+    const widths = [80, 160];
+
+    for (const entry of entries) {
+      if (!entry.isFile()) continue;
+      const file = entry.name;
+      const ext = path.extname(file).toLowerCase();
+      if (!exts.has(ext)) continue;
+      const name = path.basename(file, ext);
+      const inputPath = path.join(orgsDir, file);
+      const img = sharp(inputPath);
+      const meta = await img.metadata();
+
+      for (const w of widths) {
+        const target = Math.min(w, meta.width || w);
+        const avifOut = path.join(orgsDir, `${name}-${target}.avif`);
+        const webpOut = path.join(orgsDir, `${name}-${target}.webp`);
+        await img
+          .resize({ width: target })
+          .avif({ quality: 60 })
+          .toFile(avifOut);
+        await img
+          .resize({ width: target })
+          .webp({ quality: 70 })
+          .toFile(webpOut);
+      }
+      console.log(`Converted org logo ${inputPath} -> AVIF/WEBP at 80px, 160px`);
+    }
+  } catch (e) {
+    console.warn('convertOrgLogos: skipped or failed', e);
+  }
+}

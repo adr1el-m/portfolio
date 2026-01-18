@@ -21,7 +21,9 @@ export class CustomCursor {
       this.cursorY = this.targetY;
       this.render(true);
       this.startLoop();
+      return;
     }
+    this.startLoop();
   };
 
   private onPointerOver = (e: PointerEvent) => {
@@ -90,7 +92,9 @@ export class CustomCursor {
     if (this.rafId !== null) return;
     const tick = () => {
       this.render(false);
-      this.rafId = requestAnimationFrame(tick);
+      if (this.rafId !== null) {
+        this.rafId = requestAnimationFrame(tick);
+      }
     };
     this.rafId = requestAnimationFrame(tick);
   }
@@ -105,9 +109,10 @@ export class CustomCursor {
     if (!this.cursor || !this.cursorDot) return;
     if (!this.hasMoved) return;
 
-    const easing = 0.18;
     const dx = this.targetX - this.cursorX;
     const dy = this.targetY - this.cursorY;
+    const dist = Math.hypot(dx, dy);
+    const easing = force ? 1 : Math.min(0.65, Math.max(0.25, 0.22 + dist * 0.0045));
 
     if (force) {
       this.cursorX = this.targetX;
@@ -120,10 +125,11 @@ export class CustomCursor {
     this.setTransform(this.cursorDot, this.targetX, this.targetY);
     this.setTransform(this.cursor, this.cursorX, this.cursorY);
 
-    if (!force && Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05) {
+    if (!force && dist < 0.25) {
       this.cursorX = this.targetX;
       this.cursorY = this.targetY;
       this.setTransform(this.cursor, this.cursorX, this.cursorY);
+      this.stopLoop();
     }
   }
 

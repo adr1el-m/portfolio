@@ -4,13 +4,17 @@ export class GeminiService {
   private apiKey: string;
   private model: string;
   private baseUrl: string;
+  private useProxy: boolean;
 
   constructor() {
-    this.apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
+    this.useProxy = Boolean(import.meta.env.PROD) &&
+      typeof window !== 'undefined' &&
+      !/^(localhost|127\.0\.0\.1)/.test(window.location.hostname);
+    this.apiKey = this.useProxy ? '' : (import.meta.env.VITE_GEMINI_API_KEY || '');
     this.model = import.meta.env.VITE_GEMINI_MODEL || 'gemini-2.5-flash';
-    this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
+    this.baseUrl = this.useProxy ? '/api/gemini' : 'https://generativelanguage.googleapis.com/v1beta/models';
 
-    if (!this.apiKey) {
+    if (!this.useProxy && !this.apiKey) {
       logger.warn('GeminiService: No API key found. Chatbot will use local responses only.');
     }
   }
@@ -20,21 +24,28 @@ export class GeminiService {
     const timeoutId = window.setTimeout(() => controller.abort(), 12000);
 
     try {
-      const response = await fetch(`${this.baseUrl}/${model}:generateContent?key=${this.apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: 'user',
-              parts: [{ text: prompt }],
-            },
-          ],
-        }),
-        signal: controller.signal,
-      });
+      const response = await (this.useProxy
+        ? fetch(this.baseUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model, prompt }),
+          signal: controller.signal,
+        })
+        : fetch(`${this.baseUrl}/${model}:generateContent?key=${this.apiKey}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: 'user',
+                parts: [{ text: prompt }],
+              },
+            ],
+          }),
+          signal: controller.signal,
+        }));
 
       if (!response.ok) {
         const raw = await response.text().catch(() => '');
@@ -44,7 +55,9 @@ export class GeminiService {
       }
 
       const data = await response.json().catch(() => null);
-      const parts = data?.candidates?.[0]?.content?.parts as Array<{ text?: unknown }> | undefined;
+      const parts = (this.useProxy
+        ? (data?.text != null ? [{ text: data?.text }] : undefined)
+        : (data?.candidates?.[0]?.content?.parts)) as Array<{ text?: unknown }> | undefined;
       const text = Array.isArray(parts)
         ? parts.map((p) => (typeof p?.text === 'string' ? p.text : '')).join('')
         : null;
@@ -60,7 +73,7 @@ export class GeminiService {
   }
 
   public async generateResponse(userMessage: string, context: string): Promise<string | null> {
-    if (!this.apiKey) return null;
+    if (!this.useProxy && !this.apiKey) return null;
 
     try {
       const prompt = `

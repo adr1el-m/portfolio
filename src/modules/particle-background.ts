@@ -26,6 +26,12 @@ export class ParticleBackground {
       throw new Error(`Container with id "${containerId}" not found.`);
     }
     this.container = container;
+    
+    // Optimize for mobile devices
+    const isMobile = window.innerWidth < 768;
+    this.particleCount = isMobile ? 800 : 3000;
+    this.maxConnections = isMobile ? 10 : 20;
+    this.connectionDistance = isMobile ? 0.3 : 0.5;
 
     this.particlePositions = new Float32Array(this.particleCount * 3);
     this.particleVelocities = new Float32Array(this.particleCount * 3);

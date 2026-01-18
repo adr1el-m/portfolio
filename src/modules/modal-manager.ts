@@ -189,6 +189,7 @@ export class ModalManager {
     const projectTitle = element.getAttribute('data-project-title') || '';
     const linkedinUrl = element.getAttribute('data-linkedin') || '';
     const blogUrl = element.getAttribute('data-blog') || '';
+    const facebookUrl = element.getAttribute('data-facebook') || '';
 
     try {
       const images = JSON.parse(imagesStr);
@@ -208,6 +209,7 @@ export class ModalManager {
         projectTitle: projectTitle || undefined,
         linkedinUrl: linkedinUrl || undefined,
         blogUrl: blogUrl || undefined,
+        facebookUrl: facebookUrl || undefined,
       };
     } catch (e) {
       logger.error('Error parsing achievement data:', e);
@@ -251,13 +253,25 @@ export class ModalManager {
       descriptionEl.style.display = data.description ? '' : 'none';
     }
 
-    // New: render a related project button when projectTitle is available
+    // Prefer Facebook post button if provided; otherwise optional project button
     const infoSection = document.querySelector('.achievement-info') as HTMLElement;
     if (infoSection) {
       const existing = infoSection.querySelector('.related-project-button');
       if (existing) existing.remove();
 
-      if (data.projectTitle) {
+      const detailsBlock = infoSection.querySelector('.achievement-details');
+      if (data.facebookUrl) {
+        const fb = SecurityManager.createSafeAnchor(data.facebookUrl, 'View Facebook Post', 'github-button', true);
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'link-icon';
+        iconSpan.textContent = '🔗';
+        fb.prepend(iconSpan);
+        if (detailsBlock && detailsBlock.parentElement) {
+          detailsBlock.parentElement.insertBefore(fb, detailsBlock.nextSibling);
+        } else {
+          infoSection.appendChild(fb);
+        }
+      } else if (data.projectTitle) {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'related-project-button';
@@ -269,11 +283,9 @@ export class ModalManager {
             const t = item.querySelector('.project-title')?.textContent?.trim();
             if (t === data.projectTitle) target = item as HTMLElement;
           });
-
           if (target) {
             const pd = this.getProjectData(target);
             if (pd) {
-              // Close achievement modal before opening the project modal
               this.closeAchievementModal();
               this.openProjectModal(pd);
             }
@@ -281,8 +293,6 @@ export class ModalManager {
             logger.warn(`Project "${data.projectTitle}" not found in list.`);
           }
         });
-        // Insert after the details block for better context
-        const detailsBlock = infoSection.querySelector('.achievement-details');
         if (detailsBlock && detailsBlock.parentElement) {
           detailsBlock.parentElement.insertBefore(btn, detailsBlock.nextSibling);
         } else {
@@ -567,7 +577,7 @@ export class ModalManager {
         <hr class="desc-divider" />
         <div class="desc-section"><h4>Technologies Used</h4><ul><li><strong>Frontend:</strong> HTML, CSS, JavaScript</li><li><strong>Frameworks:</strong> React, Vite</li><li><strong>APIs:</strong> Google Generative AI for eco-tips and chatbot responses</li><li><strong>Charting:</strong> Chart.js for visualizing data</li><li><strong>Styling:</strong> Tailwind CSS for responsive design</li></ul></div>
         <hr class="desc-divider" />
-        <div class="desc-section"><h4>Usage</h4><ul><li><strong>Sustainability Calculator:</strong> Fill in the form with your daily activities to calculate your carbon footprint.</li><li><strong>Eco Tips:</strong> Click on the \"Get Eco Tip\" button to receive a personalized tip.</li><li><strong>Chatbot:</strong> Use the chat feature to ask questions and get instant responses.</li></ul></div>`;
+        <div class="desc-section"><h4>Usage</h4><ul><li><strong>Sustainability Calculator:</strong> Fill in the form with your daily activities to calculate your carbon footprint.</li><li><strong>Eco Tips:</strong> Click on the "Get Eco Tip" button to receive a personalized tip.</li><li><strong>Chatbot:</strong> Use the chat feature to ask questions and get instant responses.</li></ul></div>`;
       } else if (data.title.trim() === 'Kita-Kita (Agentic)' || data.title.includes('Agentic')) {
         projectDescription.classList.add('rich');
         projectDescription.innerHTML = `
@@ -1194,7 +1204,7 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
       active.blur();
     }
     if (this.previousFocus) {
-      try { this.previousFocus.focus(); } catch {}
+      try { this.previousFocus.focus(); } catch { /* ignore */ }
     }
 
     if (projectModal) {
@@ -1397,7 +1407,7 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
       active.blur();
     }
     if (this.previousFocus) {
-      try { this.previousFocus.focus(); } catch {}
+      try { this.previousFocus.focus(); } catch { /* ignore */ }
     }
 
     this.modalEl?.classList.remove('active');

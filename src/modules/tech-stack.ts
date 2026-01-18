@@ -262,7 +262,7 @@ export class TechStack {
       this.filter();
     };
     // Re-evaluate on resize (bind once)
-    const w = window as any;
+    const w = window as unknown as { __techStackResizeBound?: boolean };
     if (!w.__techStackResizeBound) {
       window.addEventListener('resize', () => this.filter());
       w.__techStackResizeBound = true;

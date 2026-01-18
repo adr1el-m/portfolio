@@ -10,9 +10,11 @@ interface SearchResult {
 export class Search {
   private overlayEl: HTMLElement | null = null;
   private resultsEl: HTMLElement | null = null;
+  private inputRef: HTMLInputElement | null = null;
 
   constructor() {
     this.init();
+    this.bindGlobalHotkeys();
   }
 
   private init(): void {
@@ -71,6 +73,7 @@ export class Search {
 
     this.overlayEl = overlay;
     this.resultsEl = results;
+    this.inputRef = input as HTMLInputElement;
 
     input.addEventListener('keydown', (e) => {
       if ((e as KeyboardEvent).key === 'Enter') {
@@ -86,15 +89,7 @@ export class Search {
     });
 
     closeBtn.addEventListener('click', () => {
-      this.overlayEl?.remove();
-      this.overlayEl = null;
-      this.resultsEl = null;
-      // Remove ?q from URL
-      try {
-        const url = new URL(window.location.href);
-        url.searchParams.delete('q');
-        window.history.replaceState({}, '', url.pathname + url.hash);
-      } catch {}
+      this.closeOverlay();
     });
   }
 
@@ -103,7 +98,7 @@ export class Search {
       const url = new URL(window.location.href);
       if (q) url.searchParams.set('q', q); else url.searchParams.delete('q');
       window.history.replaceState({}, '', url.toString());
-    } catch {}
+    } catch { void 0; }
   }
 
   private updateResults(query: string): void {
@@ -291,6 +286,45 @@ export class Search {
       case 'projects': return 'projects';
       case 'organizations': return 'organizations';
     }
+  }
+
+  private openOverlay(initialQuery: string = ''): void {
+    this.renderOverlay();
+    this.updateQueryParam(initialQuery);
+    if (this.inputRef) {
+      this.inputRef.value = initialQuery;
+      try { this.inputRef.focus(); } catch { void 0; }
+    }
+    this.updateResults(initialQuery);
+  }
+
+  private closeOverlay(): void {
+    this.overlayEl?.remove();
+    this.overlayEl = null;
+    this.resultsEl = null;
+    this.updateQueryParam('');
+  }
+
+  private bindGlobalHotkeys(): void {
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const tag = (target?.tagName || '').toLowerCase();
+      const editable = tag === 'input' || tag === 'textarea' || target?.isContentEditable === true;
+      if (editable) return;
+
+      const slash = e.key === '/';
+      const cmdk = (e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey);
+      if ((slash && !e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey) || cmdk) {
+        e.preventDefault();
+        this.openOverlay('');
+        return;
+      }
+
+      if (this.overlayEl && e.key === 'Escape') {
+        e.preventDefault();
+        this.closeOverlay();
+      }
+    });
   }
 }
 

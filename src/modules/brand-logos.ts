@@ -9,7 +9,7 @@ const NS = 'http://www.w3.org/2000/svg';
 function svgEl<K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string, string | number> = {}): SVGElementTagNameMap[K] {
   const el = document.createElementNS(NS, tag);
   Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, String(v)));
-  return el as any;
+  return el as SVGElementTagNameMap[K];
 }
 
 function baseSvg(): SVGSVGElement {

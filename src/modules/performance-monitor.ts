@@ -183,7 +183,7 @@ export class PerformanceMonitor {
         totalSize: 0,
       };
 
-      resources.forEach((resource: any) => {
+      (resources as PerformanceResourceTiming[]).forEach((resource) => {
         const type = resource.initiatorType;
         if (type === 'script') resourceStats.scripts++;
         if (type === 'css' || type === 'link') resourceStats.stylesheets++;
@@ -233,8 +233,8 @@ export class PerformanceMonitor {
   private sendToAnalytics(report: PerformanceReport): void {
     // Send to Vercel Analytics (automatically collected)
     // You can also send custom events if needed
-    if (typeof window !== 'undefined' && (window as any).va) {
-      (window as any).va('event', {
+    if (typeof window !== 'undefined' && window.va) {
+      window.va('event', {
         name: 'web_vital',
         data: {
           metric: report.metric,

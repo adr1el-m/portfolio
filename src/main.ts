@@ -77,9 +77,7 @@ class PortfolioApp {
       // Initialize all modules
       const securityManager = new SecurityManager();
       // Harden external links (adds rel noopener/noreferrer and disables javascript: URLs)
-      if (typeof (securityManager as any).ensureSafeExternalLinks === 'function') {
-        securityManager.ensureSafeExternalLinks();
-      }
+      securityManager.ensureSafeExternalLinks();
       // Apply text placeholders early to avoid image errors
       new TextPlaceholders().init();
       const loadingManager = new LoadingManager();
@@ -96,6 +94,10 @@ class PortfolioApp {
 
       // Defer non-essential modules until after first paint/idle
       defer(() => {
+        // Initialize Wow Factors
+        import('./modules/scroll-animations').then(({ ScrollAnimations }) => new ScrollAnimations());
+        import('./modules/custom-cursor').then(({ CustomCursor }) => new CustomCursor());
+
         import('./modules/about-enhancements').then(({ AboutEnhancements }) => {
           new AboutEnhancements();
         });
@@ -162,9 +164,9 @@ class PortfolioApp {
       defer(() => {
         if (!auditMode && !prefersReducedMotion) {
           import('vanilla-tilt').then(module => {
-            const VanillaTilt = module.default;
+            const VanillaTilt = module.default as unknown as { init: (elements: NodeListOf<Element> | Element[], options?: Record<string, unknown>) => void };
             const cards = document.querySelectorAll('.achievement-card');
-            VanillaTilt.init(cards as any, {
+            VanillaTilt.init(cards, {
               max: 15,
               speed: 400,
               glare: true,

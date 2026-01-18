@@ -33,7 +33,6 @@ export class AwardsAccordion {
       if (content.style.maxHeight === 'none' || getComputedStyle(content).maxHeight === 'none') {
         content.style.maxHeight = content.scrollHeight + 'px';
         // Force reflow to apply the starting height before collapsing
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         content.offsetHeight;
       }
 
@@ -84,8 +83,9 @@ export class AwardsAccordion {
     const cards = container.querySelectorAll('.achievement-card');
     
     // Import VanillaTilt dynamically if needed
-    if (typeof window !== 'undefined' && (window as any).VanillaTilt) {
-      const VanillaTilt = (window as any).VanillaTilt;
+    const w = window as unknown as { VanillaTilt?: { init: (elements: NodeListOf<Element> | Element[], options?: Record<string, unknown>) => void } };
+    if (typeof window !== 'undefined' && w.VanillaTilt) {
+      const VanillaTilt = w.VanillaTilt;
       VanillaTilt.init(cards, {
         max: 15,
         speed: 400,

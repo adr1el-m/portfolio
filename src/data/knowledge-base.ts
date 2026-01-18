@@ -100,9 +100,9 @@ export const KB: KnowledgeBase = {
         'Comprehensive financial advisory platform with calculators, budgets, dashboards, and AI tips. Built for clarity, usability, and practical decision support.',
       technologies:
         'Frontend: HTML, CSS, JavaScript, React, Vite; Backend: Node/Express; Data: Firebase Firestore; Charts: Chart.js; AI: Google Generative AI',
-      githubUrl: undefined,
+      githubUrl: 'https://github.com/adr1el-m/finance-and-ai',
       liveUrl: undefined,
-      videoUrl: undefined,
+      videoUrl: '/images/projects/financeWise/fw.mp4',
       codedexUrl: undefined,
     },
     {
@@ -114,6 +114,8 @@ export const KB: KnowledgeBase = {
         'AI‑powered banking and financial management platform for expense tracking, forecasting, and intelligent agent support.',
       technologies:
         'HTML, CSS, JavaScript, AI agent orchestration, charts, backend services',
+      videoUrl: '/images/projects/agentic/Deansanitzy.mp4',
+      githubUrl: 'https://github.com/adr1el-m/team-Deansanitzy-2025',
     },
     {
       title: 'RGBC ATM Transaction System',
@@ -127,20 +129,46 @@ export const KB: KnowledgeBase = {
     {
       title: 'Loan Management System (PHP/MySQL)',
       category: 'Web App',
-      images: [],
-      webpImages: [],
+      images: [
+        '/images/projects/loan/1.png',
+        '/images/projects/loan/2.png',
+        '/images/projects/loan/3.png',
+        '/images/projects/loan/4.png',
+      ],
+      webpImages: [
+        '/images/projects/loan/1-400.webp',
+        '/images/projects/loan/2-400.webp',
+        '/images/projects/loan/3-400.webp',
+        '/images/projects/loan/4-400.webp',
+      ],
       description:
         'Grade 12 project simulating loan application workflows including user authentication, loan calculation, and confirmation.',
       technologies: 'PHP, MySQL, HTML, CSS, JavaScript',
+      githubUrl: 'https://github.com/adr1el-m/PHP-Loan-System',
     },
     {
       title: 'Online Document Request System (ODRS)',
       category: 'Web App',
-      images: ['/images/ODRS.png'],
-      webpImages: [],
+      images: [
+        '/images/projects/ODRS/1.jpeg',
+        '/images/projects/ODRS/2.jpeg',
+        '/images/projects/ODRS/3.jpeg',
+        '/images/projects/ODRS/4.jpeg',
+        '/images/projects/ODRS/5.jpeg',
+        '/images/projects/ODRS/6.jpeg',
+      ],
+      webpImages: [
+        '/images/projects/ODRS/1-400.webp',
+        '/images/projects/ODRS/2-400.webp',
+        '/images/projects/ODRS/3-400.webp',
+        '/images/projects/ODRS/4-400.webp',
+        '/images/projects/ODRS/5-400.webp',
+        '/images/projects/ODRS/6-400.webp',
+      ],
       description:
         'Web platform for Grade 12 students at University of Makati to request and manage school documents with tracking and admin control.',
       technologies: 'HTML, CSS, JavaScript, PHP, MySQL',
+      githubUrl: 'https://github.com/adr1el-m/Online-Document-Request-System',
     },
   ],
   achievements: [
@@ -226,6 +254,17 @@ export const KB: KnowledgeBase = {
       location: 'Bulwagang Balagtas NALLRC, Polytechnic University of the Philippines — Manila',
       description:
         'Recognition for excellence in national entrepreneurship competition.',
+    },
+    {
+      title: 'Codebility Portfolio Contest 2025 — 2nd Place',
+      images: ['/images/honors/codebility/portfolio-contest-2025.jpg'],
+      webpImages: ['/images/honors/codebility/portfolio-contest-2025-400.webp'],
+      organizer: 'Codebility — Portfolio Contest 2025',
+      date: 'October 2025',
+      location: 'Online',
+      description:
+        'Secured 2nd place; received an internship offer and a ₱800 award.',
+      projectTitle: 'Portfolio Contest 2025',
     },
   ],
   organizations: [

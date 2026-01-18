@@ -1014,20 +1014,21 @@ main {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
-  justify-items: center;
+  justify-items: stretch;
 }
 
 .contact-item {
   min-width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 16px;
 }
 
 .contact-info {
-  max-width: calc(100% - 46px);
-  width: calc(100% - 46px);
+  max-width: 100%;
+  width: 100%;
+  min-width: 0;
 }
 
 .contact-title {
@@ -1044,15 +1045,25 @@ main {
 
 .contact-info address { font-style: normal; }
 
+.sidebar .contacts-list > .contact-item:first-child {
+  justify-content: center;
+}
+
+.sidebar .contacts-list > .contact-item:first-child .contact-info {
+  display: flex;
+  justify-content: center;
+}
+
 .social-list {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 15px;
-  padding-bottom: 4px;
-  padding-left: 7px;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 0 6px 4px;
   position: relative;
   z-index: 2;
+  max-width: 100%;
 }
 
 .social-item {
@@ -2436,8 +2447,8 @@ textarea.form-input::-webkit-resizer { display: none; }
   .has-scrollbar::-webkit-scrollbar-button { width: 100px; }
 
   .contacts-list {
-    grid-template-columns: 1fr 1fr;
-    gap: 30px 15px;
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
 
@@ -2567,17 +2578,18 @@ textarea.form-input::-webkit-resizer { display: none; }
 
 
   main {
-    max-width: 1200px;
+    max-width: 95%;
     margin-inline: auto;
     display: flex;
     justify-content: center;
     align-items: stretch;
-    gap: 25px;
+    gap: 30px;
   }
 
   .main-content {
-    min-width: 75%;
-    width: 75%;
+    flex-grow: 1;
+    width: auto;
+    min-width: 0;
     margin: 0;
   }
 
@@ -2589,6 +2601,9 @@ textarea.form-input::-webkit-resizer { display: none; }
     margin-bottom: 0;
     padding-top: 60px;
     z-index: 1;
+    width: 300px;
+    min-width: 300px;
+    flex-shrink: 0;
   }
 
   .sidebar-info { 
@@ -2986,6 +3001,11 @@ article.active {
     width: 100%;
     margin: 0 auto;
     text-align: center;
+  }
+
+  .contacts-list > .contact-item:first-child .contact-info {
+    width: 100%;
+    max-width: 100%;
   }
 
   /* Hide back-to-top on mobile to avoid overlapping chatbot */
@@ -6148,4 +6168,223 @@ article.projects ul.project-list li.project-item:focus-within {
 
 @media (max-width: 767px) {
   .stack-toggle { align-self: center; }
+}
+
+/* =========================================
+   WOW FACTOR & OPTIMIZATION ADDITIONS
+   ========================================= */
+
+/* --- Custom Cursor --- */
+@media (pointer: fine) {
+  body {
+    cursor: none;
+  }
+  
+  a, button, input, textarea, .clickable {
+    cursor: none;
+  }
+}
+
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--orange-yellow-crayola);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s, background-color 0.3s;
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+
+.custom-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background-color: var(--orange-yellow-crayola);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+
+.custom-cursor.hovered {
+  width: 60px;
+  height: 60px;
+  background-color: rgba(255, 219, 112, 0.1);
+  border-color: transparent;
+}
+
+/* --- Scroll Animations --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal:nth-child(2) { transition-delay: 0.1s; }
+.reveal:nth-child(3) { transition-delay: 0.2s; }
+.reveal:nth-child(4) { transition-delay: 0.3s; }
+
+/* --- Responsive Layout Adjustments --- */
+@media (min-width: 1250px) {
+  /* Desktop Layout: Sidebar + Main Content Side-by-Side */
+  main {
+    max-width: 95%;
+    margin-inline: auto;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 30px;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 60px;
+    max-height: calc(100vh - 120px);
+    height: 100%;
+    margin-bottom: 0;
+    padding-top: 60px;
+    z-index: 1;
+    width: 300px;
+    min-width: 300px;
+    flex-shrink: 0;
+  }
+
+  .main-content {
+    flex-grow: 1;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1249px) {
+  main {
+    max-width: 95%;
+    margin-inline: auto;
+    display: flex;
+    gap: 25px;
+  }
+  
+  .sidebar {
+    position: sticky;
+    top: 60px;
+    width: 250px;
+    min-width: 250px;
+    flex-shrink: 0;
+    margin-bottom: 0;
+  }
+  
+  .main-content {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  article {
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
+    padding-top: 74px;
+  }
+
+  .navbar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: auto;
+    bottom: auto;
+    width: max-content;
+    margin: 0;
+  }
+
+  .contacts-list {
+    justify-items: stretch;
+  }
+
+  .contact-item {
+    justify-content: flex-start;
+  }
+
+  .contact-info {
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .contact-info .contact-link {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  .contacts-list > .contact-item:first-child {
+    justify-content: center;
+  }
+
+  .contacts-list .resume {
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+
+  .social-list {
+    justify-content: center;
+    gap: 10px;
+    padding-inline: 0;
+  }
+
+  .social-item .social-link {
+    width: 32px;
+    height: 32px;
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 1023px) {
+  /* Tablet/Mobile Stacked Layout */
+  main {
+    display: block;
+    margin-inline: 16px;
+  }
+  
+  .sidebar {
+    margin-bottom: 30px;
+    position: static;
+  }
+}
+
+/* Optimize animations for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+  
+  .custom-cursor, .custom-cursor-dot {
+    display: none;
+  }
+  
+  body {
+    cursor: auto;
+  }
 }

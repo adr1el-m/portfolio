@@ -10,7 +10,7 @@ function waitForChatbotInstance(maxMs = 5000): Promise<Manager | null> {
   return new Promise(resolve => {
     const start = Date.now();
     const tick = () => {
-      const mgr = (window as any)?.Portfolio?.lazy?.ChatbotManager as Manager | undefined;
+      const mgr = window.Portfolio?.lazy?.ChatbotManager as Manager | undefined;
       if (mgr && typeof mgr.addMessage === 'function') {
         resolve(mgr);
         return;
@@ -81,11 +81,12 @@ async function pumpMessages(mgr: Manager, overlay: HTMLElement): Promise<{ count
     try {
       mgr.addMessage(text, 'user');
       // Provide last user message context for suggestions
-      (mgr as any).lastUserMessage = text;
+      (mgr as unknown as { lastUserMessage?: string }).lastUserMessage = text;
       // Call private method via escape hatch; safe for dev/testing
-      (mgr as any).handleMessage(text);
-    } catch (e: any) {
-      errors.push(String(e?.message || e));
+      (mgr as unknown as { handleMessage?: (t: string) => void }).handleMessage?.(text);
+    } catch (e: unknown) {
+      const err = e as { message?: unknown };
+      errors.push(String(err?.message ?? e));
     }
     const t1 = performance.now();
     return t1 - t0;

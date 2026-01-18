@@ -135,7 +135,7 @@ export class YouTubeEmbeds {
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
     iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
     iframe.title = item.querySelector('h3')?.textContent?.trim() || 'YouTube video';
-    (iframe as any).allowFullscreen = true;
+    iframe.allowFullscreen = true;
 
     player.hidden = false;
     player.innerHTML = '';

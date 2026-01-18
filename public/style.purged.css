@@ -1071,10 +1071,11 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   transition: color var(--transition-1);
   position: relative;
   overflow: hidden;
+  box-shadow: none;
 }
 
-.navbar-link:hover,
-.navbar-link:focus { color: var(--light-gray-70); }
+.navbar-link:hover { color: var(--light-gray-70); box-shadow: none; }
+.navbar-link:focus { color: var(--light-gray-70); box-shadow: none; }
 
 .navbar-link.active { color: var(--orange-yellow-crayola); }
 
@@ -1115,7 +1116,7 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   border: 1px solid var(--color-border);
   box-shadow: var(--elevation-1);
   z-index: 1;
-  transition: all 0.3s ease;
+  transition: transform 150ms ease, box-shadow 150ms ease;
   display: flex;
   align-items: flex-start;
   gap: 18px;
@@ -1151,8 +1152,8 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 }
 
 .service-item:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--elevation-2);
+  transform: translateY(0px);
+  box-shadow: none;
 }
 
 .service-icon-box {
@@ -1383,10 +1384,7 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 .timeline-container .timeline-item:hover .timeline-content,
 .timeline-item .timeline-content:focus-visible {
   transform: translateY(-5px);
-  box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.35),
-              0 8px 24px rgba(255, 215, 0, 0.18),
-              0 0 16px rgba(255, 215, 0, 0.35);
-  border-color: rgba(255, 215, 0, 0.4);
+  box-shadow: none;
 }
 
 .timeline-item .timeline-content:focus-visible {
@@ -3621,7 +3619,7 @@ article.active {
 
 .achievement-card:hover {
   transform: translateY(-10px) scale(1.03) rotateX(0deg);
-  box-shadow: var(--elevation-2), 0 0 0 1px var(--color-accent-weak);
+  box-shadow: none;
 }
 
 /* Award Badge */
@@ -4953,10 +4951,7 @@ picture img {
 .stack-item:hover,
 .stack-item:focus-within {
   transform: translateY(-4px);
-  box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.35),
-              0 8px 24px rgba(255, 215, 0, 0.18),
-              0 0 16px rgba(255, 215, 0, 0.35);
-  border-color: rgba(255, 215, 0, 0.4);
+  box-shadow: none;
 }
 .stack-item:hover::after { opacity: 1; }
 
@@ -4991,10 +4986,7 @@ picture img {
 /* Gold glow hover for Projects (match timeline-content aesthetic) */
 article.projects ul.project-list li.project-item:hover,
 article.projects ul.project-list li.project-item:focus-within {
-  box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.35),
-              0 8px 24px rgba(255, 215, 0, 0.18),
-              0 0 16px rgba(255, 215, 0, 0.35);
-  border-color: rgba(255, 215, 0, 0.4);
+  box-shadow: none;
 }
 .filter-chips { -ms-overflow-style: none; }
 .filter-chips::-webkit-scrollbar { display: none; }

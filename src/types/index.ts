@@ -33,6 +33,7 @@ export interface AchievementData {
   projectTitle?: string;
   linkedinUrl?: string;
   blogUrl?: string;
+  facebookUrl?: string;
 }
 
 export interface ProjectData {
@@ -56,10 +57,10 @@ export interface Portfolio {
     prefersReducedMotion?: boolean;
   };
   modules: {
-    [key: string]: any;
+    [key: string]: unknown;
   };
   lazy?: {
-    [key: string]: any;
+    [key: string]: unknown;
   };
   legacy?: Record<string, (...args: unknown[]) => unknown>;
   utils?: Record<string, (...args: unknown[]) => unknown>;
@@ -69,6 +70,9 @@ declare global {
   interface Window {
     Portfolio: Portfolio;
     CONFIG?: PortfolioConfig;
+    VanillaTilt?: { init: (elements: NodeListOf<Element> | Element[], options?: Record<string, unknown>) => void };
+    va?: (event: string, data: unknown) => void;
+    __techStackResizeBound?: boolean;
   }
 }
 

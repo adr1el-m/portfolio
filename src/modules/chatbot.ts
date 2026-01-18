@@ -2,6 +2,7 @@ import type { ChatMessage, ProjectData, AchievementData } from '@/types';
 import { logger } from '@/config';
 import { KB } from '@/data/knowledge-base';
 import { Search } from '@/modules/search';
+import { GeminiService } from './gemini-service';
 
 // Use explicit data interfaces to avoid accidental 'never' inference
 type ProjectItem = ProjectData;
@@ -72,6 +73,7 @@ export class ChatbotManager {
   private lastUserMessage: string | null = null;
   private detailedMode: boolean = false;
   private userPrefs: { detailedMode: boolean } = { detailedMode: false };
+  private geminiService: GeminiService;
   
   // Add focus management state
   private previouslyFocusedElement: HTMLElement | null = null;
@@ -87,7 +89,7 @@ export class ChatbotManager {
   
   // --- Smart helpers for matching and detail preference ---
   private normalize(text: string): string {
-    return text.toLowerCase().replace(/[^a-z0-9\s\-]/g, ' ').replace(/\s+/g, ' ').trim();
+    return text.toLowerCase().replace(/[^a-z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim();
   }
 
   // Tokenize for fuzzy matching
@@ -136,6 +138,8 @@ export class ChatbotManager {
 
       // Base similarity on title
       let score = this.jaccard(mTokens, titleTokens) * 5;
+
+      score += this.fuzzyScore(p.title, msg) * 2;
 
       // Exact inclusion gets a strong boost
       if (mNorm.includes(titleNorm)) score += 3;
@@ -434,6 +438,8 @@ export class ChatbotManager {
     this.inputField = document.querySelector('.chatbox-input input') as HTMLInputElement;
     this.sendButton = document.querySelector('.chatbox-input button');
 
+    this.geminiService = new GeminiService();
+
     // Initialize ARIA state
     if (this.chatbotBtn) this.chatbotBtn.setAttribute('aria-expanded', 'false');
     if (this.chatbox) {
@@ -497,7 +503,7 @@ export class ChatbotManager {
 
       // Focus the first interactive element inside the dialog
       const focusTarget = this.inputField || this.closeBtn || this.chatbox;
-      try { (focusTarget as HTMLElement)?.focus({ preventScroll: true }); } catch {}
+      try { (focusTarget as HTMLElement)?.focus({ preventScroll: true }); } catch { /* ignore */ }
 
       // Trap focus within the dialog and handle Escape
       this.focusTrapHandler = (e: KeyboardEvent) => {
@@ -535,7 +541,7 @@ export class ChatbotManager {
 
       // Restore focus to the trigger or previous element
       const restoreTarget = this.chatbotBtn ?? this.previouslyFocusedElement;
-      try { restoreTarget?.focus({ preventScroll: true }); } catch {}
+      try { restoreTarget?.focus({ preventScroll: true }); } catch { void 0; }
     }
   }
 
@@ -668,7 +674,7 @@ export class ChatbotManager {
     if (t.includes('open resume')) {
       const url = KB.contact.resumeUrl;
       if (url) {
-        try { window.open(url, '_blank', 'noopener,noreferrer'); } catch {}
+        try { window.open(url, '_blank', 'noopener,noreferrer'); } catch { /* ignore */ }
         this.addMessage('Opening resume…', 'bot');
         return;
       }
@@ -676,7 +682,7 @@ export class ChatbotManager {
     if (t.includes('open github repo')) {
       const p = this.findProject(this.lastUserMessage || '');
       if (p && p.githubUrl) {
-        try { window.open(p.githubUrl, '_blank', 'noopener,noreferrer'); } catch {}
+        try { window.open(p.githubUrl, '_blank', 'noopener,noreferrer'); } catch { /* ignore */ }
         this.addMessage(`Opening GitHub repo for ${p.title}…`, 'bot');
         return;
       } else {
@@ -687,7 +693,7 @@ export class ChatbotManager {
     if (t.includes('open live site')) {
       const p = this.findProject(this.lastUserMessage || '');
       if (p && p.liveUrl) {
-        try { window.open(p.liveUrl, '_blank', 'noopener,noreferrer'); } catch {}
+        try { window.open(p.liveUrl, '_blank', 'noopener,noreferrer'); } catch { /* ignore */ }
         this.addMessage(`Opening live site for ${p.title}…`, 'bot');
         return;
       } else {
@@ -699,7 +705,7 @@ export class ChatbotManager {
       const p = this.findProject(this.lastUserMessage || '');
       const url = p ? (p.videoUrl || p.liveUrl) : undefined;
       if (url) {
-        try { window.open(url, '_blank', 'noopener,noreferrer'); } catch {}
+        try { window.open(url, '_blank', 'noopener,noreferrer'); } catch { void 0; }
         this.addMessage(`Opening demo for ${p ? p.title : 'project'}…`, 'bot');
         return;
       } else {
@@ -747,9 +753,9 @@ export class ChatbotManager {
       const url = new URL(window.location.href);
       url.searchParams.set('q', query);
       window.history.replaceState({}, '', url.toString());
-    } catch {}
+    } catch { /* ignore */ }
     // Instantiate overlay (module guards and builds overlay if ?q exists)
-    try { new Search(); } catch {}
+    try { new Search(); } catch { /* ignore */ }
   }
   // === New: DOM-driven Projects extraction and listing ===
   private getProjectsFromDOM(): Array<{
@@ -1144,7 +1150,7 @@ export class ChatbotManager {
         if (cvCite) cites.push(cvCite);
         const sec = this.unifiedIndex.find((it) => it.id === 'sec-contact')?.citation;
         if (sec) cites.push(sec);
-        return `Resume: <a href="${c.resumeUrl}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>. For a quick glance, ask \"skills\" or \"projects\".${this.buildCitationsHTML(cites)}`;
+        return `Resume: <a href="${c.resumeUrl}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>. For a quick glance, ask "skills" or "projects".${this.buildCitationsHTML(cites)}`;
       }
       case 'SKILLS': {
         const body = this.buildSkillsHTML();
@@ -1298,11 +1304,46 @@ export class ChatbotManager {
     }
   }
 
-  private handleMessage(userMessage: string): void {
+  private buildContext(): string {
+    const profile = `Name: ${KB.profile.name}\nTitle: ${KB.profile.title}\nSummary: ${KB.profile.summary}`;
+    const skills = `Skills: ${KB.skills.core.join(', ')}\nTech Stack: ${KB.skills.technologies.join(', ')}`;
+    
+    const projects = KB.projects.map(p => 
+      `- ${p.title} (${p.category}): ${p.description}. Tech: ${p.technologies}. Links: ${[p.liveUrl, p.githubUrl, p.videoUrl].filter(Boolean).join(', ')}`
+    ).join('\n');
+    
+    const achievements = KB.achievements.map(a => 
+      `- ${a.title}: ${a.description} (${a.location}, ${a.date})`
+    ).join('\n');
+    
+    const contact = `Email: ${KB.contact.email}\nGitHub: ${KB.contact.github}\nLinkedIn: ${KB.contact.linkedin}`;
+    
+    return [profile, skills, "Projects:", projects, "Achievements:", achievements, "Contact:", contact].join('\n\n');
+  }
+
+  private async handleMessage(userMessage: string): Promise<void> {
     const guard = this.applyGuardrails(userMessage);
     if (guard) {
       this.addMessage(this.formatResponse(guard, 'concise'), 'bot');
       return;
+    }
+
+    // Try Gemini first
+    try {
+      this.showTypingIndicator();
+      const context = this.buildContext();
+      const aiResponse = await this.geminiService.generateResponse(userMessage, context);
+      this.hideTypingIndicator();
+      
+      if (aiResponse) {
+        this.addMessage(this.formatResponse(aiResponse, this.detailedMode ? 'detailed' : 'concise'), 'bot');
+        return;
+      } else {
+        logger.warn('Gemini returned null response, falling back to local KB.');
+      }
+    } catch (err) {
+      logger.error('Gemini fallback due to error:', err);
+      this.hideTypingIndicator();
     }
 
     // Dev-only Gemini connectivity check trigger
@@ -1317,7 +1358,7 @@ export class ChatbotManager {
         })();
         return;
       }
-    } catch {}
+    } catch { /* ignore */ }
 
     this.detailedMode = this.prefersDetailed(userMessage) || this.detailedMode;
     this.userPrefs.detailedMode = this.detailedMode;
@@ -1331,15 +1372,15 @@ export class ChatbotManager {
   // Dev-only connectivity test for Gemini API; returns a short status message
   private async checkGeminiConnectivity(): Promise<string> {
     try {
-      const key = (import.meta as any).env?.VITE_GEMINI_API_KEY as string | undefined;
-      const model = ((import.meta as any).env?.VITE_GEMINI_MODEL as string | undefined) || 'gemini-pro';
+      const key = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
+      const model = (import.meta.env.VITE_GEMINI_MODEL as string | undefined) || 'gemini-2.5-flash';
       if (!key) {
         return 'Gemini key not configured (VITE_GEMINI_API_KEY missing).';
       }
-      if (!(import.meta as any).env?.DEV) {
+      if (!import.meta.env.DEV) {
         return 'Gemini connectivity check is disabled outside development.';
       }
-      const url = `https://generativelanguage.googleapis.com/v1/models/${encodeURIComponent(model)}:generateContent?key=${key}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${key}`;
       const body = {
         contents: [
           {
@@ -1363,8 +1404,9 @@ export class ChatbotManager {
       const sample = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? 'no-text';
       const preview = sample.length > 160 ? sample.slice(0, 160) + '…' : sample;
       return `Gemini responded OK with model “${model}”. Sample: ${preview}`;
-    } catch (e: any) {
-      return `Gemini check error: ${e?.message || String(e)}`;
+    } catch (e: unknown) {
+      const err = e as { message?: unknown } | null;
+      return `Gemini check error: ${err?.message || String(e)}`;
     }
   }
 
@@ -1375,12 +1417,12 @@ export class ChatbotManager {
         const p = JSON.parse(raw);
         if (typeof p?.detailedMode === 'boolean') this.userPrefs.detailedMode = p.detailedMode;
       }
-    } catch {}
+    } catch { /* ignore */ }
   }
 
   private savePreferences(): void {
     try {
       localStorage.setItem('adrAI:prefs', JSON.stringify(this.userPrefs));
-    } catch {}
+    } catch { /* ignore */ }
   }
 }

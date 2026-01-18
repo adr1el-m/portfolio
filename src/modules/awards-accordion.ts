@@ -33,7 +33,7 @@ export class AwardsAccordion {
       if (content.style.maxHeight === 'none' || getComputedStyle(content).maxHeight === 'none') {
         content.style.maxHeight = content.scrollHeight + 'px';
         // Force reflow to apply the starting height before collapsing
-        content.offsetHeight;
+        content.getBoundingClientRect();
       }
 
       header.classList.remove('active');

@@ -106,7 +106,7 @@ export class PerformanceMonitor {
     if (typeof window !== 'undefined') {
       try {
         window.dispatchEvent(new CustomEvent('portfolio:web-vitals', { detail: { report } }));
-      } catch (e) {
+      } catch {
         // no-op: CustomEvent may not be available in some environments
       }
     }

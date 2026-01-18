@@ -78,7 +78,7 @@ export class YouTubeEmbeds {
       const parts = u.pathname.split('/');
       const idx = parts.indexOf('embed');
       if (idx !== -1 && parts[idx + 1]) return parts[idx + 1];
-    } catch (_) {
+    } catch {
       // Fallback regex
       const m = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
       if (m) return m[1];

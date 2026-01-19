@@ -16,7 +16,7 @@ export default defineConfig({
     open: true,
     cors: true,
     headers: {
-      'Content-Security-Policy': "default-src 'self'; upgrade-insecure-requests; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-analytics.com https://vitals.vercel-insights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com https://va.vercel-analytics.com https://vitals.vercel-insights.com https://www.google-analytics.com; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'none'; report-uri /api/csp-report; report-to csp-endpoint",
+      'Content-Security-Policy': "default-src 'self'; upgrade-insecure-requests; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-analytics.com https://vitals.vercel-insights.com https://vercel.live; style-src 'self' 'unsafe-inline' https://vercel.live; img-src 'self' data: https: blob: https://vercel.live; font-src 'self' data: https://vercel.live; connect-src 'self' https://generativelanguage.googleapis.com https://va.vercel-analytics.com https://vitals.vercel-insights.com https://www.google-analytics.com https://vercel.live; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://vercel.live; object-src 'none'; base-uri 'none'; report-uri /api/csp-report; report-to csp-endpoint",
       'Report-To': '{"group":"csp-endpoint","max_age":10886400,"endpoints":[{"url":"/api/csp-report"}]}',
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'SAMEORIGIN',

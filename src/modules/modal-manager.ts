@@ -227,9 +227,8 @@ export class ModalManager {
     }
     if (this.modalEl) {
       this.modalEl.setAttribute('aria-labelledby', this.titleEl?.id || 'achievement-modal-title');
-      this.modalEl.setAttribute('aria-hidden', 'false');
+      this.modalEl.removeAttribute('aria-hidden');
       this.modalEl.setAttribute('tabindex', '-1');
-      (this.modalEl as HTMLElement).focus();
     }
 
     // Use WebP if supported, fallback to regular images
@@ -390,6 +389,7 @@ export class ModalManager {
     
     if (this.modalEl) {
       this.modalEl.classList.add('active');
+      (this.modalEl as HTMLElement).focus();
       logger.log('Modal class list after adding active:', this.modalEl.classList);
     }
     
@@ -1172,7 +1172,7 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
     // Show modal
     if (projectModal) {
       projectModal.style.display = 'flex';
-      projectModal.setAttribute('aria-hidden', 'false');
+      projectModal.removeAttribute('aria-hidden');
       projectModal.setAttribute('tabindex', '-1');
       (projectModal as HTMLElement).focus();
       logger.log('Modal opened for project:', data.title);
@@ -1208,8 +1208,8 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
     }
 
     if (projectModal) {
-      projectModal.setAttribute('aria-hidden', 'true');
       projectModal.style.display = 'none';
+      projectModal.setAttribute('aria-hidden', 'true');
     }
     this.previousFocus = null;
     document.body.style.overflow = ''; // Restore scrolling

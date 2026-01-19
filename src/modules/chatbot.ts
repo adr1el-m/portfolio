@@ -1372,13 +1372,13 @@ export class ChatbotManager {
   // Dev-only connectivity test for Gemini API; returns a short status message
   private async checkGeminiConnectivity(): Promise<string> {
     try {
+      if (!import.meta.env.DEV) {
+        return 'Gemini connectivity check is disabled outside development.';
+      }
       const key = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
       const model = (import.meta.env.VITE_GEMINI_MODEL as string | undefined) || 'gemini-2.5-flash';
       if (!key) {
         return 'Gemini key not configured (VITE_GEMINI_API_KEY missing).';
-      }
-      if (!import.meta.env.DEV) {
-        return 'Gemini connectivity check is disabled outside development.';
       }
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${key}`;
       const body = {

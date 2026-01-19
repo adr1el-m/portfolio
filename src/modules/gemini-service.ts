@@ -7,12 +7,17 @@ export class GeminiService {
   private useProxy: boolean;
 
   constructor() {
-    this.useProxy = Boolean(import.meta.env.PROD) &&
-      typeof window !== 'undefined' &&
-      !/^(localhost|127\.0\.0\.1)/.test(window.location.hostname);
-    this.apiKey = this.useProxy ? '' : (import.meta.env.VITE_GEMINI_API_KEY || '');
-    this.model = import.meta.env.VITE_GEMINI_MODEL || 'gemini-2.5-flash';
-    this.baseUrl = this.useProxy ? '/api/gemini' : 'https://generativelanguage.googleapis.com/v1beta/models';
+    if (import.meta.env.DEV) {
+      this.useProxy = false;
+      this.apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
+      this.model = import.meta.env.VITE_GEMINI_MODEL || 'gemini-2.5-flash';
+      this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
+    } else {
+      this.useProxy = true;
+      this.apiKey = '';
+      this.model = import.meta.env.VITE_GEMINI_MODEL || 'gemini-2.5-flash';
+      this.baseUrl = '/api/gemini';
+    }
 
     if (!this.useProxy && !this.apiKey) {
       logger.warn('GeminiService: No API key found. Chatbot will use local responses only.');

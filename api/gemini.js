@@ -8,7 +8,10 @@ module.exports = async (req, res) => {
   const defaultModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
   if (!apiKey) {
-    res.status(500).json({ error: 'Gemini API key not configured on server.' });
+    res.status(500).json({
+      error: 'Gemini API key not configured on server.',
+      hint: 'Set GEMINI_API_KEY (recommended) or GOOGLE_API_KEY in Vercel Environment Variables.',
+    });
     return;
   }
 

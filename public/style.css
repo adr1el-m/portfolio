@@ -961,10 +961,12 @@ main {
   font-size: var(--fs-7);
 }
 
-.contact-info .contact-link {
-  white-space: normal;
-  overflow-wrap: break-word;
-  word-break: normal;
+.contact-info .contact-link:not(.resume) {
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  font-size: clamp(12px, 1.1vw, var(--fs-7));
+  line-height: 1.2;
 }
 
 .contact-info address { font-style: normal; }
@@ -5206,12 +5208,12 @@ article.projects ul.project-list li.project-item:focus-within {
     min-width: 0;
   }
 
-  .contact-info .contact-link {
-    white-space: normal;
+  .contact-info .contact-link:not(.resume) {
+    white-space: nowrap;
     overflow: visible;
     text-overflow: clip;
-    overflow-wrap: break-word;
-    word-break: normal;
+    font-size: clamp(12px, 1.1vw, var(--fs-7));
+    line-height: 1.2;
   }
 
   .contacts-list > .contact-item:first-child {

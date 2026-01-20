@@ -962,7 +962,9 @@ main {
 }
 
 .contact-info .contact-link {
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-all;
 }
 
 .contact-info address { font-style: normal; }

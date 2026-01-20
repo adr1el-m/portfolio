@@ -964,7 +964,7 @@ main {
 .contact-info .contact-link {
   white-space: normal;
   overflow-wrap: break-word;
-  word-break: break-all;
+  word-break: normal;
 }
 
 .contact-info address { font-style: normal; }
@@ -1881,8 +1881,10 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   .contacts-list { gap: 20px; }
 
   .contact-info {
-    max-width: calc(100% - 64px);
-    width: calc(100% - 64px);
+    flex: 1;
+    max-width: 100%;
+    width: auto;
+    min-width: 0;
   }
 
   .navbar { border-radius: 20px 20px 0 0; }

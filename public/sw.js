@@ -1,4 +1,4 @@
-const CACHE_NAME = 'adriel-portfolio-v3';
+const CACHE_NAME = 'adriel-portfolio-v4';
 const OFFLINE_URLS = ['/offline', '/offline.html'];
 const PRECACHE_ASSETS = [
   '/',
@@ -26,15 +26,14 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-
-  // Bypass non-GET requests
   if (request.method !== 'GET') return;
+
+  const isHtml = request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html');
 
   event.respondWith(
     caches.match(request).then((cached) => {
       const fetchPromise = fetch(request)
         .then((networkResponse) => {
-          // Cache successful responses
           const clone = networkResponse.clone();
           if (networkResponse.ok) {
             caches.open(CACHE_NAME).then((cache) => cache.put(request, clone)).catch(() => {});
@@ -42,16 +41,13 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => {
-          // Offline fallback for navigations
-          if (request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html')) {
+          if (isHtml) {
             return caches.match(OFFLINE_URLS[0]).then((res) => res || caches.match(OFFLINE_URLS[1]));
           }
-          // Fallback to cache if available
           return cached;
         });
 
-      // Prefer cached first for performance
-      return cached || fetchPromise;
+      return isHtml ? fetchPromise.then((res) => res || cached) : (cached || fetchPromise);
     })
   );
 });

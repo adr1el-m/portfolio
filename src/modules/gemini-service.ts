@@ -9,7 +9,8 @@ export class GeminiService {
 
   constructor() {
     this.clientApiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
-    if (import.meta.env.DEV) {
+    const canUseDirect = !!this.clientApiKey;
+    if (import.meta.env.DEV || canUseDirect) {
       this.useProxy = false;
       this.apiKey = this.clientApiKey;
       this.model = import.meta.env.VITE_GEMINI_MODEL || 'gemini-2.5-flash';

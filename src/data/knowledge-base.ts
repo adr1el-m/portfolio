@@ -106,16 +106,39 @@ export const KB: KnowledgeBase = {
       codedexUrl: undefined,
     },
     {
+      title: 'Green Pulse',
+      category: 'Web App',
+      images: [],
+      webpImages: [],
+      description:
+        'GreenPulse is an interactive web application designed to promote sustainability through carbon footprint tracking, AI-powered eco-tips, and personalized progress monitoring.',
+      technologies:
+        'React, Vite, Tailwind CSS, Chart.js, Google Generative AI',
+      githubUrl: 'https://github.com/adr1el-m/green-pulse',
+      videoUrl: '/images/projects/greenPulse/GP-opt.mp4',
+    },
+    {
       title: 'Kita‑Kita (Agentic)',
       category: 'AI Banking Platform',
       images: [],
       webpImages: [],
       description:
-        'AI‑powered banking and financial management platform for expense tracking, forecasting, and intelligent agent support.',
+        'Kita-Kita is an AI-powered financial co-pilot that combines intelligent agents, unified account management, and predictive analytics to help Filipinos achieve financial wellness.',
       technologies:
         'HTML, CSS, JavaScript, AI agent orchestration, charts, backend services',
       videoUrl: '/images/projects/agentic/Deansanitzy.mp4',
       githubUrl: 'https://github.com/adr1el-m/team-Deansanitzy-2025',
+    },
+    {
+      title: 'WorkSight',
+      category: 'Web App',
+      images: [],
+      webpImages: [],
+      description:
+        'WorkSight is an AI-powered well-being analytics platform that uses behavioral data and psychological science to predict and prevent employee burnout.',
+      technologies:
+        'Next.js, Supabase, TypeScript, Tailwind CSS, AI/ML',
+      githubUrl: 'https://github.com/4sightorg/worksight',
     },
     {
       title: 'RGBC ATM Transaction System',
@@ -142,7 +165,7 @@ export const KB: KnowledgeBase = {
         '/images/projects/loan/4-400.webp',
       ],
       description:
-        'Grade 12 project simulating loan application workflows including user authentication, loan calculation, and confirmation.',
+        'Web-based Loan Management System simulating real-world lending workflows, including user authentication, loan calculation, and confirmation.',
       technologies: 'PHP, MySQL, HTML, CSS, JavaScript',
       githubUrl: 'https://github.com/adr1el-m/PHP-Loan-System',
     },
@@ -169,6 +192,22 @@ export const KB: KnowledgeBase = {
         'Web platform for Grade 12 students at University of Makati to request and manage school documents with tracking and admin control.',
       technologies: 'HTML, CSS, JavaScript, PHP, MySQL',
       githubUrl: 'https://github.com/adr1el-m/Online-Document-Request-System',
+    },
+    {
+      title: 'Four Fundamental Spaces Finder',
+      category: 'Linear Algebra Tool',
+      images: [
+        '/images/projects/fourFundamentalSpacesFinder/LandingPage.png',
+        '/images/projects/fourFundamentalSpacesFinder/Computation-mac.jpeg',
+        '/images/projects/fourFundamentalSpacesFinder/GeometricVisualization-mac.jpeg',
+        '/images/projects/fourFundamentalSpacesFinder/GeometricVisualization.png',
+      ],
+      webpImages: [],
+      description:
+        'A comprehensive Linear Algebra tool designed to calculate and visualize the four fundamental subspaces of a matrix: Column Space, Row Space, Null Space, and Left Null Space. This application provides step-by-step Row Reduced Echelon Form (RREF) calculations, LaTeX support for equations, and interactive 2D/3D geometric visualizations.',
+      technologies: 'Next.js, Swift, SwiftUI, LaTeX, MathJax',
+      githubUrl:
+        'https://github.com/adr1el-m/Four-Fundamental-Spaces-Finder?tab=readme-ov-file',
     },
   ],
   achievements: [
@@ -209,7 +248,7 @@ export const KB: KnowledgeBase = {
       teammates: [],
       githubUrl: 'https://github.com/adr1el-m/worksight',
       description:
-        'Workplace productivity solution leveraging data insights and automation. Earned 3rd place among strong competitors.',
+        'WorkSight is an AI-powered well-being analytics platform that uses behavioral data and psychological science to predict and prevent employee burnout.',
       projectTitle: 'WorkSight',
     },
     {

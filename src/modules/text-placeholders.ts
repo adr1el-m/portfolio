@@ -1,14 +1,42 @@
 import { logger } from '@/config';
 
-function svgDataUri(title: string, width = 400, height = 300, bg = '#1a1a1a', fg = '#ffdb70'): string {
+function svgDataUri(title: string, width = 800, height = 450, bg = '#1a1a1a', fg = '#ffdb70'): string {
   const safeText = (title || '').replace(/\s+/g, ' ').trim();
+  
+  // Simple word wrap logic
+  const words = safeText.split(' ');
+  const lines: string[] = [];
+  let currentLine = words[0] || '';
+  const maxCharsPerLine = 30; // Approx characters per line for font-size 40 at width 800
+
+  for (let i = 1; i < words.length; i++) {
+    if ((currentLine + ' ' + words[i]).length < maxCharsPerLine) {
+      currentLine += ' ' + words[i];
+    } else {
+      lines.push(currentLine);
+      currentLine = words[i];
+    }
+  }
+  lines.push(currentLine);
+
+  // Generate tspans
+  const fontSize = 40;
+  const lineHeight = 1.2;
+  const totalHeight = lines.length * fontSize * lineHeight;
+  const startY = (height - totalHeight) / 2 + (fontSize * 0.8); // Center vertically
+
+  const textContent = lines.map((line, index) => {
+    const y = startY + (index * fontSize * lineHeight);
+    return `<tspan x="50%" y="${y}">${line}</tspan>`;
+  }).join('');
+
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
   <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
     <rect width="100%" height="100%" fill="${bg}"/>
-    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+    <text x="50%" text-anchor="middle"
           fill="${fg}" font-family="system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
-          font-size="24" font-weight="600">
-      ${safeText}
+          font-size="${fontSize}" font-weight="600">
+      ${textContent}
     </text>
   </svg>`;
   const encoded = encodeURIComponent(svg)

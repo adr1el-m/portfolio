@@ -80,8 +80,8 @@ class PortfolioApp {
       securityManager.ensureSafeExternalLinks();
       // Apply text placeholders early to avoid image errors
       new TextPlaceholders().init();
-      const loadingManager = new LoadingManager();
       const imageOptimizer = new ImageOptimizer();
+      const loadingManager = new LoadingManager();
       const modalManager = new ModalManager();
       const navigationManager = new NavigationManager();
       // Initialize client-side search (activates when URL has ?q=)

@@ -215,8 +215,17 @@ export class LoadingManager {
    * Remove skeleton loader from image
    */
   private removeImageSkeleton(img: HTMLImageElement): void {
-    const parent = img.parentElement;
+    let parent = img.parentElement;
     if (!parent) return;
+
+    // Check if the image is inside a picture element (handled by ImageOptimizer)
+    // If so, the skeleton might be on the grandparent (the original container)
+    if (parent.tagName.toLowerCase() === 'picture') {
+      const skeletonInPicture = parent.querySelector('.image-skeleton');
+      if (!skeletonInPicture && parent.parentElement) {
+        parent = parent.parentElement;
+      }
+    }
 
     const skeleton = parent.querySelector('.image-skeleton');
     if (skeleton) {

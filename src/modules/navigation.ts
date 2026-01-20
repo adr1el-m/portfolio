@@ -381,11 +381,22 @@ export class NavigationManager {
    */
   private deprioritizeOrganizationLogos(): void {
     const logos = document.querySelectorAll<HTMLImageElement>('.org-logo img');
+    const head = document.head;
     logos.forEach((img) => {
       img.setAttribute('loading', 'lazy');
       img.setAttribute('fetchpriority', 'low');
       if (!img.hasAttribute('decoding')) {
         img.setAttribute('decoding', 'async');
+      }
+
+      // Remove preload link to prevent "unused preload" warnings
+      const src = img.currentSrc || img.src;
+      if (src) {
+        const id = `preload-${src}`;
+        const link = head.querySelector(`link[data-id="${CSS.escape(id)}"]`);
+        if (link) {
+          link.remove();
+        }
       }
     });
   }

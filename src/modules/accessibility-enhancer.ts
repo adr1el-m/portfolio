@@ -82,20 +82,7 @@ export class AccessibilityEnhancer {
         }
       });
 
-      // Make award badges accessible
-      const badge = card.querySelector('.award-badge');
-      if (badge && !badge.hasAttribute('role')) {
-        const emoji = badge.textContent?.trim() || '';
-        let ariaLabel = 'Award';
-        if (emoji === '🏆') ariaLabel = 'Trophy';
-        else if (emoji === '🎖️') ariaLabel = 'Medal';
-        else if (emoji === '🥇') ariaLabel = 'First place medal';
-        else if (emoji === '🥈') ariaLabel = 'Second place medal';
-        else if (emoji === '🥉') ariaLabel = 'Third place medal';
-        
-        badge.setAttribute('role', 'img');
-        badge.setAttribute('aria-label', ariaLabel);
-      }
+
     });
 
     logger.info(`✅ Enhanced ${achievementCards.length} achievement cards for accessibility`);

@@ -465,6 +465,17 @@ export class ModalManager {
       projectCodedex.innerHTML = '<span class="link-icon">📝</span> View Codédex Post';
       linksContainer.appendChild(projectCodedex);
     }
+    let projectDevpost = document.querySelector('.project-devpost') as HTMLAnchorElement | null;
+    if (linksContainer && !projectDevpost) {
+      projectDevpost = document.createElement('a');
+      projectDevpost.className = 'project-link project-devpost';
+      projectDevpost.target = '_blank';
+      projectDevpost.rel = 'noopener noreferrer';
+      projectDevpost.setAttribute('aria-label', 'View Devpost submission (opens in new tab)');
+      projectDevpost.style.display = 'none';
+      projectDevpost.innerHTML = '<span class="link-icon">🏆</span> Devpost Submission';
+      linksContainer.appendChild(projectDevpost);
+    }
 
     const currentImageNum = document.querySelector('.current-image-number');
     const totalImagesNum = document.querySelector('.total-images');
@@ -500,6 +511,15 @@ export class ModalManager {
         liveLink.style.display = 'none';
       }
     }
+    const devpostLink = document.querySelector('.project-link.project-devpost') as HTMLAnchorElement | null;
+    if (devpostLink) {
+      if (data.title.trim() === 'FinanceWise') {
+        devpostLink.href = 'https://devpost.com/software/financewise';
+        devpostLink.style.display = '';
+      } else {
+        devpostLink.style.display = 'none';
+      }
+    }
     if (projectDescription) {
       // Render rich HTML for RGBC ATM project
       const rgTitleMatch = data.title.startsWith('RGBC: Richard Gwapo Banking Corporation');
@@ -522,19 +542,99 @@ export class ModalManager {
         <div class="desc-section"><h4>Conclusion</h4><p>The <strong>RGBC ATM Transaction System</strong> is a comprehensive Java Swing project that effectively simulates real‑world ATM functionalities. It highlights the technical implementation of user authentication, transactions, and admin management while emphasizing robust input validation, user experience, and program reliability — a strong foundation for more advanced banking systems.</p></div>`;
       } else if (data.title.trim() === 'PHP-Loan-System' || data.title.includes('PHP Loan System')) {
         projectDescription.classList.add('rich');
-        projectDescription.innerHTML = `<div class="desc-section"><p>This repository contains a PHP/MySQL project focused on creating a loan management system. It was completed during my Grade 12 year at the University of Makati as part of the Laboratory Exercises for COMPROG 3 under the supervision of Mr. Roel Richard C. Traballo, a faculty member of the College of Computer Science. The system is a simulation of a basic loan application process, including user authentication, loan calculation, and loan confirmation functionalities.</p></div>
+        projectDescription.innerHTML = `<div class="desc-section"><p>A web-based Loan Management System built with PHP and MySQL that streamlines the loan application process. It features secure user authentication, automated loan calculations, and real-time generation of repayment schedules. The system supports different user roles with specific interest rates and provides clear breakdowns of monthly dues and total payable amounts.</p></div>
         <hr class="desc-divider" />
-        <div class="desc-section"><h4>Project Overview</h4><p>The PHP Loan System Project is a dynamic web application that guides users through the loan application process. The system includes multiple pages to ensure that the user experience is intuitive and structured. This includes:</p><ul><li><strong>A Login Page</strong> where users authenticate their credentials.</li><li><strong>A Loan Amount Page</strong> for users to input loan details.</li><li><strong>A Loan Information Page</strong> to display computed loan data and monthly dues.</li><li><strong>A Loan Confirmation Page</strong> for finalizing the application process.</li></ul></div>
+        <div class="desc-section">
+          <h4>Features</h4>
+          <div class="feature-grid">
+            <div class="feature-card">
+              <div class="feature-icon"><ion-icon name="shield-checkmark-outline"></ion-icon></div>
+              <h5>Login System</h5>
+              <ul>
+                <li>Validates username & password (5 chars max).</li>
+                <li>Real-time error feedback for invalid inputs.</li>
+                <li>Secure session management.</li>
+              </ul>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon"><ion-icon name="wallet-outline"></ion-icon></div>
+              <h5>Loan Management</h5>
+              <ul>
+                <li>Flexible terms (6, 12, 24 months).</li>
+                <li>Role-based interest (Officer: 5%, Member: 10%).</li>
+                <li>Automated interest calculation.</li>
+              </ul>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon"><ion-icon name="calculator-outline"></ion-icon></div>
+              <h5>Financial Analysis</h5>
+              <ul>
+                <li>Total payable amount computation.</li>
+                <li>Monthly due breakdown.</li>
+                <li>Instant calculation updates.</li>
+              </ul>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon"><ion-icon name="document-text-outline"></ion-icon></div>
+              <h5>Workflow Control</h5>
+              <ul>
+                <li>Step-by-step application wizard.</li>
+                <li>Confirmation & reset capabilities.</li>
+                <li>Structured navigation flow.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
         <hr class="desc-divider" />
-        <div class="desc-section"><h4>Features</h4><ol><li><strong>Login System</strong><ul><li>Validates username and password (limited to 5 characters).</li><li>Displays appropriate error messages for invalid inputs.</li><li>Proceeds to the loan process upon successful authentication.</li></ul></li><li><strong>Loan Amount Input</strong><ul><li>Users specify the loan amount and repayment term (6, 12, or 24 months).</li><li>Interest rates differ based on user type (Officer: 5%, Member: 10%).</li></ul></li><li><strong>Loan Information Display</strong><ul><li>Computes total interest, total payable amount, and monthly dues.</li><li>Offers options to confirm or reset entries.</li></ul></li><li><strong>Loan Confirmation</strong><ul><li>Summarizes the loan details.</li><li>Provides a "Back to Login Page" button to restart the process.</li></ul></li><li><strong>Interactive Buttons</strong><ul><li><em>Accept:</em> Processes user login and navigates to the next page.</li><li><em>Clear All:</em> Resets user input fields.</li><li><em>Submit:</em> Finalizes loan application details.</li><li><em>Back:</em> Navigates to the previous step.</li></ul></li></ol></div>
+        <div class="desc-section">
+          <h4>System Workflow</h4>
+          <div class="workflow-timeline">
+            <div class="workflow-step">
+              <div class="workflow-step-marker">1</div>
+              <div class="workflow-step-content">
+                <h5><ion-icon name="log-in-outline"></ion-icon> Login Page</h5>
+                <ul>
+                  <li><strong>Input:</strong> Username & Password authentication.</li>
+                  <li><strong>Validation:</strong> Checks against database records.</li>
+                  <li><strong>Action:</strong> Redirects to Loan Amount on success.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="workflow-step">
+              <div class="workflow-step-marker">2</div>
+              <div class="workflow-step-content">
+                <h5><ion-icon name="cash-outline"></ion-icon> Loan Configuration</h5>
+                <ul>
+                  <li><strong>Input:</strong> Select Loan Amount & Repayment Term.</li>
+                  <li><strong>Logic:</strong> Applies interest rate based on user role.</li>
+                  <li><strong>Action:</strong> "Confirm Loan" to proceed.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="workflow-step">
+              <div class="workflow-step-marker">3</div>
+              <div class="workflow-step-content">
+                <h5><ion-icon name="analytics-outline"></ion-icon> Review Details</h5>
+                <ul>
+                  <li><strong>Display:</strong> Shows interest, total amount, & monthly dues.</li>
+                  <li><strong>Decision:</strong> "Submit" to finalize or "Back" to modify.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="workflow-step">
+              <div class="workflow-step-marker">4</div>
+              <div class="workflow-step-content">
+                <h5><ion-icon name="checkmark-circle-outline"></ion-icon> Confirmation</h5>
+                <ul>
+                  <li><strong>Summary:</strong> Final overview of the approved loan.</li>
+                  <li><strong>Complete:</strong> Return to login for next transaction.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
         <hr class="desc-divider" />
-        <div class="desc-section"><h4>System Workflow</h4><div class="desc-subsection"><h5>Page 1: Login Page</h5><ul><li><strong>Input Fields:</strong> Username and Password (maximum of 5 characters each).</li><li><strong>Outputs:</strong><ul><li><em>Error Message for Empty Values:</em> Prompts users to fill in all fields.</li><li><em>Error Message for Incorrect Credentials:</em> Displays "Incorrect Username or Password."</li><li><em>Success:</em> Displays "Password Accepted" and navigates to the Loan Amount page.</li></ul></li></ul></div><div class="desc-subsection"><h5>Page 2: Loan Amount Page</h5><ul><li><strong>Input Fields:</strong> Loan Amount, Repayment Term (6, 12, or 24 months).</li><li><strong>Buttons:</strong> <em>Confirm Loan</em> (proceeds to the Loan Information page), <em>Clear All</em> (resets inputs).</li></ul></div><div class="desc-subsection"><h5>Page 3: Loan Information Page</h5><ul><li><strong>Outputs:</strong> Computed interest, total payable amount, and monthly dues.</li><li><strong>Buttons:</strong> <em>Submit</em> (navigates to Loan Confirmation), <em>Back</em> (returns to Loan Amount).</li></ul></div><div class="desc-subsection"><h5>Page 4: Loan Confirmation Page</h5><ul><li><strong>Outputs:</strong> Final loan details including interest, total payable amount, and monthly dues.</li><li><strong>Button:</strong> <em>Back to Login Page</em> (restarts the application process).</li></ul></div></div>
-        <hr class="desc-divider" />
-        <div class="desc-section"><h4>Technologies Used</h4><ul><li><strong>Backend:</strong> PHP</li><li><strong>Database:</strong> MySQL</li><li><strong>Frontend:</strong> HTML, CSS, Bootstrap</li><li><strong>Tools:</strong> XAMPP/WAMP (for local server setup)</li></ul></div>
-        <hr class="desc-divider" />
-        <div class="desc-section"><h4>Setup Instructions</h4><ol><li><strong>Clone the repository:</strong><pre><code>git clone https://github.com/your-username/PHP-Loan-System.git</code></pre></li><li><strong>Import the Database:</strong><ul><li>Use the <code>.sql</code> file included in the repository.</li><li>Import it into your MySQL database via PHPMyAdmin or a terminal.</li></ul></li><li><strong>Configure Database Connection:</strong><ul><li>Locate the database configuration section in the PHP files.</li><li>Update credentials to match your local MySQL setup.</li></ul></li><li><strong>Run the Project:</strong><ul><li>Start a local server using XAMPP or WAMP.</li><li>Access the project in your browser at <code>http://localhost/PHP-Loan-System</code>.</li></ul></li></ol></div>
-        <hr class="desc-divider" />
-        <div class="desc-section"><h4>Database Details</h4><p>The database schema includes a table for user accounts and a reference loan table for calculations. Below are sample values:</p><table><thead><tr><th>User Type</th><th>Loan Amount</th><th>Interest (%)</th><th>Total Amount</th><th>Monthly Dues (6 mos)</th><th>Monthly Dues (12 mos)</th><th>Monthly Dues (24 mos)</th></tr></thead><tbody><tr><td>Officer</td><td>5,000.00</td><td>5%</td><td>5,250.00</td><td>875.00</td><td>437.50</td><td>218.75</td></tr><tr><td>Member</td><td>10,000.00</td><td>10%</td><td>11,000.00</td><td>1,833.33</td><td>916.67</td><td>458.33</td></tr></tbody></table></div>`;
+        <div class="desc-section"><h4>Technologies Used</h4><ul><li><strong>Backend:</strong> PHP</li><li><strong>Database:</strong> MySQL</li><li><strong>Frontend:</strong> HTML, CSS, Bootstrap</li><li><strong>Tools:</strong> XAMPP/WAMP (for local server setup)</li></ul></div>`;
       } else if (data.title.trim() === 'Hand Gesture Recognition and Arduino Integration' || data.title.includes('Hand Gesture Recognition')) {
         projectDescription.classList.add('rich');
         projectDescription.innerHTML = `<div class="desc-section"><p>This project combines computer vision and embedded systems to detect hand gestures and control various outputs using an Arduino. It leverages Python for hand gesture detection with the Mediapipe library and Arduino to process the received data for hardware interfacing.</p></div>
@@ -554,130 +654,233 @@ export class ModalManager {
         <div class="desc-section"><h4>Conclusion</h4><p>The <strong>RGBC ATM Transaction System</strong> is a comprehensive Java Swing project that effectively simulates real‑world ATM functionalities. It highlights the technical implementation of user authentication, transactions, and admin management while emphasizing robust input validation, user experience, and program reliability — a strong foundation for more advanced banking systems.</p></div>`;
       } else if (data.title.trim() === 'FinanceWise') {
         projectDescription.classList.add('rich');
-        projectDescription.innerHTML = `<div class="desc-section"><p>FinanceWise is a comprehensive financial advisory platform designed to help users make informed decisions about spending, investments, and loans. Our platform combines modern design with practical financial tools to provide a seamless user experience.</p></div>
+        projectDescription.innerHTML = `<div class="desc-section"><p>FinanceWise is a comprehensive financial advisory platform designed to help users make informed decisions about spending, investments, and loans. Our platform combines modern design with practical financial tools to provide a seamless user experience. I won a dollar on this.</p></div>
         <hr class="desc-divider" />
         <div class="desc-section"><h4>Features</h4>
-          <div class="desc-subsection"><h5>SpendWise</h5><ul><li>Personalized spending advice based on your financial circumstances</li><li>Smart budgeting recommendations</li><li>Expense tracking and analysis</li></ul></div>
-          <div class="desc-subsection"><h5>InvestWise</h5><ul><li>Customized investment suggestions</li><li>Risk assessment tools</li><li>Portfolio diversification guidance</li></ul></div>
-          <div class="desc-subsection"><h5>LoanWise</h5><ul><li>Loan eligibility assessment</li><li>Interest rate comparisons</li><li>Repayment strategy planning</li></ul></div>
+          <div class="feature-grid">
+            <div class="feature-column">
+              <h5>SpendWise</h5>
+              <ul>
+                <li>Personalized spending advice based on your financial circumstances</li>
+                <li>Smart budgeting recommendations</li>
+                <li>Expense tracking and analysis</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>InvestWise</h5>
+              <ul>
+                <li>Customized investment suggestions</li>
+                <li>Risk assessment tools</li>
+                <li>Portfolio diversification guidance</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>LoanWise</h5>
+              <ul>
+                <li>Loan eligibility assessment</li>
+                <li>Interest rate comparisons</li>
+                <li>Repayment strategy planning</li>
+              </ul>
+            </div>
+          </div>
         </div>
         <hr class="desc-divider" />
-        <div class="desc-section"><h4>Technologies Used</h4><ul><li>HTML5</li><li>CSS3</li><li>JavaScript</li><li>Particles.js for interactive background</li><li>Modern UI/UX principles</li><li>Responsive Design</li></ul></div>
+        <div class="desc-section">
+          <div class="tech-design-grid">
+            <div class="tech-column">
+              <h4>Technologies Used</h4>
+              <ul>
+                <li>HTML5</li>
+                <li>CSS3</li>
+                <li>JavaScript</li>
+                <li>Particles.js for interactive background</li>
+                <li>Modern UI/UX principles</li>
+                <li>Responsive Design</li>
+              </ul>
+            </div>
+            <div class="tech-column">
+              <h4>Design Features</h4>
+              <ul>
+                <li>Modern and intuitive user interface</li>
+                <li>Responsive design for all devices</li>
+                <li>Interactive particle background</li>
+                <li>Smooth animations and transitions</li>
+                <li>Professional color scheme</li>
+              </ul>
+            </div>
+          </div>
+        </div>
         <hr class="desc-divider" />
-        <div class="desc-section"><h4>Design Features</h4><ul><li>Modern and intuitive user interface</li><li>Responsive design for all devices</li><li>Interactive particle background</li><li>Smooth animations and transitions</li><li>Professional color scheme</li></ul></div>
-        <hr class="desc-divider" />
-        <div class="desc-section"><h4>Configuration</h4><p>The project uses <strong>Particles.js</strong> for the interactive background. You can customize particle behavior by modifying the <code>particlesjs-config.json</code> file in the <code>loading</code> directory.</p></div>
-        <hr class="desc-divider" />
-        <div class="desc-section"><h4>Responsive Design</h4><p>FinanceWise is built with a mobile-first approach, ensuring a seamless experience across all devices:</p><ul><li>Desktop</li><li>Tablet</li><li>Mobile phones</li></ul></div>`;
+        <div class="desc-section">
+          <div class="tech-design-grid">
+            <div class="tech-column">
+              <h4>Configuration</h4>
+              <p>The project uses <strong>Particles.js</strong> for the interactive background. You can customize particle behavior by modifying the <code>particlesjs-config.json</code> file in the <code>loading</code> directory.</p>
+            </div>
+            <div class="tech-column">
+              <h4>Responsive Design</h4>
+              <p>FinanceWise is built with a mobile-first approach, ensuring a seamless experience across all devices:</p>
+              <ul>
+                <li>Desktop</li>
+                <li>Tablet</li>
+                <li>Mobile phones</li>
+              </ul>
+            </div>
+          </div>
+        </div>`;
       } else if (data.title.trim() === 'green-pulse' || data.title.includes('GreenPulse') || data.title.includes('Green Pulse')) {
         projectDescription.classList.add('rich');
-        projectDescription.innerHTML = `<div class="desc-section"><p>GreenPulse is an interactive web application designed to promote sustainability and eco-friendly practices. It provides users with tools to calculate their environmental impact, offers personalized eco-tips, and features various sustainability-related functionalities.</p></div>
+        projectDescription.innerHTML = `<div class="desc-section"><p>GreenPulse is an interactive web application designed to promote sustainability and eco-friendly practices. It provides users with tools to calculate their environmental impact, offers personalized eco-tips, and features various sustainability-related functionalities. Our platform combines modern technology with environmental awareness to empower users in their green journey.</p></div>
         <hr class="desc-divider" />
-        <div class="desc-section"><h4>Features</h4><ul><li><strong>Sustainability Calculator:</strong> Calculate your carbon footprint based on daily activities.</li><li><strong>Eco Tips:</strong> Get personalized eco-friendly tips generated by AI.</li><li><strong>Chat Functionality:</strong> Engage with a chatbot for instant responses and support.</li><li><strong>Progress Tracking:</strong> Visualize your progress towards sustainability goals.</li><li><strong>Interactive UI:</strong> Enjoy a user-friendly interface with animations and effects.</li></ul></div>
+        <div class="desc-section"><h4>Features</h4>
+          <div class="feature-grid">
+            <div class="feature-column">
+              <h5>Track & Analyze</h5>
+              <ul>
+                <li>Sustainability Calculator to measure carbon footprint</li>
+                <li>Visual progress tracking towards goals</li>
+                <li>Data visualization with Chart.js</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>AI Assistance</h5>
+              <ul>
+                <li>Personalized AI-generated eco-tips</li>
+                <li>Interactive chatbot for instant support</li>
+                <li>Powered by Google Generative AI</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>User Experience</h5>
+              <ul>
+                <li>Interactive and user-friendly interface</li>
+                <li>Engaging animations and effects</li>
+                <li>Responsive design for all devices</li>
+              </ul>
+            </div>
+          </div>
+        </div>
         <hr class="desc-divider" />
-        <div class="desc-section"><h4>Technologies Used</h4><ul><li><strong>Frontend:</strong> HTML, CSS, JavaScript</li><li><strong>Frameworks:</strong> React, Vite</li><li><strong>APIs:</strong> Google Generative AI for eco-tips and chatbot responses</li><li><strong>Charting:</strong> Chart.js for visualizing data</li><li><strong>Styling:</strong> Tailwind CSS for responsive design</li></ul></div>
+        <div class="desc-section">
+          <div class="tech-design-grid">
+            <div class="tech-column">
+              <h4>Technologies Used</h4>
+              <ul>
+                <li>React & Vite</li>
+                <li>Google Generative AI</li>
+                <li>Chart.js</li>
+                <li>HTML5, CSS3, JavaScript</li>
+              </ul>
+            </div>
+            <div class="tech-column">
+              <h4>Design Features</h4>
+              <ul>
+                <li>Tailwind CSS styling</li>
+                <li>Modern, clean aesthetic</li>
+                <li>Responsive layout</li>
+                <li>Smooth interactions</li>
+              </ul>
+            </div>
+          </div>
+        </div>
         <hr class="desc-divider" />
         <div class="desc-section"><h4>Usage</h4><ul><li><strong>Sustainability Calculator:</strong> Fill in the form with your daily activities to calculate your carbon footprint.</li><li><strong>Eco Tips:</strong> Click on the "Get Eco Tip" button to receive a personalized tip.</li><li><strong>Chatbot:</strong> Use the chat feature to ask questions and get instant responses.</li></ul></div>`;
       } else if (data.title.trim() === 'Kita-Kita (Agentic)' || data.title.includes('Agentic')) {
         projectDescription.classList.add('rich');
-        projectDescription.innerHTML = `
-        <div class="desc-section"><h4>The Challenge: Financial Empowerment for Every Filipino</h4>
-          <p>In the Philippines, millions lack access to personalized financial guidance, making it difficult to manage debt, optimize cash flow, and build long-term wealth. Kita-kita was born out of a need to bridge this gap, providing a sophisticated yet accessible AI-powered financial co-pilot tailored to the unique economic landscape of the Philippines.</p>
+        projectDescription.innerHTML = `<div class="desc-section"><p>Kita-kita is a sophisticated AI-powered financial co-pilot designed to bridge the gap in personalized financial guidance for Filipinos. By combining advanced AI agents with a unified financial hub, it empowers users to manage debt, optimize cash flow, and build long-term wealth through data-driven insights and automated planning.</p></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Features</h4>
+          <div class="feature-grid">
+            <div class="feature-column">
+              <h5>AI Financial Agents</h5>
+              <ul>
+                <li><strong>Debt Demolisher:</strong> Automated debt-elimination plans</li>
+                <li><strong>Cashflow Optimizer:</strong> Spending analysis & savings tips</li>
+                <li><strong>Wealth Builder:</strong> Long-term investment guidance</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>Unified Hub</h5>
+              <ul>
+                <li>Multi-bank account & e-wallet management</li>
+                <li>Seamless transaction tracking & categorization</li>
+                <li>Recurring subscription monitoring</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>Analytics & Forecast</h5>
+              <ul>
+                <li>Real-time financial health visualization</li>
+                <li>AI-powered expense forecasting</li>
+                <li>Interactive charts & dashboards</li>
+              </ul>
+            </div>
+          </div>
         </div>
         <hr class="desc-divider" />
-        <div class="desc-section"><h4>Our Solution: Key Features</h4>
-          <div class="desc-subsection"><p>🤖 <strong>AI Financial Agents:</strong> A suite of intelligent assistants designed to tackle specific financial goals:</p>
-            <ul>
-              <li><strong>Debt Demolisher:</strong> Creates a personalized, automated debt-elimination plan.</li>
-              <li><strong>Cashflow Optimizer:</strong> Analyzes spending habits and identifies opportunities to save.</li>
-              <li><strong>Wealth Builder:</strong> Provides long-term investment guidance with a focus on the Philippine market.</li>
-            </ul>
-          </div>
-          <div class="desc-subsection"><p>💰 <strong>Unified Financial Hub:</strong></p>
-            <ul>
-              <li>Manage all your bank accounts and e-wallets in one place.</li>
-              <li>Track transactions, categorize spending, and monitor recurring subscriptions seamlessly.</li>
-            </ul>
-          </div>
-          <div class="desc-subsection"><p>📈 <strong>Advanced Analytics & Forecasting:</strong></p>
-            <ul>
-              <li>Visualize your financial health with real-time charts and dashboards.</li>
-              <li>Leverage AI-powered predictions to anticipate future expenses and make informed decisions.</li>
-            </ul>
-          </div>
-        </div>
-        <hr class="desc-divider" />
-        <div class="desc-section"><h4>How We Built It: Tech Stack</h4>
-          <table>
-            <thead><tr><th>Category</th><th>Technologies</th></tr></thead>
-            <tbody>
-              <tr><td>Frontend</td><td>HTML5, CSS3, JavaScript (ES6+)</td></tr>
-              <tr><td>Backend</td><td>Node.js, Express.js</td></tr>
-              <tr><td>Database</td><td>Firebase Firestore</td></tr>
-              <tr><td>AI</td><td>Llama 3 (running locally)</td></tr>
-              <tr><td>Platform</td><td>Firebase (Auth, Hosting)</td></tr>
-              <tr><td>Libraries</td><td>Chart.js, Helmet, Express Rate Limit</td></tr>
-              <tr><td>Dev Tools</td><td>Jest, Nodemon, Sentry</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <hr class="desc-divider" />
-        <div class="desc-section"><h4>Project Overview</h4>
-          <p>Kita-kita is a comprehensive AI-powered banking and financial management platform that helps users track expenses, manage bank accounts, forecast financial trends, and make informed financial decisions through intelligent AI agents.</p>
-          <div class="desc-subsection"><h5>Key Features</h5>
-            <ul>
-              <li>🤖 <strong>AI Financial Agents:</strong> Multiple specialized AI assistants for different financial needs</li>
-              <li>💳 <strong>Transaction Management:</strong> Add, track, and categorize income/expense transactions</li>
-              <li>🏦 <strong>Bank Account Integration:</strong> Manage multiple bank accounts and e-wallets</li>
-              <li>📊 <strong>Financial Analytics:</strong> Real-time charts and financial health monitoring</li>
-              <li>🔮 <strong>Expense Forecasting:</strong> AI-powered predictions for future expenses</li>
-              <li>📱 <strong>Subscription Management:</strong> Track and optimize recurring payments</li>
-              <li>🕰️ <strong>Financial Time Machine:</strong> Explore alternate financial scenarios</li>
-              <li>💡 <strong>Ipon Coach:</strong> Personalized savings guidance and tips</li>
-            </ul>
+        <div class="desc-section">
+          <div class="tech-design-grid">
+            <div class="tech-column">
+              <h4>Technologies Used</h4>
+              <ul>
+                <li><strong>AI:</strong> Llama 3 (Local), AI Agents</li>
+                <li><strong>Backend:</strong> Node.js, Express.js, Firebase</li>
+                <li><strong>Frontend:</strong> HTML5, CSS3, JavaScript (ES6+)</li>
+                <li><strong>Tools:</strong> Chart.js, Jest, Sentry</li>
+              </ul>
+            </div>
+            <div class="tech-column">
+              <h4>Design Features</h4>
+              <ul>
+                <li>Modern Dashboard UI</li>
+                <li>Interactive Data Visualization</li>
+                <li>Responsive Mobile-First Layout</li>
+                <li>Secure Authentication Flow</li>
+              </ul>
+            </div>
           </div>
         </div>
         <hr class="desc-divider" />
         <div class="desc-section"><h4>Usage Guide</h4>
           <div class="desc-subsection"><h5>Getting Started</h5>
             <ol>
-              <li><strong>Sign Up/Login:</strong> Create an account or login with existing credentials</li>
-              <li><strong>Dashboard Overview:</strong> View your financial summary and recent transactions</li>
-              <li><strong>Add Bank Accounts:</strong> Set up your bank accounts and e-wallets</li>
-              <li><strong>Record Transactions:</strong> Add income and expense transactions</li>
-              <li><strong>Explore AI Agents:</strong> Use specialized AI assistants for financial guidance</li>
+              <li><strong>Sign Up/Login:</strong> Create an account or login.</li>
+              <li><strong>Dashboard:</strong> View financial summary.</li>
+              <li><strong>Setup:</strong> Add bank accounts/e-wallets.</li>
+              <li><strong>Transact:</strong> Record income/expenses.</li>
+              <li><strong>Agents:</strong> Use AI assistants below.</li>
             </ol>
           </div>
-          <div class="desc-subsection"><h5>AI Agents & How to Use Them</h5>
-            <ol>
-              <li><strong>Debt Demolisher</strong>
-                <p><em>Purpose:</em> Creates a personalized and automated debt-elimination plan. It analyzes your liabilities and simulates the most effective payoff strategies (like the Avalanche and Snowball methods) to help you become debt-free faster.</p>
+          <div class="desc-subsection"><h5>AI Agents</h5>
+            <div class="usage-grid">
+              <div class="usage-card">
+                <h5>Debt Demolisher</h5>
+                <p><em>Purpose:</em> Automated debt-elimination planning (Avalanche/Snowball).</p>
                 <p><em>How to Test:</em></p>
                 <ul>
-                  <li>Link accounts that have a negative balance (e.g., credit cards, loans).</li>
-                  <li>Navigate to the "Debt Demolisher" agent from the dashboard.</li>
-                  <li>The agent will automatically analyze your debt and present you with a tailored repayment plan, showing you the estimated payoff date and potential interest savings.</li>
+                  <li>Link negative balance accounts.</li>
+                  <li>Open agent to view plan.</li>
                 </ul>
-              </li>
-              <li><strong>Cashflow Optimizer</strong>
-                <p><em>Purpose:</em> Analyzes your spending habits to identify opportunities for improvement. It automatically detects recurring subscriptions, highlights areas of high spending, and provides actionable tips to help you increase your savings.</p>
+              </div>
+              <div class="usage-card">
+                <h5>Cashflow Optimizer</h5>
+                <p><em>Purpose:</em> Analyzes spending & subscriptions.</p>
                 <p><em>How to Test:</em></p>
                 <ul>
-                  <li>Ensure you have a variety of transactions logged, including recurring ones (like Netflix or Spotify).</li>
-                  <li>Access the "Cashflow Optimizer" from the dashboard.</li>
-                  <li>Review the agent's findings, which will include a list of your subscriptions and personalized recommendations for reducing expenses.</li>
+                  <li>Log varied transactions.</li>
+                  <li>Review savings tips.</li>
                 </ul>
-              </li>
-              <li><strong>Wealth Builder</strong>
-                <p><em>Purpose:</em> Acts as your long-term investment and wealth-growth assistant. It provides guidance on building a diversified portfolio with a focus on the Philippine financial context, suggesting investments like index funds, UITFs, and Pag-IBIG MP2.</p>
+              </div>
+              <div class="usage-card">
+                <h5>Wealth Builder</h5>
+                <p><em>Purpose:</em> Long-term investment guidance (PH context).</p>
                 <p><em>How to Test:</em></p>
                 <ul>
-                  <li>Make sure your income, savings, and investment accounts are set up.</li>
-                  <li>Open the "Wealth Builder" agent.</li>
-                  <li>Ask for an investment plan, and the agent will provide personalized recommendations based on your financial profile and long-term goals.</li>
+                  <li>Set up financial profile.</li>
+                  <li>Ask for investment plan.</li>
                 </ul>
-              </li>
-            </ol>
+              </div>
+            </div>
           </div>
         </div>
         <hr class="desc-divider" />
@@ -716,8 +919,10 @@ export class ModalManager {
     <hr class="desc-divider" />
     <div class="desc-section"><h4>🌟 Core Features</h4>
       <div class="desc-subsection"><h5>🤖 The Kita Companions</h5>
-        <ol>
-          <li><strong>Gabay Gastos</strong>
+        <div class="feature-grid">
+          <div class="feature-column">
+            <h5>Gabay Gastos</h5>
+            <p><em>Financial Behavior Analysis</em></p>
             <ul>
               <li>Advanced AI financial behavior analysis</li>
               <li>Intelligent spending pattern detection</li>
@@ -732,8 +937,11 @@ export class ModalManager {
               <li>AI-powered personalized insights</li>
               <li>Smart budget recommendations</li>
             </ul>
-          </li>
-          <li><strong>Dunong Puhunan</strong>
+          </div>
+
+          <div class="feature-column">
+            <h5>Dunong Puhunan</h5>
+            <p><em>Investment Intelligence</em></p>
             <ul>
               <li>Investment trend analysis</li>
               <li>Market opportunity identification</li>
@@ -746,8 +954,11 @@ export class ModalManager {
               <li>Risk-adjusted return analysis</li>
               <li>Market insights and alerts</li>
             </ul>
-          </li>
-          <li><strong>Bantay Utang</strong>
+          </div>
+
+          <div class="feature-column">
+            <h5>Bantay Utang</h5>
+            <p><em>Credit & Loan Manager</em></p>
             <ul>
               <li>Comprehensive financial metrics analysis</li>
               <li>Income stability assessment</li>
@@ -762,8 +973,11 @@ export class ModalManager {
               <li>Budget insights</li>
               <li>Payment history analysis</li>
             </ul>
-          </li>
-          <li><strong>Iwas Scam</strong>
+          </div>
+
+          <div class="feature-column">
+            <h5>Iwas Scam</h5>
+            <p><em>Fraud Protection</em></p>
             <ul>
               <li>AI-powered fraud detection</li>
               <li>Transaction pattern monitoring</li>
@@ -778,8 +992,11 @@ export class ModalManager {
               <li>Risk scoring system</li>
               <li>Security recommendations</li>
             </ul>
-          </li>
-          <li><strong>Tiwala Score</strong>
+          </div>
+
+          <div class="feature-column">
+            <h5>Tiwala Score</h5>
+            <p><em>Credit Scoring</em></p>
             <ul>
               <li>Credit score optimization</li>
               <li>Payment history tracking</li>
@@ -794,8 +1011,11 @@ export class ModalManager {
               <li>Smart budget creation</li>
               <li>Automatic payment setup</li>
             </ul>
-          </li>
-          <li><strong>Patunay Check</strong>
+          </div>
+
+          <div class="feature-column">
+            <h5>Patunay Check</h5>
+            <p><em>Identity Verification</em></p>
             <ul>
               <li>KYC (Know Your Customer) management</li>
               <li>Regulatory compliance monitoring</li>
@@ -810,12 +1030,12 @@ export class ModalManager {
               <li>Security status overview</li>
               <li>Document verification workflow</li>
             </ul>
-          </li>
-        </ol>
+          </div>
+        </div>
       </div>
     </div>
     <hr class="desc-divider" />
-    <div class="desc-section"><h4>📊 Financial Health Analysis</h4>
+    <div class="desc-section"><h4>Financial Health Analysis</h4>
       <ul>
         <li><strong>Real-time Analytics:</strong> Continuous monitoring of all financial activities</li>
         <li><strong>Risk Assessment:</strong> Multi-factor risk analysis across all companions</li>
@@ -825,7 +1045,7 @@ export class ModalManager {
       </ul>
     </div>
     <hr class="desc-divider" />
-    <div class="desc-section"><h4>🧠 AI-Powered Integration</h4>
+    <div class="desc-section"><h4>AI-Powered Integration</h4>
       <p>Each companion features:</p>
       <ul>
         <li><strong>Natural Language Processing:</strong> Understands complex financial queries</li>
@@ -836,7 +1056,7 @@ export class ModalManager {
       </ul>
     </div>
     <hr class="desc-divider" />
-    <div class="desc-section"><h4>🚀 Features</h4>
+    <div class="desc-section"><h4>Features</h4>
       <ul>
         <li><strong>AI-Powered Chatbot:</strong> Intelligent assistance for banking queries and financial advice</li>
         <li><strong>Secure Banking Integration:</strong> Safe and reliable banking operations</li>
@@ -847,7 +1067,7 @@ export class ModalManager {
       </ul>
     </div>
     <hr class="desc-divider" />
-    <div class="desc-section"><h4>🛠️ Technology Stack</h4>
+    <div class="desc-section"><h4>Technology Stack</h4>
       <ul>
         <li><strong>Frontend:</strong> React.js with custom CSS styling</li>
         <li><strong>Backend:</strong> Node.js, Express.js</li>
@@ -859,7 +1079,7 @@ export class ModalManager {
       </ul>
     </div>
     <hr class="desc-divider" />
-    <div class="desc-section"><h4>📋 Prerequisites</h4>
+    <div class="desc-section"><h4>Prerequisites</h4>
       <ul>
         <li>Node.js (v14 or higher)</li>
         <li>npm or yarn</li>
@@ -883,29 +1103,6 @@ export class ModalManager {
             <li>Facility discovery with filters and details</li>
             <li>Accessible UI, responsive across devices</li>
           </ul>
-        </div>
-        <hr class="desc-divider" />
-        <div class="desc-section"><h4>Environment variables</h4>
-          <p>Create an <code>.env.local</code> (used by Vite) with the following keys:</p>
-          <pre><code>VITE_FIREBASE_API_KEY=
-VITE_FIREBASE_AUTH_DOMAIN=
-VITE_FIREBASE_PROJECT_ID=
-VITE_FIREBASE_STORAGE_BUCKET=
-VITE_FIREBASE_MESSAGING_SENDER_ID=
-VITE_FIREBASE_APP_ID=
-VITE_FIREBASE_MEASUREMENT_ID=</code></pre>
-          <p>You can verify your environment locally:</p>
-          <pre><code>npm run verify-env</code></pre>
-        </div>
-        <hr class="desc-divider" />
-        <div class="desc-section"><h4>Project scripts</h4>
-          <pre><code>npm run dev        # Start Vite dev server
-npm run build      # Build frontend
-npm run build:all  # Build frontend + API
-npm run start      # Start API/server (production)
-npm run test       # Run unit tests (Vitest)
-npm run lint       # Lint + Prettier check
-npm run lint:fix   # Autofix lint errors & format</code></pre>
         </div>
         <hr class="desc-divider" />
         <div class="desc-section"><h4>Tech stack</h4>
@@ -1053,6 +1250,76 @@ npm run lint:fix   # Autofix lint errors & format</code></pre>
               <li><strong>Creativity:</strong> Unique sari-sari store concept with Filipino culture</li>
               <li><strong>Usability:</strong> Beautiful, intuitive interface with excellent UX</li>
             </ul>
+          </div>
+        </div>`;
+  } else if (data.title.trim() === 'Four Fundamental Spaces Finder') {
+    projectDescription.classList.add('rich');
+    projectDescription.innerHTML = `<div class="desc-section">
+      <p>${data.description}</p>
+    </div>
+    <hr class="desc-divider" />
+    <div class="desc-section"><h4>Team Members</h4>
+      <ul>
+        <li>Castillejo, Paul Daniel C.</li>
+        <li>Dotollo, Zyrah Mae M.</li>
+        <li>Lozano, Mac Edison S.</li>
+        <li>Magalona, Adriel M.</li>
+        <li>Monterey, Reine Arabelle L.</li>
+        <li>Puti, Jude Vincent F.</li>
+      </ul>
+    </div>`;
+  } else if (data.title.trim() === 'WorkSight' || data.title.includes('WorkSight')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `<div class="desc-section"><p>WorkSight is an AI-powered employee well-being analytics platform that gives leaders foresight, not hindsight. By combining behavioral data with psychological science, it addresses the critical issue of burnout, turning an invisible threat into a measurable, preventable business risk.</p></div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Features</h4>
+          <div class="feature-grid">
+            <div class="feature-column">
+              <h5>Predictive Analytics</h5>
+              <ul>
+                <li>Analyzes workload & collaboration patterns</li>
+                <li>Forecasts burnout risk before it escalates</li>
+                <li>Data-driven decision support</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>Psychological Insights</h5>
+              <ul>
+                <li>Integrates behavioral psychology models</li>
+                <li>Contextualizes raw data into human metrics</li>
+                <li>Promotes healthier work habits</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>Proactive Management</h5>
+              <ul>
+                <li>Actionable recommendations for leaders</li>
+                <li>Real-time team health monitoring</li>
+                <li>Prevents productivity loss</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section">
+          <div class="tech-design-grid">
+            <div class="tech-column">
+              <h4>Technologies Used</h4>
+              <ul>
+                <li><strong>Frontend:</strong> Next.js, React, TypeScript</li>
+                <li><strong>Backend:</strong> Supabase (Auth, DB, Realtime)</li>
+                <li><strong>Data:</strong> Behavioral Analysis Algorithms</li>
+                <li><strong>Architecture:</strong> Monorepo</li>
+              </ul>
+            </div>
+            <div class="tech-column">
+              <h4>Impact & Recognition</h4>
+              <ul>
+                <li><strong>3rd Place:</strong> BPI DataWave Hackathon 2025</li>
+                <li><strong>Economic:</strong> Addresses $1T annual burnout cost</li>
+                <li><strong>Human:</strong> Improves employee retention & well-being</li>
+              </ul>
+            </div>
           </div>
         </div>`;
       } else {

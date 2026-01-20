@@ -25,6 +25,9 @@ export class ImageOptimizer {
   private optimizeProjectThumbnails(): void {
     const imgs = Array.from(document.querySelectorAll<HTMLImageElement>('.project-img img'));
     imgs.forEach((img) => {
+      // Skip images that are explicitly marked to not be optimized
+      if (img.hasAttribute('data-no-optimize')) return;
+
       const parentTag = img.parentElement?.tagName.toLowerCase() || '';
       if (parentTag === 'picture') return;
 
@@ -72,6 +75,8 @@ export class ImageOptimizer {
   }
 
   private optimizeAvatar(): void {
+    // Disabled to ensure high quality avatar is used
+    /*
     const avatarImgs = Array.from(document.querySelectorAll<HTMLImageElement>('img[src*="/images/my-avatar"], .avatar-box img'));
     avatarImgs.forEach((img) => {
       const parentTag = img.parentElement?.tagName.toLowerCase() || '';
@@ -111,6 +116,7 @@ export class ImageOptimizer {
         parent.replaceChild(picture, original);
       }
     });
+    */
   }
 
   private applyDefaultSizes(): void {

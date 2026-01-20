@@ -59,10 +59,5 @@
     "three": "^0.180.0",
     "vanilla-tilt": "^1.8.1",
     "web-vitals": "^5.1.0"
-  },
-  "overrides": {
-    "chrome-launcher": "^1.2.1",
-    "tmp": "^0.2.3",
-    "globby": "^11.1.0"
   }
 }

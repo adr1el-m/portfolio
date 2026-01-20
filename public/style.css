@@ -2092,11 +2092,7 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   grid-template-columns: 1fr;
 }
 
-.contact-info .contact-link {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+
 
 .contact-info .contact-link,
 .contact-info time,

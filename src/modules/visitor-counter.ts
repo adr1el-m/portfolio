@@ -9,15 +9,16 @@ import { logger } from '@/config';
  */
 
 // Firebase config
+// Firebase config - uses public Realtime Database rules
 const firebaseConfig = {
-    apiKey: "AIzaSyC7OEurUurMXZrVJU3gMaxkm1Rop0ElTcE",
-    authDomain: "adriel-portfolio-counter.firebaseapp.com",
-    databaseURL: "https://adriel-portfolio-counter-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "adriel-portfolio-counter",
-    storageBucket: "adriel-portfolio-counter.firebasestorage.app",
-    messagingSenderId: "496754060724",
-    appId: "1:496754060724:web:c130b53098dcc04e5256e1",
-    measurementId: "G-Z5XFSXH2N9"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 export class VisitorCounter {

@@ -40,27 +40,20 @@ export class VisitorCounter {
             // Increment count if new session and not admin
             const hasVisited = sessionStorage.getItem('visited_session');
 
-            logger.log(`VisitorCounter check details: Admin=${this.isAdmin}, VisitedSession=${hasVisited}`);
-
             if (!hasVisited && !this.isAdmin) {
-                logger.log('VisitorCounter: Attempting to increment count via transaction...');
                 // Use transaction to safely increment counter
                 runTransaction(countRef, (currentCount) => {
                     return (currentCount || 0) + 1;
                 }).then(() => {
                     sessionStorage.setItem('visited_session', 'true');
-                    logger.log('VisitorCounter: Successfully incremented!');
                 }).catch((err) => {
                     logger.warn('VisitorCounter: failed to increment', err);
                 });
-            } else {
-                logger.log('VisitorCounter: Skipping increment (already visited or admin)');
             }
 
             // Listen for updates
             onValue(countRef, (snapshot) => {
                 const val = snapshot.val();
-                logger.log('VisitorCounter: Received update from DB:', val);
                 // If null (new db), default to 0
                 const count = typeof val === 'number' ? val : 0;
                 this.updateDisplay(count);

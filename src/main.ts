@@ -22,6 +22,7 @@ import { SkeletonLoader } from './modules/skeleton-loader';
 import { PerformanceMonitor } from './modules/performance-monitor';
 import { PerformanceDashboard } from './modules/performance-dashboard';
 import { AccessibilityEnhancer } from './modules/accessibility-enhancer';
+import { ScrollProgress } from './modules/scroll-progress';
 import { logger } from './config';
 import type { Portfolio } from './types';
 import { TextPlaceholders } from './modules/text-placeholders';
@@ -84,6 +85,8 @@ class PortfolioApp {
       const loadingManager = new LoadingManager();
       const modalManager = new ModalManager();
       const navigationManager = new NavigationManager();
+      // Initialize scroll progress bar
+      new ScrollProgress();
       // Initialize client-side search (activates when URL has ?q=)
       const search = new Search();
 
@@ -121,6 +124,20 @@ class PortfolioApp {
           new TechStack();
         });
       }, 150);
+
+      // Initialize AI summaries for project hover tooltips
+      defer(() => {
+        import('./modules/ai-summaries').then(({ AISummaries }) => {
+          new AISummaries();
+        });
+      }, 200);
+
+      // Initialize real-time visitor counter
+      defer(() => {
+        import('./modules/visitor-counter').then(({ VisitorCounter }) => {
+          new VisitorCounter();
+        });
+      }, 300);
 
       // Initialize video thumbnails manager earlier for faster poster setup
       defer(() => {

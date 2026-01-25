@@ -136,7 +136,7 @@ export class NavigationManager {
           window.scrollTo({ top: 0, behavior: 'auto' });
           this.isTransitioning = false;
 
-        // Push SPA route for the active section and update canonical
+          // Push SPA route for the active section and update canonical
           const path = this.pathFromKey(targetKey);
           this.updateCanonical(path);
           try {
@@ -146,8 +146,15 @@ export class NavigationManager {
           }
         };
 
-        // Activate target immediately for snappy navigation
-        finalize();
+        // Use View Transitions API if available for smooth crossfade
+        if ('startViewTransition' in document && typeof (document as any).startViewTransition === 'function') {
+          (document as any).startViewTransition(() => {
+            finalize();
+          });
+        } else {
+          // Fallback for browsers without View Transitions API
+          finalize();
+        }
       });
     });
 
@@ -174,7 +181,7 @@ export class NavigationManager {
         }
       });
     }, { threshold: 0.1 });
-    
+
     revealElements.forEach(el => this.revealObserver?.observe(el));
 
     // Back-to-top button functionality
@@ -187,7 +194,7 @@ export class NavigationManager {
           backToTopBtn.classList.remove('show');
         }
       });
-      
+
       backToTopBtn.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
@@ -199,7 +206,7 @@ export class NavigationManager {
    */
   private setupFAQ(): void {
     const faqQuestions = document.querySelectorAll<HTMLElement>('.faq-question');
-    
+
     faqQuestions.forEach((question) => {
       question.addEventListener('click', () => {
         this.toggleFAQ(question);
@@ -219,7 +226,7 @@ export class NavigationManager {
    */
   private filterFunc(selectedValue: string): void {
     const filterItems = document.querySelectorAll<HTMLElement>("[data-filter-item]");
-    
+
     filterItems.forEach((item) => {
       if (selectedValue === "all") {
         item.classList.add("active");
@@ -371,7 +378,7 @@ export class NavigationManager {
       }
       // Trigger decoding as soon as data is available
       if (typeof img.decode === 'function') {
-        img.decode().catch(() => {});
+        img.decode().catch(() => { });
       }
     });
   }

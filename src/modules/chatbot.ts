@@ -1043,6 +1043,50 @@ export class ChatbotManager {
     return null;
   }
 
+  // Sentiment analysis: detect user emotion/tone to adapt response style
+  private detectSentiment(userMessage: string): 'curious' | 'frustrated' | 'professional' | 'casual' | 'excited' {
+    const m = userMessage.toLowerCase();
+
+    // Frustrated: negative words, frustration indicators
+    if (/(frustrated|annoying|useless|doesn't work|broken|hate|worst|terrible|ugh|sigh|:\(|😤|😡)/.test(m)) {
+      return 'frustrated';
+    }
+
+    // Excited: enthusiasm markers
+    if (/(wow|amazing|awesome|love|great|excellent|perfect|best|😍|🎉|❤️|!!|cool|brilliant)/.test(m)) {
+      return 'excited';
+    }
+
+    // Professional: formal language, business terms
+    if (/(regarding|inquire|professional|collaborate|opportunity|position|hiring|recruit|resume|cv|experience|qualifications)/.test(m)) {
+      return 'professional';
+    }
+
+    // Curious: questions and exploration
+    if (/(\?|how|what|why|tell me|show me|explain|describe|curious|wondering|interested in)/.test(m)) {
+      return 'curious';
+    }
+
+    // Default: casual
+    return 'casual';
+  }
+
+  // Get tone instructions for Gemini based on sentiment
+  private getToneInstructions(sentiment: 'curious' | 'frustrated' | 'professional' | 'casual' | 'excited'): string {
+    switch (sentiment) {
+      case 'frustrated':
+        return 'The user seems frustrated. Be extra patient, empathetic, and direct. Acknowledge their frustration briefly and provide clear, actionable information without being overly apologetic.';
+      case 'excited':
+        return 'The user is enthusiastic! Match their energy with excitement and enthusiasm. Be warm and encouraging. Use positive language.';
+      case 'professional':
+        return 'The user is being professional. Be formal, concise, and business-appropriate. Focus on qualifications, experience, and concrete achievements. Avoid casual language or emojis.';
+      case 'curious':
+        return 'The user is curious and exploratory. Be helpful and informative. Provide details and suggest related topics they might find interesting.';
+      default:
+        return 'The user is casual. Be friendly and conversational while staying helpful.';
+    }
+  }
+
   // Convert markdown formatting to HTML for proper display in chat
   private markdownToHtml(text: string): string {
     return text
@@ -1400,7 +1444,10 @@ Resume: ${KB.contact.resumeUrl}`;
         role: m.role as 'user' | 'bot',
         content: m.content
       }));
-      const aiResponse = await this.geminiService.generateResponse(userMessage, context, recentHistory);
+      // Detect user sentiment and get tone instructions for adaptive responses
+      const sentiment = this.detectSentiment(userMessage);
+      const toneInstructions = this.getToneInstructions(sentiment);
+      const aiResponse = await this.geminiService.generateResponse(userMessage, context, recentHistory, toneInstructions);
       this.hideTypingIndicator();
 
       if (aiResponse) {

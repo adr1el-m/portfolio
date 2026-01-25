@@ -100,13 +100,14 @@ export class GeminiService {
   public async generateResponse(
     userMessage: string,
     context: string,
-    conversationHistory?: Array<{ role: 'user' | 'bot'; content: string }>
+    conversationHistory?: Array<{ role: 'user' | 'bot'; content: string }>,
+    toneInstructions?: string
   ): Promise<string | null> {
     if (!this.useProxy && !this.apiKey) return null;
 
     try {
       // Build conversation history string for context
-      const historyStr = conversationHistory?.slice(-8).map(msg => 
+      const historyStr = conversationHistory?.slice(-8).map(msg =>
         `${msg.role === 'user' ? 'User' : 'AdrAI'}: ${msg.content.replace(/<[^>]*>/g, '').slice(0, 200)}`
       ).join('\n') || '';
 
@@ -120,6 +121,7 @@ PERSONALITY & STYLE:
 - Use occasional emojis sparingly to add warmth (1 max per response)
 - Never be robotic or overly formal
 
+${toneInstructions ? `TONE ADAPTATION:\n${toneInstructions}\n` : ''}
 KNOWLEDGE SCOPE:
 You have comprehensive knowledge of Adriel's:
 - Projects: Web apps, AI/ML tools, hackathon submissions, and personal experiments

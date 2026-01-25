@@ -8,44 +8,48 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  
+
   <!-- SEO Meta Tags -->
-  <meta name="description" content="Adriel Magalona - Full-stack Developer, AI/ML Engineer, and Tech Innovator. Specializing in web development, machine learning, and creative technology solutions. View my projects, awards, and achievements.">
-  <meta name="keywords" content="Adriel Magalona, Full-stack Developer, Web Developer, AI Engineer, Machine Learning, Software Engineer, Portfolio, Tech Projects, Innovation, Philippines">
+  <meta name="description"
+    content="Adriel Magalona - Full-stack Developer, AI/ML Engineer, and Tech Innovator. Specializing in web development, machine learning, and creative technology solutions. View my projects, awards, and achievements.">
+  <meta name="keywords"
+    content="Adriel Magalona, Full-stack Developer, Web Developer, AI Engineer, Machine Learning, Software Engineer, Portfolio, Tech Projects, Innovation, Philippines">
   <meta name="author" content="Adriel Magalona">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="hsl(240, 2%, 13%)">
   <link rel="canonical" href="https://adriel.dev">
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/images/pwa/icon-192x192.png">
-  
+
   <!-- Open Graph Meta Tags (Facebook, LinkedIn, etc.) -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://adriel.dev">
   <meta property="og:title" content="Adriel Magalona - Full-stack Developer & AI Engineer">
-  <meta property="og:description" content="Full-stack Developer and AI/ML Engineer specializing in web development, machine learning, and creative technology solutions. Explore my portfolio of innovative projects and achievements.">
+  <meta property="og:description"
+    content="Full-stack Developer and AI/ML Engineer specializing in web development, machine learning, and creative technology solutions. Explore my portfolio of innovative projects and achievements.">
   <meta property="og:image" content="/images/my-avatar.png">
   <meta property="og:image:alt" content="Adriel Magalona Portfolio">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="Adriel Magalona Portfolio">
   <meta property="og:locale" content="en_US">
-  
+
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://adriel.dev">
   <meta name="twitter:title" content="Adriel Magalona - Full-stack Developer & AI Engineer">
-  <meta name="twitter:description" content="Full-stack Developer and AI/ML Engineer specializing in web development, machine learning, and creative technology solutions. Explore my portfolio of innovative projects and achievements.">
+  <meta name="twitter:description"
+    content="Full-stack Developer and AI/ML Engineer specializing in web development, machine learning, and creative technology solutions. Explore my portfolio of innovative projects and achievements.">
   <meta name="twitter:image" content="/images/my-avatar.png">
   <meta name="twitter:image:alt" content="Adriel Magalona Portfolio">
   <meta name="twitter:creator" content="@adrielmagalona">
   <meta name="twitter:site" content="@adrielmagalona">
-  
+
   <!-- Additional SEO -->
   <meta name="application-name" content="Adriel Magalona Portfolio">
   <meta name="apple-mobile-web-app-title" content="Adriel Portfolio">
   <meta name="format-detection" content="telephone=no">
-  
+
   <!-- Content Security Policy will be set by server headers -->
   <title>Adriel Magalona - Full-stack Developer & AI Engineer | Portfolio</title>
   <link rel="shortcut icon" href="/images/my-avatar.png" type="image/x-icon">
@@ -461,49 +465,202 @@
       --white-2: hsl(0, 0%, 98%);
       --orange-yellow-crayola: hsl(45, 100%, 72%);
 
-      --fs-1: 24px; --fs-2: 18px; --fs-3: 17px; --fs-4: 16px; --fs-5: 15px; --fs-6: 14px; --fs-7: 13px; --fs-8: 11px;
-      --fw-300: 300; --fw-400: 400; --fw-500: 500; --fw-600: 600;
+      --fs-1: 24px;
+      --fs-2: 18px;
+      --fs-3: 17px;
+      --fs-4: 16px;
+      --fs-5: 15px;
+      --fs-6: 14px;
+      --fs-7: 13px;
+      --fs-8: 11px;
+      --fw-300: 300;
+      --fw-400: 400;
+      --fw-500: 500;
+      --fw-600: 600;
 
       --shadow-1: -4px 8px 24px hsla(0, 0%, 0%, 0.25);
       --transition-1: 0.25s ease;
     }
 
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    a { text-decoration: none; }
-    li { list-style: none; }
-    img, a, button, time, span { display: block; }
-    button { font: inherit; background: none; border: none; text-align: left; cursor: pointer; }
-    input, textarea { display: block; width: 100%; background: none; font: inherit; }
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    li {
+      list-style: none;
+    }
+
+    img,
+    a,
+    button,
+    time,
+    span {
+      display: block;
+    }
+
+    button {
+      font: inherit;
+      background: none;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    input,
+    textarea {
+      display: block;
+      width: 100%;
+      background: none;
+      font: inherit;
+    }
 
     /* Avatar critical styles */
-    .avatar-box { width: 80px; height: 80px; border-radius: 20px; overflow: hidden; margin: 0 auto; background: var(--bg-gradient-onyx); }
-    .avatar-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 20px; }
-    .sidebar-info { display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center; }
-    .info-content { display: flex; flex-direction: column; align-items: center; }
+    .avatar-box {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 0 auto;
+      background: var(--bg-gradient-onyx);
+    }
 
-    ::selection { background: var(--orange-yellow-crayola); color: var(--smoky-black); }
-    :focus { outline-color: var(--orange-yellow-crayola); }
-    html { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif; }
-    body { background: var(--smoky-black); }
+    .avatar-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 20px;
+    }
+
+    .sidebar-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      text-align: center;
+    }
+
+    .info-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    ::selection {
+      background: var(--orange-yellow-crayola);
+      color: var(--smoky-black);
+    }
+
+    :focus {
+      outline-color: var(--orange-yellow-crayola);
+    }
+
+    html {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    }
+
+    body {
+      background: var(--smoky-black);
+    }
 
     /* Shell containers visible above the fold */
-    .sidebar, article { background: var(--eerie-black-2); border: 1px solid var(--jet); border-radius: 20px; padding: 15px; box-shadow: var(--shadow-1); }
-    .separator { width: 100%; height: 1px; background: var(--jet); margin: 16px 0; }
-    .icon-box { position: relative; background: var(--border-gradient-onyx); width: 30px; height: 30px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 16px; color: var(--orange-yellow-crayola); box-shadow: var(--shadow-1); z-index: 1; }
-    .icon-box::before { content: ""; position: absolute; inset: 1px; background: var(--eerie-black-1); border-radius: inherit; z-index: -1; }
+    .sidebar,
+    article {
+      background: var(--eerie-black-2);
+      border: 1px solid var(--jet);
+      border-radius: 20px;
+      padding: 15px;
+      box-shadow: var(--shadow-1);
+    }
+
+    .separator {
+      width: 100%;
+      height: 1px;
+      background: var(--jet);
+      margin: 16px 0;
+    }
+
+    .icon-box {
+      position: relative;
+      background: var(--border-gradient-onyx);
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      color: var(--orange-yellow-crayola);
+      box-shadow: var(--shadow-1);
+      z-index: 1;
+    }
+
+    .icon-box::before {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      background: var(--eerie-black-1);
+      border-radius: inherit;
+      z-index: -1;
+    }
 
     /* Typography used in header/about */
-    .h2, .h3, .h4, .h5 { color: var(--white-2); text-transform: capitalize; }
-    .h2 { font-size: var(--fs-1); }
-    .h3 { font-size: var(--fs-2); }
-    .h4 { font-size: var(--fs-4); }
-    .h5 { font-size: var(--fs-7); font-weight: var(--fw-500); }
-    .article-title { position: relative; padding-bottom: 7px; }
-    .article-title::after { content: ""; position: absolute; bottom: 0; left: 0; width: 30px; height: 3px; background: var(--text-gradient-yellow); border-radius: 3px; }
+    .h2,
+    .h3,
+    .h4,
+    .h5 {
+      color: var(--white-2);
+      text-transform: capitalize;
+    }
+
+    .h2 {
+      font-size: var(--fs-1);
+    }
+
+    .h3 {
+      font-size: var(--fs-2);
+    }
+
+    .h4 {
+      font-size: var(--fs-4);
+    }
+
+    .h5 {
+      font-size: var(--fs-7);
+      font-weight: var(--fw-500);
+    }
+
+    .article-title {
+      position: relative;
+      padding-bottom: 7px;
+    }
+
+    .article-title::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 30px;
+      height: 3px;
+      background: var(--text-gradient-yellow);
+      border-radius: 3px;
+    }
 
     /* Ensure the initially active article is shown */
-    article { display: none; }
-    article.active { display: block; }
+    article {
+      display: none;
+    }
+
+    article.active {
+      display: block;
+    }
   </style>
 
   <!-- Preload and load main stylesheet -->
@@ -512,13 +669,14 @@
 
   <!-- Preload hero avatar with responsive sources -->
   <link rel="preload" as="image" href="/images/my-avatar.avif"
-        imagesrcset="/images/my-avatar.avif 80w, /images/my-avatar@2x.avif 160w"
-        imagesizes="80px" fetchpriority="high">
+    imagesrcset="/images/my-avatar.avif 80w, /images/my-avatar@2x.avif 160w" imagesizes="80px" fetchpriority="high">
 
   <!-- Use system fonts instead of Google Fonts to avoid CSP issues -->
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif; }
-    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    }
+
     /* Visually hidden class for screen readers */
     .visually-hidden {
       position: absolute !important;
@@ -531,7 +689,7 @@
       white-space: nowrap !important;
       border: 0 !important;
     }
-    
+
     /* Skip to main content link */
     /* skip-link styles removed per request */
   </style>
@@ -542,15 +700,58 @@
   <noscript>
     <style>
       /* Show content without JS; hide interactive UI */
-      article { display: block !important; }
-      .navbar, .chatbox, .chatbot-btn, .back-to-top, #particle-background, .info_more-btn { display: none !important; }
-      .project-card-video { display: none !important; }
-      .noscript-banner { background: #1a1a1a; color: #fff; border: 1px solid var(--jet); border-radius: 10px; padding: 12px; margin: 12px 0; }
-      .noscript-banner h2 { font-size: var(--fs-2); margin-bottom: 8px; }
-      .noscript-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-      .noscript-nav a { color: var(--orange-yellow-crayola); border: 1px solid var(--jet); border-radius: 8px; padding: 6px 10px; }
-      .noscript-links { margin-top: 10px; }
-      .noscript-links li { margin: 4px 0; }
+      article {
+        display: block !important;
+      }
+
+      .navbar,
+      .chatbox,
+      .chatbot-btn,
+      .back-to-top,
+      #particle-background,
+      .info_more-btn {
+        display: none !important;
+      }
+
+      .project-card-video {
+        display: none !important;
+      }
+
+      .noscript-banner {
+        background: #1a1a1a;
+        color: #fff;
+        border: 1px solid var(--jet);
+        border-radius: 10px;
+        padding: 12px;
+        margin: 12px 0;
+      }
+
+      .noscript-banner h2 {
+        font-size: var(--fs-2);
+        margin-bottom: 8px;
+      }
+
+      .noscript-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .noscript-nav a {
+        color: var(--orange-yellow-crayola);
+        border: 1px solid var(--jet);
+        border-radius: 8px;
+        padding: 6px 10px;
+      }
+
+      .noscript-links {
+        margin-top: 10px;
+      }
+
+      .noscript-links li {
+        margin: 4px 0;
+      }
     </style>
     <div class="noscript-banner" role="alert" aria-live="polite">
       <h2>Basic View Loaded</h2>
@@ -565,21 +766,31 @@
       <div class="noscript-section">
         <h3 class="h3" style="margin-top:10px">Project Links</h3>
         <ul class="noscript-links" aria-label="Project repositories and live demos">
-          <li><a href="https://github.com/adr1el-m/Online-Document-Request-System" target="_blank" rel="noopener">ODRS (PHP)</a></li>
-          <li><a href="https://github.com/adr1el-m/merc-airline-ticketing-system" target="_blank" rel="noopener">Merc Airline Ticketing System (C++)</a></li>
-          <li><a href="https://github.com/adr1el-m/PHP-Loan-System" target="_blank" rel="noopener">PHP-Loan-System</a></li>
-          <li><a href="https://github.com/adr1el-m/ITC-youtube-layout" target="_blank" rel="noopener">YouTube Layout</a> • <a href="https://adriel-itc-assignment.vercel.app" target="_blank" rel="noopener">Live</a></li>
+          <li><a href="https://github.com/adr1el-m/Online-Document-Request-System" target="_blank" rel="noopener">ODRS
+              (PHP)</a></li>
+          <li><a href="https://github.com/adr1el-m/merc-airline-ticketing-system" target="_blank" rel="noopener">Merc
+              Airline Ticketing System (C++)</a></li>
+          <li><a href="https://github.com/adr1el-m/PHP-Loan-System" target="_blank" rel="noopener">PHP-Loan-System</a>
+          </li>
+          <li><a href="https://github.com/adr1el-m/ITC-youtube-layout" target="_blank" rel="noopener">YouTube Layout</a>
+            • <a href="https://adriel-itc-assignment.vercel.app" target="_blank" rel="noopener">Live</a></li>
           <li><a href="https://github.com/adr1el-m/finance-and-ai" target="_blank" rel="noopener">FinanceWise</a></li>
           <li><a href="https://github.com/adr1el-m/green-pulse" target="_blank" rel="noopener">Green Pulse</a></li>
-          <li><a href="https://github.com/adr1el-m/LoanWolves-KitaKita" target="_blank" rel="noopener">Kita-Kita (Mobile)</a></li>
-          <li><a href="https://github.com/adr1el-m/talambuhay" target="_blank" rel="noopener">Talambuhay</a> • <a href="https://talambuhay-ni-adriel.vercel.app" target="_blank" rel="noopener">Live</a></li>
+          <li><a href="https://github.com/adr1el-m/LoanWolves-KitaKita" target="_blank" rel="noopener">Kita-Kita
+              (Mobile)</a></li>
+          <li><a href="https://github.com/adr1el-m/talambuhay" target="_blank" rel="noopener">Talambuhay</a> • <a
+              href="https://talambuhay-ni-adriel.vercel.app" target="_blank" rel="noopener">Live</a></li>
           <li><a href="https://github.com/adr1el-m/sparkfest" target="_blank" rel="noopener">BarangayNav</a></li>
-          <li><a href="https://github.com/adr1el-m/team-Deansanitzy-2025" target="_blank" rel="noopener">Kita-Kita (Agentic)</a></li>
+          <li><a href="https://github.com/adr1el-m/team-Deansanitzy-2025" target="_blank" rel="noopener">Kita-Kita
+              (Agentic)</a></li>
           <li><a href="https://github.com/4sightorg/worksight" target="_blank" rel="noopener">WorkSight</a></li>
-          <li><a href="https://github.com/adr1el-m/mini-app" target="_blank" rel="noopener">Tindahan ni Aling Nena</a></li>
+          <li><a href="https://github.com/adr1el-m/mini-app" target="_blank" rel="noopener">Tindahan ni Aling Nena</a>
+          </li>
           <li><a href="https://github.com/4sightorg/dokq" target="_blank" rel="noopener">DokQ</a></li>
-          <li><a href="https://github.com/adr1el-m/carmen-the-parasight" target="_blank" rel="noopener">LingapLink</a></li>
-          <li><a href="https://github.com/adr1el-m/codedex-SeptemberChallenge" target="_blank" rel="noopener">Fireside September</a></li>
+          <li><a href="https://github.com/adr1el-m/carmen-the-parasight" target="_blank" rel="noopener">LingapLink</a>
+          </li>
+          <li><a href="https://github.com/adr1el-m/codedex-SeptemberChallenge" target="_blank" rel="noopener">Fireside
+              September</a></li>
         </ul>
       </div>
     </div>
@@ -591,14 +802,8 @@
       <div class="sidebar-info">
 
         <figure class="avatar-box">
-            <img src="/images/my-avatar.png"
-                 alt="Adriel Magalona"
-                 width="150"
-                 height="150"
-                 loading="eager"
-                 fetchpriority="high"
-                 decoding="async"
-                 class="critical-image">
+          <img src="/images/my-avatar.png" alt="Adriel Magalona" width="150" height="150" loading="eager"
+            fetchpriority="high" decoding="async" class="critical-image">
         </figure>
 
         <div class="info-content">
@@ -618,7 +823,8 @@
         <ul class="contacts-list" id="contact">
           <li class="contact-item">
             <div class="contact-info">
-              <a class="contact-link resume" href="/files/MAGALONA-CV.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open my resume (PDF) in a new tab">RESUME</a>
+              <a class="contact-link resume" href="/files/MAGALONA-CV.pdf" target="_blank" rel="noopener noreferrer"
+                aria-label="Open my resume (PDF) in a new tab">RESUME</a>
             </div>
           </li>
           <li class="contact-item">
@@ -653,35 +859,42 @@
 
         <div class="separator"></div>
 
-        
+
         <ul class="social-list" role="list" aria-label="Social media links">
 
           <li class="social-item">
-            <a href="https://www.linkedin.com/in/adriel-magalona-0546b9318/" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Connect with me on LinkedIn (opens in new tab)" data-tooltip="Connect with me on LinkedIn">
+            <a href="https://www.linkedin.com/in/adriel-magalona-0546b9318/" class="social-link" target="_blank"
+              rel="noopener noreferrer" aria-label="Connect with me on LinkedIn (opens in new tab)"
+              data-tooltip="Connect with me on LinkedIn">
               <ion-icon name="logo-linkedin" aria-hidden="true"></ion-icon>
             </a>
           </li>
 
           <li class="social-item">
-            <a href="https://github.com/adr1el-m" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Check out my GitHub profile (opens in new tab)" data-tooltip="Check out my GitHub">
+            <a href="https://github.com/adr1el-m" class="social-link" target="_blank" rel="noopener noreferrer"
+              aria-label="Check out my GitHub profile (opens in new tab)" data-tooltip="Check out my GitHub">
               <ion-icon name="logo-github" aria-hidden="true"></ion-icon>
             </a>
           </li>
 
           <li class="social-item">
-            <a href="https://www.facebook.com/Traceaz" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Follow me on Facebook (opens in new tab)" data-tooltip="Follow me on Facebook">
+            <a href="https://www.facebook.com/Traceaz" class="social-link" target="_blank" rel="noopener noreferrer"
+              aria-label="Follow me on Facebook (opens in new tab)" data-tooltip="Follow me on Facebook">
               <ion-icon name="logo-facebook" aria-hidden="true"></ion-icon>
             </a>
           </li>
 
           <li class="social-item">
-            <a href="https://twitter.com/adr1el_m" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Follow me on X, formerly Twitter (opens in new tab)" data-tooltip="Follow me on X (Twitter)">
+            <a href="https://twitter.com/adr1el_m" class="social-link" target="_blank" rel="noopener noreferrer"
+              aria-label="Follow me on X, formerly Twitter (opens in new tab)" data-tooltip="Follow me on X (Twitter)">
               <ion-icon name="logo-twitter" aria-hidden="true"></ion-icon>
             </a>
           </li>
 
           <li class="social-item">
-            <a href="https://www.instagram.com/adr1elllll/" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Follow me on Instagram (opens in new tab)" data-tooltip="Follow me on Instagram">
+            <a href="https://www.instagram.com/adr1elllll/" class="social-link" target="_blank"
+              rel="noopener noreferrer" aria-label="Follow me on Instagram (opens in new tab)"
+              data-tooltip="Follow me on Instagram">
               <ion-icon name="logo-instagram" aria-hidden="true"></ion-icon>
             </a>
           </li>
@@ -702,7 +915,8 @@
         <ul class="navbar-list">
 
           <li class="navbar-item">
-            <button class="navbar-link  active" data-nav-link aria-label="Navigate to About section" aria-current="page">About</button>
+            <button class="navbar-link  active" data-nav-link aria-label="Navigate to About section"
+              aria-current="page">About</button>
           </li>
 
           <li class="navbar-item">
@@ -714,7 +928,8 @@
           </li>
 
           <li class="navbar-item">
-            <button class="navbar-link" data-nav-link aria-label="Navigate to Organizations section">Organizations</button>
+            <button class="navbar-link" data-nav-link
+              aria-label="Navigate to Organizations section">Organizations</button>
           </li>
 
         </ul>
@@ -740,7 +955,8 @@
               <div class="service-content-box">
                 <h4 class="h4 service-item-title">Web Development</h4>
                 <p class="service-item-text">
-                  Crafting modern, responsive websites with cutting-edge technologies. From frontend design to backend functionality, I build complete web solutions.
+                  Crafting modern, responsive websites with cutting-edge technologies. From frontend design to backend
+                  functionality, I build complete web solutions.
                 </p>
               </div>
             </li>
@@ -752,7 +968,8 @@
               <div class="service-content-box">
                 <h4 class="h4 service-item-title">UI/UX Design</h4>
                 <p class="service-item-text">
-                  Creating intuitive and visually appealing user interfaces that enhance user experience and drive engagement.
+                  Creating intuitive and visually appealing user interfaces that enhance user experience and drive
+                  engagement.
                 </p>
               </div>
             </li>
@@ -764,7 +981,8 @@
               <div class="service-content-box">
                 <h4 class="h4 service-item-title">Database Management</h4>
                 <p class="service-item-text">
-                  Designing and optimizing database architectures to ensure efficient data storage, retrieval, and scalability.
+                  Designing and optimizing database architectures to ensure efficient data storage, retrieval, and
+                  scalability.
                 </p>
               </div>
             </li>
@@ -776,7 +994,8 @@
               <div class="service-content-box">
                 <h4 class="h4 service-item-title">AI Integration</h4>
                 <p class="service-item-text">
-                  Implementing intelligent solutions using machine learning and AI APIs to create smarter, more responsive applications.
+                  Implementing intelligent solutions using machine learning and AI APIs to create smarter, more
+                  responsive applications.
                 </p>
               </div>
             </li>
@@ -798,7 +1017,8 @@
               <button class="chip" data-chip="Tools">Tools</button>
             </div>
             <div class="stack-search-wrapper">
-              <input type="search" class="stack-search" placeholder="Search technologies" aria-label="Search technologies" autocomplete="off">
+              <input type="search" class="stack-search" placeholder="Search technologies"
+                aria-label="Search technologies" autocomplete="off">
             </div>
           </div>
           <ul id="stack-grid" class="stack-grid" role="list" aria-label="Technology items"></ul>
@@ -806,7 +1026,7 @@
 
         <section class="achievements">
           <h3 class="h3 achievements-title">Honors & Awards</h3>
-          
+
           <!-- Awards organized by year with accordion -->
           <div class="awards-timeline">
 
@@ -819,14 +1039,11 @@
               </button>
               <div class="year-content active">
                 <ul class="achievements-list">
-                  
+
                   <!-- October 2025 -->
                   <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
-                    data-images='["/images/honors/codebiity/codebility.jpg"]'
-                    data-webp-images='[]'
-                    data-organizer="Codebility — Portfolio Contest 2025"
-                    data-date="October 2025"
-                    data-location="Online"
+                    data-images='["/images/honors/codebiity/codebility.jpg"]' data-webp-images='[]'
+                    data-organizer="Codebility — Portfolio Contest 2025" data-date="October 2025" data-location="Online"
                     data-description="Secured 2nd place; received an internship offer and a ₱800 award."
                     data-facebook="https://www.facebook.com/share/p/19mEFhhtCv/">
 
@@ -844,8 +1061,7 @@
                     data-images='["/images/honors/BPIdatawave/1.jpeg", "/images/honors/BPIdatawave/2.jpeg", "/images/honors/BPIdatawave/3.jpeg", "/images/honors/BPIdatawave/4.jpeg"]'
                     data-webp-images='["/images/honors/BPIdatawave/1.jpeg", "/images/honors/BPIdatawave/2.jpeg", "/images/honors/BPIdatawave/3.jpeg", "/images/honors/BPIdatawave/4.jpeg"]'
                     data-organizer="Our team, 4Sight, secured 3rd place at the BPI DataWave Hackathon 2025 in the Workplace Productivity & Future of Work category. After four months of intense ideation, prototyping, and collaboration, we developed WorkSight - an AI-powered platform that addresses a critical issue: 1 in 3 employees is at high risk of burnout, costing the global economy over $1 trillion annually. WorkSight gives leaders foresight, not hindsight, analyzing behavioral data (workloads, collaboration) combined with psychological science to turn burnout from an invisible threat into a measurable, preventable business risk. Out of 750-900+ learners from across the Philippines, making it to the Top 3 is truly an honor. The awarding ceremony was held on October 1, 2025, at TEBL Hall 1 & 2, AIM Conference Center, where we had the incredible opportunity to meet BPI President and CEO TG Limcaoco."
-                    data-date="October 1, 2025"
-                    data-location="AIM Conference Center, Makati City"
+                    data-date="October 1, 2025" data-location="AIM Conference Center, Makati City"
                     data-teammates='[{"name":"Kiel Ethan Lanzanas","role":"Team Member"},{"name":"Ellah Benerado","role":"Team Member"},{"name":"John Carlo Santos","role":"Team Member"}]'
                     data-project-title="WorkSight"
                     data-linkedin="https://www.linkedin.com/posts/adr1el_%F0%9D%9F%AF%F0%9D%97%BF%F0%9D%97%B1-%F0%9D%97%A3%F0%9D%97%B9%F0%9D%97%AE%F0%9D%97%B0%F0%9D%97%B2%F0%9D%97%BF-%F0%9D%97%A3%F0%9D%97%BF%F0%9D%97%BC%F0%9D%98%82%F0%9D%97%B1-%F0%9D%98%81%F0%9D%97%BC-activity-7380458127965499392-mGk-?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFCMwAABUwVcMwAFxdORbMcULlqBOAyuSpU"
@@ -856,7 +1072,8 @@
                       <h4 class="h4 card-title">BPI DataWave Hackathon 2025</h4>
                       <p class="card-subtitle">Workplace Productivity & Future of Work • Team 4Sight</p>
                       <p class="card-date"><ion-icon name="calendar-outline"></ion-icon> October 1, 2025</p>
-                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> AIM Conference Center, Makati City</p>
+                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> AIM Conference Center,
+                        Makati City</p>
                     </div>
                   </li>
 
@@ -865,19 +1082,19 @@
                     data-images='["/images/honors/technovation/1.jpeg", "/images/honors/technovation/2.jpeg", "/images/honors/technovation/3.jpeg"]'
                     data-webp-images='["/images/honors/technovation/1.jpeg", "/images/honors/technovation/2.jpeg", "/images/honors/technovation/3.jpeg"]'
                     data-organizer="After 3 months of dedication and competing with some of the best techno-scholars across different regions of the country, our team Carmen The ParaSight, representing the National Capital Region, emerged as the Champion at the National Technovation Summit held at Marco Polo Plaza Hotel, Cebu on August 31, 2025. Our project, LingapLink, is an AI-powered healthcare platform designed to address inefficiencies in the Philippine medical system by streamlining triage, booking, communication, and record management, making healthcare more efficient and accessible for all. I contributed by developing the AI triage system, unifying the platform for both stakeholders, and delivering the live demo pitch while handling critical questions from the judges. Organized by Scholars Transforming Advancement and Research for Technology - DOST with support from Department of Science and Technology."
-                    data-date="August 31, 2025"
-                    data-location="Marco Polo Plaza Hotel, Cebu"
+                    data-date="August 31, 2025" data-location="Marco Polo Plaza Hotel, Cebu"
                     data-teammates='[{"name":"Juanito Ramos II","role":"Team Member"},{"name":"Maxxinne Fernandez","role":"Team Member"},{"name":"Threshia Saut","role":"Team Member"},{"name":"Franchezca Natividad Banayad","role":"Team Member"}]'
                     data-project-title="LingapLink"
                     data-linkedin="https://www.linkedin.com/posts/adr1el_nationaltechnovationsummit-activity-7369257090281791488-SXY8?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFCMwAABUwVcMwAFxdORbMcULlqBOAyuSpU"
-                    data-github="https://github.com/adr1el-m/technovation-2025"
->
+                    data-github="https://github.com/adr1el-m/technovation-2025">
                     <div class="award-ribbon">Champion</div>
                     <div class="card-content">
                       <h4 class="h4 card-title">Technovation Summit 2025 Start-up Hackathon</h4>
                       <p class="card-subtitle">National Champion • Team Carmen The ParaSight • LingapLink</p>
-                      <p class="card-date"><span role="img" aria-label="Calendar"><ion-icon name="calendar-outline"></ion-icon></span> August 31, 2025</p>
-                      <p class="card-location"><span role="img" aria-label="Location"><ion-icon name="location-outline"></ion-icon></span> Marco Polo Plaza Hotel, Cebu</p>
+                      <p class="card-date"><span role="img" aria-label="Calendar"><ion-icon
+                            name="calendar-outline"></ion-icon></span> August 31, 2025</p>
+                      <p class="card-location"><span role="img" aria-label="Location"><ion-icon
+                            name="location-outline"></ion-icon></span> Marco Polo Plaza Hotel, Cebu</p>
                     </div>
                   </li>
 
@@ -886,8 +1103,7 @@
                     data-images='["/images/honors/DLSUHackercup/1.jpeg", "/images/honors/DLSUHackercup/2.jpeg", "/images/honors/DLSUHackercup/3.jpeg", "/images/honors/DLSUHackercup/4.jpeg"]'
                     data-webp-images='["/images/honors/DLSUHackercup/1.jpeg", "/images/honors/DLSUHackercup/2.jpeg", "/images/honors/DLSUHackercup/3.jpeg", "/images/honors/DLSUHackercup/4.jpeg"]'
                     data-organizer="Representing Team 4Sight, we competed in the DLSU HackerCup 2025 on August 15–16 at Gokongwei Hall, De La Salle University. We tackled the theme 'Convenience: Hacking Everyday Hassles for Better Communities.' Our project, DokQ, is a smart appointment system featuring both a patient portal and a dashboard for healthcare providers. It is designed to reduce long queues in healthcare facilities while empowering patients with a digital profile to manage appointments and store their health history. Out of 24 participating teams, we proudly placed 9th. Beyond the ranking, it was a truly rewarding experience to innovate, collaborate, and learn together."
-                    data-date="August 15–16, 2025"
-                    data-location="Gokongwei Hall, De La Salle University"
+                    data-date="August 15–16, 2025" data-location="Gokongwei Hall, De La Salle University"
                     data-teammates='[{"name":"Ellah Benerado","role":"Team Member"},{"name":"Kiel Ethan Lanzanas","role":"Team Member"},{"name":"John Carlo Santos","role":"Team Member"}]'
                     data-project-title="DokQ"
                     data-linkedin="https://www.linkedin.com/posts/adr1el_we-had-the-incredible-opportunity-to-compete-activity-7366371237717065728-4aPw?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFCMwAABUwVcMwAFxdORbMcULlqBOAyuSpU"
@@ -897,7 +1113,8 @@
                       <h4 class="h4 card-title">De La Salle University Hackercup</h4>
                       <p class="card-subtitle">Team 4Sight • DokQ Healthcare System</p>
                       <p class="card-date"><ion-icon name="calendar-outline"></ion-icon> August 15–16, 2025</p>
-                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> Gokongwei Hall, De La Salle University</p>
+                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> Gokongwei Hall, De La Salle
+                        University</p>
                     </div>
                   </li>
 
@@ -906,8 +1123,7 @@
                     data-images='["/images/honors/genAI/1.jpeg", "/images/honors/genAI/2.jpeg", "/images/honors/genAI/3.jpeg", "/images/honors/genAI/4.jpeg"]'
                     data-webp-images='["/images/honors/genAI/1.jpeg", "/images/honors/genAI/2.jpeg", "/images/honors/genAI/3.jpeg", "/images/honors/genAI/4.jpeg"]'
                     data-organizer="Our team, Deansanitzy, placed Top 5 out of 33 teams at the Agentic AI Hackathon organized by Gen AI Philippines on June 28, 2025, hosted at White Cloak Technologies, Inc. This was our most challenging hackathon so far, balancing academic exams, tight schedules, and limited rest. What made this experience even more meaningful was that it was our first time competing with professionals—having previously participated in student-level competitions, facing off with industry teams gave us a broader perspective and pushed us to operate at a higher standard. Together, we built Kita-Kita: an AI-powered financial management platform designed to help users track expenses, manage bank accounts, forecast financial trends, and make informed decisions through intelligent AI agents. We are still in our first year of college, and reaching this milestone early on motivates us to keep building."
-                    data-date="June 28, 2025"
-                    data-location="White Cloak Technologies, Inc."
+                    data-date="June 28, 2025" data-location="White Cloak Technologies, Inc."
                     data-teammates='[{"name":"James Rafael Mendiola","role":"Team Member"},{"name":"Jude Vincent Puti","role":"Team Member"}]'
                     data-project-title="Kita-Kita (Agentic)"
                     data-linkedin="https://www.linkedin.com/posts/adr1el_%F0%9D%97%A7%F0%9D%97%BC%F0%9D%97%BD-%F0%9D%9F%B1-%F0%9D%97%BC%F0%9D%98%82%F0%9D%98%81-%F0%9D%97%BC%F0%9D%97%B3-%F0%9D%9F%AF%F0%9D%9F%AF-%F0%9D%97%A7%F0%9D%97%B2%F0%9D%97%AE%F0%9D%97%BA%F0%9D%98%80-activity-7347497299155070976-OOo-?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFCMwAABUwVcMwAFxdORbMcULlqBOAyuSpU"
@@ -917,7 +1133,8 @@
                       <h4 class="h4 card-title">Agentic AI Hackathon 2025</h4>
                       <p class="card-subtitle">Team Deansanitzy • Kita-Kita Financial Platform</p>
                       <p class="card-date"><ion-icon name="calendar-outline"></ion-icon> June 28, 2025</p>
-                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> White Cloak Technologies, Inc.</p>
+                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> White Cloak Technologies,
+                        Inc.</p>
                     </div>
                   </li>
 
@@ -926,17 +1143,18 @@
                     data-images='["/images/honors/sparkrush/1.jpeg", "/images/honors/sparkrush/2.jpeg", "/images/honors/sparkrush/3.jpeg"]'
                     data-webp-images='["/images/honors/sparkrush/1.jpeg", "/images/honors/sparkrush/2.jpeg", "/images/honors/sparkrush/3.jpeg"]'
                     data-organizer="We clinched Second Runner-Up at Spark Rush 2025! On May 17, 2025, our team raced through the grounds of Polytechnic University of the Philippines - Manila for Spark Rush 2025, a station-based competition organized by Google Developer Groups on Campus — Polytechnic University of the Philippines. From intense sprints and brain-teasing challenges to high-stakes checkpoints, we powered through each station with unwavering grit, seamless teamwork, and strategic coordination—all while pushing our physical and mental limits. Grateful to have experienced this with my amazing team Eba't Adan (E-E-Bat?) consisting of Alvic Decipolo, Russ David, Rheinz Owen Alpon, and Vinzed Diala. Couldn't have done it without you all!"
-                    data-date="May 17, 2025"
-                    data-location="Polytechnic University of the Philippines - Manila"
+                    data-date="May 17, 2025" data-location="Polytechnic University of the Philippines - Manila"
                     data-teammates='[{"name":"Alvic Decipolo","role":"Team Member"},{"name":"Russ David","role":"Team Member"},{"name":"Rheinz Owen Alpon","role":"Team Member"},{"name":"Vinzed Diala","role":"Team Member"}]'
                     data-linkedin="https://www.linkedin.com/posts/adr1el_%F0%9D%97%AA%F0%9D%97%B2-%F0%9D%97%B0%F0%9D%97%B9%F0%9D%97%B6%F0%9D%97%BB%F0%9D%97%B0%F0%9D%97%B5%F0%9D%97%B2%F0%9D%97%B1-%F0%9D%97%A6%F0%9D%97%B2%F0%9D%97%B0%F0%9D%97%BC%F0%9D%97%BB%F0%9D%97%B1-%F0%9D%97%A5%F0%9D%98%82%F0%9D%97%BB%F0%9D%97%BB%F0%9D%97%B2%F0%9D%97%BF-%F0%9D%97%A8%F0%9D%97%BD-activity-7333147558954926080-wSWj?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFCMwAABUwVcMwAFxdORbMcULlqBOAyuSpU">
 
                     <div class="award-ribbon">2nd Runner-Up</div>
                     <div class="card-content">
-                      <h4 class="h4 card-title">Spark Rush 2025 - Google Developer Groups on Campus: Polytechnic University of the Philippines</h4>
+                      <h4 class="h4 card-title">Spark Rush 2025 - Google Developer Groups on Campus: Polytechnic
+                        University of the Philippines</h4>
                       <p class="card-subtitle">Station-Based Competition • Team Eba't Adan ⚡</p>
                       <p class="card-date"><ion-icon name="calendar-outline"></ion-icon> May 17, 2025</p>
-                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> Polytechnic University of the Philippines - Manila</p>
+                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> Polytechnic University of
+                        the Philippines - Manila</p>
                     </div>
                   </li>
 
@@ -958,14 +1176,15 @@
                       <h4 class="h4 card-title">Hack-it: The New Era of Banking Hackathon</h4>
                       <p class="card-subtitle">AI-Powered Fintech Solution - Team Loan Wolves 🐺</p>
                       <p class="card-date"><ion-icon name="calendar-outline"></ion-icon> April 4–5, 2025</p>
-                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> work.able, Bridgetowne, Quezon City</p>
+                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> work.able, Bridgetowne,
+                        Quezon City</p>
                     </div>
                   </li>
 
                 </ul>
               </div>
             </div>
-            
+
             <!-- 2024 Awards -->
             <div class="year-group">
               <button class="year-header" data-year-toggle>
@@ -979,14 +1198,14 @@
                     data-images='["/images/honors/excalicode/1.jpeg", "/images/honors/excalicode/2.jpeg"]'
                     data-webp-images='[]'
                     data-organizer="Organized by The Programmers' Guild at Polytechnic University of the Philippines, where I won the Knight Category in a Data Structures & Algorithms competition."
-                    data-date="September 2024"
-                    data-location="Polytechnic University of the Philippines">
+                    data-date="September 2024" data-location="Polytechnic University of the Philippines">
                     <div class="award-ribbon">1st Place</div>
                     <div class="card-content">
                       <h4 class="h4 card-title">Excalicode - Data Structures & Algorithms Competition</h4>
                       <p class="card-subtitle">Knight Category Winner</p>
                       <p class="card-date"><ion-icon name="calendar-outline"></ion-icon> September 2024</p>
-                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> Polytechnic University of the Philippines</p>
+                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> Polytechnic University of
+                        the Philippines</p>
                     </div>
                   </li>
 
@@ -994,21 +1213,20 @@
                     data-images='["/images/honors/eneda/1.jpeg", "/images/honors/eneda/2.jpeg", "/images/honors/eneda/3.jpeg", "/images/honors/eneda/4.jpeg", "/images/honors/eneda/5.jpeg", "/images/honors/eneda/6.jpeg"]'
                     data-webp-images='["/images/honors/eneda/1.jpeg", "/images/honors/eneda/2.jpeg", "/images/honors/eneda/3.jpeg", "/images/honors/eneda/4.jpeg", "/images/honors/eneda/5.jpeg", "/images/honors/eneda/6.jpeg"]'
                     data-organizer="After a month of intense preparation and stress, I'm proud to share that my team, Piyutech, secured 3rd place out of 6 teams at the ENEDA Hackathon, held on September 14, 2024, at Miriam College, Quezon City! A special shoutout to my incredible teammates Mc Henry Sarcia, Sean Russell Villeza, Jermaine Falcutila, and Kenchie Baylon for their unwavering commitment. Together, we developed 'EcoSiklo,' a circular economy solution that transforms fabric scraps into essential pet products—combining sustainability with innovation. We're also deeply thankful to Ms. Margarita Caparas and Dr. Luis Sison from UPSCALE Innovation Hub for their rigorous consultations, grilling us to ensure our pitch and our product were pitch-perfect. As a freshman, this achievement marks the beginning of an exciting journey in tech and sustainability for me. It's a powerful reminder that even at the early stages of our careers, we have the ability to create meaningful change. I'm looking forward to leveraging this experience to further my skills, collaborate on innovative solutions, and contribute to a more sustainable future."
-                    data-date="September 14, 2024"
-                    data-location="Miriam College, Quezon City"
+                    data-date="September 14, 2024" data-location="Miriam College, Quezon City"
                     data-teammates='[{"name":"Mc Henry Sarcia","role":"Team Member"},{"name":"Sean Russell Villeza","role":"Team Member"},{"name":"Jermaine Falcutila","role":"Team Member"},{"name":"Kenchie Baylon","role":"Team Member"}]'>
                     <div class="award-ribbon">3rd Place</div>
                     <div class="card-content">
                       <h4 class="h4 card-title">Entrepreneurship Educators Association Hackathon</h4>
                       <p class="card-subtitle">Team Piyutech • EcoSiklo Project</p>
                       <p class="card-date"><ion-icon name="calendar-outline"></ion-icon> September 14, 2024</p>
-                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> Miriam College, Quezon City</p>
+                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> Miriam College, Quezon City
+                      </p>
                     </div>
                   </li>
-                  
+
                   <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
-                    data-images='["/achievements/GP/cert.jpg"]'
-                    data-webp-images='[]'
+                    data-images='["/achievements/GP/cert.jpg"]' data-webp-images='[]'
                     data-organizer="I am deeply honored to have been recognized at the Gawad Pagkilala Taong 2024 last November 21, 2024, held at Polytechnic University of the Philippines' Bulwagang Balagtas NALLRC. Receiving the Gawad Pagkilala certificate for securing 3rd place in the Entrepreneurship Educators' Association National Competition is a moment I will truly cherish. Achieving this as a first-year student makes it even more meaningful and motivates me to keep pushing forward. Thank you to my mentors, peers, and everyone who supported me throughout this journey. Here’s to more milestones ahead!"
                     data-date="November 21, 2024"
                     data-location="Bulwagang Balagtas NALLRC, Polytechnic University of the Philippines - Manila">
@@ -1017,7 +1235,8 @@
                       <h4 class="h4 card-title">Gawad Pagkilala 2024</h4>
                       <p class="card-subtitle">Recognition Award</p>
                       <p class="card-date"><ion-icon name="calendar-outline"></ion-icon> November 21, 2024</p>
-                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> Bulwagang Balagtas NALLRC, Polytechnic University of the Philippines - Manila</p>
+                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> Bulwagang Balagtas NALLRC,
+                        Polytechnic University of the Philippines - Manila</p>
                     </div>
                   </li>
                 </ul>
@@ -1035,14 +1254,24 @@
                 <ul class="achievements-list">
                   <!-- Add participation items here -->
                   <li class="achievement-item">
-                    <div class="achievement-card visible" data-achievement-card data-title="Sparkfest 2025" data-date="2025" data-location="Google Developer Groups on Campus - Polytechnic University of the Philippines" data-description="A 1-week hackathon that is designed to bring together students to tackle real-world challenges with innovative tech solutions. The hackathon aims to address challenges by developing innovative solutions aligned with the Sustainable Development Goals (SDGs)." data-image="" data-project-title="BarangayNav" data-teammates='[{"name":"Paul Arthur M. Marayan","role":"Team Member (PUP)"},{"name":"Clark Johnson Ebora","role":"Team Member (UST)"},{"name":"Carl Jayvin T. Lee","role":"Team Member (PUP)"}]'>
+                    <div class="achievement-card visible" data-achievement-card data-title="Sparkfest 2025"
+                      data-date="2025"
+                      data-location="Google Developer Groups on Campus - Polytechnic University of the Philippines"
+                      data-description="A 1-week hackathon that is designed to bring together students to tackle real-world challenges with innovative tech solutions. The hackathon aims to address challenges by developing innovative solutions aligned with the Sustainable Development Goals (SDGs)."
+                      data-image="" data-project-title="BarangayNav"
+                      data-teammates='[{"name":"Paul Arthur M. Marayan","role":"Team Member (PUP)"},{"name":"Clark Johnson Ebora","role":"Team Member (UST)"},{"name":"Carl Jayvin T. Lee","role":"Team Member (PUP)"}]'>
                       <h4 class="card-title">Sparkfest 2025</h4>
                       <p class="card-date"><ion-icon name="calendar-outline"></ion-icon> 2025</p>
-                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> Google Developer Groups on Campus - Polytechnic University of the Philippines</p>
+                      <p class="card-location"><ion-icon name="location-outline"></ion-icon> Google Developer Groups on
+                        Campus - Polytechnic University of the Philippines</p>
                     </div>
                   </li>
                   <li class="achievement-item">
-                    <div class="achievement-card visible" data-achievement-card data-title="Green Pioneers hackathon" data-date="Online" data-location="Online" data-organizer="Organized by YPStem (Global online event)" data-description="This is a hackathon organized by YPStem that invites students from all over the world to engineer a solution to an environmental problem! Our goal is to give students the opportunity to explore the world around them and experiment in creating an impactful solution. Participants are encouraged to be creative and choose themes ranging from waste management to plastic pollution. We deeply hope that you will be able to enjoy the process of finding a solution and take pleasure in aiding the community." data-github="https://greenpioneers.devpost.com/?" data-project-title="Green Pulse">
+                    <div class="achievement-card visible" data-achievement-card data-title="Green Pioneers hackathon"
+                      data-date="Online" data-location="Online"
+                      data-organizer="Organized by YPStem (Global online event)"
+                      data-description="This is a hackathon organized by YPStem that invites students from all over the world to engineer a solution to an environmental problem! Our goal is to give students the opportunity to explore the world around them and experiment in creating an impactful solution. Participants are encouraged to be creative and choose themes ranging from waste management to plastic pollution. We deeply hope that you will be able to enjoy the process of finding a solution and take pleasure in aiding the community."
+                      data-github="https://greenpioneers.devpost.com/?" data-project-title="Green Pulse">
                       <h4 class="card-title">Green Pioneers hackathon</h4>
                       <p class="card-date"><ion-icon name="calendar-outline"></ion-icon> Online</p>
                       <p class="card-location"><ion-icon name="location-outline"></ion-icon> Online</p>
@@ -1055,7 +1284,7 @@
           </div>
         </section>
 
-        
+
 
 
       </article>
@@ -1087,7 +1316,9 @@
                   <span class="tag">Algorithms</span>
                 </div>
                 <p class="timeline-text">
-                  Embarked on a journey of Computer Science. The program equipped me with cutting-edge skills in software development, algorithms, and data structures, preparing me to be at the forefront of technological innovation.
+                  Embarked on a journey of Computer Science. The program equipped me with cutting-edge skills in
+                  software development, algorithms, and data structures, preparing me to be at the forefront of
+                  technological innovation.
                 </p>
               </div>
             </div>
@@ -1103,7 +1334,9 @@
                   <span class="tag">JAVA</span>
                 </div>
                 <p class="timeline-text">
-                  Delved into the Computer Programming track under the Technical Vocational Livelihood (TVL) strand, where I honed my expertise in essential programming languages and frameworks such as HTML, CSS, PHP, XAMPP, C++, and JAVA.
+                  Delved into the Computer Programming track under the Technical Vocational Livelihood (TVL) strand,
+                  where I honed my expertise in essential programming languages and frameworks such as HTML, CSS, PHP,
+                  XAMPP, C++, and JAVA.
                 </p>
               </div>
             </div>
@@ -1118,7 +1351,9 @@
                   <span class="tag">.NET</span>
                 </div>
                 <p class="timeline-text">
-                  Pursued computer programming from 8th to 10th grade, mastering the fundamentals of C++, Visual Basic/.NET, and other core technologies. This early exposure fostered my passion for coding and laid the groundwork for my future in the tech industry.
+                  Pursued computer programming from 8th to 10th grade, mastering the fundamentals of C++, Visual
+                  Basic/.NET, and other core technologies. This early exposure fostered my passion for coding and laid
+                  the groundwork for my future in the tech industry.
                 </p>
               </div>
             </div>
@@ -1158,7 +1393,9 @@
                   <span class="tag">Problem Solving</span>
                 </div>
                 <p class="timeline-text">
-                  Workflow Architect at Eskwelabs, automating pitch‑deck creation and investor outreach for funding. I design cross‑team workflows using Google technologies and n8n to streamline processes, improve reliability, and document standards that enhance operational efficiency.
+                  Workflow Architect at Eskwelabs, automating pitch‑deck creation and investor outreach for funding. I
+                  design cross‑team workflows using Google technologies and n8n to streamline processes, improve
+                  reliability, and document standards that enhance operational efficiency.
                 </p>
               </div>
             </div>
@@ -1189,7 +1426,10 @@
                   <span class="tag">Full Scholarship</span>
                 </div>
                 <p class="timeline-text">
-                  Awarded the prestigious DOST-SEI Scholarship under Republic Act 7687, recognizing academic excellence and commitment to science and technology. This merit-based scholarship supports my pursuit of a degree in Computer Science, providing full tuition coverage and academic support to develop future scientists and technologists for the Philippines.
+                  Awarded the prestigious DOST-SEI Scholarship under Republic Act 7687, recognizing academic excellence
+                  and commitment to science and technology. This merit-based scholarship supports my pursuit of a degree
+                  in Computer Science, providing full tuition coverage and academic support to develop future scientists
+                  and technologists for the Philippines.
                 </p>
               </div>
             </div>
@@ -1206,7 +1446,10 @@
                   <span class="tag">Cooperative</span>
                 </div>
                 <p class="timeline-text">
-                  Recognized as a scholar by the Makati City Employees Multi-Purpose Cooperative (MACEMCO), a community-based organization dedicated to supporting the educational advancement of deserving students. This scholarship demonstrates MACEMCO's commitment to fostering academic excellence and empowering the next generation of professionals.
+                  Recognized as a scholar by the Makati City Employees Multi-Purpose Cooperative (MACEMCO), a
+                  community-based organization dedicated to supporting the educational advancement of deserving
+                  students. This scholarship demonstrates MACEMCO's commitment to fostering academic excellence and
+                  empowering the next generation of professionals.
                 </p>
               </div>
             </div>
@@ -1222,7 +1465,7 @@
       <article id="projects" class="projects" data-page="projects">
 
         <header>
-                <h2 class="h2 article-title">Projects & Portfolio</h2>
+          <h2 class="h2 article-title">Projects & Portfolio</h2>
         </header>
 
         <section class="projects">
@@ -1232,15 +1475,12 @@
           <ul class="project-list">
 
 
-            <li class="project-item active" 
-                data-filter-item 
-                data-category="PHP"
-                data-images='["/images/projects/ODRS/1.jpeg", "/images/projects/ODRS/2.jpeg", "/images/projects/ODRS/3.jpeg", "/images/projects/ODRS/4.jpeg", "/images/projects/ODRS/5.jpeg", "/images/projects/ODRS/6.jpeg"]'
-                data-webp-images='[]'
-                data-description="Online Document Request System for Grade 12 students at the University of Makati Higher School (HS ng UMak). A comprehensive web-based platform that streamlines the process of requesting and managing school documents, featuring user authentication, request tracking, real-time status updates, and administrative controls for efficient document processing."
-                data-technologies="PHP • MySQL • JavaScript • HTML/CSS • Bootstrap"
-                data-github="https://github.com/adr1el-m/Online-Document-Request-System"
-                data-live="">
+            <li class="project-item active" data-filter-item data-category="PHP"
+              data-images='["/images/projects/ODRS/1.jpeg", "/images/projects/ODRS/2.jpeg", "/images/projects/ODRS/3.jpeg", "/images/projects/ODRS/4.jpeg", "/images/projects/ODRS/5.jpeg", "/images/projects/ODRS/6.jpeg"]'
+              data-webp-images='[]'
+              data-description="Online Document Request System for Grade 12 students at the University of Makati Higher School (HS ng UMak). A comprehensive web-based platform that streamlines the process of requesting and managing school documents, featuring user authentication, request tracking, real-time status updates, and administrative controls for efficient document processing."
+              data-technologies="PHP • MySQL • JavaScript • HTML/CSS • Bootstrap"
+              data-github="https://github.com/adr1el-m/Online-Document-Request-System" data-live="">
               <a href="#">
 
                 <figure class="project-img">
@@ -1248,9 +1488,8 @@
                     <ion-icon name="eye-outline"></ion-icon>
                   </div>
 
-                  <img src="/images/projects/ODRS/1.jpeg" 
-                       alt="Online Document Request System - University of Makati" 
-                       loading="lazy">
+                  <img src="/images/projects/ODRS/1.jpeg" alt="Online Document Request System - University of Makati"
+                    loading="lazy">
                 </figure>
 
                 <h3 class="project-title">Online Document Request System</h3>
@@ -1259,26 +1498,23 @@
               </a>
             </li>
 
-            <li class="project-item active" data-filter-item data-category="Software"
-              data-images='[]'
+            <li class="project-item active" data-filter-item data-category="Software" data-images='[]'
               data-webp-images='[]'
               data-description="Merc Airline Ticketing System is a student-built C++ console application that implements a complete airline reservation workflow: search and book flights, manage passenger records, calculate fares including taxes/VAT and discounts, and simulate payment transactions. The project is implemented mainly as a single-source file for learning purposes and demonstrates end-to-end booking and pricing logic suitable for study, refactoring, or extension."
-              data-technologies="C++"
-              data-github="https://github.com/adr1el-m/merc-airline-ticketing-system">
+              data-technologies="C++" data-github="https://github.com/adr1el-m/merc-airline-ticketing-system">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img alt="Merc Airline Ticketing System" loading="lazy">
+                  <img
+                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='20' font-weight='600' text-anchor='middle' dy='.3em'%3EMerc Airline Ticketing System%3C/text%3E%3C/svg%3E"
+                    alt="Merc Airline Ticketing System" loading="lazy" width="400" height="300">
                 </figure>
                 <h3 class="project-title">Merc Airline Ticketing System</h3>
               </a>
             </li>
-            <li class="project-item active"
-                data-filter-item 
-                data-category="Software"
-                data-images='[]'
-                data-webp-images='[]'
-                data-description="Project Overview:
+            <li class="project-item active" data-filter-item data-category="Software" data-images='[]'
+              data-webp-images='[]'
+              data-description="Project Overview:
 The ATM Transaction System is a Java-based graphical application that simulates the core functionalities of an Automated Teller Machine (ATM). Developed using Java Swing, this program allows users to perform basic banking operations such as balance inquiry, withdrawal, deposit, and fund transfer, while also incorporating an administrator interface for managing customer accounts.
 
 This project demonstrates concepts of object-oriented programming, GUI design with Swing, data validation, and user input handling. It aims to provide a realistic banking experience in a controlled simulation, integrating both user and admin functionalities within a secure system.
@@ -1352,16 +1588,22 @@ Future Enhancements:
 
 Conclusion:
 The RGBC ATM Transaction System is a comprehensive Java Swing project that effectively simulates real-world ATM functionalities. It not only highlights the technical implementation of user authentication, transactions, and admin management but also emphasizes robust input validation, user experience, and program reliability — making it a strong foundation for more advanced banking systems in the future."
-                data-technologies="Java • Java Swing • OOP • GUI">
+              data-technologies="Java • Java Swing • OOP • GUI">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img alt="RGBC: Richard Gwapo Banking Corporation (ATM Transaction System)" loading="lazy">
+                  <img
+                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='45%25' fill='%23ffdb70' font-family='system-ui' font-size='18' font-weight='600' text-anchor='middle'%3ERGBC: ATM Transaction%3C/text%3E%3Ctext x='50%25' y='55%25' fill='%23ffdb70' font-family='system-ui' font-size='18' font-weight='600' text-anchor='middle'%3ESystem%3C/text%3E%3C/svg%3E"
+                    alt="RGBC: Richard Gwapo Banking Corporation (ATM Transaction System)" loading="lazy" width="400"
+                    height="300">
                 </figure>
                 <h3 class="project-title">RGBC: Richard Gwapo Banking Corporation (ATM Transaction System)</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Development" data-images='["/images/projects/loan/1.png", "/images/projects/loan/2.png", "/images/projects/loan/3.png", "/images/projects/loan/4.png"]' data-webp-images='[]' data-technologies="PHP • MySQL • HTML/CSS • Bootstrap" data-github="https://github.com/adr1el-m/PHP-Loan-System">
+            <li class="project-item active" data-filter-item data-category="Web Development"
+              data-images='["/images/projects/loan/1.png", "/images/projects/loan/2.png", "/images/projects/loan/3.png", "/images/projects/loan/4.png"]'
+              data-webp-images='[]' data-technologies="PHP • MySQL • HTML/CSS • Bootstrap"
+              data-github="https://github.com/adr1el-m/PHP-Loan-System">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
@@ -1377,7 +1619,8 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="/images/projects/handGesture/thumbnail.png" alt="Hand Gesture Recognition and Arduino Integration" loading="lazy">
+                  <img src="/images/projects/handGesture/thumbnail.png"
+                    alt="Hand Gesture Recognition and Arduino Integration" loading="lazy">
                 </figure>
                 <h3 class="project-title">Hand Gesture Recognition and Arduino Integration</h3>
               </a>
@@ -1385,54 +1628,73 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
             <li class="project-item active" data-filter-item data-category="Web Design"
               data-images='["/images/projects/ytLayout/clone.jpg"]'
               data-description="HTML and CSS activity from my first-year Introduction to Computer Science course."
-              data-technologies="HTML, CSS"
-              data-github="https://github.com/adr1el-m/ITC-youtube-layout"
+              data-technologies="HTML, CSS" data-github="https://github.com/adr1el-m/ITC-youtube-layout"
               data-live="https://adriel-itc-assignment.vercel.app">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="/images/projects/ytLayout/clone.jpg" alt="YouTube Layout preview" loading="lazy" width="400" height="300">
+                  <img src="/images/projects/ytLayout/clone.jpg" alt="YouTube Layout preview" loading="lazy" width="400"
+                    height="300">
                 </figure>
                 <h3 class="project-title">YouTube Layout</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application" data-images="[]" data-webp-images="[]" data-description="FinanceWise is a comprehensive financial advisory platform designed to help users make informed decisions about spending, investments, and loans." data-technologies="HTML5, CSS3, JavaScript, Particles.js, Responsive Design" data-video="/images/projects/financeWise/fw.mp4" data-github="https://github.com/adr1el-m/finance-and-ai">
+            <li class="project-item active" data-filter-item data-category="Web Application" data-images="[]"
+              data-webp-images="[]"
+              data-description="FinanceWise is a comprehensive financial advisory platform designed to help users make informed decisions about spending, investments, and loans."
+              data-technologies="HTML5, CSS3, JavaScript, Particles.js, Responsive Design"
+              data-video="/images/projects/financeWise/fw.mp4" data-github="https://github.com/adr1el-m/finance-and-ai">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/financeWise/fw.mp4" muted playsinline preload="none" data-poster="https://placehold.co/400x300/1a1a1a/ffdb70?text=FinanceWise" width="400" height="300"></video>
+                  <video class="project-card-video" data-src="/images/projects/financeWise/fw.mp4" muted playsinline
+                    preload="none"
+                    poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3EFinanceWise%3C/text%3E%3C/svg%3E"
+                    width="400" height="300"></video>
                 </figure>
                 <h3 class="project-title">FinanceWise</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application" data-video="/images/projects/greenPulse/GP-opt.mp4" data-description="GreenPulse is an interactive web application designed to promote sustainability through carbon footprint tracking, AI-powered eco-tips, and personalized progress monitoring." data-technologies="React, Vite, Tailwind CSS, Chart.js, Google Generative AI" data-github="https://github.com/adr1el-m/green-pulse">
+            <li class="project-item active" data-filter-item data-category="Web Application"
+              data-video="/images/projects/greenPulse/GP-opt.mp4"
+              data-description="GreenPulse is an interactive web application designed to promote sustainability through carbon footprint tracking, AI-powered eco-tips, and personalized progress monitoring."
+              data-technologies="React, Vite, Tailwind CSS, Chart.js, Google Generative AI"
+              data-github="https://github.com/adr1el-m/green-pulse">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/greenPulse/GP-opt.mp4" muted playsinline preload="none" data-poster="https://placehold.co/400x300/1a1a1a/ffdb70?text=Green+Pulse" width="400" height="300"></video>
+                  <video class="project-card-video" data-src="/images/projects/greenPulse/GP-opt.mp4" muted playsinline
+                    preload="none"
+                    poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3EGreen Pulse%3C/text%3E%3C/svg%3E"
+                    width="400" height="300"></video>
                 </figure>
                 <h3 class="project-title">Green Pulse</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Mobile App" data-github="https://github.com/adr1el-m/LoanWolves-KitaKita">
+            <li class="project-item active" data-filter-item data-category="Mobile App"
+              data-github="https://github.com/adr1el-m/LoanWolves-KitaKita">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img alt="Kita-Kita" loading="lazy" width="400" height="300">
+                  <img
+                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3EKita-Kita%3C/text%3E%3C/svg%3E"
+                    alt="Kita-Kita" loading="lazy" width="400" height="300">
                 </figure>
                 <h3 class="project-title">Kita-Kita</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Design" 
+            <li class="project-item active" data-filter-item data-category="Web Design"
               data-video="/images/projects/talambuhay/talambuhay.mp4"
               data-description="Talambuhay is a web-based translation platform primarily developed using JavaScript, with supplementary TypeScript components and standard web markup and styling. The project is deployed on Vercel and structured as a frontend web application. For detailed information on the frameworks, libraries, and runtime environment, refer to the package.json file and explore the source directories (e.g., src/, pages/, app/, api/, etc.)."
               data-technologies="JavaScript • TypeScript • HTML • CSS • Node.js • Vercel"
-              data-github="https://github.com/adr1el-m/talambuhay"
-              data-live="https://talambuhay-ni-adriel.vercel.app">
+              data-github="https://github.com/adr1el-m/talambuhay" data-live="https://talambuhay-ni-adriel.vercel.app">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/talambuhay/talambuhay.mp4" muted playsinline preload="none" data-poster="https://placehold.co/400x300/1a1a1a/ffdb70?text=Talambuhay" width="400" height="300"></video>
+                  <video class="project-card-video" data-src="/images/projects/talambuhay/talambuhay.mp4" muted
+                    playsinline preload="none"
+                    poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3ETalambuhay%3C/text%3E%3C/svg%3E"
+                    width="400" height="300"></video>
                 </figure>
                 <h3 class="project-title">Talambuhay</h3>
               </a>
@@ -1445,16 +1707,26 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/barangayNav/BarangayNav-opt.mp4" muted playsinline preload="none" data-poster="https://placehold.co/400x300/1a1a1a/ffdb70?text=BarangayNav" width="400" height="300"></video>
+                  <video class="project-card-video" data-src="/images/projects/barangayNav/BarangayNav-opt.mp4" muted
+                    playsinline preload="none"
+                    poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3EBarangayNav%3C/text%3E%3C/svg%3E"
+                    width="400" height="300"></video>
                 </figure>
                 <h3 class="project-title">BarangayNav</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="AI/ML" data-video="/images/projects/agentic/Deansanitzy.mp4" data-description="Kita-Kita is an AI-powered financial co-pilot that combines intelligent agents, unified account management, and predictive analytics to help Filipinos achieve financial wellness." data-technologies="HTML5, CSS3, JavaScript (ES6+), Node.js, Express.js, Firebase Firestore, Llama 3, Chart.js, Helmet, Express Rate Limit" data-github="https://github.com/adr1el-m/team-Deansanitzy-2025">
+            <li class="project-item active" data-filter-item data-category="AI/ML"
+              data-video="/images/projects/agentic/Deansanitzy.mp4"
+              data-description="Kita-Kita is an AI-powered financial co-pilot that combines intelligent agents, unified account management, and predictive analytics to help Filipinos achieve financial wellness."
+              data-technologies="HTML5, CSS3, JavaScript (ES6+), Node.js, Express.js, Firebase Firestore, Llama 3, Chart.js, Helmet, Express Rate Limit"
+              data-github="https://github.com/adr1el-m/team-Deansanitzy-2025">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/agentic/Deansanitzy.mp4" muted playsinline preload="none" data-poster="https://placehold.co/400x300/1a1a1a/ffdb70?text=Kita-Kita+Agentic" width="400" height="300"></video>
+                  <video class="project-card-video" data-src="/images/projects/agentic/Deansanitzy.mp4" muted
+                    playsinline preload="none"
+                    poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='45%25' fill='%23ffdb70' font-family='system-ui' font-size='22' font-weight='600' text-anchor='middle'%3EKita-Kita%3C/text%3E%3Ctext x='50%25' y='58%25' fill='%23ffdb70' font-family='system-ui' font-size='18' font-weight='600' text-anchor='middle'%3E(Agentic)%3C/text%3E%3C/svg%3E"
+                    width="400" height="300"></video>
                 </figure>
                 <h3 class="project-title">Kita-Kita (Agentic)</h3>
               </a>
@@ -1462,25 +1734,33 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
             <li class="project-item active" data-filter-item data-category="Web Application"
               data-images='["/images/projects/worksight/1.jpg", "/images/projects/worksight/2.jpg", "/images/projects/worksight/3.jpg"]'
               data-webp-images='["/images/projects/worksight/1-1200.avif", "/images/projects/worksight/2-1200.avif", "/images/projects/worksight/3-1200.avif"]'
-              data-description="WorkSight is an AI-powered well-being analytics platform that uses behavioral data and psychological science to predict and prevent employee burnout." data-github="https://github.com/4sightorg/worksight"
+              data-description="WorkSight is an AI-powered well-being analytics platform that uses behavioral data and psychological science to predict and prevent employee burnout."
+              data-github="https://github.com/4sightorg/worksight"
               data-technologies="<strong class='section-title'>Web Application (apps/web)</strong><ul class='tech-list'><li><strong>Framework:</strong> Next.js 14 (App Router)</li><li><strong>Language:</strong> TypeScript</li><li><strong>Styling:</strong> Tailwind CSS + shadcn/ui</li><li><strong>Database:</strong> Supabase (PostgreSQL)</li><li><strong>Authentication:</strong> Supabase Auth</li><li><strong>State Management:</strong> React Server Components + Client Components</li><li><strong>Testing:</strong> Jest + React Testing Library</li><li><strong>Deployment:</strong> Vercel</li></ul><strong class='section-title'>Documentation (apps/docs)</strong><ul class='tech-list'><li><strong>Framework:</strong> VitePress</li><li><strong>Language:</strong> TypeScript</li><li><strong>Styling:</strong> Default VitePress theme</li><li><strong>Deployment:</strong> GitHub Pages</li></ul><strong class='section-title'>Development Tools</strong><ul class='tech-list'><li><strong>Package Manager:</strong> pnpm with workspaces</li><li><strong>Monorepo:</strong> Turbo for build orchestration</li><li><strong>Linting:</strong> ESLint + Prettier</li><li><strong>Type Checking:</strong> TypeScript</li><li><strong>Git Hooks:</strong> Husky (optional)</li><li><strong>CI/CD:</strong> GitHub Actions</li></ul><strong class='section-title'>References</strong><ul class='tech-list'><li><a href='https://nextjs.org' target='_blank' rel='noopener noreferrer'>Next.js</a> – React framework</li><li><a href='https://supabase.com' target='_blank' rel='noopener noreferrer'>Supabase</a> – Backend as a Service</li><li><a href='https://tailwindcss.com' target='_blank' rel='noopener noreferrer'>Tailwind CSS</a> – Utility-first CSS</li><li><a href='https://ui.shadcn.com' target='_blank' rel='noopener noreferrer'>shadcn/ui</a> – UI component library</li><li><a href='https://vitepress.dev' target='_blank' rel='noopener noreferrer'>VitePress</a> – Documentation framework</li><li><a href='https://turbo.build' target='_blank' rel='noopener noreferrer'>Turbo</a> – Monorepo build system</li></ul>">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
                   <picture>
-                    <source type="image/avif" srcset="/images/projects/worksight/1-400.avif 400w, /images/projects/worksight/1-800.avif 800w, /images/projects/worksight/1-1200.avif 1200w" sizes="(max-width: 768px) 95vw, 400px">
-                    <source type="image/webp" srcset="/images/projects/worksight/1-400.webp 400w, /images/projects/worksight/1-800.webp 800w, /images/projects/worksight/1-1200.webp 1200w" sizes="(max-width: 768px) 95vw, 400px">
+                    <source type="image/avif"
+                      srcset="/images/projects/worksight/1-400.avif 400w, /images/projects/worksight/1-800.avif 800w, /images/projects/worksight/1-1200.avif 1200w"
+                      sizes="(max-width: 768px) 95vw, 400px">
+                    <source type="image/webp"
+                      srcset="/images/projects/worksight/1-400.webp 400w, /images/projects/worksight/1-800.webp 800w, /images/projects/worksight/1-1200.webp 1200w"
+                      sizes="(max-width: 768px) 95vw, 400px">
                     <img src="/images/projects/worksight/1.jpg" alt="WorkSight" loading="lazy" width="400" height="300">
                   </picture>
                 </figure>
                 <h3 class="project-title">WorkSight</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application" data-github="https://github.com/adr1el-m/mini-app">
+            <li class="project-item active" data-filter-item data-category="Web Application"
+              data-github="https://github.com/adr1el-m/mini-app">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img alt="Tindahan ni Aling Nena" loading="lazy" width="400" height="300">
+                  <img
+                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='20' font-weight='600' text-anchor='middle' dy='.3em'%3ETindahan ni Aling Nena%3C/text%3E%3C/svg%3E"
+                    alt="Tindahan ni Aling Nena" loading="lazy" width="400" height="300">
                 </figure>
                 <h3 class="project-title">Tindahan ni Aling Nena</h3>
               </a>
@@ -1488,34 +1768,56 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
             <li class="project-item active" data-filter-item data-category="Web Application"
               data-images='["/images/projects/DokQ/1.jpg", "/images/projects/DokQ/2.jpg"]'
               data-webp-images='["/images/projects/DokQ/1-1200.avif", "/images/projects/DokQ/2-1200.avif"]'
-              data-description="DokQ — Smart Queuing and Appointments for Healthcare" data-github="https://github.com/4sightorg/dokq"
+              data-description="DokQ — Smart Queuing and Appointments for Healthcare"
+              data-github="https://github.com/4sightorg/dokq"
               data-technologies="React • TypeScript • Vite • Node.js • Express • Firebase (Auth, Firestore, Storage) • ESLint • Prettier • Vitest • Vercel/Docker">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
                   <picture>
-                    <source type="image/avif" srcset="/images/projects/DokQ/1-400.avif 400w, /images/projects/DokQ/1-800.avif 800w, /images/projects/DokQ/1-1200.avif 1200w" sizes="(max-width: 768px) 95vw, 400px">
-                    <source type="image/webp" srcset="/images/projects/DokQ/1-400.webp 400w, /images/projects/DokQ/1-800.webp 800w, /images/projects/DokQ/1-1200.webp 1200w" sizes="(max-width: 768px) 95vw, 400px">
+                    <source type="image/avif"
+                      srcset="/images/projects/DokQ/1-400.avif 400w, /images/projects/DokQ/1-800.avif 800w, /images/projects/DokQ/1-1200.avif 1200w"
+                      sizes="(max-width: 768px) 95vw, 400px">
+                    <source type="image/webp"
+                      srcset="/images/projects/DokQ/1-400.webp 400w, /images/projects/DokQ/1-800.webp 800w, /images/projects/DokQ/1-1200.webp 1200w"
+                      sizes="(max-width: 768px) 95vw, 400px">
                     <img src="/images/projects/DokQ/1.jpg" alt="DokQ thumbnail" loading="lazy" width="400" height="300">
                   </picture>
                 </figure>
                 <h3 class="project-title">DokQ</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application" data-images="[]" data-webp-images="[]" data-description="LingapLink is a comprehensive, modern healthcare platform designed to revolutionize the connection between patients and healthcare providers. Built with cutting-edge web technologies and a focus on security, accessibility, and user experience, LingapLink streamlines healthcare delivery through intelligent automation and seamless digital workflows." data-technologies="<strong class='section-title'>Frontend</strong><table class='tech-table'><thead><tr><th>Technology</th><th>Version</th><th>Purpose</th></tr></thead><tbody><tr><td>React</td><td>18.3.1</td><td>Modern UI framework with hooks and context</td></tr><tr><td>TypeScript</td><td>5.8.3</td><td>Type‑safe JavaScript development</td></tr><tr><td>Vite</td><td>6.3.5</td><td>Fast build tool and dev server</td></tr><tr><td>React Router</td><td>6.24.1</td><td>Client‑side routing and navigation</td></tr><tr><td>Lucide</td><td>0.523.0</td><td>Modern icon library</td></tr><tr><td>Recharts</td><td>3.0.0</td><td>Data visualization and analytics</td></tr></tbody></table><strong class='section-title'>Backend & Services</strong><table class='tech-table'><thead><tr><th>Technology</th><th>Version</th><th>Purpose</th></tr></thead><tbody><tr><td>Node.js</td><td>20+</td><td>JavaScript runtime environment</td></tr><tr><td>Express</td><td>4.19.2</td><td>Web application framework</td></tr><tr><td>Firebase</td><td>11.9.1</td><td>Backend‑as‑a‑Service platform</td></tr><tr><td>Firestore</td><td>11.9.1</td><td>NoSQL document database</td></tr><tr><td>Gemini</td><td>0.24.1</td><td>AI/ML services and natural language processing</td></tr></tbody></table>" data-github="https://github.com/adr1el-m/carmen-the-parasight" data-video="/images/projects/lingapLink/lingaplinkks.mp4">
+            <li class="project-item active" data-filter-item data-category="Web Application" data-images="[]"
+              data-webp-images="[]"
+              data-description="LingapLink is a comprehensive, modern healthcare platform designed to revolutionize the connection between patients and healthcare providers. Built with cutting-edge web technologies and a focus on security, accessibility, and user experience, LingapLink streamlines healthcare delivery through intelligent automation and seamless digital workflows."
+              data-technologies="<strong class='section-title'>Frontend</strong><table class='tech-table'><thead><tr><th>Technology</th><th>Version</th><th>Purpose</th></tr></thead><tbody><tr><td>React</td><td>18.3.1</td><td>Modern UI framework with hooks and context</td></tr><tr><td>TypeScript</td><td>5.8.3</td><td>Type‑safe JavaScript development</td></tr><tr><td>Vite</td><td>6.3.5</td><td>Fast build tool and dev server</td></tr><tr><td>React Router</td><td>6.24.1</td><td>Client‑side routing and navigation</td></tr><tr><td>Lucide</td><td>0.523.0</td><td>Modern icon library</td></tr><tr><td>Recharts</td><td>3.0.0</td><td>Data visualization and analytics</td></tr></tbody></table><strong class='section-title'>Backend & Services</strong><table class='tech-table'><thead><tr><th>Technology</th><th>Version</th><th>Purpose</th></tr></thead><tbody><tr><td>Node.js</td><td>20+</td><td>JavaScript runtime environment</td></tr><tr><td>Express</td><td>4.19.2</td><td>Web application framework</td></tr><tr><td>Firebase</td><td>11.9.1</td><td>Backend‑as‑a‑Service platform</td></tr><tr><td>Firestore</td><td>11.9.1</td><td>NoSQL document database</td></tr><tr><td>Gemini</td><td>0.24.1</td><td>AI/ML services and natural language processing</td></tr></tbody></table>"
+              data-github="https://github.com/adr1el-m/carmen-the-parasight"
+              data-video="/images/projects/lingapLink/lingaplinkks.mp4">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/lingapLink/lingaplinkks.mp4" muted playsinline preload="none" data-poster="https://placehold.co/400x300/1a1a1a/ffdb70?text=LingapLink" width="400" height="300"></video>
+                  <video class="project-card-video" data-src="/images/projects/lingapLink/lingaplinkks.mp4" muted
+                    playsinline preload="none"
+                    poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3ELingapLink%3C/text%3E%3C/svg%3E"
+                    width="400" height="300"></video>
                 </figure>
                 <h3 class="project-title">LingapLink</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Community" data-images="[]" data-webp-images="[]" data-description="Fireside September is a compact autumn-themed mobile experience that blends seasonal warmth with productivity. It includes flip-style trivia cards with subtle reveal animations, a configurable Pomodoro timer with ambient sounds such as rain and crackling fire, mood-based recipes via the Honey Hazel assistant powered by Gemini, a gamified autumn bucket list that awards points for completed activities, and a customizable fireplace with sound and visual modes including a colorful magic mode. Built with Flutter and Dart, leveraging audioplayers and flutter_launcher_icons. The interface features parallax leaves, scatter effects, pixel-art accents, smooth animations, and a custom autumn icon." data-technologies="Flutter, Dart, Gemini (Honey Hazel), audioplayers, flutter_launcher_icons" data-github="https://github.com/adr1el-m/codedex-SeptemberChallenge" data-video="/images/projects/Fireside/fireside.mp4" data-codedex="https://www.codedex.io/community/monthly-challenge/submission/LBsElEkx1LCAa6uIYd6y">
+            <li class="project-item active" data-filter-item data-category="Community" data-images="[]"
+              data-webp-images="[]"
+              data-description="Fireside September is a compact autumn-themed mobile experience that blends seasonal warmth with productivity. It includes flip-style trivia cards with subtle reveal animations, a configurable Pomodoro timer with ambient sounds such as rain and crackling fire, mood-based recipes via the Honey Hazel assistant powered by Gemini, a gamified autumn bucket list that awards points for completed activities, and a customizable fireplace with sound and visual modes including a colorful magic mode. Built with Flutter and Dart, leveraging audioplayers and flutter_launcher_icons. The interface features parallax leaves, scatter effects, pixel-art accents, smooth animations, and a custom autumn icon."
+              data-technologies="Flutter, Dart, Gemini (Honey Hazel), audioplayers, flutter_launcher_icons"
+              data-github="https://github.com/adr1el-m/codedex-SeptemberChallenge"
+              data-video="/images/projects/Fireside/fireside.mp4"
+              data-codedex="https://www.codedex.io/community/monthly-challenge/submission/LBsElEkx1LCAa6uIYd6y">
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/Fireside/fireside.mp4" muted playsinline preload="none" data-poster="https://placehold.co/400x300/1a1a1a/ffdb70?text=Fireside" width="400" height="300"></video>
+                  <video class="project-card-video" data-src="/images/projects/Fireside/fireside.mp4" muted playsinline
+                    preload="none"
+                    poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='22' font-weight='600' text-anchor='middle' dy='.3em'%3EFireside September%3C/text%3E%3C/svg%3E"
+                    width="400" height="300"></video>
                 </figure>
                 <h3 class="project-title">Fireside september</h3>
               </a>
@@ -1528,9 +1830,10 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
               data-github="https://github.com/adr1el-m/Four-Fundamental-Spaces-Finder?tab=readme-ov-file">
               <a href="#">
                 <figure class="project-img">
-              <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-              <img src="/images/projects/fourFundamentalSpacesFinder/LandingPage.png" alt="Four Fundamental Spaces Finder" loading="lazy" width="400" height="300" data-no-optimize>
-            </figure>
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <img src="/images/projects/fourFundamentalSpacesFinder/LandingPage.png"
+                    alt="Four Fundamental Spaces Finder" loading="lazy" width="400" height="300" data-no-optimize>
+                </figure>
                 <h3 class="project-title">Four Fundamental Spaces Finder</h3>
               </a>
             </li>
@@ -1544,21 +1847,20 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
         <header>
           <h2 class="h2 article-title">Organizations & Affiliations</h2>
         </header>
-    
+
         <div class="organization-container">
           <!-- Organization 1 -->
           <div class="organization-card" data-organization="org1">
             <div class="org-card-header">
               <div class="org-logo">
                 <picture>
-                  <source type="image/avif" srcset="/images/orgs/GDSC-80.avif 80w, /images/orgs/GDSC-160.avif 160w" sizes="80px">
-                  <source type="image/webp" srcset="/images/orgs/GDSC-80.webp 80w, /images/orgs/GDSC-160.webp 160w" sizes="80px">
-                  <img src="/images/orgs/GDSC.png" 
-                       alt="Google Developer Student Clubs - Polytechnic University of the Philippines" 
-                       width="80" 
-                       height="80"
-                       loading="lazy"
-                       decoding="async" />
+                  <source type="image/avif" srcset="/images/orgs/GDSC-80.avif 80w, /images/orgs/GDSC-160.avif 160w"
+                    sizes="80px">
+                  <source type="image/webp" srcset="/images/orgs/GDSC-80.webp 80w, /images/orgs/GDSC-160.webp 160w"
+                    sizes="80px">
+                  <img src="/images/orgs/GDSC.png"
+                    alt="Google Developer Student Clubs - Polytechnic University of the Philippines" width="80"
+                    height="80" loading="lazy" decoding="async" />
                 </picture>
               </div>
               <div class="org-header-content">
@@ -1566,23 +1868,24 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
               </div>
             </div>
             <div class="org-card-body">
-              <p class="org-desc">Focuses on "Helping bridge the gap between theory and practice." This organization empowers students by offering hands-on learning experiences, technical workshops, and collaborative projects, allowing members to apply their theoretical knowledge to real-world challenges. GDSC equips students with the practical skills and industry connections essential for success in tech fields.</p>
+              <p class="org-desc">Focuses on "Helping bridge the gap between theory and practice." This organization
+                empowers students by offering hands-on learning experiences, technical workshops, and collaborative
+                projects, allowing members to apply their theoretical knowledge to real-world challenges. GDSC equips
+                students with the practical skills and industry connections essential for success in tech fields.</p>
             </div>
           </div>
-    
+
           <!-- Organization 2 -->
           <div class="organization-card" data-organization="org2">
             <div class="org-card-header">
               <div class="org-logo">
                 <picture>
-                  <source type="image/avif" srcset="/images/orgs/AWS-80.avif 80w, /images/orgs/AWS-160.avif 160w" sizes="80px">
-                  <source type="image/webp" srcset="/images/orgs/AWS-80.webp 80w, /images/orgs/AWS-160.webp 160w" sizes="80px">
-                  <img src="/images/orgs/AWS.jpg" 
-                       alt="AWS Cloud Club - Polytechnic University of the Philippines" 
-                       width="80" 
-                       height="80"
-                       loading="lazy"
-                       decoding="async" />
+                  <source type="image/avif" srcset="/images/orgs/AWS-80.avif 80w, /images/orgs/AWS-160.avif 160w"
+                    sizes="80px">
+                  <source type="image/webp" srcset="/images/orgs/AWS-80.webp 80w, /images/orgs/AWS-160.webp 160w"
+                    sizes="80px">
+                  <img src="/images/orgs/AWS.jpg" alt="AWS Cloud Club - Polytechnic University of the Philippines"
+                    width="80" height="80" loading="lazy" decoding="async" />
                 </picture>
               </div>
               <div class="org-header-content">
@@ -1590,23 +1893,26 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
               </div>
             </div>
             <div class="org-card-body">
-              <p class="org-desc">The first of its kind in the Philippines, is reshaping campus life with a blend of organized chaos and "AWSomeness." This club provides students with hands-on experience in cloud computing, offering workshops, events, and projects that help members develop their cloud skills, explore Amazon Web Services (AWS) technologies, and build a strong foundation for careers in cloud and tech industries.</p>
+              <p class="org-desc">The first of its kind in the Philippines, is reshaping campus life with a blend of
+                organized chaos and "AWSomeness." This club provides students with hands-on experience in cloud
+                computing, offering workshops, events, and projects that help members develop their cloud skills,
+                explore Amazon Web Services (AWS) technologies, and build a strong foundation for careers in cloud and
+                tech industries.</p>
             </div>
           </div>
-    
+
           <!-- Organization 3 -->
           <div class="organization-card" data-organization="org3">
             <div class="org-card-header">
               <div class="org-logo">
                 <picture>
-                  <source type="image/avif" srcset="/images/orgs/MMSC-80.avif 80w, /images/orgs/MMSC-160.avif 160w" sizes="80px">
-                  <source type="image/webp" srcset="/images/orgs/MMSC-80.webp 80w, /images/orgs/MMSC-160.webp 160w" sizes="80px">
-                  <img src="/images/orgs/MMSC.jpg" 
-                       alt="Polytechnic University of the Philippines - Manila Microsoft Student Community" 
-                       width="80" 
-                       height="80"
-                       loading="lazy"
-                       decoding="async"/>
+                  <source type="image/avif" srcset="/images/orgs/MMSC-80.avif 80w, /images/orgs/MMSC-160.avif 160w"
+                    sizes="80px">
+                  <source type="image/webp" srcset="/images/orgs/MMSC-80.webp 80w, /images/orgs/MMSC-160.webp 160w"
+                    sizes="80px">
+                  <img src="/images/orgs/MMSC.jpg"
+                    alt="Polytechnic University of the Philippines - Manila Microsoft Student Community" width="80"
+                    height="80" loading="lazy" decoding="async" />
                 </picture>
               </div>
               <div class="org-header-content">
@@ -1614,23 +1920,25 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
               </div>
             </div>
             <div class="org-card-body">
-              <p class="org-desc">A dynamic network of student leaders dedicated to fostering a community where students can learn, innovate, and collaborate on projects using Microsoft technologies. Through workshops, mentorship, and events, the Microsoft Student Community empowers members to develop their technical skills, grow their professional network, and prepare for success in the tech industry.</p>
+              <p class="org-desc">A dynamic network of student leaders dedicated to fostering a community where students
+                can learn, innovate, and collaborate on projects using Microsoft technologies. Through workshops,
+                mentorship, and events, the Microsoft Student Community empowers members to develop their technical
+                skills, grow their professional network, and prepare for success in the tech industry.</p>
             </div>
           </div>
-    
+
           <!-- Organization 4 -->
           <div class="organization-card" data-organization="org4">
             <div class="org-card-header">
               <div class="org-logo">
                 <picture>
-                  <source type="image/avif" srcset="/images/orgs/TPG-80.avif 80w, /images/orgs/TPG-160.avif 160w" sizes="80px">
-                  <source type="image/webp" srcset="/images/orgs/TPG-80.webp 80w, /images/orgs/TPG-160.webp 160w" sizes="80px">
-                  <img src="/images/orgs/TPG.jpg" 
-                       alt="The Programmers' Guild — Polytechnic University of the Philippines" 
-                       width="80" 
-                       height="80"
-                       loading="lazy"
-                       decoding="async" />
+                  <source type="image/avif" srcset="/images/orgs/TPG-80.avif 80w, /images/orgs/TPG-160.avif 160w"
+                    sizes="80px">
+                  <source type="image/webp" srcset="/images/orgs/TPG-80.webp 80w, /images/orgs/TPG-160.webp 160w"
+                    sizes="80px">
+                  <img src="/images/orgs/TPG.jpg"
+                    alt="The Programmers' Guild — Polytechnic University of the Philippines" width="80" height="80"
+                    loading="lazy" decoding="async" />
                 </picture>
               </div>
               <div class="org-header-content">
@@ -1638,7 +1946,10 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
               </div>
             </div>
             <div class="org-card-body">
-              <p class="org-desc">A community-based student organization advocating that "Coding is for everyone." Open to all students, TPG fosters an inclusive environment where members can explore programming and technology through hands-on workshops, coding competitions, and community events, supporting students of all backgrounds in building tech skills.</p>
+              <p class="org-desc">A community-based student organization advocating that "Coding is for everyone." Open
+                to all students, TPG fosters an inclusive environment where members can explore programming and
+                technology through hands-on workshops, coding competitions, and community events, supporting students of
+                all backgrounds in building tech skills.</p>
             </div>
           </div>
 
@@ -1647,22 +1958,25 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
             <div class="org-card-header">
               <div class="org-logo">
                 <picture>
-                  <source type="image/avif" srcset="/images/orgs/JBECP-80.avif 80w, /images/orgs/JBECP-160.avif 160w" sizes="80px">
-                  <source type="image/webp" srcset="/images/orgs/JBECP-80.webp 80w, /images/orgs/JBECP-160.webp 160w" sizes="80px">
-                  <img src="/images/orgs/JBECP.jpg" 
-                       alt="Junior Blockchain Education Consortium of the Philippines - Polytechnic University of the Philippines - Manila" 
-                       width="80" 
-                       height="80"
-                       loading="lazy"
-                       decoding="async" />
+                  <source type="image/avif" srcset="/images/orgs/JBECP-80.avif 80w, /images/orgs/JBECP-160.avif 160w"
+                    sizes="80px">
+                  <source type="image/webp" srcset="/images/orgs/JBECP-80.webp 80w, /images/orgs/JBECP-160.webp 160w"
+                    sizes="80px">
+                  <img src="/images/orgs/JBECP.jpg"
+                    alt="Junior Blockchain Education Consortium of the Philippines - Polytechnic University of the Philippines - Manila"
+                    width="80" height="80" loading="lazy" decoding="async" />
                 </picture>
               </div>
               <div class="org-header-content">
-                <h3 class="org-name">Junior Blockchain Education Consortium of the Philippines - Polytechnic University of the Philippines - Manila</h3>
+                <h3 class="org-name">Junior Blockchain Education Consortium of the Philippines - Polytechnic University
+                  of the Philippines - Manila</h3>
               </div>
             </div>
             <div class="org-card-body">
-              <p class="org-desc">Empowers students to "Win through a chain of learnings." This organization provides a platform for aspiring business leaders to gain practical insights, build professional skills, and connect through events, seminars, and networking opportunities. JBEC supports its members in developing a solid foundation for future careers in business and management.</p>
+              <p class="org-desc">Empowers students to "Win through a chain of learnings." This organization provides a
+                platform for aspiring business leaders to gain practical insights, build professional skills, and
+                connect through events, seminars, and networking opportunities. JBEC supports its members in developing
+                a solid foundation for future careers in business and management.</p>
             </div>
           </div>
         </div>
@@ -1671,7 +1985,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
 
 
 
-      
+
       <!-- Add this section for FAQ -->
       <article id="faq" class="faq" data-page="faq">
         <header>
@@ -1685,7 +1999,8 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
           </div>
           <div class="faq-item">
             <h3 class="faq-question">What services do you offer?</h3>
-            <p class="faq-answer">I offer web development, database administration, graphic design, and UI/UX design services.</p>
+            <p class="faq-answer">I offer web development, database administration, graphic design, and UI/UX design
+              services.</p>
           </div>
           <!-- Add more FAQ items as needed -->
         </section>
@@ -1700,7 +2015,8 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
   </main>
 
   <!-- Chatbot Button -->
-  <button class="chatbot-btn" aria-label="Open chat with AdrAI assistant" aria-haspopup="dialog" aria-controls="chatbox">
+  <button class="chatbot-btn" aria-label="Open chat with AdrAI assistant" aria-haspopup="dialog"
+    aria-controls="chatbox">
     <span role="img" aria-label="Chat icon">💬</span>
   </button>
 
@@ -1712,20 +2028,15 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
         <span aria-hidden="true">✕</span>
       </button>
     </div>
-    
+
     <div class="chatbox-messages" role="log" aria-live="polite" aria-atomic="false" aria-label="Chat messages">
       <!-- Messages will be added here dynamically -->
     </div>
-    
+
     <form class="chatbox-input" aria-label="Chat input form">
       <label for="chat-input" class="visually-hidden">Type your message</label>
-      <input 
-        type="text" 
-        id="chat-input"
-        placeholder="Ask me anything..." 
-        aria-label="Type your message to AdrAI"
-        autocomplete="off"
-        aria-describedby="chat-input-hint">
+      <input type="text" id="chat-input" placeholder="Ask me anything..." aria-label="Type your message to AdrAI"
+        autocomplete="off" aria-describedby="chat-input-hint">
       <span id="chat-input-hint" class="visually-hidden">Press Enter to send message</span>
       <button type="submit" aria-label="Send message">
         <span aria-hidden="true">↑</span>
@@ -1739,12 +2050,13 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
   </button>
 
   <!-- Project Modal -->
-  <div id="projectModal" class="project-modal" role="dialog" aria-labelledby="project-modal-title" aria-modal="true" aria-hidden="true">
+  <div id="projectModal" class="project-modal" role="dialog" aria-labelledby="project-modal-title" aria-modal="true"
+    aria-hidden="true">
     <div class="project-modal-wrapper">
       <button class="project-modal-close" aria-label="Close project modal" type="button">
         <span aria-hidden="true">&times;</span>
       </button>
-      
+
       <!-- Image Gallery Section (Top) -->
       <div>
         <div class="project-gallery-slider">
@@ -1757,7 +2069,8 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
               <source class="project-image-jpeg" type="image/jpeg" />
               <img src="" alt="" class="project-gallery-image" id="project-modal-image">
             </picture>
-            <video id="project-modal-video" class="project-gallery-video" controls playsinline preload="metadata" style="display: none;"></video>
+            <video id="project-modal-video" class="project-gallery-video" controls playsinline preload="metadata"
+              style="display: none;"></video>
             <!-- project-gallery-counter removed as requested -->
           </div>
           <button class="project-gallery-next" aria-label="Next project image" type="button">
@@ -1765,7 +2078,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
           </button>
         </div>
       </div>
-      
+
       <!-- Project Info Section (Bottom) -->
       <div class="project-modal-info">
         <h2 id="project-modal-title" class="project-info-title"></h2>
@@ -1775,10 +2088,12 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
           <span class="tech-stack"></span>
         </div>
         <div class="project-info-links">
-          <a href="#" class="project-link project-github" target="_blank" rel="noopener noreferrer" aria-label="View project on GitHub (opens in new tab)" style="display: none;">
+          <a href="#" class="project-link project-github" target="_blank" rel="noopener noreferrer"
+            aria-label="View project on GitHub (opens in new tab)" style="display: none;">
             <span class="link-icon">🔗</span> GitHub
           </a>
-          <a href="#" class="project-link project-live" target="_blank" rel="noopener noreferrer" aria-label="View live demo (opens in new tab)" style="display: none;">
+          <a href="#" class="project-link project-live" target="_blank" rel="noopener noreferrer"
+            aria-label="View live demo (opens in new tab)" style="display: none;">
             <span class="link-icon">🚀</span> Live Demo
           </a>
         </div>
@@ -1787,7 +2102,8 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
   </div>
 
   <!-- Updated Achievement Modal -->
-  <div id="achievementModal" class="achievement-modal" role="dialog" aria-labelledby="achievement-modal-title" aria-modal="true" aria-hidden="true">
+  <div id="achievementModal" class="achievement-modal" role="dialog" aria-labelledby="achievement-modal-title"
+    aria-modal="true" aria-hidden="true">
     <div class="achievement-modal-content">
       <button class="achievement-modal-close" aria-label="Close achievement modal" type="button">
         <span aria-hidden="true">&times;</span>
@@ -1839,382 +2155,411 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
   <script type="module" src="/src/main.ts"></script>
 
   <style>
-  .chatbot-btn {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
-    color: var(--text-primary);
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: var(--type-2xl);
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3),
-                inset 2px 2px 6px rgba(255, 255, 255, 0.1),
-                inset -2px -2px 6px rgba(0, 0, 0, 0.8);
-    z-index: 1000;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 1px solid var(--color-border);
-  }
-
-  .chatbot-btn:hover {
-    transform: scale(1.1);
-    background: linear-gradient(145deg, #1a1a1a, #2c2c2c);
-    color: var(--accent-gold);
-    box-shadow: var(--shadow-gold);
-  }
-
-  .chatbox {
-    position: fixed;
-    bottom: 100px;
-    right: 30px;
-    width: 320px;
-    height: 480px;
-    background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
-    border-radius: 20px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-    display: none;
-    flex-direction: column;
-    z-index: 1100;
-    overflow: hidden;
-    border: 1px solid var(--color-border);
-    backdrop-filter: blur(15px);
-  }
-
-  .chatbox.active {
-    display: flex;
-  }
-
-  .chatbox-header {
-    background: linear-gradient(145deg, var(--surface-2), var(--surface));
-    color: var(--text-primary);
-    padding: 15px;
-    font-size: var(--type-sm);
-    text-align: center;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--color-border);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    text-shadow: none;
-  }
-
-  .chatbox-header h3 {
-    margin: 0;
-    font-size: var(--type-sm);
-  }
-
-  .close-btn {
-    cursor: pointer;
-    font-size: var(--type-xl);
-    color: var(--text-primary);
-    font-weight: bold;
-    padding: 5px;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .close-btn:hover {
-    background: rgba(26, 26, 26, 0.1);
-    transform: scale(1.1);
-  }
-
-  .chatbox-messages {
-    flex: 1;
-    padding: 10px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background: var(--surface);
-    scrollbar-width: thin;
-    scrollbar-color: var(--accent-gold) var(--surface);
-  }
-
-  .chatbox-messages::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .chatbox-messages::-webkit-scrollbar-track {
-    background: var(--surface);
-  }
-
-  .chatbox-messages::-webkit-scrollbar-thumb {
-    background: var(--accent-gold);
-    border-radius: 3px;
-  }
-
-  .message {
-    max-width: 95%;
-    padding: 6px 8px;
-    border-radius: 15px;
-    word-wrap: break-word;
-    animation: messagePopIn 0.3s ease-out forwards;
-    opacity: 0;
-    transform: translateY(10px);
-    font-size: var(--type-xs);
-  }
-
-  @keyframes messagePopIn {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .user-message {
-    background: linear-gradient(145deg, var(--surface-2), var(--surface));
-    color: var(--text-primary);
-    align-self: flex-end;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--color-border);
-  }
-
-  .bot-message {
-    background: linear-gradient(145deg, #2c2c2c, #242424);
-    color: #fff;
-    align-self: flex-start;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--color-border);
-  }
-  /* Chatbot links: gold, not default blue */
-  .bot-message a {
-    color: var(--accent-gold);
-    text-decoration: underline;
-  }
-  .bot-message a:hover {
-    color: var(--accent-gold);
-  }
-  .bot-message a:focus {
-    outline: 2px solid var(--color-accent-weak);
-    outline-offset: 2px;
-  }
-
-  .chatbox-input {
-    display: flex;
-    padding: 10px;
-    gap: 10px;
-    background: var(--surface-2);
-    border-top: 1px solid var(--color-border);
-  }
-
-  .chatbox-input input {
-    flex: 1;
-    padding: 12px 20px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    border-radius: 15px;
-    font-size: var(--type-xs);
-    outline: none;
-    background: #1a1a1a;
-    color: #fff;
-    transition: all 0.3s ease;
-  }
-
-  .chatbox-input input:focus {
-    border-color: #ffdb70;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-  }
-
-  .chatbox-input input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .chatbox-input button {
-    background: linear-gradient(145deg, #ffdb70, #FFC000);
-    color: #000;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 15px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .chatbox-input button:hover {
-    background: linear-gradient(145deg, #FFC000, #FFD700);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-  }
-
-  .typing-indicator {
-    display: flex;
-    gap: 4px;
-    padding: 8px 12px;
-    background: rgba(255, 215, 0, 0.1);
-    border-radius: 10px;
-    width: fit-content;
-  }
-
-  .typing-dot {
-    width: 6px;
-    height: 6px;
-    background: #FFD700;
-    border-radius: 50%;
-    animation: typingBounce 1.4s infinite ease-in-out;
-  }
-
-  .typing-dot:nth-child(1) { animation-delay: 0s; }
-  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-  @keyframes typingBounce {
-    0%, 60%, 100% { transform: translateY(0); }
-    30% { transform: translateY(-4px); }
-  }
-
-
-  /* Mobile-friendly chatbot styles */
-  @media (max-width: 768px) {
     .chatbot-btn {
-      bottom: 80px; /* Move up to avoid navbar */
-      right: 20px;
-      width: 50px;
-      height: 50px;
-      font-size: 1.2rem;
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+      color: var(--text-primary);
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: var(--type-2xl);
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3),
+        inset 2px 2px 6px rgba(255, 255, 255, 0.1),
+        inset -2px -2px 6px rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid var(--color-border);
+    }
+
+    .chatbot-btn:hover {
+      transform: scale(1.1);
+      background: linear-gradient(145deg, #1a1a1a, #2c2c2c);
+      color: var(--accent-gold);
+      box-shadow: var(--shadow-gold);
     }
 
     .chatbox {
       position: fixed;
-      bottom: 80px; /* Move up to avoid navbar */
-      right: 10px;
-      width: calc(100% - 20px); /* Full width minus margins */
-      max-width: 350px;
-      height: 60vh; /* Percentage of viewport height */
-      max-height: 500px;
-      margin: 10px;
-      border-radius: 15px;
+      bottom: 100px;
+      right: 30px;
+      width: 320px;
+      height: 480px;
+      background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+      display: none;
+      flex-direction: column;
+      z-index: 1100;
+      overflow: hidden;
+      border: 1px solid var(--color-border);
+      backdrop-filter: blur(15px);
+    }
+
+    .chatbox.active {
+      display: flex;
     }
 
     .chatbox-header {
-      padding: 12px;
-      font-size: 1rem;
+      background: linear-gradient(145deg, var(--surface-2), var(--surface));
+      color: var(--text-primary);
+      padding: 15px;
+      font-size: var(--type-sm);
+      text-align: center;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--color-border);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      text-shadow: none;
+    }
+
+    .chatbox-header h3 {
+      margin: 0;
+      font-size: var(--type-sm);
+    }
+
+    .close-btn {
+      cursor: pointer;
+      font-size: var(--type-xl);
+      color: var(--text-primary);
+      font-weight: bold;
+      padding: 5px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-btn:hover {
+      background: rgba(26, 26, 26, 0.1);
+      transform: scale(1.1);
     }
 
     .chatbox-messages {
-      padding: 12px;
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: var(--surface);
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent-gold) var(--surface);
     }
 
-    .chatbox-input {
-      padding: 8px;
+    .chatbox-messages::-webkit-scrollbar {
+      width: 6px;
     }
 
-    .chatbox-input input {
-      padding: 8px 12px;
-      font-size: 14px;
+    .chatbox-messages::-webkit-scrollbar-track {
+      background: var(--surface);
     }
 
-    .chatbox-input button {
-      padding: 8px 12px;
+    .chatbox-messages::-webkit-scrollbar-thumb {
+      background: var(--accent-gold);
+      border-radius: 3px;
     }
 
     .message {
+      max-width: 95%;
+      padding: 6px 8px;
+      border-radius: 15px;
+      word-wrap: break-word;
+      animation: messagePopIn 0.3s ease-out forwards;
+      opacity: 0;
+      transform: translateY(10px);
+      font-size: var(--type-xs);
+    }
+
+    @keyframes messagePopIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .user-message {
+      background: linear-gradient(145deg, var(--surface-2), var(--surface));
+      color: var(--text-primary);
+      align-self: flex-end;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--color-border);
+    }
+
+    .bot-message {
+      background: linear-gradient(145deg, #2c2c2c, #242424);
+      color: #fff;
+      align-self: flex-start;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--color-border);
+    }
+
+    /* Chatbot links: gold, not default blue */
+    .bot-message a {
+      color: var(--accent-gold);
+      text-decoration: underline;
+    }
+
+    .bot-message a:hover {
+      color: var(--accent-gold);
+    }
+
+    .bot-message a:focus {
+      outline: 2px solid var(--color-accent-weak);
+      outline-offset: 2px;
+    }
+
+    .chatbox-input {
+      display: flex;
+      padding: 10px;
+      gap: 10px;
+      background: var(--surface-2);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .chatbox-input input {
+      flex: 1;
+      padding: 12px 20px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 15px;
+      font-size: var(--type-xs);
+      outline: none;
+      background: #1a1a1a;
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+
+    .chatbox-input input:focus {
+      border-color: #ffdb70;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    }
+
+    .chatbox-input input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .chatbox-input button {
+      background: linear-gradient(145deg, #ffdb70, #FFC000);
+      color: #000;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .chatbox-input button:hover {
+      background: linear-gradient(145deg, #FFC000, #FFD700);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
       padding: 8px 12px;
-      font-size: 14px;
-      max-width: 85%;
-    }
-  }
-
-  /* Additional improvements for very small screens */
-  @media (max-width: 380px) {
-    .chatbox {
-      width: calc(100% - 10px);
-      right: 5px;
-      margin: 5px;
+      background: rgba(255, 215, 0, 0.1);
+      border-radius: 10px;
+      width: fit-content;
     }
 
-    .chatbot-btn {
-      width: 45px;
-      height: 45px;
-      font-size: 1rem;
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background: #FFD700;
+      border-radius: 50%;
+      animation: typingBounce 1.4s infinite ease-in-out;
     }
-  }
 
-  /* Add this CSS for dark mode adaptation */
-  .faq-section {
-    background-color: #2c2c2c; /* Dark background */
-    color: #fff; /* Light text */
-    padding: 20px;
-    border-radius: 8px;
-  }
-
-  .faq-item {
-    margin-bottom: 15px;
-  }
-
-  .faq-question {
-    cursor: pointer;
-    font-weight: bold;
-    transition: color 0.3s;
-    color: var(--text-primary);
-  }
-
-  .faq-question:hover {
-    color: var(--accent-gold);
-  }
-
-  .faq-answer {
-    display: none; /* Initially hidden */
-    margin-top: 5px;
-    padding: 10px;
-    background-color: var(--surface-2);
-    color: var(--text-muted);
-    border-radius: 5px;
-  }
-
-  /* Project Modal Styles moved to style.css to prevent conflicts and ensure consistency */
-  /* Inline project modal CSS removed. See `style.css` for authoritative styles. */
-
-  /* Keep achievement item pointer styling */
-  .achievement-item {
-    cursor: pointer;
-  }
-
-  /* Mobile project title overlay */
-  @media (max-width: 600px) {
-    
-
-    article.projects ul.project-list li.project-item a {
-      position: relative;
-      display: block;
+    .typing-dot:nth-child(1) {
+      animation-delay: 0s;
     }
-    article.projects ul.project-list li.project-item .project-img {
-      position: relative;
+
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
     }
-    /* Center the eye icon overlay on mobile */
-    article.projects ul.project-list li.project-item .project-item-icon-box {
-      inset: 0;
-      margin: auto;
-      transform: scale(var(--scale)); /* remove translate to avoid offset */
-      z-index: 3;
+
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
     }
-    article.projects ul.project-list li.project-item .project-title {
-      position: absolute;
-      left: 12px;
-      bottom: 12px;
-      margin: 0;
-      padding: 6px 10px;
+
+    @keyframes typingBounce {
+
+      0%,
+      60%,
+      100% {
+        transform: translateY(0);
+      }
+
+      30% {
+        transform: translateY(-4px);
+      }
+    }
+
+
+    /* Mobile-friendly chatbot styles */
+    @media (max-width: 768px) {
+      .chatbot-btn {
+        bottom: 80px;
+        /* Move up to avoid navbar */
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+      }
+
+      .chatbox {
+        position: fixed;
+        bottom: 80px;
+        /* Move up to avoid navbar */
+        right: 10px;
+        width: calc(100% - 20px);
+        /* Full width minus margins */
+        max-width: 350px;
+        height: 60vh;
+        /* Percentage of viewport height */
+        max-height: 500px;
+        margin: 10px;
+        border-radius: 15px;
+      }
+
+      .chatbox-header {
+        padding: 12px;
+        font-size: 1rem;
+      }
+
+      .chatbox-messages {
+        padding: 12px;
+      }
+
+      .chatbox-input {
+        padding: 8px;
+      }
+
+      .chatbox-input input {
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+
+      .chatbox-input button {
+        padding: 8px 12px;
+      }
+
+      .message {
+        padding: 8px 12px;
+        font-size: 14px;
+        max-width: 85%;
+      }
+    }
+
+    /* Additional improvements for very small screens */
+    @media (max-width: 380px) {
+      .chatbox {
+        width: calc(100% - 10px);
+        right: 5px;
+        margin: 5px;
+      }
+
+      .chatbot-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+      }
+    }
+
+    /* Add this CSS for dark mode adaptation */
+    .faq-section {
+      background-color: #2c2c2c;
+      /* Dark background */
+      color: #fff;
+      /* Light text */
+      padding: 20px;
       border-radius: 8px;
-      background: rgba(26, 26, 26, 0.65);
-      color: var(--white-1);
-      z-index: 2;
-      font-size: 0.95rem;
-      line-height: 1.2;
-      pointer-events: none;
     }
-  }
 
+    .faq-item {
+      margin-bottom: 15px;
+    }
+
+    .faq-question {
+      cursor: pointer;
+      font-weight: bold;
+      transition: color 0.3s;
+      color: var(--text-primary);
+    }
+
+    .faq-question:hover {
+      color: var(--accent-gold);
+    }
+
+    .faq-answer {
+      display: none;
+      /* Initially hidden */
+      margin-top: 5px;
+      padding: 10px;
+      background-color: var(--surface-2);
+      color: var(--text-muted);
+      border-radius: 5px;
+    }
+
+    /* Project Modal Styles moved to style.css to prevent conflicts and ensure consistency */
+    /* Inline project modal CSS removed. See `style.css` for authoritative styles. */
+
+    /* Keep achievement item pointer styling */
+    .achievement-item {
+      cursor: pointer;
+    }
+
+    /* Mobile project title overlay */
+    @media (max-width: 600px) {
+
+
+      article.projects ul.project-list li.project-item a {
+        position: relative;
+        display: block;
+      }
+
+      article.projects ul.project-list li.project-item .project-img {
+        position: relative;
+      }
+
+      /* Center the eye icon overlay on mobile */
+      article.projects ul.project-list li.project-item .project-item-icon-box {
+        inset: 0;
+        margin: auto;
+        transform: scale(var(--scale));
+        /* remove translate to avoid offset */
+        z-index: 3;
+      }
+
+      article.projects ul.project-list li.project-item .project-title {
+        position: absolute;
+        left: 12px;
+        bottom: 12px;
+        margin: 0;
+        padding: 6px 10px;
+        border-radius: 8px;
+        background: rgba(26, 26, 26, 0.65);
+        color: var(--white-1);
+        z-index: 2;
+        font-size: 0.95rem;
+        line-height: 1.2;
+        pointer-events: none;
+      }
+    }
   </style>
 
 </body>

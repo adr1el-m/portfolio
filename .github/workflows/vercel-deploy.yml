@@ -36,5 +36,3 @@ jobs:
           working-directory: .
           prod: true
           prebuilt: true
-          # If build is already done above, you can set prebuilt: true
-          # prebuilt: true

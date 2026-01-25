@@ -67,14 +67,14 @@ export class ChatbotManager {
   private messagesContainer: HTMLElement | null;
   private inputField: HTMLInputElement | null;
   private sendButton: HTMLElement | null;
-  
+
   private conversationSummary: string = '';
   private summaryEveryTurns = 6;
   private lastUserMessage: string | null = null;
   private detailedMode: boolean = false;
   private userPrefs: { detailedMode: boolean } = { detailedMode: false };
   private geminiService: GeminiService;
-  
+
   // Add focus management state
   private previouslyFocusedElement: HTMLElement | null = null;
   private focusTrapHandler?: (e: KeyboardEvent) => void;
@@ -86,7 +86,7 @@ export class ChatbotManager {
     skills: '',
     achievements: '',
   };
-  
+
   // --- Smart helpers for matching and detail preference ---
   private normalize(text: string): string {
     return text.toLowerCase().replace(/[^a-z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -861,7 +861,7 @@ export class ChatbotManager {
   }
 
   // Multi-intent: score intents with keyword weights and entity boosts
-  private scoreIntents(userMessage: string, entities: ExtractedEntities): Array<{ intent: IntentType, score: number }>{
+  private scoreIntents(userMessage: string, entities: ExtractedEntities): Array<{ intent: IntentType, score: number }> {
     const m = this.normalize(userMessage);
 
     const hasProjectEntity = entities.projects.length > 0;
@@ -1043,10 +1043,38 @@ export class ChatbotManager {
     return null;
   }
 
-  private formatResponse(text: string, tone: 'concise'|'detailed'|'playful' = 'concise'): string {
-    if (tone === 'concise') return `${text}`;
-    if (tone === 'playful') return `${text} 🎉`;
-    return `${text}${this.conversationSummary ? `<br><em>Based on our chat:</em> ${this.conversationSummary}` : ''}`;
+  // Convert markdown formatting to HTML for proper display in chat
+  private markdownToHtml(text: string): string {
+    return text
+      // Convert markdown links [text](url) to clickable <a> tags
+      .replace(/\[([^\]]+)\]\s*\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:#ffdb70;text-decoration:underline">$1</a>')
+      // Convert bare URLs to clickable links (http/https)
+      .replace(/(?<![">])(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color:#ffdb70;text-decoration:underline">$1</a>')
+      // Convert **bold** to <strong>
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      // Convert *italic* to <em>
+      .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+      // Convert `code` to <code>
+      .replace(/`([^`]+)`/g, '<code style="background:#2a2a2a;padding:2px 5px;border-radius:3px;font-size:0.9em">$1</code>')
+      // Convert markdown bullet lists: * item or - item at start of line
+      .replace(/^[\*\-]\s+(.+)$/gm, '• $1')
+      // Convert numbered lists: 1. item
+      .replace(/^\d+\.\s+(.+)$/gm, '→ $1')
+      // Convert double newlines to <br><br>
+      .replace(/\n\n/g, '<br><br>')
+      // Convert single newlines to <br>
+      .replace(/\n/g, '<br>')
+      // Clean up any remaining stray asterisks at word boundaries
+      .replace(/(\s)\*(\S)/g, '$1$2')
+      .replace(/(\S)\*(\s)/g, '$1$2');
+  }
+
+  private formatResponse(text: string, tone: 'concise' | 'detailed' | 'playful' = 'concise'): string {
+    // Always convert markdown to HTML for proper rendering
+    const htmlText = this.markdownToHtml(text);
+    if (tone === 'concise') return htmlText;
+    if (tone === 'playful') return `${htmlText} 🎉`;
+    return `${htmlText}${this.conversationSummary ? `<br><em>Based on our chat:</em> ${this.conversationSummary}` : ''}`;
   }
 
 
@@ -1269,7 +1297,7 @@ export class ChatbotManager {
           const facts = this.unifiedIndex.find(it => it.kind === 'project' && this.normalize(it.title) === this.normalize(title))?.facts;
           (facts?.tech || []).forEach(t => techCounts.set(t, (techCounts.get(t) || 0) + 1));
         });
-        const topTech = Array.from(techCounts.entries()).sort((a,b) => b[1]-a[1]).slice(0,3).map(([t]) => t);
+        const topTech = Array.from(techCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([t]) => t);
         this.topicSummaries.projects = `Discussed ${mentionedProjects.size} project(s): ${Array.from(mentionedProjects).join(', ')}${topTech.length ? ` — common stack: ${topTech.join(', ')}` : ''}`;
       } else {
         this.topicSummaries.projects = '';
@@ -1305,20 +1333,55 @@ export class ChatbotManager {
   }
 
   private buildContext(): string {
-    const profile = `Name: ${KB.profile.name}\nTitle: ${KB.profile.title}\nSummary: ${KB.profile.summary}`;
-    const skills = `Skills: ${KB.skills.core.join(', ')}\nTech Stack: ${KB.skills.technologies.join(', ')}`;
-    
-    const projects = KB.projects.map(p => 
-      `- ${p.title} (${p.category}): ${p.description}. Tech: ${p.technologies}. Links: ${[p.liveUrl, p.githubUrl, p.videoUrl].filter(Boolean).join(', ')}`
+    const profile = `Name: ${KB.profile.name}
+Title: ${KB.profile.title}
+Summary: ${KB.profile.summary}
+Nationality: ${KB.profile.nationality || 'Filipino'}`;
+
+    const skills = `Core Skills: ${KB.skills.core.join(', ')}
+Technologies: ${KB.skills.technologies.join(', ')}`;
+
+    const experience = KB.experience.map(e =>
+      `- ${e.role} at ${e.company} (${e.period}): ${e.summary || 'Professional experience'}`
     ).join('\n');
-    
-    const achievements = KB.achievements.map(a => 
-      `- ${a.title}: ${a.description} (${a.location}, ${a.date})`
+
+    const education = KB.education.map(e =>
+      `- ${e.school}${e.program ? ` — ${e.program}` : ''}${e.period ? ` (${e.period})` : ''}${e.notes ? `. ${e.notes}` : ''}`
     ).join('\n');
-    
-    const contact = `Email: ${KB.contact.email}\nGitHub: ${KB.contact.github}\nLinkedIn: ${KB.contact.linkedin}`;
-    
-    return [profile, skills, "Projects:", projects, "Achievements:", achievements, "Contact:", contact].join('\n\n');
+
+    const projects = KB.projects.slice(0, 10).map(p =>
+      `- ${p.title} (${p.category}): ${p.description?.slice(0, 150) || 'Project details available'}. Tech: ${p.technologies?.split(';')[0] || 'Various'}. ${p.githubUrl ? `GitHub: ${p.githubUrl}` : ''}${p.liveUrl ? ` Live: ${p.liveUrl}` : ''}`
+    ).join('\n');
+
+    const achievements = KB.achievements.slice(0, 6).map(a =>
+      `- ${a.title}: ${a.description?.slice(0, 100) || 'Achievement'} (${a.location}, ${a.date})${a.projectTitle ? ` — Project: ${a.projectTitle}` : ''}`
+    ).join('\n');
+
+    const organizations = `Organizations: ${KB.organizations.join(', ')}`;
+
+    const contact = `Email: ${KB.contact.email}
+GitHub: ${KB.contact.github}
+LinkedIn: ${KB.contact.linkedin}
+Resume: ${KB.contact.resumeUrl}`;
+
+    // Include topic summaries if available for conversation context
+    const topicContext = [
+      this.topicSummaries.projects,
+      this.topicSummaries.skills,
+      this.topicSummaries.achievements
+    ].filter(Boolean).join('\n');
+
+    return [
+      '=== PROFILE ===', profile,
+      '\n=== SKILLS ===', skills,
+      '\n=== EXPERIENCE ===', experience || 'Currently focused on studies and hackathons',
+      '\n=== EDUCATION ===', education,
+      '\n=== PROJECTS (Highlights) ===', projects,
+      '\n=== ACHIEVEMENTS ===', achievements,
+      '\n=== ORGANIZATIONS ===', organizations,
+      '\n=== CONTACT ===', contact,
+      topicContext ? `\n=== CURRENT DISCUSSION ===\n${topicContext}` : ''
+    ].join('\n');
   }
 
   private async handleMessage(userMessage: string): Promise<void> {
@@ -1328,13 +1391,18 @@ export class ChatbotManager {
       return;
     }
 
-    // Try Gemini first
+    // Try Gemini first with conversation history for context
     try {
       this.showTypingIndicator();
       const context = this.buildContext();
-      const aiResponse = await this.geminiService.generateResponse(userMessage, context);
+      // Pass recent conversation history for multi-turn awareness
+      const recentHistory = this.messages.slice(-10).map(m => ({
+        role: m.role as 'user' | 'bot',
+        content: m.content
+      }));
+      const aiResponse = await this.geminiService.generateResponse(userMessage, context, recentHistory);
       this.hideTypingIndicator();
-      
+
       if (aiResponse) {
         this.addMessage(this.formatResponse(aiResponse, this.detailedMode ? 'detailed' : 'concise'), 'bot');
         return;
@@ -1366,7 +1434,9 @@ export class ChatbotManager {
     const { intents, entities } = this.detectIntents(userMessage);
     const intent = this.chooseTopIntent(intents, entities);
     const botResponse = this.routeIntent(intent, userMessage);
-    this.addMessage(this.formatResponse(botResponse, this.detailedMode ? 'detailed' : 'concise'), 'bot');
+    // Add a note that this is from local knowledge when Gemini was attempted but failed
+    const localNote = '<small style="opacity:0.7">📚 From local knowledge</small><br>';
+    this.addMessage(localNote + this.formatResponse(botResponse, this.detailedMode ? 'detailed' : 'concise'), 'bot');
   }
 
   // Dev-only connectivity test for Gemini API; returns a short status message

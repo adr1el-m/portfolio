@@ -1322,6 +1322,544 @@ export class ModalManager {
             </div>
           </div>
         </div>`;
+      } else if (data.title.trim() === 'Online Document Request System' || data.title.includes('Document Request')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `<div class="desc-section">
+          <p>A comprehensive web-based platform that streamlines the process of requesting and managing school documents for Grade 12 students at the University of Makati Higher School (HS ng UMak).</p>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Key Features</h4>
+          <div class="feature-grid">
+            <div class="feature-column">
+              <h5>🔐 User Authentication</h5>
+              <ul>
+                <li>Secure login system for students</li>
+                <li>Role-based access control</li>
+                <li>Password-protected accounts</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>📄 Document Management</h5>
+              <ul>
+                <li>Request various school documents</li>
+                <li>Track request status in real-time</li>
+                <li>View request history</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>⚙️ Admin Controls</h5>
+              <ul>
+                <li>Process document requests</li>
+                <li>Update request statuses</li>
+                <li>Manage student records</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>System Workflow</h4>
+          <div class="workflow-timeline">
+            <div class="workflow-step">
+              <div class="workflow-step-marker">1</div>
+              <div class="workflow-step-content">
+                <h5>Student Login</h5>
+                <p>Students authenticate with their credentials to access the system.</p>
+              </div>
+            </div>
+            <div class="workflow-step">
+              <div class="workflow-step-marker">2</div>
+              <div class="workflow-step-content">
+                <h5>Submit Request</h5>
+                <p>Select document type and fill in required details.</p>
+              </div>
+            </div>
+            <div class="workflow-step">
+              <div class="workflow-step-marker">3</div>
+              <div class="workflow-step-content">
+                <h5>Admin Processing</h5>
+                <p>Administrators review and process the request.</p>
+              </div>
+            </div>
+            <div class="workflow-step">
+              <div class="workflow-step-marker">4</div>
+              <div class="workflow-step-content">
+                <h5>Status Updates</h5>
+                <p>Real-time notifications on request progress.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section">
+          <div class="tech-design-grid">
+            <div class="tech-column">
+              <h4>Technologies</h4>
+              <ul>
+                <li><strong>Backend:</strong> PHP</li>
+                <li><strong>Database:</strong> MySQL</li>
+                <li><strong>Frontend:</strong> HTML, CSS, JavaScript</li>
+                <li><strong>Framework:</strong> Bootstrap</li>
+              </ul>
+            </div>
+            <div class="tech-column">
+              <h4>Benefits</h4>
+              <ul>
+                <li>Eliminates manual paperwork</li>
+                <li>Reduces processing time</li>
+                <li>Transparent request tracking</li>
+                <li>Accessible anytime, anywhere</li>
+              </ul>
+            </div>
+          </div>
+        </div>`;
+      } else if (data.title.trim() === 'Merc Airline Ticketing System' || data.title.includes('Merc Airline')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `<div class="desc-section">
+          <p>A student-built C++ console application that implements a complete airline reservation workflow. The system demonstrates end-to-end booking and pricing logic suitable for study, refactoring, or extension.</p>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Core Functionalities</h4>
+          <div class="feature-grid">
+            <div class="feature-column">
+              <h5>✈️ Flight Operations</h5>
+              <ul>
+                <li>Search available flights</li>
+                <li>View flight schedules</li>
+                <li>Check seat availability</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>🎫 Booking System</h5>
+              <ul>
+                <li>Book and reserve flights</li>
+                <li>Manage passenger records</li>
+                <li>Generate booking confirmations</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>💰 Fare Calculation</h5>
+              <ul>
+                <li>Automatic fare computation</li>
+                <li>Tax and VAT inclusion</li>
+                <li>Discount application</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Technical Highlights</h4>
+          <ul>
+            <li><strong>Language:</strong> C++ (single-source file implementation)</li>
+            <li><strong>Architecture:</strong> Console-based user interface</li>
+            <li><strong>Purpose:</strong> Educational project demonstrating OOP concepts</li>
+            <li><strong>Features:</strong> Simulated payment transactions</li>
+          </ul>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Learning Outcomes</h4>
+          <ul>
+            <li>Object-oriented programming in C++</li>
+            <li>Data structures for record management</li>
+            <li>User input validation and error handling</li>
+            <li>Business logic implementation</li>
+          </ul>
+        </div>`;
+      } else if (data.title.trim() === 'YouTube Layout' || data.title.includes('YouTube Layout')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `<div class="desc-section">
+          <p>A responsive HTML and CSS recreation of the YouTube interface, developed as part of my first-year Introduction to Computer Science course.</p>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Project Highlights</h4>
+          <div class="feature-grid">
+            <div class="feature-column">
+              <h5>🎨 Layout Recreation</h5>
+              <ul>
+                <li>Accurate YouTube-style design</li>
+                <li>Video thumbnail grid</li>
+                <li>Navigation sidebar</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>📱 Responsive Design</h5>
+              <ul>
+                <li>Mobile-friendly layout</li>
+                <li>Flexible grid system</li>
+                <li>Adaptive components</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section">
+          <div class="tech-design-grid">
+            <div class="tech-column">
+              <h4>Technologies</h4>
+              <ul>
+                <li><strong>HTML5:</strong> Semantic markup</li>
+                <li><strong>CSS3:</strong> Flexbox & Grid</li>
+              </ul>
+            </div>
+            <div class="tech-column">
+              <h4>Skills Demonstrated</h4>
+              <ul>
+                <li>UI/UX design principles</li>
+                <li>CSS layout techniques</li>
+                <li>Web fundamentals</li>
+              </ul>
+            </div>
+          </div>
+        </div>`;
+      } else if (data.title.trim() === 'Talambuhay' || data.title.includes('Talambuhay')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `<div class="desc-section">
+          <p>A web-based translation and biography platform built with JavaScript and TypeScript. Deployed on Vercel as a modern frontend application.</p>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Key Features</h4>
+          <div class="feature-grid">
+            <div class="feature-column">
+              <h5>🌐 Translation</h5>
+              <ul>
+                <li>Multi-language support</li>
+                <li>Real-time translation</li>
+                <li>User-friendly interface</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>📖 Biography</h5>
+              <ul>
+                <li>Personal story presentation</li>
+                <li>Interactive timeline</li>
+                <li>Rich media content</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>🎯 User Experience</h5>
+              <ul>
+                <li>Clean, modern design</li>
+                <li>Smooth animations</li>
+                <li>Responsive layout</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section">
+          <div class="tech-design-grid">
+            <div class="tech-column">
+              <h4>Technologies</h4>
+              <ul>
+                <li><strong>Primary:</strong> JavaScript, TypeScript</li>
+                <li><strong>Markup:</strong> HTML, CSS</li>
+                <li><strong>Runtime:</strong> Node.js</li>
+                <li><strong>Deployment:</strong> Vercel</li>
+              </ul>
+            </div>
+            <div class="tech-column">
+              <h4>Project Structure</h4>
+              <ul>
+                <li>src/ - Source files</li>
+                <li>pages/ - Route components</li>
+                <li>api/ - Backend endpoints</li>
+                <li>app/ - App configuration</li>
+              </ul>
+            </div>
+          </div>
+        </div>`;
+      } else if (data.title.trim() === 'BarangayNav' || data.title.includes('BarangayNav')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `<div class="desc-section">
+          <p>A transparent platform for navigating barangay services, powered by AI assistance and real-time tracking to support accountable governance in the Philippines.</p>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Key Features</h4>
+          <div class="feature-grid">
+            <div class="feature-column">
+              <h5>🤖 AI Guidance</h5>
+              <ul>
+                <li>Powered by Gemini AI</li>
+                <li>Service inquiry assistance</li>
+                <li>24/7 automated support</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>📋 Service Info</h5>
+              <ul>
+                <li>Clear requirements listing</li>
+                <li>Transparent fee disclosure</li>
+                <li>Processing timelines</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>🎨 Modern Design</h5>
+              <ul>
+                <li>Dark theme with glassmorphism</li>
+                <li>Responsive across devices</li>
+                <li>Intuitive navigation</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Technical Implementation</h4>
+          <ul>
+            <li><strong>Frontend:</strong> HTML, CSS, TypeScript, Angular</li>
+            <li><strong>AI:</strong> Google Gemini for intelligent responses</li>
+            <li><strong>Security:</strong> Environment-based API key management</li>
+            <li><strong>Architecture:</strong> Modern SPA with real-time updates</li>
+          </ul>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Impact</h4>
+          <p>BarangayNav aims to bridge the gap between citizens and local government units by providing transparent, accessible information about barangay services, promoting accountable governance and reducing bureaucratic friction.</p>
+        </div>`;
+      } else if (data.title.trim() === 'LingapLink' || data.title.includes('LingapLink')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `<div class="desc-section">
+          <p>A comprehensive, modern healthcare platform designed to revolutionize the connection between patients and healthcare providers. Built with cutting-edge web technologies focusing on security, accessibility, and user experience.</p>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Core Features</h4>
+          <div class="feature-grid">
+            <div class="feature-column">
+              <h5>🏥 Patient Portal</h5>
+              <ul>
+                <li>Appointment scheduling</li>
+                <li>Medical records access</li>
+                <li>Prescription management</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>👨‍⚕️ Provider Tools</h5>
+              <ul>
+                <li>Patient management</li>
+                <li>Digital health records</li>
+                <li>Secure messaging</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>🤖 AI Assistance</h5>
+              <ul>
+                <li>Intelligent automation</li>
+                <li>Natural language processing</li>
+                <li>Smart recommendations</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Technology Stack</h4>
+          <div class="tech-design-grid">
+            <div class="tech-column">
+              <h5>Frontend</h5>
+              <ul>
+                <li><strong>React 18:</strong> Modern UI framework</li>
+                <li><strong>TypeScript:</strong> Type-safe development</li>
+                <li><strong>Vite:</strong> Fast build tool</li>
+                <li><strong>Recharts:</strong> Data visualization</li>
+              </ul>
+            </div>
+            <div class="tech-column">
+              <h5>Backend</h5>
+              <ul>
+                <li><strong>Node.js & Express:</strong> Server framework</li>
+                <li><strong>Firebase:</strong> Auth & Firestore</li>
+                <li><strong>Gemini:</strong> AI/ML services</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Design Philosophy</h4>
+          <ul>
+            <li><strong>Security First:</strong> HIPAA-conscious design principles</li>
+            <li><strong>Accessibility:</strong> WCAG-compliant interface</li>
+            <li><strong>User-Centric:</strong> Intuitive workflows for all users</li>
+            <li><strong>Scalable:</strong> Built to grow with healthcare needs</li>
+          </ul>
+        </div>`;
+      } else if (data.title.trim() === 'VeemahPay' || data.title.includes('VeemahPay')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `<div class="desc-section">
+          <p>VeemahPay is a modern, secure, and user-friendly digital banking platform designed to simplify financial management. Built as a comprehensive full-stack application, it demonstrates enterprise-grade architecture with a focus on security, scalability, and exceptional user experience.</p>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Core Features</h4>
+          <div class="feature-grid">
+            <div class="feature-column">
+              <h5>🏦 Banking Operations</h5>
+              <ul>
+                <li>Secure user registration & login</li>
+                <li>Real-time balance tracking</li>
+                <li>Deposits, withdrawals & transfers</li>
+                <li>Transaction history with filters</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>👨‍💼 Admin Dashboard</h5>
+              <ul>
+                <li>User account management</li>
+                <li>System-wide transaction logs</li>
+                <li>Account lock/unlock controls</li>
+                <li>Void erroneous transactions</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>🤖 AI Assistant</h5>
+              <ul>
+                <li>Intelligent chatbot support</li>
+                <li>Financial guidance</li>
+                <li>Natural language queries</li>
+                <li>24/7 automated assistance</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>CRUD Operations</h4>
+          <div class="feature-grid">
+            <div class="feature-column">
+              <h5>Create</h5>
+              <ul>
+                <li>User registration with initial balance</li>
+                <li>Transaction initiation</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>Read</h5>
+              <ul>
+                <li>Dashboard with real-time data</li>
+                <li>Transaction history & logs</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>Update</h5>
+              <ul>
+                <li>Profile management</li>
+                <li>Account status changes</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>Delete</h5>
+              <ul>
+                <li>Account archival</li>
+                <li>Transaction voiding</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>OOP Pillars (Java Backend)</h4>
+          <ul>
+            <li><strong>Encapsulation:</strong> Private attributes with controlled access via getters/setters</li>
+            <li><strong>Inheritance:</strong> Base User class extended by Customer and Admin roles</li>
+            <li><strong>Polymorphism:</strong> Method overriding for account-specific operations</li>
+            <li><strong>Abstraction:</strong> Interfaces defining transaction contracts</li>
+          </ul>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Technology Stack</h4>
+          <div class="tech-design-grid">
+            <div class="tech-column">
+              <h5>Frontend</h5>
+              <ul>
+                <li><strong>Framework:</strong> Next.js 14 (React)</li>
+                <li><strong>Language:</strong> TypeScript</li>
+                <li><strong>Styling:</strong> Tailwind CSS</li>
+                <li><strong>Charts:</strong> Recharts</li>
+              </ul>
+            </div>
+            <div class="tech-column">
+              <h5>Backend</h5>
+              <ul>
+                <li><strong>Runtime:</strong> Node.js</li>
+                <li><strong>Database:</strong> PostgreSQL</li>
+                <li><strong>OOP Logic:</strong> Java</li>
+                <li><strong>DevOps:</strong> Docker</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Security Features</h4>
+          <ul>
+            <li><strong>Authentication:</strong> Secure PIN-based login with session management</li>
+            <li><strong>Account Protection:</strong> Auto-lock after failed login attempts</li>
+            <li><strong>Data Encryption:</strong> bcrypt password hashing</li>
+            <li><strong>Email Verification:</strong> Secure account recovery flow</li>
+          </ul>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Team</h4>
+          <p>Developed by <strong>Group 4 (BSCS 2-2)</strong> as a final project for Object Oriented Programming at Polytechnic University of the Philippines.</p>
+        </div>`;
+      } else if (data.title.trim() === 'Fireside september' || data.title.toLowerCase().includes('fireside')) {
+        projectDescription.classList.add('rich');
+        projectDescription.innerHTML = `<div class="desc-section">
+          <p>A compact autumn-themed mobile experience that blends seasonal warmth with productivity. Built with Flutter and Dart, featuring a cozy aesthetic with pixel-art accents and smooth animations.</p>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Features</h4>
+          <div class="feature-grid">
+            <div class="feature-column">
+              <h5>🎴 Trivia Cards</h5>
+              <ul>
+                <li>Flip-style interaction</li>
+                <li>Subtle reveal animations</li>
+                <li>Autumn-themed content</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>⏱️ Pomodoro Timer</h5>
+              <ul>
+                <li>Configurable sessions</li>
+                <li>Ambient sounds (rain, fire)</li>
+                <li>Focus-friendly design</li>
+              </ul>
+            </div>
+            <div class="feature-column">
+              <h5>🍯 Honey Hazel</h5>
+              <ul>
+                <li>AI-powered assistant</li>
+                <li>Mood-based recipes</li>
+                <li>Powered by Gemini</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section"><h4>Additional Features</h4>
+          <ul>
+            <li><strong>🍂 Autumn Bucket List:</strong> Gamified activities with points for completion</li>
+            <li><strong>🔥 Custom Fireplace:</strong> Sound and visual modes including colorful magic mode</li>
+            <li><strong>🎨 UI Effects:</strong> Parallax leaves, scatter effects, pixel-art accents</li>
+            <li><strong>📱 Custom Icon:</strong> Unique autumn-themed app icon</li>
+          </ul>
+        </div>
+        <hr class="desc-divider" />
+        <div class="desc-section">
+          <div class="tech-design-grid">
+            <div class="tech-column">
+              <h4>Technologies</h4>
+              <ul>
+                <li><strong>Framework:</strong> Flutter & Dart</li>
+                <li><strong>AI:</strong> Gemini (Honey Hazel)</li>
+                <li><strong>Audio:</strong> audioplayers package</li>
+                <li><strong>Icons:</strong> flutter_launcher_icons</li>
+              </ul>
+            </div>
+            <div class="tech-column">
+              <h4>Design Elements</h4>
+              <ul>
+                <li>Warm autumn color palette</li>
+                <li>Cozy, seasonal aesthetic</li>
+                <li>Smooth animations</li>
+                <li>Pixel-art accents</li>
+              </ul>
+            </div>
+          </div>
+        </div>`;
       } else {
         projectDescription.classList.remove('rich');
         projectDescription.textContent = data.description;

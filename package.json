@@ -15,7 +15,7 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit",
     "lighthouse": "lighthouse http://localhost:4173 --view --output=html --output-path=./lighthouse-report.html",
-    "lighthouse:ci": "lhci autorun",
+    "lighthouse:ci": "lhci autorun --config=./config/lighthouserc.json",
     "perf:audit": "npm run build && npm run preview & sleep 3 && npm run lighthouse && kill %1",
     "perf:budget": "lighthouse http://localhost:4173 --budget-path=./config/performance-budget.json --output=html --output-path=./budget-report.html"
   },

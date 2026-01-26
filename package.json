@@ -17,7 +17,7 @@
     "lighthouse": "lighthouse http://localhost:4173 --view --output=html --output-path=./lighthouse-report.html",
     "lighthouse:ci": "lhci autorun",
     "perf:audit": "npm run build && npm run preview & sleep 3 && npm run lighthouse && kill %1",
-    "perf:budget": "lighthouse http://localhost:4173 --budget-path=./performance-budget.json --output=html --output-path=./budget-report.html"
+    "perf:budget": "lighthouse http://localhost:4173 --budget-path=./config/performance-budget.json --output=html --output-path=./budget-report.html"
   },
   "keywords": [
     "portfolio",

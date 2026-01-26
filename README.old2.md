@@ -269,268 +269,72 @@ portfolio/
 └── README.md                # You are here!
 ```
 
----
+## 🧩 Key Features
 
-## 🎯 Feature Deep Dive
+- Service Worker
+  - Precache `style.purged.css`, `index.html`, offline routes, and PWA icons.
+  - Cache‑first for repeat visits; network update for freshness.
 
-### 🔄 Service Worker & PWA
-Sophisticated caching strategy for optimal performance and offline experience:
+- Accessibility Enhancer
+  - Landmark improvements and assistive markup activation after DOM ready.
+  - Audits can be stabilized via `?audit=true` query behavior in `main.ts`.
 
-- **Precache Strategy**: Critical assets cached on installation
-- **Cache-First**: Instant repeat visits with background network updates
-- **Offline Support**: Full offline experience at `/offline`
-- **Install Prompt**: Native PWA install for supported browsers
-- **Update Management**: Automatic updates with user notifications
+- Performance Optimizations
+  - Deferred module loading using `requestAnimationFrame + setTimeout` windows.
+  - Skeleton loaders and progressive image handling.
+  - Lighthouse CI runs on PRs and scheduled to track performance drift.
 
-**Key Files**: [public/sw.js](public/sw.js), [src/modules/pwa-manager.ts](src/modules/pwa-manager.ts)
+- Security Hardening
+  - Strict CSP headers in `vercel.json` with `report-uri /api/csp-report`.
+  - Safe external link enforcement (`noopener`, `noreferrer`) at runtime.
+  - Sanitized content creation helpers.
 
-### ⚡ Performance Optimizations
+## 🔁 CI Pipelines
 
-- **Modern Image Formats**: AVIF with WebP fallback, lazy loading
-- **Code Splitting**: Deferred module loading via `requestAnimationFrame`
-- **Critical CSS**: Inlined critical styles, deferred non-critical
-- **Real-time Monitoring**: Web Vitals dashboard (LCP, FID, CLS, TTFB)
-- **Performance Budgets**: Automated enforcement via Lighthouse CI
+- Deploy (`vercel-deploy.yml`)
+  - Node 22, `npm ci` with caching, concurrency control to cancel overlapping runs.
+  - Uses prebuilt artifacts for faster production deploys.
 
-**Key Files**: [src/modules/performance-monitor.ts](src/modules/performance-monitor.ts), [config/performance-budget.json](config/performance-budget.json)
+- Performance (`performance.yml`)
+  - Builds, runs Lighthouse CI, uploads artifacts, and comments summary on PRs.
 
-### ♿ Accessibility Features
+- Accessibility (`accessibility.yml`)
+  - Spins up preview and runs `axe-core` and `pa11y-ci` against key pages.
 
-- **Automated Testing**: `axe-core` and `pa11y-ci` in CI pipeline
-- **WCAG 2.1 AA**: Full compliance with accessibility standards
-- **Semantic HTML**: Proper heading hierarchy and landmarks
-- **Keyboard Navigation**: Complete keyboard accessibility
-- **Screen Reader Support**: Descriptive labels and ARIA
+- Badges (`badges.yml`)
+  - Generates Lighthouse and coverage badges into `public/badges`.
 
-**Key Files**: [src/modules/accessibility-enhancer.ts](src/modules/accessibility-enhancer.ts), [config/pa11y-ci.json](config/pa11y-ci.json)
+## ☁️ Deployment (Vercel)
 
-### 🔒 Security Implementation
+- Required secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
+- Rewrites ensure clean SPA routes (e.g., `/projects`, `/organizations`, `/offline`).
+- Cache headers tuned for images and HTML.
 
-- **Strict CSP**: Content Security Policy with violation reporting
-- **Security Headers**: HSTS, X-Frame-Options, X-Content-Type-Options
-- **Safe Links**: Automatic `rel="noopener noreferrer"` enforcement
-- **Input Sanitization**: XSS prevention on all user inputs
-- **CSP Reporting**: Real-time violation monitoring at `/api/csp-report`
+## 🔐 CSP Reporting
 
-**Key Files**: [vercel.json](vercel.json), [api/csp-report.js](api/csp-report.js), [src/modules/security.ts](src/modules/security.ts)
+- Reports collected at `POST /api/csp-report` (see `api/csp-report.js`).
+- Use your browser’s DevTools to verify blocked resources and policy adherence.
 
-### 🤖 AI Chatbot Integration
+## 🧪 Audits
 
-Intelligent chatbot powered by Google's Gemini API:
-
-- **Context-Aware**: Trained on portfolio content and projects
-- **Natural Language**: Conversational interface for content exploration
-- **Rate Limiting**: Exponential backoff and request throttling
-- **Error Handling**: Graceful fallbacks for API failures
-
-**Key Files**: [src/modules/chatbot.ts](src/modules/chatbot.ts), [src/modules/gemini-service.ts](src/modules/gemini-service.ts), [api/gemini.js](api/gemini.js)
-
----
-
-## 🔄 CI/CD Pipeline
-
-### Automated Workflows
-
-| Workflow | Trigger | Purpose |
-|----------|---------|---------|
-| **Deploy** | Push to `main`, PRs | Automated Vercel deployments with caching |
-| **Performance** | PRs, Weekly | Lighthouse CI audits with budget enforcement |
-| **Accessibility** | PRs | WCAG 2.1 AA compliance testing |
-| **Badges** | Push to `main`, Weekly | Generate Lighthouse & coverage badges |
-
-### Performance Thresholds
-- Performance: ≥90
-- Accessibility: 100
-- Best Practices: 100
-- SEO: 100
-
-**Key Directory**: [.github/workflows/](.github/workflows/)
-
----
-
-## 🚀 Deployment
-
-### Vercel Configuration
-
-Optimized deployment with custom headers and rewrites:
-
-```json
-{
-  "headers": [
-    {
-      "key": "Strict-Transport-Security",
-      "value": "max-age=31536000; includeSubDomains"
-    },
-    {
-      "key": "Content-Security-Policy",
-      "value": "default-src 'self'; ..."
-    }
-  ]
-}
+Local performance audit
+```bash
+npm run build && npm run preview &
+sleep 3
+npm run lighthouse
 ```
 
-### Required Environment Variables
-- `VITE_GEMINI_API_KEY` - Google Gemini API key
-- `VERCEL_TOKEN` - Vercel deployment token
-- `VERCEL_ORG_ID` - Vercel organization ID
-- `VERCEL_PROJECT_ID` - Vercel project ID
-
-### Cache Strategy
-- **Images**: `max-age=31536000, immutable`
-- **HTML**: `max-age=0, must-revalidate`
-- **Assets**: `max-age=31536000, immutable`
-
-**Configuration**: [vercel.json](vercel.json)
-
----
-
-## 🧪 Testing & Quality
-
-### Local Testing
-
-#### Performance Audit
+Accessibility audit
 ```bash
-npm run perf:audit          # Full audit with visual report
-npm run perf:budget         # Validate budgets
-npm run lighthouse:ci       # CI environment simulation
-```
-
-#### Accessibility Testing
-```bash
-npx pa11y-ci --config config/pa11y-ci.json
+pa11y-ci --config pa11y-ci.json
+# or
 npx @axe-core/cli --tags wcag2a,wcag2aa --exit http://localhost:4173/
 ```
 
-#### Code Quality
-```bash
-npm run lint               # ESLint
-npm run type-check         # TypeScript
-```
-
-### Performance Budgets
-
-| Metric | Budget | Current |
-|--------|---------|---------|
-| Performance Score | ≥90 | 💯 100 |
-| First Contentful Paint | ≤1.8s | ✅ 0.9s |
-| Largest Contentful Paint | ≤2.5s | ✅ 1.2s |
-| Time to Interactive | ≤3.8s | ✅ 2.1s |
-| Cumulative Layout Shift | ≤0.1 | ✅ 0.05 |
-| Total Bundle Size | ≤300KB | ✅ 60KB |
-
----
-
-## 📊 Performance Metrics
-
-### Lighthouse Scores
-🎯 **Performance**: 100/100 | ♿ **Accessibility**: 100/100 | ✅ **Best Practices**: 100/100 | 🔍 **SEO**: 100/100 | ⚡ **PWA**: ✓
-
-### Web Vitals
-- **LCP** (Largest Contentful Paint): <1.2s ✅
-- **FID** (First Input Delay): <100ms ✅
-- **CLS** (Cumulative Layout Shift): <0.05 ✅
-- **TTFB** (Time to First Byte): <600ms ✅
-- **FCP** (First Contentful Paint): <0.9s ✅
-
-### Bundle Analysis
-- **Initial JS**: ~45KB gzipped
-- **Initial CSS**: ~12KB gzipped
-- **Total Initial Load**: ~60KB (excluding images)
-
----
-
-## 📚 Documentation
-
-Additional resources in [docs/](docs/):
-
-- 📝 [Loading Demo](docs/loading-demo.html) - Interactive loading states
-- 📱 [Mobile Testing Guide](docs/mobile-test-guide.html) - Mobile testing strategies
-
-### API Documentation
-
-#### CSP Reporting Endpoint
-```
-POST /api/csp-report
-```
-Receives and logs Content Security Policy violations.
-
-#### Gemini Chatbot Endpoint
-```
-POST /api/gemini
-Content-Type: application/json
-
-{
-  "message": "Tell me about your AI projects",
-  "conversationHistory": []
-}
-```
-
----
-
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these guidelines:
-
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/AmazingFeature`)
-3. **Commit** your changes (`git commit -m 'Add some AmazingFeature'`)
-4. **Push** to the branch (`git push origin feature/AmazingFeature`)
-5. **Open** a Pull Request
-
-### Before Submitting
-```bash
-npm run lint          # Pass ESLint checks
-npm run type-check    # Pass TypeScript checks
-npm run perf:budget   # Meet performance budgets
-```
-
-### Code of Conduct
-Be respectful, inclusive, and professional in all interactions.
-
----
+PRs welcome. Please run `npm run lint` and `npm run type-check` before submitting.
 
 ## 📄 License
 
-MIT © 2026 Adriel Magalona
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
-
----
-
-## 🙏 Acknowledgments
-
-- **Three.js** - Beautiful 3D particle effects
-- **Vite** - Lightning-fast build tool
-- **Vercel** - Seamless deployment platform
-- **Google Gemini** - AI chatbot capabilities
-- **Lighthouse** - Performance monitoring
-- **axe & Pa11y** - Accessibility testing
-
----
-
-## 📞 Connect With Me
-
-<div align="center">
-
-[![Portfolio](https://img.shields.io/badge/Portfolio-adriel.dev-4A90E2?style=for-the-badge&logo=google-chrome&logoColor=white)](https://adriel.dev)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Adriel_Magalona-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/adrielmagalona)
-[![GitHub](https://img.shields.io/badge/GitHub-adr1el--m-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/adr1el-m)
-[![Email](https://img.shields.io/badge/Email-dagsmagalona@gmail.com-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:dagsmagalona@gmail.com)
-
-</div>
-
----
-
-<div align="center">
-
-### ⭐ Star this repository if you find it helpful!
-
-**Built with ❤️ by [Adriel Magalona](https://adriel.dev)**
-
-*Last Updated: January 2026*
-
-</div>
+MIT © Adriel Magalona

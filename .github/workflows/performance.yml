@@ -100,7 +100,7 @@ jobs:
       - name: Check Performance Budget
         run: |
           lighthouse http://localhost:4173 \
-            --budget-path=./performance-budget.json \
+            --budget-path=./config/performance-budget.json \
             --output=json \
             --output-path=./budget-results.json \
             --chrome-flags="--headless"

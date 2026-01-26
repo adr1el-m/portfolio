@@ -37,7 +37,7 @@ jobs:
 
       - name: Run Pa11y CI
         run: |
-          npx pa11y-ci --config ./pa11y-ci.json | tee pa11y-results.txt
+          npx pa11y-ci --config ./config/pa11y-ci.json | tee pa11y-results.txt
 
       - name: Run Axe CLI - Home
         run: |

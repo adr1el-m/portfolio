@@ -11,6 +11,32 @@ if (import.meta.env.PROD && typeof window !== 'undefined' && !/^(localhost|127\.
     try { injectSpeedInsights(); } catch (err) { console.warn('Vercel Speed Insights injection failed:', err); }
   });
 }
+
+/**
+ * Detect modern image format support and add classes to documentElement
+ */
+function detectImageFormatSupport(): void {
+  // Check AVIF support
+  const avifImg = new Image();
+  avifImg.onload = () => {
+    document.documentElement.classList.add('avif');
+  };
+  avifImg.onerror = () => {
+    // AVIF not supported, check WebP
+  };
+  avifImg.src = 'data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADybWV0YQAAAAAAAAAoaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAGxpYmF2aWYAAAAADnBpdG0AAAAAAAEAAAAeaWxvYwAAAABEAAABAAEAAAABAAABGgAAAB0AAAAoaWluZgAAAAAAAQAAABppbmZlAgAAAAABAABhdjAxQ29sb3IAAAAAamlwcnAAAABLaXBjbwAAABRpc3BlAAAAAAAAAAIAAAACAAAAEHBpeGkAAAAAAwgICAAAAAxhdjFDgQ0MAAAAABNjb2xybmNseAACAAIAAYAAAAAXaXBtYQAAAAAAAAABAAEEAQKDBAAAACVtZGF0EgAKBzgABpAQ0AIyDQAAAA+A';
+
+  // Check WebP support
+  const webpImg = new Image();
+  webpImg.onload = () => {
+    document.documentElement.classList.add('webp');
+  };
+  webpImg.src = 'data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAEAcQERGIiP4HAA==';
+}
+
+// Run format detection immediately
+detectImageFormatSupport();
+
 import { NavigationManager } from './modules/navigation';
 import { SecurityManager } from './modules/security';
 import { LoadingManager } from './modules/loading-manager';

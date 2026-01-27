@@ -23,9 +23,42 @@ export class ModalManager {
   private projectWebpImages: string[] = [];
   private projectJpegImages: string[] = [];
   private previousFocus: HTMLElement | null = null;
+  private preloadedImages: Set<string> = new Set();
 
   constructor() {
     this.init();
+  }
+
+  /**
+   * Convert an original image path to its optimized version (AVIF or WebP)
+   */
+  private getOptimizedImagePath(originalPath: string, format: 'avif' | 'webp'): string {
+    // Match common image extensions
+    const extMatch = originalPath.match(/\.(jpe?g|png)$/i);
+    if (!extMatch) return originalPath;
+    
+    // Replace extension with optimized format
+    return originalPath.replace(/\.(jpe?g|png)$/i, `.${format}`);
+  }
+
+  /**
+   * Preload images for smoother navigation
+   */
+  private preloadImages(imagePaths: string[]): void {
+    imagePaths.forEach((src) => {
+      if (this.preloadedImages.has(src)) return;
+      
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        this.preloadedImages.add(src);
+        logger.log(`Preloaded image: ${src}`);
+      };
+      img.onerror = () => {
+        // If optimized version fails, the modal will fallback to original
+        logger.warn(`Failed to preload: ${src}`);
+      };
+    });
   }
 
   private init(): void {
@@ -231,12 +264,30 @@ export class ModalManager {
       this.modalEl.setAttribute('tabindex', '-1');
     }
 
-    // Use WebP if supported, fallback to regular images
+    // Convert original image paths to optimized AVIF/WebP versions
+    const originalImages = data.images || [];
+    const avifImages = originalImages.map((src) => this.getOptimizedImagePath(src, 'avif'));
+    const webpImages = originalImages.map((src) => this.getOptimizedImagePath(src, 'webp'));
+    
+    // Prefer AVIF > WebP > original (based on browser support)
+    const supportsAvif = document.documentElement.classList.contains('avif');
     const supportsWebp = document.documentElement.classList.contains('webp');
-    this.achievementWebpImages = (data.webpImages || []).filter((p) => p.endsWith('.webp') || p.endsWith('.avif'));
-    this.achievementJpegImages = (data.images || []);
-    this.images = supportsWebp && this.achievementWebpImages.length > 0 ? this.achievementWebpImages : this.achievementJpegImages;
+    
+    if (supportsAvif) {
+      this.images = avifImages;
+      this.achievementWebpImages = avifImages;
+    } else if (supportsWebp) {
+      this.images = webpImages;
+      this.achievementWebpImages = webpImages;
+    } else {
+      this.images = originalImages;
+      this.achievementWebpImages = [];
+    }
+    this.achievementJpegImages = originalImages;
     this.currentIndex = 0;
+
+    // Preload next images for smoother navigation
+    this.preloadImages(this.images.slice(0, 3));
 
     logger.log('Modal element:', this.modalEl);
     logger.log('Images to display:', this.images);
@@ -2171,10 +2222,26 @@ export class ModalManager {
         requestAnimationFrame(() => (img.style.opacity = '1'));
       };
       img.onerror = () => {
-        this.hideImageLoader(slider);
-        logger.error('Failed to load image:', src);
-        // Make sure image remains visible for a retry if needed
-        img.style.display = 'block';
+        // Fallback to original JPEG if optimized format fails
+        const fallbackSrc = jpegSrc;
+        if (fallbackSrc && fallbackSrc !== src) {
+          logger.warn('Optimized image failed, falling back to:', fallbackSrc);
+          img.src = fallbackSrc;
+          img.onload = () => {
+            this.hideImageLoader(slider);
+            this.applyAchievementImageFit(img, slider as HTMLElement | null);
+            requestAnimationFrame(() => (img.style.opacity = '1'));
+          };
+          img.onerror = () => {
+            this.hideImageLoader(slider);
+            logger.error('Failed to load fallback image:', fallbackSrc);
+            img.style.display = 'block';
+          };
+        } else {
+          this.hideImageLoader(slider);
+          logger.error('Failed to load image:', src);
+          img.style.display = 'block';
+        }
       };
     }, 120);
   }

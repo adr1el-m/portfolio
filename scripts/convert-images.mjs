@@ -7,6 +7,7 @@ const root = process.cwd();
 const imagesDir = path.join(root, 'public', 'images');
 const projectsDir = path.join(imagesDir, 'projects');
 const orgsDir = path.join(imagesDir, 'orgs');
+const honorsDir = path.join(imagesDir, 'honors');
 
 async function ensureFileExists(filePath) {
   try {
@@ -103,6 +104,7 @@ async function main() {
   await convertAvatar();
   await convertProjectImages();
   await convertOrgLogos();
+  await convertHonorsImages();
 }
 
 main().catch((err) => {
@@ -144,5 +146,54 @@ async function convertOrgLogos() {
     }
   } catch (e) {
     console.warn('convertOrgLogos: skipped or failed', e);
+  }
+}
+
+// Convert honors/awards images to optimized AVIF/WEBP (600px max width for modals)
+async function convertHonorsImages() {
+  try {
+    const entries = await fs.readdir(honorsDir, { withFileTypes: true });
+    const exts = new Set(['.jpg', '.jpeg', '.png']);
+    const maxWidth = 800; // Optimal for modal display
+
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+      const dirPath = path.join(honorsDir, entry.name);
+      const files = await fs.readdir(dirPath);
+      
+      for (const file of files) {
+        const ext = path.extname(file).toLowerCase();
+        if (!exts.has(ext)) continue;
+        
+        // Skip already converted files
+        if (file.includes('-optimized')) continue;
+        
+        const name = path.basename(file, ext);
+        const inputPath = path.join(dirPath, file);
+        const img = sharp(inputPath);
+        const meta = await img.metadata();
+        
+        const targetWidth = Math.min(maxWidth, meta.width || maxWidth);
+        const avifOut = path.join(dirPath, `${name}.avif`);
+        const webpOut = path.join(dirPath, `${name}.webp`);
+        
+        // Convert to AVIF (best compression)
+        await img
+          .resize({ width: targetWidth, withoutEnlargement: true })
+          .avif({ quality: 65 })
+          .toFile(avifOut);
+        
+        // Convert to WebP (broad support fallback)
+        await img
+          .resize({ width: targetWidth, withoutEnlargement: true })
+          .webp({ quality: 75 })
+          .toFile(webpOut);
+        
+        console.log(`Converted honors image ${inputPath} -> AVIF/WEBP at ${targetWidth}px`);
+      }
+    }
+    console.log('✅ Honors images conversion complete!');
+  } catch (e) {
+    console.warn('convertHonorsImages: skipped or failed', e);
   }
 }

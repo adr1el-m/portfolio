@@ -4,6 +4,7 @@
  */
 export class AwardsAccordion {
   private resizeObservers: WeakMap<HTMLElement, ResizeObserver> = new WeakMap();
+  private preloadedImages: Set<string> = new Set();
 
   constructor() {
     this.init();
@@ -17,6 +18,12 @@ export class AwardsAccordion {
         this.toggleYear(header as HTMLElement);
       });
     });
+    
+    // Preload images for the initially active (expanded) section
+    const activeContent = document.querySelector('.year-content.active');
+    if (activeContent) {
+      this.preloadImagesForSection(activeContent as HTMLElement);
+    }
   }
 
   private toggleYear(header: HTMLElement): void {
@@ -46,6 +53,9 @@ export class AwardsAccordion {
       // Expand
       header.classList.add('active');
       content.classList.add('active');
+
+      // Preload images when section expands
+      this.preloadImagesForSection(content);
 
       // Set max-height to the content's scrollHeight for full expansion.
       // Use rAF so class-based padding transition applies first.
@@ -77,6 +87,47 @@ export class AwardsAccordion {
       // Keep content fully expanded if its size changes (e.g., fonts/images)
       this.observeContent(content);
     }
+  }
+
+  /**
+   * Preload optimized images for achievement cards in a section
+   */
+  private preloadImagesForSection(container: HTMLElement): void {
+    const cards = container.querySelectorAll('.achievement-card');
+    const supportsAvif = document.documentElement.classList.contains('avif');
+    const supportsWebp = document.documentElement.classList.contains('webp');
+    
+    cards.forEach((card) => {
+      const imagesAttr = card.getAttribute('data-images');
+      if (!imagesAttr) return;
+      
+      try {
+        const images: string[] = JSON.parse(imagesAttr);
+        // Preload first 2 images per card (for faster modal open)
+        images.slice(0, 2).forEach((src) => {
+          // Convert to optimized format
+          const optimizedSrc = this.getOptimizedPath(src, supportsAvif ? 'avif' : supportsWebp ? 'webp' : null);
+          
+          if (this.preloadedImages.has(optimizedSrc)) return;
+          
+          const img = new Image();
+          img.src = optimizedSrc;
+          img.onload = () => {
+            this.preloadedImages.add(optimizedSrc);
+          };
+        });
+      } catch {
+        // Ignore parse errors
+      }
+    });
+  }
+
+  /**
+   * Convert image path to optimized format
+   */
+  private getOptimizedPath(src: string, format: 'avif' | 'webp' | null): string {
+    if (!format) return src;
+    return src.replace(/\.(jpe?g|png)$/i, `.${format}`);
   }
 
   private initializeTiltForVisibleCards(container: HTMLElement): void {

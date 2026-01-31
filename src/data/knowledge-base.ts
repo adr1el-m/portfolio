@@ -224,7 +224,7 @@ export const KB: KnowledgeBase = {
         '/images/honors/technovation/3.jpeg',
       ],
       organizer:
-        'National Technovation Summit organized by START (DOST) — National Champion',
+        'National Technovation Summit organized by START (DOST) — National Champion — ₱30,000',
       date: 'August 31, 2025',
       location: 'Marco Polo Plaza Hotel, Cebu',
       teammates: [
@@ -233,7 +233,7 @@ export const KB: KnowledgeBase = {
       ],
       githubUrl: 'https://github.com/adr1el-m/technovation-2025',
       description:
-        'LingapLink — AI‑powered healthcare platform streamlining triage, booking, communication, and record management to improve efficiency and access.',
+        'LingapLink — AI‑powered healthcare platform streamlining triage, booking, communication, and record management to improve efficiency and access. Won ₱30,000.',
       projectTitle: 'LingapLink',
       linkedinUrl:
         'https://www.linkedin.com/posts/adr1el_nationaltechnovationsummit-activity-7369257090281791488-SXY8',
@@ -242,13 +242,13 @@ export const KB: KnowledgeBase = {
       title: 'BPI DataWave Hackathon 2025',
       images: [],
       webpImages: [],
-      organizer: 'BPI — Workplace Productivity & Future of Work (Team 4Sight) — 3rd Place',
+      organizer: 'BPI — Workplace Productivity & Future of Work (Team 4Sight) — 3rd Place — ₱20,000',
       date: 'October 1, 2025',
       location: 'AIM Conference Center, Makati City',
       teammates: [],
       githubUrl: 'https://github.com/adr1el-m/worksight',
       description:
-        'WorkSight is an AI-powered well-being analytics platform that uses behavioral data and psychological science to predict and prevent employee burnout.',
+        'WorkSight is an AI-powered well-being analytics platform that uses behavioral data and psychological science to predict and prevent employee burnout. Won ₱20,000.',
       projectTitle: 'WorkSight',
     },
     {
@@ -304,6 +304,8 @@ export const KB: KnowledgeBase = {
       description:
         'Secured 2nd place; received an internship offer and a ₱800 award.',
       projectTitle: 'Portfolio Contest 2025',
+      linkedinUrl: 'https://www.linkedin.com/posts/adr1el_this-comes-a-bit-late-but-its-a-milestone-activity-7419437733170896897-nULW?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFCMwAABUwVcMwAFxdORbMcULlqBOAyuSpU',
+      facebookUrl: 'https://www.facebook.com/share/p/19mEFhhtCv/',
     },
   ],
   organizations: [

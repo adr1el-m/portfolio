@@ -47,6 +47,7 @@ export interface ProjectData {
   githubUrl?: string;
   liveUrl?: string;
   codedexUrl?: string;
+  docsUrl?: string;
 }
 
 export interface Portfolio {

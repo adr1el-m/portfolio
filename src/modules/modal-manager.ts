@@ -306,8 +306,9 @@ export class ModalManager {
     // Prefer Facebook post button if provided; otherwise optional project button
     const infoSection = document.querySelector('.achievement-info') as HTMLElement;
     if (infoSection) {
-      const existing = infoSection.querySelector('.related-project-button');
-      if (existing) existing.remove();
+      // Remove all previously added buttons to prevent stacking
+      const existingButtons = infoSection.querySelectorAll('.related-project-button, .achievement-info > .github-button');
+      existingButtons.forEach((btn) => btn.remove());
 
       const detailsBlock = infoSection.querySelector('.achievement-details');
       if (data.facebookUrl) {
@@ -361,7 +362,8 @@ export class ModalManager {
       const isTechnovation = data.title.trim() === 'Technovation Summit 2025 Start-up Hackathon';
       const isDlsu = data.title.trim() === 'De La Salle University Hackercup';
       const isAgentic = data.title.trim() === 'Agentic AI Hackathon 2025';
-      if (isHackIt || isBpi || isTechnovation || isDlsu || isAgentic) {
+      const isCodebility = data.title.trim() === 'Codebility Portfolio Contest 2025';
+      if (isHackIt || isBpi || isTechnovation || isDlsu || isAgentic || isCodebility) {
         this.displayHackItActions(data);
       } else {
         let gh = data.githubUrl;
@@ -458,6 +460,7 @@ export class ModalManager {
     const liveUrl = element.getAttribute('data-live') || '';
     const codedexUrl = element.getAttribute('data-codedex') || '';
     const videoUrl = element.getAttribute('data-video') || '';
+    const docsUrl = element.getAttribute('data-docs') || '';
 
     try {
       const images = JSON.parse(imagesStr);
@@ -474,6 +477,7 @@ export class ModalManager {
         githubUrl,
         liveUrl,
         codedexUrl: codedexUrl || undefined,
+        docsUrl: docsUrl || undefined,
       };
     } catch (e) {
       logger.error('Error parsing project data:', e);
@@ -560,6 +564,15 @@ export class ModalManager {
         liveLink.style.display = '';
       } else {
         liveLink.style.display = 'none';
+      }
+    }
+    const docsLink = document.querySelector('.project-link.project-docs') as HTMLAnchorElement | null;
+    if (docsLink) {
+      if (data.docsUrl) {
+        docsLink.href = data.docsUrl;
+        docsLink.style.display = '';
+      } else {
+        docsLink.style.display = 'none';
       }
     }
     const devpostLink = document.querySelector('.project-link.project-devpost') as HTMLAnchorElement | null;

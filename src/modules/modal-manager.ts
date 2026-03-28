@@ -264,19 +264,14 @@ export class ModalManager {
       this.modalEl.setAttribute('tabindex', '-1');
     }
 
-    // Convert original image paths to optimized AVIF/WebP versions
+    // Convert original image paths to optimized WebP versions
     const originalImages = data.images || [];
-    const avifImages = originalImages.map((src) => this.getOptimizedImagePath(src, 'avif'));
     const webpImages = originalImages.map((src) => this.getOptimizedImagePath(src, 'webp'));
     
-    // Prefer AVIF > WebP > original (based on browser support)
-    const supportsAvif = document.documentElement.classList.contains('avif');
+    // Prefer WebP > original (the modal picture element declares webp/jpeg sources)
     const supportsWebp = document.documentElement.classList.contains('webp');
     
-    if (supportsAvif) {
-      this.images = avifImages;
-      this.achievementWebpImages = avifImages;
-    } else if (supportsWebp) {
+    if (supportsWebp) {
       this.images = webpImages;
       this.achievementWebpImages = webpImages;
     } else {
@@ -300,6 +295,7 @@ export class ModalManager {
     const descriptionEl = document.querySelector('.achievement-description') as HTMLElement;
     if (descriptionEl) {
       descriptionEl.textContent = data.description || '';
+      descriptionEl.style.whiteSpace = data.description ? 'pre-line' : '';
       descriptionEl.style.display = data.description ? '' : 'none';
     }
 
@@ -2225,11 +2221,15 @@ export class ModalManager {
     img.style.display = 'block';
     setTimeout(() => {
       // Set fallback <img> for browsers without <picture> support
-      img.src = src;
-      img.srcset = jpegSrc;
+      // Keep <img> on a reliable JPEG source; optimized variants are handled by <picture><source>
+      img.src = jpegSrc || src;
+      img.srcset = jpegSrc || src;
       img.sizes = '(max-width: 768px) 90vw, 50vw';
       img.onload = () => {
         this.hideImageLoader(slider);
+        img.classList.remove('image-error');
+        img.style.display = 'block';
+        slider?.querySelector('.image-error-placeholder')?.remove();
         // Apply adaptive fit on mobile to avoid letterboxing/cropping
         this.applyAchievementImageFit(img, slider as HTMLElement | null);
         requestAnimationFrame(() => (img.style.opacity = '1'));
@@ -2242,6 +2242,9 @@ export class ModalManager {
           img.src = fallbackSrc;
           img.onload = () => {
             this.hideImageLoader(slider);
+            img.classList.remove('image-error');
+            img.style.display = 'block';
+            slider?.querySelector('.image-error-placeholder')?.remove();
             this.applyAchievementImageFit(img, slider as HTMLElement | null);
             requestAnimationFrame(() => (img.style.opacity = '1'));
           };

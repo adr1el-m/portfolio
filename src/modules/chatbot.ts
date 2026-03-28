@@ -20,7 +20,6 @@ type IntentType =
   | 'ACHIEVEMENTS'
   | 'ACHIEVEMENT_DETAILS'
   | 'RESUME'
-  | 'ORGANIZATIONS'
   | 'GENERAL';
 
 type ExtractedEntities = {
@@ -34,7 +33,7 @@ type SourceOrigin = 'KB' | 'DOM' | 'Search';
 type Citation = {
   label: string;
   href?: string;
-  section?: 'projects' | 'about' | 'contact' | 'skills' | 'organizations' | 'education';
+  section?: 'projects' | 'about' | 'contact' | 'skills' | 'education';
   selector?: string;
   origin: SourceOrigin;
 };
@@ -45,7 +44,7 @@ type ProjectFacts = {
 };
 type IndexedItem = {
   id: string;
-  kind: 'project' | 'achievement' | 'skill' | 'contact' | 'education' | 'organization';
+  kind: 'project' | 'achievement' | 'skill' | 'contact' | 'education';
   title: string;
   text?: string;
   tags?: string[];
@@ -74,6 +73,17 @@ export class ChatbotManager {
   private detailedMode: boolean = false;
   private userPrefs: { detailedMode: boolean } = { detailedMode: false };
   private geminiService: GeminiService;
+  private conversationContext: {
+    lastIntent: IntentType | null;
+    lastProjectTitle: string | null;
+    lastAchievementTitle: string | null;
+    lastTechnology: string | null;
+  } = {
+    lastIntent: null,
+    lastProjectTitle: null,
+    lastAchievementTitle: null,
+    lastTechnology: null,
+  };
 
   // Add focus management state
   private previouslyFocusedElement: HTMLElement | null = null;
@@ -121,6 +131,126 @@ export class ChatbotManager {
     return /(detail|deep|explain|elaborate|comprehensive|thorough|more info|tell me more|smart)/i.test(userMessage);
   }
 
+  private findProjectByTitle(title: string | null): ProjectItem | null {
+    if (!title) return null;
+    const normTitle = this.normalize(title);
+    return KB.projects.find((p) => this.normalize(p.title) === normTitle) || null;
+  }
+
+  private findAchievementByTitle(title: string | null): AchievementItem | null {
+    if (!title) return null;
+    const normTitle = this.normalize(title);
+    return KB.achievements.find((a) => this.normalize(a.title) === normTitle) || null;
+  }
+
+  private isFollowUpMessage(userMessage: string): boolean {
+    const m = this.normalize(userMessage);
+    if (!this.conversationContext.lastIntent) return false;
+    if (/^(and|also|then|next|okay|ok|sure|right)\b/.test(m)) return true;
+    if (/\b(it|its|that|this|that one|this one|same project|same one|more details|expand|elaborate|tell me more|what else)\b/.test(m)) return true;
+    if (m.length <= 24 && /(more|details|explain|show|open|link|demo|stack)/.test(m)) return true;
+    return false;
+  }
+
+  private handleControlCommand(userMessage: string): string | null {
+    const m = this.normalize(userMessage);
+    if (/^(\/)?(mode )?detailed( mode)?( on)?$/.test(m) || /^(be )?more detailed$/.test(m)) {
+      this.detailedMode = true;
+      this.userPrefs.detailedMode = true;
+      this.savePreferences();
+      return 'Detailed mode is now <strong>ON</strong>. I will provide deeper breakdowns, context, and links.';
+    }
+    if (/^(\/)?(mode )?(concise|brief|short)( mode)?( on)?$/.test(m) || /^detailed mode off$/.test(m)) {
+      this.detailedMode = false;
+      this.userPrefs.detailedMode = false;
+      this.savePreferences();
+      return 'Concise mode is now <strong>ON</strong>. I will keep answers short and direct.';
+    }
+    if (/^(\/)?help$/.test(m) || /what can you do|capabilities|how can you help/.test(m)) {
+      return [
+        '<strong>AdrAI capabilities</strong>',
+        '1) Project intelligence: summaries, stack, links, and related achievements',
+        '2) Achievement deep-dives: context, date, organizer, and related project',
+        '3) Navigation actions: open projects, open honors, open resume, search site',
+        '4) Contact & profile: email, LinkedIn, GitHub, education, and skill highlights',
+        'Tip: use <code>/detailed</code> for richer answers or <code>/concise</code> for short replies',
+      ].join('<br>');
+    }
+    return null;
+  }
+
+  private retrieveRelevantItems(query: string, kinds?: Array<IndexedItem['kind']>, limit = 5): IndexedItem[] {
+    const q = this.normalize(query);
+    if (!q) return [];
+
+    const scored = this.unifiedIndex
+      .filter((item) => !kinds || kinds.includes(item.kind))
+      .map((item) => {
+        const titleScore = this.fuzzyScore(item.title || '', q) * 3;
+        const textScore = this.fuzzyScore(item.text || '', q) * 1.4;
+        const tagScore = (item.tags || []).reduce((acc, t) => acc + this.fuzzyScore(t, q), 0) * 0.9;
+        const contextBoost = this.conversationContext.lastProjectTitle && this.normalize(item.title) === this.normalize(this.conversationContext.lastProjectTitle)
+          ? 1.2
+          : 0;
+        return { item, score: titleScore + textScore + tagScore + contextBoost };
+      })
+      .filter((x) => x.score >= 1.1)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit)
+      .map((x) => x.item);
+
+    return scored;
+  }
+
+  private buildRetrievedContextSnippet(query: string): string {
+    const top = this.retrieveRelevantItems(query, undefined, 6);
+    if (!top.length) return '';
+    return top
+      .map((item) => {
+        const text = (item.text || '').replace(/\s+/g, ' ').slice(0, 180);
+        const tags = item.tags?.slice(0, 4).join(', ');
+        return `- [${item.kind}] ${item.title}${text ? `: ${text}` : ''}${tags ? ` | tags: ${tags}` : ''}${item.url ? ` | link: ${item.url}` : ''}`;
+      })
+      .join('\n');
+  }
+
+  private buildSmartGeneralResponse(userMessage: string): string {
+    const matches = this.retrieveRelevantItems(userMessage, undefined, 4);
+    if (!matches.length) {
+      return `${KB.profile.title}. ${KB.profile.summary} Ask about a specific project, achievement, skill, or contact detail for a focused answer.`;
+    }
+
+    const body = matches
+      .map((m) => {
+        const shortText = m.text ? m.text.slice(0, 160) : '';
+        const links = m.url ? ` <a href="${m.url}" target="_blank" rel="noopener noreferrer">Open</a>` : '';
+        return `<strong>${m.title}</strong>${shortText ? ` — ${shortText}` : ''}${links}`;
+      })
+      .join('<br>');
+
+    const citations = matches.map((m) => m.citation);
+    return `<strong>Best matches for your request</strong><br>${body}${this.buildCitationsHTML(citations)}`;
+  }
+
+  private updateConversationContext(userMessage: string, intent: IntentType, entities: ExtractedEntities): void {
+    this.conversationContext.lastIntent = intent;
+
+    const project = this.findProject(userMessage)
+      || this.findProjectByTitle(entities.projects[0] || null)
+      || (this.isFollowUpMessage(userMessage) ? this.findProjectByTitle(this.conversationContext.lastProjectTitle) : null);
+    if (project) this.conversationContext.lastProjectTitle = project.title;
+
+    const achievement = this.findAchievement(userMessage)
+      || this.findAchievementByTitle(entities.achievements[0] || null)
+      || (this.isFollowUpMessage(userMessage) ? this.findAchievementByTitle(this.conversationContext.lastAchievementTitle) : null);
+    if (achievement) this.conversationContext.lastAchievementTitle = achievement.title;
+
+    const explicitTech = entities.technologies[0]
+      || KB.skills.technologies.find((t) => this.normalize(userMessage).includes(this.normalize(t)))
+      || null;
+    if (explicitTech) this.conversationContext.lastTechnology = explicitTech;
+  }
+
   private findProject(userMessage: string): ProjectItem | null {
     const msg = userMessage;
     const mNorm = this.normalize(msg);
@@ -157,6 +287,20 @@ export class ChatbotManager {
 
     // Threshold tuned to avoid random picks
     if (bestProject && bestScore >= 2) return bestProject;
+
+    // Follow-up resolution: map "it/that project" to previously discussed project
+    if (this.isFollowUpMessage(userMessage)) {
+      const fromContext = this.findProjectByTitle(this.conversationContext.lastProjectTitle);
+      if (fromContext) return fromContext;
+    }
+
+    // If user mentions a technology from recent context, return the most relevant project using it
+    const techHint = this.conversationContext.lastTechnology;
+    if (techHint && /(project|build|built|using|with|stack|tech)/i.test(userMessage)) {
+      const found = KB.projects.find((p) => this.normalize(p.technologies || '').includes(this.normalize(techHint)));
+      if (found) return found;
+    }
+
     return null;
   }
 
@@ -177,6 +321,10 @@ export class ChatbotManager {
       if (score > bestScore) { bestScore = score; bestAchievement = a; }
     });
     if (bestAchievement && bestScore >= 2) return bestAchievement;
+    if (this.isFollowUpMessage(userMessage)) {
+      const fromContext = this.findAchievementByTitle(this.conversationContext.lastAchievementTitle);
+      if (fromContext) return fromContext;
+    }
     return null;
   }
 
@@ -273,16 +421,6 @@ export class ChatbotManager {
       });
     });
 
-    // KB organizations
-    KB.organizations.forEach((org, i) => {
-      index.push({
-        id: `kb-org-${i}`,
-        kind: 'organization',
-        title: org,
-        citation: { label: 'KB › Organizations', section: 'organizations', origin: 'KB' },
-      });
-    });
-
     // DOM projects
     const domProjects = this.getProjectsFromDOM();
     domProjects.forEach((p, i) => {
@@ -326,7 +464,6 @@ export class ChatbotManager {
     index.push({ id: 'sec-achievements', kind: 'achievement', title: 'Achievements Section', citation: { label: 'Section › Achievements', section: 'about', origin: 'Search' } });
     index.push({ id: 'sec-contact', kind: 'contact', title: 'Contact Section', citation: { label: 'Section › Contact', section: 'contact', origin: 'Search' } });
     index.push({ id: 'sec-education', kind: 'education', title: 'Education Section', citation: { label: 'Section › Education', section: 'education', origin: 'Search' } });
-    index.push({ id: 'sec-organizations', kind: 'organization', title: 'Organizations Section', citation: { label: 'Section › Organizations', section: 'organizations', origin: 'Search' } });
 
     this.unifiedIndex = index;
   }
@@ -546,7 +683,7 @@ export class ChatbotManager {
   }
 
   private displayWelcomeMessage(): void {
-    const welcomeMessage = "👋 Hi! I'm AdrAI, Adriel's AI assistant. I can help you learn more about his skills, projects, and experience. What would you like to know?";
+    const welcomeMessage = "👋 Hi! I'm AdrAI, Adriel's AI assistant. I can give deep project and achievement breakdowns, compare technologies, and open relevant links for you. Try asking: \"Explain WorkSight in detail\", \"show projects and skills\", or use /detailed for richer answers.";
     this.addMessage(welcomeMessage, 'bot');
   }
 
@@ -734,7 +871,7 @@ export class ChatbotManager {
     this.sendMessage();
   }
 
-  private navigateToSection(section: 'about' | 'background' | 'projects' | 'organizations' | 'contact'): void {
+  private navigateToSection(section: 'about' | 'background' | 'projects' | 'contact'): void {
     const label = section === 'contact' ? 'about' : section;
     const btns = Array.from(document.querySelectorAll<HTMLElement>('[data-nav-link]'));
     const targetBtn = btns.find((b) => (b.textContent || '').trim().toLowerCase() === label);
@@ -878,7 +1015,6 @@ export class ChatbotManager {
       ACHIEVEMENT_DETAILS: 0,
       ACHIEVEMENTS: 0,
       RESUME: 0,
-      ORGANIZATIONS: 0,
       FAQ: 0,
       GENERAL: 0,
     };
@@ -893,7 +1029,6 @@ export class ChatbotManager {
     if (/(\beducation\b|school|university|study|major|graduate)/.test(m)) bump('EDUCATION', 2);
     if (/(\baward(s)?\b|achievement(s)?\b|hackathon|win|won|prize|finalist|honorable mention)/.test(m)) bump('ACHIEVEMENTS', 2);
     if (/(\bresume\b|cv)/.test(m)) bump('RESUME', 2);
-    if (/(\borg(anization)?s?\b|community|club)/.test(m)) bump('ORGANIZATIONS', 1);
     if (/(\bfaq\b|how is|what is|why is|explain)/.test(m)) bump('FAQ', 1);
 
     // Additional contact cues (social profiles and explicit link requests)
@@ -950,8 +1085,45 @@ export class ChatbotManager {
     return { intents, entities };
   }
 
+  private buildMultiIntentResponse(userMessage: string, intents: Array<{ intent: IntentType, score: number }>): string | null {
+    const lower = userMessage.toLowerCase();
+    const isCompound = /\b(and|also|plus|as well as|along with|&|, then|, and)\b/.test(lower);
+    if (!isCompound) return null;
+
+    const candidates = intents
+      .filter((x) => x.score >= 2 && !['GENERAL'].includes(x.intent))
+      .map((x) => x.intent)
+      .filter((value, index, arr) => arr.indexOf(value) === index)
+      .slice(0, 2);
+
+    if (candidates.length < 2) return null;
+
+    const labelMap: Record<IntentType, string> = {
+      FAQ: 'FAQ',
+      PROJECTS: 'Projects',
+      PROJECT_DETAILS: 'Project Details',
+      CONTACT: 'Contact',
+      SKILLS: 'Skills',
+      DATABASE: 'Databases',
+      EDUCATION: 'Education',
+      ACHIEVEMENTS: 'Achievements',
+      ACHIEVEMENT_DETAILS: 'Achievement Details',
+      RESUME: 'Resume',
+      GENERAL: 'General',
+    };
+
+    const sections = candidates
+      .map((intent) => `<strong>${labelMap[intent]}</strong><br>${this.routeIntent(intent, userMessage)}`)
+      .join('<br><br>');
+
+    return sections;
+  }
+
   private detectIntent(userMessage: string): IntentType {
     const m = userMessage.toLowerCase();
+    if (this.isFollowUpMessage(userMessage) && this.conversationContext.lastIntent) {
+      return this.conversationContext.lastIntent;
+    }
     // Prioritize specific intents first, and use word boundaries to avoid substring collisions (e.g., 'how' in 'show')
     if (/(project|projects|portfolio|work)\b/.test(m)) {
       const p = this.findProject(userMessage);
@@ -966,7 +1138,6 @@ export class ChatbotManager {
       return a ? 'ACHIEVEMENT_DETAILS' : 'ACHIEVEMENTS';
     }
     if (/(resume|cv)\b/.test(m)) return 'RESUME';
-    if (/(org|organization|organizations|community|club)\b/.test(m)) return 'ORGANIZATIONS';
     if (/\b(faq|question|how is|what is|why is|explain)\b/.test(m)) return 'FAQ';
     return 'GENERAL';
   }
@@ -1012,8 +1183,6 @@ export class ChatbotManager {
         return ['What can you do?', 'How is the site built?', 'Is there a resume?', 'Open Projects section'];
       case 'RESUME':
         return ['Open resume', 'Share contact info', 'List skills'];
-      case 'ORGANIZATIONS':
-        return ['Show organizations', 'Any leadership roles?', 'Related achievements?'];
       default:
         if (p) {
           const proj = p as ProjectItem;
@@ -1101,7 +1270,7 @@ export class ChatbotManager {
       // Convert `code` to <code>
       .replace(/`([^`]+)`/g, '<code style="background:#2a2a2a;padding:2px 5px;border-radius:3px;font-size:0.9em">$1</code>')
       // Convert markdown bullet lists: * item or - item at start of line
-      .replace(/^[\*\-]\s+(.+)$/gm, '• $1')
+      .replace(/^[*-]\s+(.+)$/gm, '• $1')
       // Convert numbered lists: 1. item
       .replace(/^\d+\.\s+(.+)$/gm, '→ $1')
       // Convert double newlines to <br><br>
@@ -1274,13 +1443,6 @@ export class ChatbotManager {
         const foot = this.topicSummaries.achievements ? `<br><small>${this.topicSummaries.achievements}</small>` : '';
         return `${body}${foot}${this.buildCitationsHTML(cites)}`;
       }
-      case 'ORGANIZATIONS': {
-        const cites: Citation[] = [];
-        const sec = this.unifiedIndex.find((it) => it.id === 'sec-organizations')?.citation;
-        if (sec) cites.push(sec);
-        cites.push(...this.unifiedIndex.filter((it) => it.kind === 'organization').map(it => it.citation));
-        return `Organizations: ${KB.organizations.join('; ')}.${this.buildCitationsHTML(cites)}`;
-      }
       case 'FAQ': {
         const m = message.toLowerCase();
         if (/how.*built|how.*site|stack|tech|technology/.test(m)) {
@@ -1401,8 +1563,6 @@ Technologies: ${KB.skills.technologies.join(', ')}`;
       `- ${a.title}: ${a.description?.slice(0, 100) || 'Achievement'} (${a.location}, ${a.date})${a.projectTitle ? ` — Project: ${a.projectTitle}` : ''}`
     ).join('\n');
 
-    const organizations = `Organizations: ${KB.organizations.join(', ')}`;
-
     const contact = `Email: ${KB.contact.email}
 GitHub: ${KB.contact.github}
 LinkedIn: ${KB.contact.linkedin}
@@ -1422,23 +1582,39 @@ Resume: ${KB.contact.resumeUrl}`;
       '\n=== EDUCATION ===', education,
       '\n=== PROJECTS (Highlights) ===', projects,
       '\n=== ACHIEVEMENTS ===', achievements,
-      '\n=== ORGANIZATIONS ===', organizations,
       '\n=== CONTACT ===', contact,
       topicContext ? `\n=== CURRENT DISCUSSION ===\n${topicContext}` : ''
     ].join('\n');
   }
 
   private async handleMessage(userMessage: string): Promise<void> {
+    const controlResponse = this.handleControlCommand(userMessage);
+    if (controlResponse) {
+      this.addMessage(this.formatResponse(controlResponse, this.detailedMode ? 'detailed' : 'concise'), 'bot');
+      return;
+    }
+
     const guard = this.applyGuardrails(userMessage);
     if (guard) {
       this.addMessage(this.formatResponse(guard, 'concise'), 'bot');
       return;
     }
 
+    // Detect intents/entities early so both Gemini and local fallback can reuse them
+    const { intents, entities } = this.detectIntents(userMessage);
+    const scoredIntent = this.chooseTopIntent(intents, entities);
+    const intent = this.isFollowUpMessage(userMessage) && this.conversationContext.lastIntent
+      ? this.conversationContext.lastIntent
+      : scoredIntent;
+
     // Try Gemini first with conversation history for context
     try {
       this.showTypingIndicator();
-      const context = this.buildContext();
+      const retrieved = this.buildRetrievedContextSnippet(userMessage);
+      const context = [
+        this.buildContext(),
+        retrieved ? `\n=== RETRIEVED MATCHES FOR CURRENT QUERY ===\n${retrieved}` : ''
+      ].join('');
       // Pass recent conversation history for multi-turn awareness
       const recentHistory = this.messages.slice(-10).map(m => ({
         role: m.role as 'user' | 'bot',
@@ -1452,6 +1628,7 @@ Resume: ${KB.contact.resumeUrl}`;
 
       if (aiResponse) {
         this.addMessage(this.formatResponse(aiResponse, this.detailedMode ? 'detailed' : 'concise'), 'bot');
+        this.updateConversationContext(userMessage, intent, entities);
         return;
       } else {
         logger.warn('Gemini returned null response, falling back to local KB.');
@@ -1477,13 +1654,13 @@ Resume: ${KB.contact.resumeUrl}`;
 
     this.detailedMode = this.prefersDetailed(userMessage) || this.detailedMode;
     this.userPrefs.detailedMode = this.detailedMode;
-    // Multi-intent scoring
-    const { intents, entities } = this.detectIntents(userMessage);
-    const intent = this.chooseTopIntent(intents, entities);
-    const botResponse = this.routeIntent(intent, userMessage);
+    const multiIntentResponse = this.buildMultiIntentResponse(userMessage, intents);
+    const botResponse = multiIntentResponse
+      || (intent === 'GENERAL' ? this.buildSmartGeneralResponse(userMessage) : this.routeIntent(intent, userMessage));
     // Add a note that this is from local knowledge when Gemini was attempted but failed
     const localNote = '<small style="opacity:0.7">📚 From local knowledge</small><br>';
     this.addMessage(localNote + this.formatResponse(botResponse, this.detailedMode ? 'detailed' : 'concise'), 'bot');
+    this.updateConversationContext(userMessage, intent, entities);
   }
 
   // Dev-only connectivity test for Gemini API; returns a short status message

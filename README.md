@@ -198,14 +198,12 @@ portfolio/
 │   ├── pa11y-ci.json              # Accessibility test config
 │   └── performance-budget.json    # Performance budgets
 │
-├── docs/                    # Documentation & demos
-│   ├── loading-demo.html          # Loading states demo
-│   └── mobile-test-guide.html     # Mobile testing guide
-│
 ├── public/                  # Static assets
 │   ├── manifest.json              # PWA manifest
 │   ├── sw.js                      # Service worker
 │   ├── offline.html               # Offline fallback page
+│   ├── loading-demo.html          # Loading states demo page
+│   ├── mobile-test-guide.html     # Mobile testing checklist
 │   ├── robots.txt                 # SEO crawler rules
 │   ├── sitemap.xml                # Site structure
 │   ├── images/                    # Optimized images (AVIF/WebP)
@@ -441,10 +439,10 @@ npm run type-check         # TypeScript
 
 ## 📚 Documentation
 
-Additional resources in [docs/](docs/):
+Additional resources available as static routes:
 
-- 📝 [Loading Demo](docs/loading-demo.html) - Interactive loading states
-- 📱 [Mobile Testing Guide](docs/mobile-test-guide.html) - Mobile testing strategies
+- 📝 [Loading Demo](public/loading-demo.html) - Interactive loading states
+- 📱 [Mobile Testing Guide](public/mobile-test-guide.html) - Mobile testing strategies
 
 ### API Documentation
 

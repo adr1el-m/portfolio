@@ -2,7 +2,7 @@
 
 interface SearchResult {
   title: string;
-  section: 'about' | 'background' | 'projects' | 'organizations';
+  section: 'about' | 'background' | 'projects';
   element: HTMLElement | null;
   snippet?: string;
 }
@@ -169,7 +169,6 @@ export class Search {
       case 'about': return 'About → Achievements';
       case 'background': return 'Background';
       case 'projects': return 'Projects';
-      case 'organizations': return 'Organizations';
       default: return 'Section';
     }
   }
@@ -229,21 +228,6 @@ export class Search {
       }
     });
 
-    // Organizations page (cards)
-    document.querySelectorAll<HTMLElement>('[data-page="organizations"] .organizations-list .organization-card, .org-item, .org-card').forEach((el) => {
-      const title = el.querySelector('.organization-title, .h4, h4')?.textContent?.trim() || '';
-      const text = el.textContent?.trim() || '';
-      const hay = (title + ' ' + text).toLowerCase();
-      if (hay.includes(q)) {
-        res.push({
-          title: title || 'Organization',
-          section: 'organizations',
-          element: el,
-          snippet: text ? `<span style="color:var(--light-gray-70)">${this.trimSnippet(text, q)}</span>` : undefined,
-        });
-      }
-    });
-
     return res;
   }
 
@@ -261,7 +245,6 @@ export class Search {
       about: 'about',
       background: 'background',
       projects: 'projects',
-      organizations: 'organizations',
     };
 
     // Use existing navigation manager handlers by simulating a click on the navbar
@@ -284,7 +267,6 @@ export class Search {
       case 'about': return 'about';
       case 'background': return 'background';
       case 'projects': return 'projects';
-      case 'organizations': return 'organizations';
     }
   }
 

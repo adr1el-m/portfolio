@@ -32,7 +32,6 @@ export interface KnowledgeBase {
   };
   projects: ProjectData[];
   achievements: AchievementData[];
-  organizations: string[];
 }
 
 export const KB: KnowledgeBase = {
@@ -307,12 +306,5 @@ export const KB: KnowledgeBase = {
       linkedinUrl: 'https://www.linkedin.com/posts/adr1el_this-comes-a-bit-late-but-its-a-milestone-activity-7419437733170896897-nULW?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFCMwAABUwVcMwAFxdORbMcULlqBOAyuSpU',
       facebookUrl: 'https://www.facebook.com/share/p/19mEFhhtCv/',
     },
-  ],
-  organizations: [
-    'Google Developer Student Clubs — PUP',
-    'AWS Cloud Club — PUP',
-    'Microsoft Student Community — PUP Manila',
-    "The Programmers' Guild — PUP",
-    'Junior Blockchain Education Consortium of the Philippines — PUP Manila',
   ],
 };

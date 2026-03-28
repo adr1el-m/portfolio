@@ -157,6 +157,26 @@ npm run build          # Build optimized production bundle
 npm run preview        # Preview production build locally
 ```
 
+### Gradual Next.js Migration (Parallel App)
+This repo now includes a parallel Next.js app under [next](next) for gradual migration.
+
+Use these commands from the repository root:
+
+```bash
+npm run next:dev       # Run Next.js app at http://localhost:3000
+npm run next:build     # Build Next.js migration app
+npm run next:start     # Start Next.js production server
+```
+
+Current migrated slice:
+- 2026 Honors page at [next/app/honors/2026/page.tsx](next/app/honors/2026/page.tsx)
+
+Migration strategy:
+1. Move one section at a time (data + UI) into Next.js routes/components.
+2. Validate parity with the existing Vite page.
+3. Switch navigation to the Next.js route only after verification.
+4. Repeat until the legacy static page can be retired.
+
 ---
 
 ## 📦 Available Scripts

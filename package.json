@@ -7,6 +7,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --open \"/?admin=true\"",
+    "next:dev": "npm --prefix next run dev",
+    "next:build": "npm --prefix next run build",
+    "next:start": "npm --prefix next run start",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "deploy": "vercel --prod --confirm",

@@ -15,8 +15,15 @@ export class SkeletonLoader {
    * Initialize skeleton loader system
    */
   private init(): void {
-    this.createSidebarSkeleton();
-    this.setupProgressiveDisclosure();
+    // Skeleton/progressive disclosure effects are opt-in to prevent CLS on first paint.
+    const params = new URLSearchParams(window.location.search);
+    const skeletonFlag = (params.get("skeleton") || "").toLowerCase();
+    const enableSkeleton = skeletonFlag === "1" || skeletonFlag === "true" || skeletonFlag === "yes";
+
+    if (enableSkeleton) {
+      this.createSidebarSkeleton();
+      this.setupProgressiveDisclosure();
+    }
     this.addShimmerEffect();
   }
 

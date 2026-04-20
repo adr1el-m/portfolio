@@ -52,7 +52,7 @@
 
   <!-- Content Security Policy will be set by server headers -->
   <title>Adriel Magalona - Full-stack Developer & AI Engineer | Portfolio</title>
-  <link rel="shortcut icon" href="/images/my-avatar.png" type="image/x-icon">
+  <link rel="shortcut icon" href="/images/my-avatar@2x.png" type="image/x-icon">
 
   <!-- JSON-LD Structured Data for Rich Search Results -->
   <script type="application/ld+json">
@@ -801,8 +801,15 @@
       <div class="sidebar-info">
 
         <figure class="avatar-box">
-          <img src="/images/my-avatar.png" alt="Adriel Magalona" width="150" height="150" loading="eager"
-            fetchpriority="high" decoding="async" class="critical-image">
+          <picture>
+            <source type="image/avif" srcset="/images/my-avatar.avif 80w, /images/my-avatar@2x.avif 160w"
+              sizes="150px">
+            <source type="image/webp" srcset="/images/my-avatar.webp 80w, /images/my-avatar@2x.webp 160w"
+              sizes="150px">
+            <img src="/images/my-avatar@2x.png" srcset="/images/my-avatar@2x.png 160w" sizes="150px"
+              alt="Adriel Magalona" width="150" height="150" loading="eager" fetchpriority="high"
+              decoding="async" class="critical-image">
+          </picture>
         </figure>
 
         <div class="info-content">
@@ -1577,8 +1584,17 @@
                     <ion-icon name="eye-outline"></ion-icon>
                   </div>
 
-                  <img src="/images/projects/ODRS/1.jpeg" alt="Online Document Request System - University of Makati"
-                    loading="lazy">
+                  <picture>
+                    <source type="image/avif"
+                      srcset="/images/projects/ODRS/1-400.avif 400w, /images/projects/ODRS/1-800.avif 800w"
+                      sizes="(max-width: 768px) 95vw, 400px">
+                    <source type="image/webp"
+                      srcset="/images/projects/ODRS/1-400.webp 400w, /images/projects/ODRS/1-800.webp 800w"
+                      sizes="(max-width: 768px) 95vw, 400px">
+                    <img src="/images/projects/ODRS/1.jpeg"
+                      alt="Online Document Request System - University of Makati" loading="lazy" decoding="async"
+                      width="400" height="300">
+                  </picture>
                 </figure>
 
                 <h3 class="project-title">Online Document Request System</h3>
@@ -1696,7 +1712,16 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="/images/projects/loan/1.png" alt="PHP-Loan-System login page" loading="lazy">
+                  <picture>
+                    <source type="image/avif"
+                      srcset="/images/projects/loan/1-400.avif 400w, /images/projects/loan/1-800.avif 800w, /images/projects/loan/1-1200.avif 1200w"
+                      sizes="(max-width: 768px) 95vw, 400px">
+                    <source type="image/webp"
+                      srcset="/images/projects/loan/1-400.webp 400w, /images/projects/loan/1-800.webp 800w, /images/projects/loan/1-1200.webp 1200w"
+                      sizes="(max-width: 768px) 95vw, 400px">
+                    <img src="/images/projects/loan/1.png" alt="PHP-Loan-System login page" loading="lazy"
+                      decoding="async" width="400" height="300">
+                  </picture>
                 </figure>
                 <h3 class="project-title">PHP-Loan-System</h3>
               </a>
@@ -1708,8 +1733,17 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="/images/projects/handGesture/thumbnail.png"
-                    alt="Hand Gesture Recognition and Arduino Integration" loading="lazy">
+                  <picture>
+                    <source type="image/avif"
+                      srcset="/images/projects/handGesture/thumbnail-400.avif 400w, /images/projects/handGesture/thumbnail-800.avif 800w, /images/projects/handGesture/thumbnail-1200.avif 1200w"
+                      sizes="(max-width: 768px) 95vw, 400px">
+                    <source type="image/webp"
+                      srcset="/images/projects/handGesture/thumbnail-400.webp 400w, /images/projects/handGesture/thumbnail-800.webp 800w, /images/projects/handGesture/thumbnail-1200.webp 1200w"
+                      sizes="(max-width: 768px) 95vw, 400px">
+                    <img src="/images/projects/handGesture/thumbnail.png"
+                      alt="Hand Gesture Recognition and Arduino Integration" loading="lazy" decoding="async"
+                      width="400" height="300">
+                  </picture>
                 </figure>
                 <h3 class="project-title">Hand Gesture Recognition and Arduino Integration</h3>
               </a>
@@ -1722,8 +1756,16 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="/images/projects/ytLayout/clone.jpg" alt="YouTube Layout preview" loading="lazy" width="400"
-                    height="300">
+                  <picture>
+                    <source type="image/avif"
+                      srcset="/images/projects/ytLayout/clone-400.avif 400w, /images/projects/ytLayout/clone-800.avif 800w, /images/projects/ytLayout/clone-1200.avif 1200w"
+                      sizes="(max-width: 768px) 95vw, 400px">
+                    <source type="image/webp"
+                      srcset="/images/projects/ytLayout/clone-400.webp 400w, /images/projects/ytLayout/clone-800.webp 800w, /images/projects/ytLayout/clone-1200.webp 1200w"
+                      sizes="(max-width: 768px) 95vw, 400px">
+                    <img src="/images/projects/ytLayout/clone.jpg" alt="YouTube Layout preview" loading="lazy"
+                      decoding="async" width="400" height="300">
+                  </picture>
                 </figure>
                 <h3 class="project-title">YouTube Layout</h3>
               </a>

@@ -146,6 +146,7 @@ export class TechStack {
       frag.appendChild(li);
     });
     this.grid.appendChild(frag);
+    this.grid.classList.add('is-ready');
   }
 
   private bindEvents(section: Element): void {

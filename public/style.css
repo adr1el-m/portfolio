@@ -212,12 +212,10 @@ article.active {
 @keyframes slideFadeOut {
   from {
     opacity: 1;
-    transform: translateY(0);
   }
 
   to {
     opacity: 0;
-    transform: translateY(-10px);
   }
 }
 
@@ -236,12 +234,10 @@ article.active {
 @keyframes slideFadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -2394,12 +2390,10 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 @keyframes slideFadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -2548,18 +2542,15 @@ article.active {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
 .reveal {
   opacity: 0;
-  transform: translateY(20px);
 }
 
 .reveal.animate {
@@ -5379,6 +5370,11 @@ picture img {
   gap: 12px;
 }
 
+/* Reserve space before TechStack JS renders items to avoid layout shifts. */
+.stack-grid:not(.is-ready) {
+  min-height: 320px;
+}
+
 .stack-item {
   position: relative;
   display: flex;
@@ -5477,6 +5473,10 @@ picture img {
 @media (min-width: 768px) {
   .stack-grid {
     grid-template-columns: repeat(4, 1fr);
+  }
+
+  .stack-grid:not(.is-ready) {
+    min-height: 240px;
   }
 }
 
@@ -5617,13 +5617,11 @@ article.projects ul.project-list li.project-item:focus-within {
 /* --- Scroll Animations --- */
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+  transition: opacity 0.8s cubic-bezier(0.5, 0, 0, 1);
 }
 
 .reveal.active {
   opacity: 1;
-  transform: translateY(0);
 }
 
 .reveal:nth-child(2) {

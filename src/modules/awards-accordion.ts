@@ -18,12 +18,6 @@ export class AwardsAccordion {
         this.toggleYear(header as HTMLElement);
       });
     });
-    
-    // Preload images for the initially active (expanded) section
-    const activeContent = document.querySelector('.year-content.active');
-    if (activeContent) {
-      this.preloadImagesForSection(activeContent as HTMLElement);
-    }
   }
 
   private toggleYear(header: HTMLElement): void {

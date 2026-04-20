@@ -11,8 +11,7 @@ export class ScrollAnimations {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add('active');
-          // Optional: Stop observing once revealed
-          // this.observer.unobserve(entry.target); 
+          this.observer.unobserve(entry.target);
         }
       });
     }, {
@@ -25,9 +24,8 @@ export class ScrollAnimations {
   }
 
   private init(): void {
-    // Select all elements to be revealed
-    // We can add the 'reveal' class to sections, cards, headers, etc.
-    const elements = document.querySelectorAll('.reveal, article, .content-card, .timeline-item');
+    // Avoid revealing whole-page containers (e.g. article) to keep CLS stable.
+    const elements = document.querySelectorAll('.reveal, .content-card, .timeline-item');
     elements.forEach((el) => {
       el.classList.add('reveal'); // Ensure they have the base class
       this.observer.observe(el);

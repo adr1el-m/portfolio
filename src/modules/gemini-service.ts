@@ -1,5 +1,13 @@
 import { logger } from '@/config';
 
+const DEFAULT_GEMINI_MODEL = 'gemini-2.5-pro';
+const FALLBACK_GEMINI_MODEL = 'gemini-2.5-flash';
+const DIRECT_GENERATION_CONFIG = {
+  temperature: 0.35,
+  topP: 0.9,
+  maxOutputTokens: 800,
+};
+
 export class GeminiService {
   private apiKey: string;
   private clientApiKey: string;
@@ -9,22 +17,35 @@ export class GeminiService {
 
   constructor() {
     this.clientApiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
-    const canUseDirect = !!this.clientApiKey;
-    if (import.meta.env.DEV || canUseDirect) {
+    const allowClientKey = import.meta.env.DEV || import.meta.env.VITE_GEMINI_USE_CLIENT_KEY === 'true';
+    const canUseDirect = allowClientKey && !!this.clientApiKey;
+    const allowDevProxy = import.meta.env.VITE_GEMINI_USE_PROXY_IN_DEV === 'true';
+    if (canUseDirect) {
       this.useProxy = false;
       this.apiKey = this.clientApiKey;
-      this.model = import.meta.env.VITE_GEMINI_MODEL || 'gemini-2.5-flash';
+      this.model = import.meta.env.VITE_GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
       this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
+    } else if (import.meta.env.DEV && !allowDevProxy) {
+      this.useProxy = false;
+      this.apiKey = '';
+      this.model = import.meta.env.VITE_GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
+      this.baseUrl = '';
     } else {
       this.useProxy = true;
       this.apiKey = '';
-      this.model = import.meta.env.VITE_GEMINI_MODEL || 'gemini-2.5-flash';
+      this.model = import.meta.env.VITE_GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
       this.baseUrl = '/api/gemini';
     }
 
-    if (!this.useProxy && !this.apiKey) {
-      logger.warn('GeminiService: No API key found. Chatbot will use local responses only.');
+    if (import.meta.env.DEV && !canUseDirect && !allowDevProxy) {
+      logger.warn('GeminiService: No VITE_GEMINI_API_KEY found. The chatbot will use local responses.');
+    } else if (import.meta.env.DEV && !canUseDirect) {
+      logger.warn('GeminiService: No VITE_GEMINI_API_KEY found. The chatbot will use the proxy if available, then local responses.');
     }
+  }
+
+  public isAvailable(): boolean {
+    return this.useProxy || !!this.apiKey;
   }
 
   private async callModel(
@@ -58,6 +79,7 @@ export class GeminiService {
                 parts: [{ text: prompt }],
               },
             ],
+            generationConfig: DIRECT_GENERATION_CONFIG,
           }),
           signal: controller.signal,
         }));
@@ -111,15 +133,15 @@ export class GeminiService {
         `${msg.role === 'user' ? 'User' : 'AdrAI'}: ${msg.content.replace(/<[^>]*>/g, '').slice(0, 200)}`
       ).join('\n') || '';
 
-      const prompt = `You are AdrAI, Adriel Magalona's personal AI assistant on his portfolio website (adriel.dev).
+      const prompt = `You are AdrAI, Adriel Magalona's polished portfolio guide on adriel.dev.
 
 PERSONALITY & STYLE:
-- Friendly, enthusiastic, and professional — like a knowledgeable colleague
-- Proud of Adriel's accomplishments but humble and genuine
-- Proactive in suggesting related topics or deeper dives
-- Concise by default (1-3 sentences), thorough when explicitly asked
-- Use occasional emojis sparingly to add warmth (1 max per response)
-- Never be robotic or overly formal
+- Warm, sharp, and visitor-ready; sound like a capable guide, not a generic support bot
+- Speak about Adriel in third person unless the visitor asks you to draft text as Adriel
+- Be specific: cite project names, stacks, awards, dates, and links when the context provides them
+- Concise by default: 2-4 polished sentences; use bullets only for comparisons or lists
+- Never expose internal labels such as KB, DOM, fallback, prompt, or local knowledge
+- Do not invent facts. If the portfolio context does not contain an answer, say so briefly and offer a relevant next step
 
 ${toneInstructions ? `TONE ADAPTATION:\n${toneInstructions}\n` : ''}
 KNOWLEDGE SCOPE:
@@ -133,9 +155,9 @@ RESPONSE GUIDELINES:
 1. Answer directly and helpfully — don't be evasive
 2. If you know the answer from context, give specifics (project names, tech used, dates)
 3. If asked about something not in context, be honest but try to relate to what you know
-4. Suggest follow-ups naturally: "Want to know more about the tech stack?" 
+4. Suggest one natural follow-up only when it genuinely helps
 5. For project questions, mention key features and available links
-6. Keep formatting simple — avoid excessive bullet points or headers in short responses
+6. Keep formatting clean — no long disclaimers, no excessive headers, no raw source labels
 
 ${historyStr ? `RECENT CONVERSATION:\n${historyStr}\n` : ''}
 PORTFOLIO CONTEXT:
@@ -149,12 +171,11 @@ Respond naturally as AdrAI:`.trim();
       const first = await this.callModel(this.model, prompt);
       if (first.text) return first.text;
 
-      const fallbackModel = 'gemini-2.5-flash';
       const shouldRetryForModel = first.status === 404 || /not found|model/i.test(first.errorText || '');
-      if (shouldRetryForModel && this.model !== fallbackModel) {
-        const second = await this.callModel(fallbackModel, prompt);
+      if (shouldRetryForModel && this.model !== FALLBACK_GEMINI_MODEL) {
+        const second = await this.callModel(FALLBACK_GEMINI_MODEL, prompt);
         if (second.text) {
-          this.model = fallbackModel;
+          this.model = FALLBACK_GEMINI_MODEL;
           return second.text;
         }
       }
@@ -176,14 +197,14 @@ Respond naturally as AdrAI:`.trim();
         });
         if (directFirst.text) return directFirst.text;
         const directShouldRetryForModel = directFirst.status === 404 || /not found|model/i.test(directFirst.errorText || '');
-        if (directShouldRetryForModel && this.model !== fallbackModel) {
-          const directSecond = await this.callModel(fallbackModel, prompt, {
+        if (directShouldRetryForModel && this.model !== FALLBACK_GEMINI_MODEL) {
+          const directSecond = await this.callModel(FALLBACK_GEMINI_MODEL, prompt, {
             useProxy: false,
             apiKey: this.clientApiKey,
             baseUrl: directBaseUrl,
           });
           if (directSecond.text) {
-            this.model = fallbackModel;
+            this.model = FALLBACK_GEMINI_MODEL;
             return directSecond.text;
           }
         }

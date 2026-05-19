@@ -220,6 +220,7 @@ export class ModalManager {
     const githubUrl = element.getAttribute('data-github') || '';
     const description = element.getAttribute('data-description') || '';
     const projectTitle = element.getAttribute('data-project-title') || '';
+    const liveUrl = element.getAttribute('data-live') || '';
     const linkedinUrl = element.getAttribute('data-linkedin') || '';
     const blogUrl = element.getAttribute('data-blog') || '';
     const facebookUrl = element.getAttribute('data-facebook') || '';
@@ -240,6 +241,7 @@ export class ModalManager {
         githubUrl: githubUrl || undefined,
         description: description || undefined,
         projectTitle: projectTitle || undefined,
+        liveUrl: liveUrl || undefined,
         linkedinUrl: linkedinUrl || undefined,
         blogUrl: blogUrl || undefined,
         facebookUrl: facebookUrl || undefined,
@@ -377,10 +379,15 @@ export class ModalManager {
             }
           });
         }
-        // Render GitHub if available
-        this.displayGithubButton(gh || undefined);
+        // Render project/action links if available
+        this.displayAchievementLinks({
+          githubUrl: gh || undefined,
+          liveUrl: data.liveUrl,
+          linkedinUrl: data.linkedinUrl,
+          blogUrl: data.blogUrl,
+        });
         // Also render LinkedIn if present
-        if (data.linkedinUrl) {
+        if (data.linkedinUrl && !data.liveUrl && !data.blogUrl && !gh) {
           const githubSection = document.querySelector('.achievement-github') as HTMLElement;
           if (githubSection) {
             githubSection.style.display = 'block';
@@ -2075,23 +2082,37 @@ export class ModalManager {
     });
   }
 
-  private displayGithubButton(githubUrl?: string): void {
-    const githubSection = document.querySelector('.achievement-github') as HTMLElement;
-    
-    if (!githubSection) return;
-    
-    if (!githubUrl) {
-      githubSection.style.display = 'none';
+  private displayAchievementLinks(links: {
+    githubUrl?: string;
+    liveUrl?: string;
+    linkedinUrl?: string;
+    blogUrl?: string;
+  }): void {
+    const section = document.querySelector('.achievement-github') as HTMLElement;
+    if (!section) return;
+
+    const actions = [
+      links.liveUrl ? { href: links.liveUrl, label: 'Open Live Demo', icon: 'open-outline' } : null,
+      links.githubUrl ? { href: links.githubUrl, label: 'View GitHub', icon: 'logo-github' } : null,
+      links.linkedinUrl ? { href: links.linkedinUrl, label: 'View LinkedIn Post', icon: 'logo-linkedin' } : null,
+      links.blogUrl ? { href: links.blogUrl, label: 'Read Article', icon: 'newspaper-outline' } : null,
+    ].filter(Boolean) as Array<{ href: string; label: string; icon: string }>;
+
+    if (!actions.length) {
+      section.style.display = 'none';
+      section.textContent = '';
       return;
     }
-    
-    githubSection.style.display = 'block';
-    githubSection.textContent = '';
-    const link = SecurityManager.createSafeAnchor(githubUrl, 'Visit Project on GitHub', 'github-button', true);
-    const icon = document.createElement('ion-icon');
-    icon.setAttribute('name', 'logo-github');
-    link.prepend(icon);
-    githubSection.appendChild(link);
+
+    section.style.display = 'block';
+    section.textContent = '';
+    actions.forEach((action) => {
+      const link = SecurityManager.createSafeAnchor(action.href, action.label, 'github-button', true);
+      const icon = document.createElement('ion-icon');
+      icon.setAttribute('name', action.icon);
+      link.prepend(icon);
+      section.appendChild(link);
+    });
   }
 
   private displayHackItActions(data: AchievementData): void {

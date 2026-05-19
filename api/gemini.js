@@ -12,7 +12,13 @@ const ALLOWED_MODELS = new Set([
 
 const RATE_WINDOW_MS = Number(process.env.GEMINI_RATE_LIMIT_WINDOW_MS || 60_000);
 const RATE_MAX_REQUESTS = Number(process.env.GEMINI_RATE_LIMIT_MAX_REQUESTS || 12);
-const MAX_PROMPT_CHARS = Number(process.env.GEMINI_MAX_PROMPT_CHARS || 4_000);
+const MAX_PROMPT_CHARS = Number(process.env.GEMINI_MAX_PROMPT_CHARS || 14_000);
+const DEFAULT_MODEL = 'gemini-2.5-pro';
+const GENERATION_CONFIG = {
+  temperature: 0.35,
+  topP: 0.9,
+  maxOutputTokens: 800,
+};
 
 function getAllowedOrigins() {
   const raw = process.env.GEMINI_ALLOWED_ORIGINS || '';
@@ -111,7 +117,7 @@ module.exports = async (req, res) => {
 
   try {
     const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '';
-    const defaultModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+    const defaultModel = process.env.GEMINI_MODEL || DEFAULT_MODEL;
 
     if (!apiKey) {
       console.error('Gemini API key missing on server.');
@@ -169,6 +175,7 @@ module.exports = async (req, res) => {
             parts: [{ text: prompt }],
           },
         ],
+        generationConfig: GENERATION_CONFIG,
       }),
     });
 

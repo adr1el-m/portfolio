@@ -76,14 +76,14 @@ async function pumpMessages(mgr: Manager, overlay: HTMLElement): Promise<{ count
   const errors: string[] = [];
   const durations: number[] = [];
 
-  const send = (text: string): number => {
+  const send = async (text: string): Promise<number> => {
     const t0 = performance.now();
     try {
       mgr.addMessage(text, 'user');
       // Provide last user message context for suggestions
       (mgr as unknown as { lastUserMessage?: string }).lastUserMessage = text;
       // Call private method via escape hatch; safe for dev/testing
-      (mgr as unknown as { handleMessage?: (t: string) => void }).handleMessage?.(text);
+      await (mgr as unknown as { handleMessage?: (t: string) => Promise<void> | void }).handleMessage?.(text);
     } catch (e: unknown) {
       const err = e as { message?: unknown };
       errors.push(String(err?.message ?? e));
@@ -93,21 +93,18 @@ async function pumpMessages(mgr: Manager, overlay: HTMLElement): Promise<{ count
   };
 
   // Burst phase: rapid fire
-  for (let i = 0; i < 30; i++) {
-    const m = randFrom(scenarios);
-    durations.push(send(m));
-  }
+  durations.push(...await Promise.all(Array.from({ length: 30 }, () => send(randFrom(scenarios)))));
 
   // Mixed phase with tiny delays
   for (let i = 0; i < 20; i++) {
     const m = randFrom(scenarios);
-    durations.push(send(m));
+    durations.push(await send(m));
     await new Promise(r => setTimeout(r, 10));
   }
 
   // Long message phase
   for (let i = 0; i < 5; i++) {
-    durations.push(send(makeLongText('Deep dive: ')));
+    durations.push(await send(makeLongText('Deep dive: ')));
   }
 
   const count = durations.length;
@@ -131,8 +128,25 @@ export async function runChatbotStressTests(): Promise<void> {
     console.warn('[StressTest] ChatbotManager not available');
     return;
   }
+  const state = mgr as unknown as {
+    detailedMode?: boolean;
+    userPrefs?: { detailedMode: boolean };
+  };
+  const previousDetailedMode = state.detailedMode;
+  const previousPrefs = state.userPrefs ? { ...state.userPrefs } : undefined;
+  const previousStoredPrefs = localStorage.getItem('adrAI:prefs');
   const overlay = createOverlay();
   overlay.textContent = 'Running chatbot stress tests…';
-  const res = await pumpMessages(mgr, overlay);
-  console.log('[StressTest] Results:', res);
+  try {
+    const res = await pumpMessages(mgr, overlay);
+    console.log('[StressTest] Results:', res);
+  } finally {
+    state.detailedMode = previousDetailedMode;
+    if (previousPrefs) state.userPrefs = previousPrefs;
+    if (previousStoredPrefs == null) {
+      localStorage.removeItem('adrAI:prefs');
+    } else {
+      localStorage.setItem('adrAI:prefs', previousStoredPrefs);
+    }
+  }
 }

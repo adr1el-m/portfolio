@@ -336,10 +336,11 @@ Sophisticated caching strategy for optimal performance and offline experience:
 
 Intelligent chatbot powered by Google's Gemini API:
 
-- **Context-Aware**: Trained on portfolio content and projects
-- **Natural Language**: Conversational interface for content exploration
-- **Rate Limiting**: Exponential backoff and request throttling
-- **Error Handling**: Graceful fallbacks for API failures
+- **Visitor-Ready Guide**: Polished answers about projects, skills, awards, resume, and contact paths
+- **Context-Aware**: Uses portfolio knowledge plus live DOM content for fresher project and achievement coverage
+- **Smarter Default Model**: Routes through Gemini 2.5 Pro by default, with Gemini 2.5 Flash as a fallback
+- **Safe Production Proxy**: Keeps the Gemini key server-side through `/api/gemini`
+- **Error Handling**: Graceful local fallbacks when the API is unavailable
 
 **Key Files**: [src/modules/chatbot.ts](src/modules/chatbot.ts), [src/modules/gemini-service.ts](src/modules/gemini-service.ts), [api/gemini.js](api/gemini.js)
 
@@ -388,7 +389,8 @@ Optimized deployment with custom headers and rewrites:
 ```
 
 ### Required Environment Variables
-- `VITE_GEMINI_API_KEY` - Google Gemini API key
+- `GEMINI_API_KEY` - Google Gemini API key for the server-side chatbot proxy
+- `GEMINI_MODEL` - Optional Gemini model override, defaults to `gemini-2.5-pro`
 - `VERCEL_TOKEN` - Vercel deployment token
 - `VERCEL_ORG_ID` - Vercel organization ID
 - `VERCEL_PROJECT_ID` - Vercel project ID

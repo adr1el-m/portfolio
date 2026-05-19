@@ -46,7 +46,6 @@ import { IconReplacer } from './modules/icon-replacer';
 import { SidebarAnimations } from './modules/sidebar-animations';
 import { SkeletonLoader } from './modules/skeleton-loader';
 import { PerformanceMonitor } from './modules/performance-monitor';
-import { PerformanceDashboard } from './modules/performance-dashboard';
 import { AccessibilityEnhancer } from './modules/accessibility-enhancer';
 import { ScrollProgress } from './modules/scroll-progress';
 import { logger } from './config';
@@ -62,12 +61,97 @@ declare global {
     Portfolio: Portfolio;
   }
 }
+
+type ChatbotInstance = {
+  openChatbox?: () => void;
+};
+
+function runWhenIdle(callback: () => void, timeout = 1800): void {
+  const idleWindow = window as Window & {
+    requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number;
+  };
+
+  if (typeof idleWindow.requestIdleCallback === 'function') {
+    idleWindow.requestIdleCallback(callback, { timeout });
+    return;
+  }
+
+  window.setTimeout(callback, Math.min(timeout, 1200));
+}
+
+function hasFirebaseConfig(): boolean {
+  const configured = (value: unknown): value is string => {
+    if (typeof value !== 'string') return false;
+    const normalized = value.trim().toLowerCase();
+    return Boolean(normalized) &&
+      normalized !== 'undefined' &&
+      normalized !== 'null' &&
+      !normalized.startsWith('your_') &&
+      !normalized.includes('your-');
+  };
+
+  return configured(import.meta.env.VITE_FIREBASE_API_KEY) &&
+    configured(import.meta.env.VITE_FIREBASE_PROJECT_ID) &&
+    configured(import.meta.env.VITE_FIREBASE_APP_ID) &&
+    configured(import.meta.env.VITE_FIREBASE_DATABASE_URL) &&
+    String(import.meta.env.VITE_FIREBASE_DATABASE_URL).startsWith('https://');
+}
+
 /**
  * Main Portfolio Application Class
  */
 class PortfolioApp {
+  private chatbotLoadPromise: Promise<ChatbotInstance | null> | null = null;
+
   constructor() {
     this.init();
+  }
+
+  private loadChatbot(openAfterLoad = false): Promise<ChatbotInstance | null> {
+    const existing = window.Portfolio?.lazy?.ChatbotManager as ChatbotInstance | undefined;
+    if (existing) {
+      if (openAfterLoad) existing.openChatbox?.();
+      return Promise.resolve(existing);
+    }
+
+    if (!this.chatbotLoadPromise) {
+      this.chatbotLoadPromise = import('./modules/chatbot')
+        .then(({ ChatbotManager }) => {
+          const manager = new ChatbotManager();
+          if (window.Portfolio?.lazy) {
+            window.Portfolio.lazy.ChatbotManager = manager;
+          }
+          return manager as ChatbotInstance;
+        })
+        .catch((error) => {
+          logger.error('Failed to load chatbot:', error);
+          this.chatbotLoadPromise = null;
+          return null;
+        });
+    }
+
+    return this.chatbotLoadPromise.then((manager) => {
+      if (openAfterLoad) manager?.openChatbox?.();
+      return manager;
+    });
+  }
+
+  private setupChatbotLoader(): void {
+    const button = document.querySelector('.chatbot-btn');
+    if (!(button instanceof HTMLButtonElement)) return;
+
+    const preload = () => {
+      void this.loadChatbot(false);
+    };
+
+    button.addEventListener('pointerenter', preload, { once: true, passive: true });
+    button.addEventListener('focus', preload, { once: true });
+    button.addEventListener('click', (event) => {
+      if (window.Portfolio?.lazy?.ChatbotManager) return;
+      event.preventDefault();
+      event.stopPropagation();
+      void this.loadChatbot(true);
+    });
   }
 
   /**
@@ -158,12 +242,14 @@ class PortfolioApp {
         });
       }, 200);
 
-      // Initialize real-time visitor counter
-      defer(() => {
-        import('./modules/visitor-counter').then(({ VisitorCounter }) => {
-          new VisitorCounter();
-        });
-      }, 300);
+      // Initialize real-time visitor counter only when Firebase is configured.
+      if (hasFirebaseConfig()) {
+        runWhenIdle(() => {
+          import('./modules/visitor-counter').then(({ VisitorCounter }) => {
+            new VisitorCounter();
+          });
+        }, 3000);
+      }
 
       // Initialize video thumbnails manager earlier for faster poster setup
       defer(() => {
@@ -204,8 +290,9 @@ class PortfolioApp {
       accessibilityEnhancer.enhanceLandmarks();
 
       // Dynamically import and initialize vanilla-tilt (skip in audit mode) — defer
-      defer(() => {
-        if (!auditMode && !prefersReducedMotion) {
+      runWhenIdle(() => {
+        const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+        if (!auditMode && !prefersReducedMotion && !isCoarsePointer) {
           import('vanilla-tilt').then(module => {
             const VanillaTilt = module.default as unknown as { init: (elements: NodeListOf<Element> | Element[], options?: Record<string, unknown>) => void };
             const cards = document.querySelectorAll('.achievement-card');
@@ -227,18 +314,7 @@ class PortfolioApp {
             });
           });
         }
-      }, 350);
-
-      // Chatbot and particle background — heavier modules, defer slightly more
-      defer(() => {
-        if (!auditMode) {
-          import('./modules/chatbot').then(({ ChatbotManager }) => {
-            if (window.Portfolio?.lazy) {
-              window.Portfolio.lazy.ChatbotManager = new ChatbotManager();
-            }
-          });
-        }
-      }, 300);
+      }, 2200);
 
       // Optional dev-only stress test: run when URL has ?stress=1
       defer(() => {
@@ -246,27 +322,33 @@ class PortfolioApp {
         const stressFlag = (qs2.get('stress') || '').toLowerCase();
         const doStress = !import.meta.env.PROD && (stressFlag === '1' || stressFlag === 'true' || stressFlag === 'yes');
         if (!auditMode && doStress) {
-          import('./modules/chatbot-stress').then(({ runChatbotStressTests }) => {
-            runChatbotStressTests();
+          this.loadChatbot(false).then(() => {
+            import('./modules/chatbot-stress').then(({ runChatbotStressTests }) => {
+              runChatbotStressTests();
+            });
           });
         }
       }, 650);
 
-      defer(() => {
+      runWhenIdle(() => {
         const canvas = document.getElementById('particle-background') as HTMLCanvasElement | null;
-        if (prefersReducedMotion) {
+        const canRunParticles = !auditMode &&
+          !prefersReducedMotion &&
+          window.innerWidth >= 900 &&
+          !window.matchMedia('(pointer: coarse)').matches;
+        if (!canRunParticles) {
           if (canvas) {
             canvas.style.display = 'none';
             canvas.setAttribute('aria-hidden', 'true');
           }
           return;
         }
-        if (!auditMode) {
+        if (canvas) {
           import('./modules/particle-background').then(({ ParticleBackground }) => {
             new ParticleBackground('particle-background');
           });
         }
-      }, 450);
+      }, 3500);
 
       // Initialize core components
       window.Portfolio = {
@@ -288,6 +370,8 @@ class PortfolioApp {
         lazy: {},
       };
 
+      this.setupChatbotLoader();
+
       logger.log('✅ Portfolio Application initialized successfully!');
       logger.log('📦 Available modules:', Object.keys(window.Portfolio.modules ?? {}));
       logger.log('📦 Lazy modules:', Object.keys(window.Portfolio.lazy ?? {}));
@@ -306,10 +390,12 @@ class PortfolioApp {
             if (import.meta.env.DEV) {
               performanceMonitor.generateReport();
             }
-            PerformanceDashboard.getInstance({
-              position: 'bottom-right',
-              minimized: true,
-              showInProduction: !import.meta.env.DEV
+            import('./modules/performance-dashboard').then(({ PerformanceDashboard }) => {
+              PerformanceDashboard.getInstance({
+                position: 'bottom-right',
+                minimized: true,
+                showInProduction: !import.meta.env.DEV
+              });
             });
           }
         }, 1000);

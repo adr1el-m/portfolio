@@ -1,286 +1,191 @@
-import * as THREE from 'three';
-
 /**
- * Creates an interactive particle background using Three.js with advanced effects.
+ * Lightweight canvas particle background.
+ * Keeps the portfolio ambience without loading Three.js or running expensive
+ * 3D connection checks on every frame.
  */
+type Particle = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+  alpha: number;
+};
+
 export class ParticleBackground {
-  private scene: THREE.Scene;
-  private camera: THREE.PerspectiveCamera;
-  private renderer: THREE.WebGLRenderer;
-  private particles: THREE.Points | null = null;
-  private lines: THREE.LineSegments | null = null;
-  private container: HTMLElement;
-  private mouse = new THREE.Vector2();
-  private mouseTarget = new THREE.Vector3();
-  private particlePositions: Float32Array;
-  private particleVelocities: Float32Array;
-  private particleCount: number = 3000; // Increased for a denser field
-  private maxConnections: number = 20;
-  private connectionDistance: number = 0.5; // Slightly reduced for performance with more particles
-  private time: number = 0;
-  private velocityDamping: number = 0.97; // Damping factor for friction
+  private canvas: HTMLCanvasElement;
+  private ctx: CanvasRenderingContext2D;
+  private particles: Particle[] = [];
+  private animationFrame = 0;
+  private width = 0;
+  private height = 0;
+  private dpr = 1;
+  private mouseX = -9999;
+  private mouseY = -9999;
+  private readonly particleCount: number;
+  private readonly maxDistance: number;
+
+  private readonly handleResize = (): void => this.resize();
+  private readonly handleMouseMove = (event: MouseEvent): void => {
+    this.mouseX = event.clientX;
+    this.mouseY = event.clientY;
+  };
+  private readonly handleMouseLeave = (): void => {
+    this.mouseX = -9999;
+    this.mouseY = -9999;
+  };
+  private readonly handleVisibilityChange = (): void => {
+    if (document.hidden) {
+      this.stop();
+    } else {
+      this.start();
+    }
+  };
 
   constructor(containerId: string) {
-    const container = document.getElementById(containerId);
-    if (!container) {
-      throw new Error(`Container with id "${containerId}" not found.`);
+    const canvas = document.getElementById(containerId);
+    if (!(canvas instanceof HTMLCanvasElement)) {
+      throw new Error(`Canvas with id "${containerId}" not found.`);
     }
-    this.container = container;
-    
-    // Optimize for mobile devices
+
     const isMobile = window.innerWidth < 768;
-    this.particleCount = isMobile ? 800 : 3000;
-    this.maxConnections = isMobile ? 10 : 20;
-    this.connectionDistance = isMobile ? 0.3 : 0.5;
+    this.canvas = canvas;
+    const ctx = canvas.getContext('2d', { alpha: true });
+    if (!ctx) {
+      throw new Error('Canvas 2D context is unavailable.');
+    }
+    this.ctx = ctx;
+    this.particleCount = isMobile ? 45 : 110;
+    this.maxDistance = isMobile ? 95 : 130;
 
-    this.particlePositions = new Float32Array(this.particleCount * 3);
-    this.particleVelocities = new Float32Array(this.particleCount * 3);
-
-    this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    this.renderer = new THREE.WebGLRenderer({
-      canvas: this.container as HTMLCanvasElement,
-      alpha: true,
-      antialias: true,
-    });
-
-    this.init();
-    this.animate();
+    this.configureCanvasStyle();
+    this.resize();
+    this.createParticles();
+    this.bindEvents();
+    this.start();
   }
 
-  private init(): void {
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  private configureCanvasStyle(): void {
+    Object.assign(this.canvas.style, {
+      position: 'fixed',
+      inset: '0',
+      width: '100%',
+      height: '100%',
+      pointerEvents: 'none',
+      zIndex: '-1',
+    });
+  }
 
-    this.camera.position.z = 4; // Moved camera slightly closer
-
-    this.createParticles();
-    this.createConnections();
-
-    window.addEventListener('resize', this.onWindowResize.bind(this));
-    document.addEventListener('mousemove', this.onMouseMove.bind(this));
+  private resize(): void {
+    this.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.canvas.width = Math.floor(this.width * this.dpr);
+    this.canvas.height = Math.floor(this.height * this.dpr);
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
   }
 
   private createParticles(): void {
-    const colors = new Float32Array(this.particleCount * 3);
-    const sizes = new Float32Array(this.particleCount);
-
-    // Portfolio theme colors (orange-yellow gradient)
-    const color1 = new THREE.Color(0xffdb70); // hsl(45, 100%, 72%)
-    const color2 = new THREE.Color(0xffb84d); // hsl(35, 100%, 68%)
-    const color3 = new THREE.Color(0xffffff); // white
-
-    for (let i = 0; i < this.particleCount; i++) {
-      const i3 = i * 3;
-      
-      // Random positions in 3D space
-      this.particlePositions[i3] = (Math.random() - 0.5) * 20; // Increased spread
-      this.particlePositions[i3 + 1] = (Math.random() - 0.5) * 20; // Increased spread
-      this.particlePositions[i3 + 2] = (Math.random() - 0.5) * 20; // Increased spread
-
-      // Random velocities for floating animation
-      this.particleVelocities[i3] = (Math.random() - 0.5) * 0.001;
-      this.particleVelocities[i3 + 1] = (Math.random() - 0.5) * 0.001;
-      this.particleVelocities[i3 + 2] = (Math.random() - 0.5) * 0.001;
-
-      // Color gradient based on depth
-      const t = Math.random();
-      const mixedColor = t < 0.5 
-        ? color1.clone().lerp(color2, t * 2)
-        : color2.clone().lerp(color3, (t - 0.5) * 2);
-
-      colors[i3] = mixedColor.r;
-      colors[i3 + 1] = mixedColor.g;
-      colors[i3 + 2] = mixedColor.b;
-
-      // Varying sizes for depth perception
-      sizes[i] = Math.random() * 0.025 + 0.01;
-    }
-
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(this.particlePositions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-
-    const material = new THREE.PointsMaterial({
-      size: 0.02,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.8,
-      sizeAttenuation: true,
-      blending: THREE.AdditiveBlending,
-    });
-
-    this.particles = new THREE.Points(geometry, material);
-    this.scene.add(this.particles);
+    this.particles = Array.from({ length: this.particleCount }, () => ({
+      x: Math.random() * this.width,
+      y: Math.random() * this.height,
+      vx: (Math.random() - 0.5) * 0.28,
+      vy: (Math.random() - 0.5) * 0.28,
+      radius: Math.random() * 1.7 + 0.6,
+      alpha: Math.random() * 0.45 + 0.25,
+    }));
   }
 
-  private createConnections(): void {
-    const maxConnections = this.particleCount * this.maxConnections;
-    const positions = new Float32Array(maxConnections * 3);
-    const colors = new Float32Array(maxConnections * 3);
-
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-    const material = new THREE.LineBasicMaterial({
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.3,
-      blending: THREE.AdditiveBlending,
-    });
-
-    this.lines = new THREE.LineSegments(geometry, material);
-    this.scene.add(this.lines);
+  private bindEvents(): void {
+    window.addEventListener('resize', this.handleResize, { passive: true });
+    window.addEventListener('mousemove', this.handleMouseMove, { passive: true });
+    window.addEventListener('mouseleave', this.handleMouseLeave, { passive: true });
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
   }
 
-  private updateConnections(): void {
-    if (!this.lines || !this.particles) return;
-
-    const positions = this.lines.geometry.attributes.position.array as Float32Array;
-    const colors = this.lines.geometry.attributes.color.array as Float32Array;
-    
-    let vertexpos = 0;
-    let colorpos = 0;
-    let numConnected = 0;
-
-    const connectionColor = new THREE.Color(0xffdb70);
-
-    for (let i = 0; i < this.particleCount && numConnected < this.maxConnections * this.particleCount / 2; i++) {
-      const i3 = i * 3;
-      
-      for (let j = i + 1; j < this.particleCount; j++) {
-        const j3 = j * 3;
-
-        const dx = this.particlePositions[i3] - this.particlePositions[j3];
-        const dy = this.particlePositions[i3 + 1] - this.particlePositions[j3 + 1];
-        const dz = this.particlePositions[i3 + 2] - this.particlePositions[j3 + 2];
-        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-        if (dist < this.connectionDistance) {
-          positions[vertexpos++] = this.particlePositions[i3];
-          positions[vertexpos++] = this.particlePositions[i3 + 1];
-          positions[vertexpos++] = this.particlePositions[i3 + 2];
-
-          positions[vertexpos++] = this.particlePositions[j3];
-          positions[vertexpos++] = this.particlePositions[j3 + 1];
-          positions[vertexpos++] = this.particlePositions[j3 + 2];
-
-          const alpha = 1.0 - (dist / this.connectionDistance);
-          colors[colorpos++] = connectionColor.r * alpha;
-          colors[colorpos++] = connectionColor.g * alpha;
-          colors[colorpos++] = connectionColor.b * alpha;
-
-          colors[colorpos++] = connectionColor.r * alpha;
-          colors[colorpos++] = connectionColor.g * alpha;
-          colors[colorpos++] = connectionColor.b * alpha;
-
-          numConnected++;
-        }
-      }
-    }
-
-    this.lines.geometry.setDrawRange(0, numConnected * 2);
-    this.lines.geometry.attributes.position.needsUpdate = true;
-    this.lines.geometry.attributes.color.needsUpdate = true;
+  private start(): void {
+    if (this.animationFrame) return;
+    this.animationFrame = window.requestAnimationFrame(() => this.animate());
   }
 
-  private onWindowResize(): void {
-    this.camera.aspect = window.innerWidth / window.innerHeight;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-  }
-
-  private onMouseMove(event: MouseEvent): void {
-    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  private stop(): void {
+    if (!this.animationFrame) return;
+    window.cancelAnimationFrame(this.animationFrame);
+    this.animationFrame = 0;
   }
 
   private animate(): void {
-    requestAnimationFrame(this.animate.bind(this));
+    this.animationFrame = window.requestAnimationFrame(() => this.animate());
+    this.ctx.clearRect(0, 0, this.width, this.height);
+    this.updateParticles();
+    this.drawConnections();
+    this.drawParticles();
+  }
 
-    this.time += 0.01;
+  private updateParticles(): void {
+    this.particles.forEach((particle) => {
+      const dx = particle.x - this.mouseX;
+      const dy = particle.y - this.mouseY;
+      const distanceSquared = dx * dx + dy * dy;
 
-    if (this.particles) {
-      // Update particle positions
-      const positions = this.particles.geometry.attributes.position.array as Float32Array;
-
-      // Map mouse to world coordinates
-      const mouseWorld = new THREE.Vector3(this.mouse.x, this.mouse.y, 0);
-      mouseWorld.unproject(this.camera);
-      const mouseDirection = mouseWorld.sub(this.camera.position).normalize();
-      const distance = -this.camera.position.z / mouseDirection.z;
-      const mousePos = this.camera.position.clone().add(mouseDirection.multiplyScalar(distance));
-
-      for (let i = 0; i < this.particleCount; i++) {
-        const i3 = i * 3;
-
-        // Apply velocity damping (friction)
-        this.particleVelocities[i3] *= this.velocityDamping;
-        this.particleVelocities[i3 + 1] *= this.velocityDamping;
-        this.particleVelocities[i3 + 2] *= this.velocityDamping;
-
-        // Update positions with velocity
-        this.particlePositions[i3] += this.particleVelocities[i3];
-        this.particlePositions[i3 + 1] += this.particleVelocities[i3 + 1];
-        this.particlePositions[i3 + 2] += this.particleVelocities[i3 + 2];
-
-        // Add subtle wave effect
-        this.particlePositions[i3 + 1] += Math.sin(this.time + i * 0.1) * 0.0005;
-
-        // Mouse wake effect (repulsion)
-        const wakeInfluence = 0.005;
-        const wakeRadius = 1.5;
-        
-        const dx = this.particlePositions[i3] - mousePos.x;
-        const dy = this.particlePositions[i3 + 1] - mousePos.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < wakeRadius) {
-          const force = (wakeRadius - dist) / wakeRadius;
-          const angle = Math.atan2(dy, dx);
-          
-          // Push particles away from the cursor
-          this.particleVelocities[i3] += Math.cos(angle) * force * wakeInfluence;
-          this.particleVelocities[i3 + 1] += Math.sin(angle) * force * wakeInfluence;
-        }
-
-        // Boundary check - wrap around
-        if (Math.abs(this.particlePositions[i3]) > 10) {
-          this.particlePositions[i3] *= -1;
-        }
-        if (Math.abs(this.particlePositions[i3 + 1]) > 10) {
-          this.particlePositions[i3 + 1] *= -1;
-        }
-        if (Math.abs(this.particlePositions[i3 + 2]) > 10) {
-          this.particlePositions[i3 + 2] *= -1;
-        }
-
-        // Update positions
-        positions[i3] = this.particlePositions[i3];
-        positions[i3 + 1] = this.particlePositions[i3 + 1];
-        positions[i3 + 2] = this.particlePositions[i3 + 2];
+      if (distanceSquared < 9000 && distanceSquared > 0.01) {
+        const distance = Math.sqrt(distanceSquared);
+        const force = (1 - distance / 95) * 0.018;
+        particle.vx += (dx / distance) * force;
+        particle.vy += (dy / distance) * force;
       }
 
-      this.particles.geometry.attributes.position.needsUpdate = true;
+      particle.vx *= 0.992;
+      particle.vy *= 0.992;
+      particle.x += particle.vx;
+      particle.y += particle.vy;
 
-      // Slow rotation
-      this.particles.rotation.y += 0.0001;
-      this.particles.rotation.x = Math.sin(this.time * 0.05) * 0.02;
+      if (particle.x < -20) particle.x = this.width + 20;
+      if (particle.x > this.width + 20) particle.x = -20;
+      if (particle.y < -20) particle.y = this.height + 20;
+      if (particle.y > this.height + 20) particle.y = -20;
+    });
+  }
+
+  private drawParticles(): void {
+    this.particles.forEach((particle) => {
+      this.ctx.beginPath();
+      this.ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+      this.ctx.fillStyle = `rgba(255, 219, 112, ${particle.alpha})`;
+      this.ctx.fill();
+    });
+  }
+
+  private drawConnections(): void {
+    this.ctx.lineWidth = 0.6;
+
+    for (let i = 0; i < this.particles.length; i++) {
+      const a = this.particles[i];
+      for (let j = i + 1; j < this.particles.length; j++) {
+        const b = this.particles[j];
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const distanceSquared = dx * dx + dy * dy;
+        const maxDistanceSquared = this.maxDistance * this.maxDistance;
+
+        if (distanceSquared > maxDistanceSquared) continue;
+
+        const alpha = (1 - Math.sqrt(distanceSquared) / this.maxDistance) * 0.16;
+        this.ctx.beginPath();
+        this.ctx.moveTo(a.x, a.y);
+        this.ctx.lineTo(b.x, b.y);
+        this.ctx.strokeStyle = `rgba(255, 219, 112, ${alpha})`;
+        this.ctx.stroke();
+      }
     }
+  }
 
-    // Update connections between nearby particles
-    this.updateConnections();
-
-    // Camera movement based on mouse
-    this.mouseTarget.x = this.mouse.x * 0.2;
-    this.mouseTarget.y = this.mouse.y * 0.2;
-    
-    this.camera.position.x += (this.mouseTarget.x - this.camera.position.x) * 0.02;
-    this.camera.position.y += (this.mouseTarget.y - this.camera.position.y) * 0.02;
-    this.camera.lookAt(this.scene.position);
-
-    this.renderer.render(this.scene, this.camera);
+  public destroy(): void {
+    this.stop();
+    window.removeEventListener('resize', this.handleResize);
+    window.removeEventListener('mousemove', this.handleMouseMove);
+    window.removeEventListener('mouseleave', this.handleMouseLeave);
+    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    this.ctx.clearRect(0, 0, this.width, this.height);
   }
 }

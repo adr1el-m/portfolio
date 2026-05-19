@@ -53,6 +53,26 @@ type IndexedItem = {
   data?: unknown;
   facts?: ProjectFacts;
 };
+type AchievementSnippet = {
+  title: string;
+  description?: string;
+  date?: string;
+  location?: string;
+  organizer?: string;
+  githubUrl?: string;
+  linkedinUrl?: string;
+  blogUrl?: string;
+};
+type ProjectSummary = {
+  title: string;
+  category: string;
+  description?: string;
+  technologies?: string;
+  githubUrl?: string;
+  liveUrl?: string;
+  videoUrl?: string;
+  codedexUrl?: string;
+};
 
 /**
  * Chatbot Manager Module
@@ -73,6 +93,7 @@ export class ChatbotManager {
   private detailedMode: boolean = false;
   private userPrefs: { detailedMode: boolean } = { detailedMode: false };
   private geminiService: GeminiService;
+  private isResponding: boolean = false;
   private conversationContext: {
     lastIntent: IntentType | null;
     lastProjectTitle: string | null;
@@ -99,7 +120,65 @@ export class ChatbotManager {
 
   // --- Smart helpers for matching and detail preference ---
   private normalize(text: string): string {
-    return text.toLowerCase().replace(/[^a-z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim();
+    return text
+      .toLowerCase()
+      .replace(/[\u2010-\u2015\u2212]/g, '-')
+      .replace(/[^a-z0-9\s-]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  private escapeHtml(text: string): string {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  private sanitizeUrl(url: string): string {
+    const value = url.trim();
+    if (!value) return '#';
+    if (value.startsWith('/') || value.startsWith('#')) return this.escapeHtml(value);
+    try {
+      const parsed = new URL(value, window.location.origin);
+      if (['http:', 'https:', 'mailto:'].includes(parsed.protocol)) {
+        return this.escapeHtml(parsed.href);
+      }
+    } catch {
+      return '#';
+    }
+    return '#';
+  }
+
+  private cleanText(value: string | undefined, limit = 260): string {
+    if (!value) return '';
+    let text = value;
+    try {
+      const template = document.createElement('template');
+      const spaced = value
+        .replace(/&#10;/g, '\n')
+        .replace(/<(br|\/p|\/div|\/li|\/tr|\/td|\/th|\/h[1-6]|\/strong|\/table|\/thead|\/tbody|\/ul|\/ol)\b[^>]*>/gi, ' ');
+      template.innerHTML = spaced;
+      text = template.content.textContent || value;
+    } catch {
+      text = value.replace(/<[^>]*>/g, ' ');
+    }
+    const cleaned = text.replace(/\s+/g, ' ').trim();
+    return cleaned.length > limit ? `${cleaned.slice(0, limit).trim()}...` : cleaned;
+  }
+
+  private sourceLabel(citation: Citation): string {
+    if (citation.section) {
+      return citation.section.charAt(0).toUpperCase() + citation.section.slice(1);
+    }
+    return citation.label
+      .replace(/^KB\s*›\s*/i, '')
+      .replace(/^DOM\s*›\s*/i, '')
+      .replace(/^Section\s*›\s*/i, '')
+      .replace(/^Projects\s*›\s*Card\s*›\s*/i, 'Projects: ')
+      .replace(/^About\s*›\s*Achievement Card\s*›\s*/i, 'Achievements: ');
   }
 
   // Tokenize for fuzzy matching
@@ -179,9 +258,56 @@ export class ChatbotManager {
     return null;
   }
 
+  private buildSmallTalkResponse(userMessage: string): string | null {
+    const m = this.normalize(userMessage);
+
+    if (/^(hi|hello|hey|yo|sup|good morning|good afternoon|good evening)( there| adrai| bot| assistant)?$/.test(m)) {
+      return [
+        'Hey, I’m AdrAI.',
+        'Ask me about Adriel’s projects, skills, awards, resume, education, or contact links.',
+        'Good starter questions: “best AI project” or “compare WorkSight and LingapLink.”',
+      ].join('<br>');
+    }
+
+    if (/^(thanks|thank you|ty|appreciate it|nice)$/.test(m)) {
+      return 'You’re welcome. I can keep going with projects, skills, awards, resume, or contact links.';
+    }
+
+    if (/^(how are you|how are you doing|are you working|you good)$/.test(m)) {
+      return 'I’m good and ready. Ask me anything about Adriel’s portfolio and I’ll keep it focused.';
+    }
+
+    if (/^(who are you|what are you|introduce yourself)$/.test(m)) {
+      return 'I’m AdrAI, Adriel’s portfolio guide. I help visitors find project details, tech stacks, achievements, resume links, and contact info quickly.';
+    }
+
+    return null;
+  }
+
+  private buildProfileResponse(userMessage: string): string | null {
+    const m = this.normalize(userMessage);
+    const mentionsAdriel = /\badriel( magalona)?\b/.test(m);
+    const asksIdentity = /\b(who|about|bio|profile|background|intro|introduce|tell me|describe)\b/.test(m);
+    if (!mentionsAdriel || !asksIdentity) return null;
+
+    const primaryEducation = KB.education[0];
+    const education = primaryEducation
+      ? `${primaryEducation.program || 'Computer Science'} student at ${primaryEducation.school}${primaryEducation.period ? ` (${primaryEducation.period})` : ''}`
+      : 'computer science student';
+    const core = KB.skills.core.slice(0, 3).join(', ');
+    return [
+      `<strong>${this.escapeHtml(KB.profile.name)}</strong> is a ${this.escapeHtml(KB.profile.title)} from the Philippines.`,
+      this.escapeHtml(this.cleanText(KB.profile.summary, 240)),
+      `He is a ${this.escapeHtml(education)}.`,
+      `Core strengths: ${this.escapeHtml(core)}.`,
+      'Ask me for his best projects, awards, resume, or contact links.',
+    ].join('<br>');
+  }
+
   private retrieveRelevantItems(query: string, kinds?: Array<IndexedItem['kind']>, limit = 5): IndexedItem[] {
     const q = this.normalize(query);
     if (!q) return [];
+    const isFollowUp = this.isFollowUpMessage(query);
 
     const scored = this.unifiedIndex
       .filter((item) => !kinds || kinds.includes(item.kind))
@@ -189,12 +315,13 @@ export class ChatbotManager {
         const titleScore = this.fuzzyScore(item.title || '', q) * 3;
         const textScore = this.fuzzyScore(item.text || '', q) * 1.4;
         const tagScore = (item.tags || []).reduce((acc, t) => acc + this.fuzzyScore(t, q), 0) * 0.9;
-        const contextBoost = this.conversationContext.lastProjectTitle && this.normalize(item.title) === this.normalize(this.conversationContext.lastProjectTitle)
+        const lexicalScore = titleScore + textScore + tagScore;
+        const contextBoost = isFollowUp && this.conversationContext.lastProjectTitle && this.normalize(item.title) === this.normalize(this.conversationContext.lastProjectTitle)
           ? 1.2
           : 0;
-        return { item, score: titleScore + textScore + tagScore + contextBoost };
+        return { item, score: lexicalScore + contextBoost, lexicalScore };
       })
-      .filter((x) => x.score >= 1.1)
+      .filter((x) => x.score >= 1.1 && (x.lexicalScore >= 0.25 || isFollowUp))
       .sort((a, b) => b.score - a.score)
       .slice(0, limit)
       .map((x) => x.item);
@@ -207,7 +334,7 @@ export class ChatbotManager {
     if (!top.length) return '';
     return top
       .map((item) => {
-        const text = (item.text || '').replace(/\s+/g, ' ').slice(0, 180);
+        const text = this.cleanText(item.text, 180);
         const tags = item.tags?.slice(0, 4).join(', ');
         return `- [${item.kind}] ${item.title}${text ? `: ${text}` : ''}${tags ? ` | tags: ${tags}` : ''}${item.url ? ` | link: ${item.url}` : ''}`;
       })
@@ -217,19 +344,19 @@ export class ChatbotManager {
   private buildSmartGeneralResponse(userMessage: string): string {
     const matches = this.retrieveRelevantItems(userMessage, undefined, 4);
     if (!matches.length) {
-      return `${KB.profile.title}. ${KB.profile.summary} Ask about a specific project, achievement, skill, or contact detail for a focused answer.`;
+      return 'I didn’t find a clear portfolio match for that. Try asking about projects, skills, achievements, resume, education, or contact links.';
     }
 
     const body = matches
       .map((m) => {
-        const shortText = m.text ? m.text.slice(0, 160) : '';
-        const links = m.url ? ` <a href="${m.url}" target="_blank" rel="noopener noreferrer">Open</a>` : '';
-        return `<strong>${m.title}</strong>${shortText ? ` — ${shortText}` : ''}${links}`;
+        const shortText = this.cleanText(m.text, 150);
+        const links = m.url ? ` <a href="${this.sanitizeUrl(m.url)}" target="_blank" rel="noopener noreferrer">Open</a>` : '';
+        return `<strong>${this.escapeHtml(m.title)}</strong>${shortText ? ` — ${this.escapeHtml(shortText)}` : ''}${links}`;
       })
       .join('<br>');
 
     const citations = matches.map((m) => m.citation);
-    return `<strong>Best matches for your request</strong><br>${body}${this.buildCitationsHTML(citations)}`;
+    return `<strong>I found a few strong matches.</strong><br>${body}${this.buildCitationsHTML(citations)}`;
   }
 
   private updateConversationContext(userMessage: string, intent: IntentType, entities: ExtractedEntities): void {
@@ -347,7 +474,7 @@ export class ChatbotManager {
         kind: 'project',
         title: p.title,
         text: p.description,
-        tags: (p.technologies || '').split(/[;,]/).map(t => t.trim()).filter(Boolean),
+        tags: this.cleanText(p.technologies || '', 500).split(/[;,•]/).map(t => t.trim()).filter(Boolean),
         url: p.githubUrl || p.liveUrl || p.codedexUrl || undefined,
         citation: { label: `KB › Projects › ${p.title}`, section: 'projects', origin: 'KB' },
         data: p,
@@ -429,7 +556,7 @@ export class ChatbotManager {
         kind: 'project',
         title: p.title,
         text: p.description,
-        tags: (p.technologies || '').split(/[;,]/).map(t => t.trim()).filter(Boolean),
+        tags: this.cleanText(p.technologies || '', 500).split(/[;,•]/).map(t => t.trim()).filter(Boolean),
         url: p.githubUrl || p.liveUrl || p.videoUrl,
         citation: { label: `Projects › Card › ${p.title}`, section: 'projects', origin: 'DOM', selector: `.project-item .project-title:contains(${p.title})` },
         data: p,
@@ -445,15 +572,16 @@ export class ChatbotManager {
     });
 
     // DOM achievements cards
-    Array.from(document.querySelectorAll<HTMLElement>('.achievement-card, .achievement-item .achievement-card')).forEach((el, i) => {
-      const title = el.querySelector('.card-title, .h4.card-title')?.textContent?.trim() || 'Achievement';
-      const desc = el.querySelector('.card-subtitle')?.textContent?.trim() || undefined;
+    this.getAchievementsFromDOM().forEach((achievement, i) => {
       index.push({
         id: `dom-ach-${i}`,
         kind: 'achievement',
-        title,
-        text: desc,
-        citation: { label: `About › Achievement Card › ${title}`, section: 'about', origin: 'DOM', selector: '.achievement-card' },
+        title: achievement.title,
+        text: achievement.description,
+        tags: [achievement.organizer, achievement.location, achievement.date].filter(Boolean) as string[],
+        url: achievement.githubUrl || achievement.linkedinUrl || achievement.blogUrl,
+        citation: { label: `About › Achievement Card › ${achievement.title}`, section: 'about', origin: 'DOM', selector: '.achievement-card' },
+        data: achievement,
       });
     });
 
@@ -470,8 +598,8 @@ export class ChatbotManager {
 
   // Normalize structured facts from base project data and modal content
   private normalizeProjectFacts(input: { title: string; technologies?: string; githubUrl?: string; liveUrl?: string; codedexUrl?: string; videoUrl?: string; }): ProjectFacts {
-    const tech = (input.technologies || '')
-      .split(/[;,]/)
+    const tech = this.cleanText(input.technologies || '', 600)
+      .split(/[;,•]/)
       .map(t => t.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, '').trim())
       .filter(Boolean);
     const links = { github: input.githubUrl, live: input.liveUrl, codedex: input.codedexUrl, video: input.videoUrl };
@@ -507,37 +635,50 @@ export class ChatbotManager {
   }
 
   private buildCitationsHTML(cites: Citation[]): string {
-    if (!cites.length) return '';
-    const items = cites.map(c => {
-      const label = c.label || (c.section ? `Section › ${c.section}` : 'Source');
-      const href = c.href ? `<a href="${c.href}" target="_blank" rel="noopener noreferrer">${label}</a>` : label;
-      return `<li>${href} <span style="color:var(--light-gray-70)">(${c.origin})</span></li>`;
+    if (!cites.length || !this.detailedMode) return '';
+    const unique = cites.filter((cite, index, all) =>
+      all.findIndex((candidate) => candidate.label === cite.label && candidate.href === cite.href) === index
+    );
+    const items = unique.slice(0, 4).map(c => {
+      const label = this.escapeHtml(this.sourceLabel(c));
+      const href = c.href ? `<a href="${this.sanitizeUrl(c.href)}" target="_blank" rel="noopener noreferrer">${label}</a>` : label;
+      return `<li>${href}</li>`;
     }).join('');
-    return `<div class="sources"><small>Sources</small><ul>${items}</ul></div>`;
+    return `<details class="sources"><summary>Portfolio sources</summary><ul>${items}</ul></details>`;
   }
 
   private buildProjectDetailsHTML(p: ProjectItem): string {
     const links: string[] = [];
-    if (p.liveUrl) links.push(`Live: <a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer">${p.liveUrl}</a>`);
-    if (p.githubUrl) links.push(`GitHub: <a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer">repo</a>`);
-    if (p.videoUrl) links.push(`Demo: <a href="${p.videoUrl}" target="_blank" rel="noopener noreferrer">video</a>`);
-    if (p.codedexUrl) links.push(`Codedex: <a href="${p.codedexUrl}" target="_blank" rel="noopener noreferrer">profile</a>`);
+    if (p.liveUrl) links.push(`<a href="${this.sanitizeUrl(p.liveUrl)}" target="_blank" rel="noopener noreferrer">Live site</a>`);
+    if (p.githubUrl) links.push(`<a href="${this.sanitizeUrl(p.githubUrl)}" target="_blank" rel="noopener noreferrer">Repository</a>`);
+    if (p.videoUrl) links.push(`<a href="${this.sanitizeUrl(p.videoUrl)}" target="_blank" rel="noopener noreferrer">Demo video</a>`);
+    if (p.codedexUrl) links.push(`<a href="${this.sanitizeUrl(p.codedexUrl)}" target="_blank" rel="noopener noreferrer">Codedex profile</a>`);
 
     // Pull normalized facts from unified index for highlights and additional links
-    const facts = this.unifiedIndex.find((it) => it.kind === 'project' && this.normalize(it.title) === this.normalize(p.title))?.facts;
-    const highlights = facts?.highlights?.length ? `<br><em>Highlights:</em> ${facts.highlights.join('; ')}` : '';
+    const facts = this.unifiedIndex
+      .filter((it) => it.kind === 'project' && this.normalize(it.title) === this.normalize(p.title))
+      .map((it) => it.facts)
+      .filter(Boolean)
+      .sort((a, b) => {
+        const aLinkCount = Object.values(a?.links || {}).filter(Boolean).length;
+        const bLinkCount = Object.values(b?.links || {}).filter(Boolean).length;
+        return bLinkCount - aLinkCount;
+      })[0];
+    const highlights = facts?.highlights?.length
+      ? `<br><em>Highlights:</em> ${facts.highlights.slice(0, 3).map((highlight) => this.escapeHtml(this.cleanText(highlight, 120))).join('; ')}`
+      : '';
     const factLinks: string[] = [];
-    if (facts?.links?.live && !links.some(l => l.includes('Live:'))) factLinks.push(`Live: <a href="${facts.links.live}" target="_blank" rel="noopener noreferrer">${facts.links.live}</a>`);
-    if (facts?.links?.github && !links.some(l => l.includes('GitHub:'))) factLinks.push(`GitHub: <a href="${facts.links.github}" target="_blank" rel="noopener noreferrer">repo</a>`);
-    if (facts?.links?.video && !links.some(l => l.includes('Demo:'))) factLinks.push(`Demo: <a href="${facts.links.video}" target="_blank" rel="noopener noreferrer">video</a>`);
-    if (facts?.links?.codedex && !links.some(l => l.includes('Codedex:'))) factLinks.push(`Codedex: <a href="${facts.links.codedex}" target="_blank" rel="noopener noreferrer">profile</a>`);
+    if (facts?.links?.live && !links.some(l => l.includes('Live site'))) factLinks.push(`<a href="${this.sanitizeUrl(facts.links.live)}" target="_blank" rel="noopener noreferrer">Live site</a>`);
+    if (facts?.links?.github && !links.some(l => l.includes('Repository'))) factLinks.push(`<a href="${this.sanitizeUrl(facts.links.github)}" target="_blank" rel="noopener noreferrer">Repository</a>`);
+    if (facts?.links?.video && !links.some(l => l.includes('Demo video'))) factLinks.push(`<a href="${this.sanitizeUrl(facts.links.video)}" target="_blank" rel="noopener noreferrer">Demo video</a>`);
+    if (facts?.links?.codedex && !links.some(l => l.includes('Codedex profile'))) factLinks.push(`<a href="${this.sanitizeUrl(facts.links.codedex)}" target="_blank" rel="noopener noreferrer">Codedex profile</a>`);
     const allLinks = [...links, ...factLinks];
 
     return [
-      `<strong>${p.title}</strong> — ${p.category}`,
-      `${p.description}`,
-      `<em>Stack:</em> ${p.technologies}`,
-      allLinks.length ? allLinks.join(' | ') : 'No external links available',
+      `<strong>${this.escapeHtml(p.title)}</strong> — ${this.escapeHtml(p.category)}`,
+      this.escapeHtml(this.cleanText(p.description, 280)),
+      `<em>Stack:</em> ${this.escapeHtml(this.cleanText(p.technologies, 220))}`,
+      allLinks.length ? allLinks.join('<br>') : 'No external links are listed for this project yet.',
       highlights,
     ].filter(Boolean).join('<br>');
   }
@@ -545,26 +686,59 @@ export class ChatbotManager {
   private buildSkillsHTML(): string {
     const s = KB.skills;
     return [
-      `<strong>Core Skills</strong>: ${s.core.join(', ')}`,
-      `<strong>Technologies</strong>: ${s.technologies.join(', ')}`,
+      `<strong>Core strengths</strong>: ${s.core.map((skill) => this.escapeHtml(skill)).join(', ')}`,
+      `<strong>Main stack</strong>: ${s.technologies.map((tech) => this.escapeHtml(tech)).join(', ')}`,
     ].join('<br>');
   }
 
   private buildAchievementsHTML(a?: AchievementItem): string {
     if (a) {
       const links: string[] = [];
-      if (a.githubUrl) links.push(`GitHub: <a href="${a.githubUrl}" target="_blank" rel="noopener noreferrer">repo</a>`);
-      if (a.linkedinUrl) links.push(`Post: <a href="${a.linkedinUrl}" target="_blank" rel="noopener noreferrer">LinkedIn</a>`);
+      if (a.githubUrl) links.push(`<a href="${this.sanitizeUrl(a.githubUrl)}" target="_blank" rel="noopener noreferrer">Repository</a>`);
+      if (a.linkedinUrl) links.push(`<a href="${this.sanitizeUrl(a.linkedinUrl)}" target="_blank" rel="noopener noreferrer">LinkedIn post</a>`);
       return [
-        `<strong>${a.title}</strong> — ${a.location} (${a.date})`,
-        `${a.description || 'Achievement details available on the honors section.'}`,
-        links.length ? links.join(' | ') : 'Links: n/a',
+        `<strong>${this.escapeHtml(a.title)}</strong> — ${this.escapeHtml(a.location)} (${this.escapeHtml(a.date)})`,
+        this.escapeHtml(this.cleanText(a.description || 'Achievement details are available in the honors section.', 260)),
+        links.length ? links.join('<br>') : 'The honors section has the best visual context for this one.',
       ].join('<br>');
     }
     const top = KB.achievements.slice(0, 3)
-      .map((ach) => `${ach.title} — ${ach.location}`)
+      .map((ach) => `${this.escapeHtml(ach.title)} — ${this.escapeHtml(ach.location)}`)
       .join('; ');
-    return `Top achievements: ${top}. Explore About → Honors & Awards for more.`;
+    return `Top highlights: ${top}. Open the honors section for the timeline and photos.`;
+  }
+
+  private buildAchievementSnippetHTML(a: AchievementSnippet): string {
+    const links: string[] = [];
+    if (a.githubUrl) links.push(`<a href="${this.sanitizeUrl(a.githubUrl)}" target="_blank" rel="noopener noreferrer">Repository</a>`);
+    if (a.linkedinUrl) links.push(`<a href="${this.sanitizeUrl(a.linkedinUrl)}" target="_blank" rel="noopener noreferrer">LinkedIn post</a>`);
+    if (a.blogUrl) links.push(`<a href="${this.sanitizeUrl(a.blogUrl)}" target="_blank" rel="noopener noreferrer">Article</a>`);
+    const meta = [a.location, a.date].filter(Boolean).map((part) => this.escapeHtml(part || '')).join(' · ');
+    return [
+      `<strong>${this.escapeHtml(a.title)}</strong>${meta ? ` — ${meta}` : ''}`,
+      a.description ? this.escapeHtml(this.cleanText(a.description, 260)) : 'This achievement appears in the honors timeline.',
+      links.length ? links.join('<br>') : 'Open the honors section for the full timeline context.',
+    ].join('<br>');
+  }
+
+  private findIndexedAchievement(userMessage: string): IndexedItem | null {
+    const msgTokens = this.tokenize(userMessage);
+    let bestScore = -Infinity;
+    let bestItem: IndexedItem | null = null;
+
+    this.unifiedIndex.filter((item) => item.kind === 'achievement').forEach((item) => {
+      const titleScore = this.jaccard(msgTokens, this.tokenize(item.title)) * 4;
+      const textScore = this.jaccard(msgTokens, this.tokenize(item.text || '')) * 1.5;
+      const tagScore = (item.tags || []).reduce((acc, tag) => acc + this.jaccard(msgTokens, this.tokenize(tag)), 0);
+      const score = titleScore + textScore + tagScore + this.fuzzyScore(item.title, userMessage);
+      if (score > bestScore) {
+        bestScore = score;
+        bestItem = item;
+      }
+    });
+
+    if (bestItem && bestScore >= 1.8) return bestItem;
+    return null;
   }
 
   constructor() {
@@ -682,35 +856,49 @@ export class ChatbotManager {
     }
   }
 
+  public openChatbox(): void {
+    if (!this.chatbox?.classList.contains('active')) {
+      this.toggleChatbox();
+    }
+  }
+
   private displayWelcomeMessage(): void {
-    const welcomeMessage = "👋 Hi! I'm AdrAI, Adriel's AI assistant. I can give deep project and achievement breakdowns, compare technologies, and open relevant links for you. Try asking: \"Explain WorkSight in detail\", \"show projects and skills\", or use /detailed for richer answers.";
+    const welcomeMessage = "Hi, I'm AdrAI, Adriel's portfolio guide. I can brief you on his strongest projects, tech stack, awards, education, resume, and contact links. Try asking: \"Which project best shows AI skill?\" or \"Compare WorkSight and LingapLink.\"";
     this.addMessage(welcomeMessage, 'bot');
   }
 
   private sendMessage(): void {
-    if (!this.inputField || !this.inputField.value.trim()) return;
+    if (!this.inputField || !this.inputField.value.trim() || this.isResponding) return;
 
     const userMessage = this.inputField.value.trim();
     this.lastUserMessage = userMessage;
     this.addMessage(userMessage, 'user');
     this.inputField.value = '';
 
-    // Show typing indicator
-    this.showTypingIndicator();
+    void this.handleMessage(userMessage);
+  }
 
-    // Simulate bot response with a delay
-    setTimeout(() => {
-      this.hideTypingIndicator();
-      this.handleMessage(userMessage);
-    }, 1000 + Math.random() * 1000);
+  private setInputPending(isPending: boolean): void {
+    this.isResponding = isPending;
+    if (this.inputField) {
+      this.inputField.disabled = isPending;
+      this.inputField.setAttribute('aria-busy', String(isPending));
+    }
+    if (this.sendButton instanceof HTMLButtonElement) {
+      this.sendButton.disabled = isPending;
+    } else if (this.sendButton) {
+      this.sendButton.setAttribute('aria-disabled', String(isPending));
+    }
   }
 
   private showTypingIndicator(): void {
     if (!this.messagesContainer) return;
+    if (document.getElementById('typing-indicator')) return;
 
     const typingDiv = document.createElement('div');
     typingDiv.className = 'typing-indicator';
     typingDiv.id = 'typing-indicator';
+    typingDiv.setAttribute('aria-label', 'AdrAI is thinking');
     typingDiv.innerHTML = `
       <div class="typing-dot"></div>
       <div class="typing-dot"></div>
@@ -721,10 +909,7 @@ export class ChatbotManager {
   }
 
   private hideTypingIndicator(): void {
-    const typingIndicator = document.getElementById('typing-indicator');
-    if (typingIndicator) {
-      typingIndicator.remove();
-    }
+    document.querySelectorAll('#typing-indicator').forEach((typingIndicator) => typingIndicator.remove());
   }
 
   private scrollToBottom(): void {
@@ -761,10 +946,6 @@ export class ChatbotManager {
     if (sender === 'bot') {
       const actions = document.createElement('div');
       actions.className = 'bot-actions';
-      actions.style.display = 'flex';
-      actions.style.flexWrap = 'wrap';
-      actions.style.gap = '6px';
-      actions.style.margin = '4px 0 8px 0';
 
       const intent = this.detectIntent(this.lastUserMessage || '');
       const suggestions = this.getSuggestions(intent);
@@ -773,12 +954,6 @@ export class ChatbotManager {
         btn.type = 'button';
         btn.textContent = sugg;
         btn.setAttribute('aria-label', `Suggestion: ${sugg}`);
-        btn.style.padding = '6px 10px';
-        btn.style.borderRadius = '12px';
-        btn.style.border = '1px solid rgba(255,215,0,0.3)';
-        btn.style.background = '#242424';
-        btn.style.color = '#fff';
-        btn.style.cursor = 'pointer';
         btn.addEventListener('click', () => this.handleSuggestionClick(sugg));
         actions.appendChild(btn);
       });
@@ -816,22 +991,22 @@ export class ChatbotManager {
         return;
       }
     }
-    if (t.includes('open github repo')) {
+    if ((t.includes('open github repo') || (t.startsWith('open') && t.includes('github'))) && !t.includes('list')) {
       const p = this.findProject(this.lastUserMessage || '');
       if (p && p.githubUrl) {
         try { window.open(p.githubUrl, '_blank', 'noopener,noreferrer'); } catch { /* ignore */ }
-        this.addMessage(`Opening GitHub repo for ${p.title}…`, 'bot');
+        this.addMessage(`Opening GitHub repo for ${this.escapeHtml(p.title)}...`, 'bot');
         return;
       } else {
         this.addMessage('I couldn’t find a matching project with a GitHub link.', 'bot');
         return;
       }
     }
-    if (t.includes('open live site')) {
+    if (t.includes('open live site') || (t.startsWith('open') && t.includes('site'))) {
       const p = this.findProject(this.lastUserMessage || '');
       if (p && p.liveUrl) {
         try { window.open(p.liveUrl, '_blank', 'noopener,noreferrer'); } catch { /* ignore */ }
-        this.addMessage(`Opening live site for ${p.title}…`, 'bot');
+        this.addMessage(`Opening live site for ${this.escapeHtml(p.title)}...`, 'bot');
         return;
       } else {
         this.addMessage('I couldn’t find a matching project with a live site.', 'bot');
@@ -843,7 +1018,7 @@ export class ChatbotManager {
       const url = p ? (p.videoUrl || p.liveUrl) : undefined;
       if (url) {
         try { window.open(url, '_blank', 'noopener,noreferrer'); } catch { void 0; }
-        this.addMessage(`Opening demo for ${p ? p.title : 'project'}…`, 'bot');
+        this.addMessage(`Opening demo for ${p ? this.escapeHtml(p.title) : 'project'}...`, 'bot');
         return;
       } else {
         this.addMessage('No demo or live link matched your request.', 'bot');
@@ -851,7 +1026,10 @@ export class ChatbotManager {
       }
     }
     if (t.includes('list github repos')) {
-      const repos = KB.projects.filter(pr => pr.githubUrl).map(pr => `<a href="${pr.githubUrl}" target="_blank" rel="noopener noreferrer">${pr.title}</a>`);
+      const repos = KB.projects
+        .filter(pr => pr.githubUrl)
+        .slice(0, 8)
+        .map(pr => `<a href="${this.sanitizeUrl(pr.githubUrl || '')}" target="_blank" rel="noopener noreferrer">${this.escapeHtml(pr.title)}</a>`);
       const html = repos.length ? `<strong>GitHub Repos</strong><br>${repos.join('<br>')}` : 'No GitHub repositories listed.';
       this.addMessage(html, 'bot');
       return;
@@ -860,7 +1038,7 @@ export class ChatbotManager {
       const qMatch = text.replace(/^(search\s+site\s+for\s+|search\s+)/i, '').trim();
       const q = qMatch || (this.lastUserMessage || '').trim();
       if (q) {
-        this.addMessage(`Searching site for “${q}”…`, 'bot');
+        this.addMessage(`Searching site for "${this.escapeHtml(q)}"...`, 'bot');
         this.openSearchOverlay(q);
         return;
       }
@@ -895,15 +1073,7 @@ export class ChatbotManager {
     try { new Search(); } catch { /* ignore */ }
   }
   // === New: DOM-driven Projects extraction and listing ===
-  private getProjectsFromDOM(): Array<{
-    title: string;
-    category: string;
-    description?: string;
-    technologies?: string;
-    githubUrl?: string;
-    liveUrl?: string;
-    videoUrl?: string;
-  }> {
+  private getProjectsFromDOM(): ProjectSummary[] {
     const items = Array.from(document.querySelectorAll('article.projects ul.project-list li.project-item')) as HTMLElement[];
     return items.map((el) => {
       const title = el.querySelector('.project-title')?.textContent?.trim() || 'Untitled Project';
@@ -919,28 +1089,178 @@ export class ChatbotManager {
     });
   }
 
-  private buildProjectsListHTML(projects: ReturnType<typeof this.getProjectsFromDOM>): string {
+  private getAllProjectSummaries(): ProjectSummary[] {
+    const byTitle = new Map<string, ProjectSummary>();
+    const add = (project: ProjectSummary) => {
+      const key = this.normalize(project.title);
+      if (!key) return;
+      const existing = byTitle.get(key);
+      byTitle.set(key, {
+        ...existing,
+        ...project,
+        description: project.description || existing?.description,
+        technologies: project.technologies || existing?.technologies,
+        githubUrl: project.githubUrl || existing?.githubUrl,
+        liveUrl: project.liveUrl || existing?.liveUrl,
+        videoUrl: project.videoUrl || existing?.videoUrl,
+        codedexUrl: project.codedexUrl || existing?.codedexUrl,
+      });
+    };
+
+    KB.projects.forEach(add);
+    this.getProjectsFromDOM().forEach(add);
+    return Array.from(byTitle.values());
+  }
+
+  private findProjectMatches(userMessage: string, limit = 4): ProjectSummary[] {
+    const msg = this.normalize(userMessage);
+    const msgTokens = this.tokenize(userMessage);
+    return this.getAllProjectSummaries()
+      .map((project) => {
+        const title = this.normalize(project.title);
+        const titleScore = this.jaccard(msgTokens, this.tokenize(project.title)) * 5;
+        const exactTitle = title && msg.includes(title) ? 4 : 0;
+        const fuzzyTitle = this.fuzzyScore(project.title, userMessage) * 2;
+        const alias = title.replace(/\s+/g, '');
+        const compactMsg = msg.replace(/\s+/g, '');
+        const compactHit = alias.length > 4 && compactMsg.includes(alias) ? 2 : 0;
+        return { project, score: titleScore + exactTitle + fuzzyTitle + compactHit };
+      })
+      .filter(({ score }) => score >= 2)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit)
+      .map(({ project }) => project);
+  }
+
+  private isProjectComparisonQuery(message: string): boolean {
+    const m = this.normalize(message);
+    if (!/\b(compare|comparison|versus|vs|difference|different|between)\b/.test(m)) return false;
+    return this.findProjectMatches(message, 3).length >= 2;
+  }
+
+  private buildProjectComparisonHTML(message: string): string | null {
+    if (!this.isProjectComparisonQuery(message)) return null;
+    const projects = this.findProjectMatches(message, 3).slice(0, 2);
+    if (projects.length < 2) return null;
+
+    const sections = projects.map((project) => {
+      const links: string[] = [];
+      if (project.liveUrl) links.push(`<a href="${this.sanitizeUrl(project.liveUrl)}" target="_blank" rel="noopener noreferrer">Live</a>`);
+      if (project.githubUrl) links.push(`<a href="${this.sanitizeUrl(project.githubUrl)}" target="_blank" rel="noopener noreferrer">GitHub</a>`);
+      if (project.videoUrl) links.push(`<a href="${this.sanitizeUrl(project.videoUrl)}" target="_blank" rel="noopener noreferrer">Demo</a>`);
+      return [
+        `<strong>${this.escapeHtml(project.title)}</strong> — ${this.escapeHtml(project.category)}`,
+        this.escapeHtml(this.cleanText(project.description, 220)),
+        project.technologies ? `<em>Stack:</em> ${this.escapeHtml(this.cleanText(project.technologies, 180))}` : '',
+        links.length ? links.join(' | ') : '',
+      ].filter(Boolean).join('<br>');
+    }).join('<br><br>');
+
+    const [first, second] = projects;
+    const summary = `${this.escapeHtml(first.title)} is stronger for ${this.escapeHtml(this.projectFocusLabel(first))}, while ${this.escapeHtml(second.title)} is stronger for ${this.escapeHtml(this.projectFocusLabel(second))}.`;
+    const cites = projects
+      .map((project) => this.unifiedIndex.find((item) => item.kind === 'project' && this.normalize(item.title) === this.normalize(project.title))?.citation)
+      .filter(Boolean) as Citation[];
+    const sec = this.unifiedIndex.find((it) => it.id === 'sec-projects')?.citation;
+    if (sec) cites.push(sec);
+    return `<strong>Quick comparison</strong><br>${sections}<br><br>${summary}${this.buildCitationsHTML(cites)}`;
+  }
+
+  private projectFocusLabel(project: ProjectSummary): string {
+    const hay = this.normalize(`${project.title} ${project.category} ${project.description || ''} ${this.cleanText(project.technologies, 500)}`);
+    if (/\bhealth|patient|triage|booking|provider|medical\b/.test(hay)) return 'healthcare workflow and AI triage';
+    if (/\bburnout|well-being|wellbeing|employee|workplace|behavioral\b/.test(hay)) return 'workplace well-being analytics';
+    if (/\bfinancial|banking|finance|account|loan|spending|investment|co-pilot\b/.test(hay)) return 'financial decision support';
+    if (/\bbarangay|governance|public service|accountability\b/.test(hay)) return 'civic service navigation';
+    if (/\bcarbon|sustainability|eco|environment\b/.test(hay)) return 'sustainability tracking';
+    return `${project.category.toLowerCase()} delivery`;
+  }
+
+  private isBestAIProjectQuery(message: string): boolean {
+    const m = this.normalize(message);
+    return /\b(ai|ml|machine learning|agentic|gemini|llama)\b/.test(m)
+      && /\b(best|strongest|most impressive|showcase|recommend|which|top)\b/.test(m);
+  }
+
+  private aiProjectScore(project: ProjectSummary): number {
+    const hay = this.normalize(`${project.title} ${project.category} ${project.description || ''} ${this.cleanText(project.technologies, 600)}`);
+    let score = 0;
+    if (/\b(ai|ml|machine learning)\b/.test(hay)) score += 3;
+    if (/\bagentic|agent\b/.test(hay)) score += 3;
+    if (/\bllama|gemini|generative ai\b/.test(hay)) score += 2;
+    if (/\bpredictive|automation|triage|co-pilot|analytics\b/.test(hay)) score += 1;
+    if (/\bai ml\b/.test(hay)) score += 2;
+    return score;
+  }
+
+  private buildBestAIProjectHTML(): string {
+    const ranked = this.getAllProjectSummaries()
+      .map((project) => ({ project, score: this.aiProjectScore(project) }))
+      .filter(({ score }) => score >= 3)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map(({ project }) => project);
+
+    if (!ranked.length) {
+      return 'The portfolio has AI-related work, but I could not identify a single strongest AI project from the current project data.';
+    }
+
+    const [best, ...also] = ranked;
+    const alsoText = also.length
+      ? `<br><br><em>Also strong:</em> ${also.map((project) => this.escapeHtml(project.title)).join(', ')}.`
+      : '';
+    const cites = ranked
+      .map((project) => this.unifiedIndex.find((item) => item.kind === 'project' && this.normalize(item.title) === this.normalize(project.title))?.citation)
+      .filter(Boolean) as Citation[];
+    const sec = this.unifiedIndex.find((it) => it.id === 'sec-projects')?.citation;
+    if (sec) cites.push(sec);
+
+    return [
+      `<strong>${this.escapeHtml(best.title)}</strong> is the strongest AI showcase.`,
+      this.escapeHtml(this.cleanText(best.description, 240)),
+      best.technologies ? `<em>Stack:</em> ${this.escapeHtml(this.cleanText(best.technologies, 220))}` : '',
+      alsoText,
+      this.buildCitationsHTML(cites),
+    ].filter(Boolean).join('<br>');
+  }
+
+  private getAchievementsFromDOM(): AchievementSnippet[] {
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('.achievement-card, .achievement-item .achievement-card'));
+    return cards.map((el) => ({
+      title: el.querySelector('.card-title, .h4.card-title')?.textContent?.trim() || 'Achievement',
+      description: el.getAttribute('data-description') || el.querySelector('.card-subtitle')?.textContent?.trim() || undefined,
+      date: el.getAttribute('data-date') || el.querySelector('.card-date')?.textContent?.trim() || undefined,
+      location: el.getAttribute('data-location') || el.querySelector('.card-location')?.textContent?.trim() || undefined,
+      organizer: el.getAttribute('data-organizer') || undefined,
+      githubUrl: el.getAttribute('data-github') || undefined,
+      linkedinUrl: el.getAttribute('data-linkedin') || undefined,
+      blogUrl: el.getAttribute('data-blog') || undefined,
+    }));
+  }
+
+  private buildProjectsListHTML(projects: ProjectSummary[]): string {
     if (!projects.length) {
       // Fallback to KB projects (all)
-      const all = KB.projects
-        .map((p) => `<strong>${p.title}</strong> — ${p.category}`)
+      const all = KB.projects.slice(0, 8)
+        .map((p) => `<strong>${this.escapeHtml(p.title)}</strong> — ${this.escapeHtml(p.category)}`)
         .join('<br>');
       return `Projects overview:<br>${all}`;
     }
 
-    const header = `<strong>Projects (${projects.length})</strong> — from the Projects section`;
-    const body = projects.map((p) => {
+    const visible = projects.slice(0, 7);
+    const header = `<strong>Project highlights</strong> — showing ${visible.length} of ${projects.length}`;
+    const body = visible.map((p) => {
       const links: string[] = [];
-      if (p.liveUrl) links.push(`<a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer">Live</a>`);
-      if (p.githubUrl) links.push(`<a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer">GitHub</a>`);
-      if (p.videoUrl) links.push(`<a href="${p.videoUrl}" target="_blank" rel="noopener noreferrer">Demo</a>`);
+      if (p.liveUrl) links.push(`<a href="${this.sanitizeUrl(p.liveUrl)}" target="_blank" rel="noopener noreferrer">Live</a>`);
+      if (p.githubUrl) links.push(`<a href="${this.sanitizeUrl(p.githubUrl)}" target="_blank" rel="noopener noreferrer">GitHub</a>`);
+      if (p.videoUrl) links.push(`<a href="${this.sanitizeUrl(p.videoUrl)}" target="_blank" rel="noopener noreferrer">Demo</a>`);
       const linkStr = links.length ? ` — ${links.join(' | ')}` : '';
-      const tech = p.technologies ? `<br><em>Stack:</em> ${p.technologies}` : '';
-      const desc = p.description ? `<br>${p.description}` : '';
-      return `<strong>${p.title}</strong> — ${p.category}${linkStr}${tech}${desc}`;
+      const tech = p.technologies ? `<br><em>Stack:</em> ${this.escapeHtml(this.cleanText(p.technologies, 160))}` : '';
+      const desc = p.description ? `<br>${this.escapeHtml(this.cleanText(p.description, 170))}` : '';
+      return `<strong>${this.escapeHtml(p.title)}</strong> — ${this.escapeHtml(p.category)}${linkStr}${tech}${desc}`;
     }).join('<br><br>');
 
-    return `${header}<br>${body}`;
+    return `${header}<br>${body}${projects.length > visible.length ? '<br><br>Ask for a specific project, or open the Projects section for the full gallery.' : ''}`;
   }
   // === End new ===
 
@@ -957,7 +1277,10 @@ export class ChatbotManager {
     const achievementCandidates = new Set<string>();
     KB.achievements.forEach(a => {
       achievementCandidates.add(this.normalize(a.title));
-      if (a.projectTitle) achievementCandidates.add(this.normalize(a.projectTitle));
+      if (a.organizer) achievementCandidates.add(this.normalize(a.organizer));
+    });
+    this.getAchievementsFromDOM().forEach(a => {
+      achievementCandidates.add(this.normalize(a.title));
       if (a.organizer) achievementCandidates.add(this.normalize(a.organizer));
     });
 
@@ -965,13 +1288,13 @@ export class ChatbotManager {
     KB.skills.technologies.forEach(t => techCandidates.add(this.normalize(t)));
     // Also gather tech from projects in DOM and KB
     this.getProjectsFromDOM().forEach(p => {
-      (p.technologies || '').split(/[,;]/).forEach(tok => {
+      this.cleanText(p.technologies || '', 500).split(/[,;•]/).forEach(tok => {
         const n = this.normalize(tok);
         if (n) techCandidates.add(n);
       });
     });
     KB.projects.forEach(p => {
-      (p.technologies || '').split(/[,;]/).forEach(tok => {
+      this.cleanText(p.technologies || '', 500).split(/[,;•]/).forEach(tok => {
         const n = this.normalize(tok);
         if (n) techCandidates.add(n);
       });
@@ -1055,12 +1378,23 @@ export class ChatbotManager {
   }
 
   // Choose top intent with thresholds and tie-breakers
-  private chooseTopIntent(intents: Array<{ intent: IntentType, score: number }>, entities: ExtractedEntities): IntentType {
+  private chooseTopIntent(intents: Array<{ intent: IntentType, score: number }>, entities: ExtractedEntities, userMessage = ''): IntentType {
     const top = intents[0];
     const second = intents[1];
     const threshold = 1; // minimum credible signal
 
     if (!top || top.score < threshold) return 'GENERAL';
+
+    const m = this.normalize(userMessage);
+    const isAchievementQuestion = /\b(award|awards|achievement|achievements|hackathon|win|won|prize|finalist|recognition|honor|honours|placed|place)\b/.test(m);
+    const projectDetailsScore = intents.find((x) => x.intent === 'PROJECT_DETAILS')?.score || 0;
+    const achievementDetailsScore = intents.find((x) => x.intent === 'ACHIEVEMENT_DETAILS')?.score || 0;
+
+    if (entities.projects.length && projectDetailsScore >= threshold && !isAchievementQuestion) {
+      if (top.intent === 'ACHIEVEMENT_DETAILS' || top.intent === 'ACHIEVEMENTS' || achievementDetailsScore <= projectDetailsScore + 1) {
+        return 'PROJECT_DETAILS';
+      }
+    }
 
     // Tie-breakers if close scores
     const close = second && (top.score - second.score) <= 1;
@@ -1192,7 +1526,7 @@ export class ChatbotManager {
           base.unshift(`Show ${proj.title} details`);
           return base;
         }
-        return ['Show projects', 'Share contact info', 'List skills', 'Search site for portfolio'];
+        return ['Best AI project', 'Compare WorkSight and LingapLink', 'Share contact info', 'List skills'];
     }
   }
 
@@ -1258,17 +1592,22 @@ export class ChatbotManager {
 
   // Convert markdown formatting to HTML for proper display in chat
   private markdownToHtml(text: string): string {
-    return text
+    const escaped = this.escapeHtml(text);
+    return escaped
       // Convert markdown links [text](url) to clickable <a> tags
-      .replace(/\[([^\]]+)\]\s*\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:#ffdb70;text-decoration:underline">$1</a>')
+      .replace(/\[([^\]]+)\]\s*\(([^)]+)\)/g, (_match, label: string, url: string) =>
+        `<a href="${this.sanitizeUrl(url)}" target="_blank" rel="noopener noreferrer">${label}</a>`
+      )
       // Convert bare URLs to clickable links (http/https)
-      .replace(/(?<![">])(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color:#ffdb70;text-decoration:underline">$1</a>')
+      .replace(/(?<![">])(https?:\/\/[^\s<]+)/g, (url: string) =>
+        `<a href="${this.sanitizeUrl(url)}" target="_blank" rel="noopener noreferrer">${url}</a>`
+      )
       // Convert **bold** to <strong>
       .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
       // Convert *italic* to <em>
       .replace(/\*([^*]+)\*/g, '<em>$1</em>')
       // Convert `code` to <code>
-      .replace(/`([^`]+)`/g, '<code style="background:#2a2a2a;padding:2px 5px;border-radius:3px;font-size:0.9em">$1</code>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
       // Convert markdown bullet lists: * item or - item at start of line
       .replace(/^[*-]\s+(.+)$/gm, '• $1')
       // Convert numbered lists: 1. item
@@ -1282,9 +1621,8 @@ export class ChatbotManager {
       .replace(/(\S)\*(\s)/g, '$1$2');
   }
 
-  private formatResponse(text: string, tone: 'concise' | 'detailed' | 'playful' = 'concise'): string {
-    // Always convert markdown to HTML for proper rendering
-    const htmlText = this.markdownToHtml(text);
+  private formatResponse(text: string, tone: 'concise' | 'detailed' | 'playful' = 'concise', source: 'markdown' | 'html' = 'markdown'): string {
+    const htmlText = source === 'html' ? text : this.markdownToHtml(text);
     if (tone === 'concise') return htmlText;
     if (tone === 'playful') return `${htmlText} 🎉`;
     return `${htmlText}${this.conversationSummary ? `<br><em>Based on our chat:</em> ${this.conversationSummary}` : ''}`;
@@ -1306,7 +1644,7 @@ export class ChatbotManager {
         }
         // Fallback
         const top = KB.projects.slice(0, 3)
-          .map((p) => `${p.title} — ${p.technologies.split(';')[0]}`)
+          .map((p) => `${this.escapeHtml(p.title)} — ${this.escapeHtml(this.cleanText(p.technologies.split(';')[0], 100))}`)
           .join('; ');
         const cites: Citation[] = [];
         const sec = this.unifiedIndex.find((it) => it.id === 'sec-projects')?.citation;
@@ -1315,6 +1653,9 @@ export class ChatbotManager {
       }
       case 'PROJECTS': {
         const fromDom = this.getProjectsFromDOM();
+        if (this.isBestAIProjectQuery(message)) {
+          return this.buildBestAIProjectHTML();
+        }
         // If user asked for AI/ML, filter accordingly
         const m = message.toLowerCase();
         const filtered = /ai|ml|machine learning|agent/.test(m)
@@ -1342,7 +1683,7 @@ export class ChatbotManager {
           if (emailCite) cites.push(emailCite);
           const sec = this.unifiedIndex.find((it) => it.id === 'sec-contact')?.citation;
           if (sec) cites.push(sec);
-          return `Email: <a href="mailto:${c.email}">${c.email}</a>${this.buildCitationsHTML(cites)}`;
+          return `Email: <a href="mailto:${this.escapeHtml(c.email)}">${this.escapeHtml(c.email)}</a>${this.buildCitationsHTML(cites)}`;
         }
         if (/\bgithub\b|\bgit\b/.test(m)) {
           const cites: Citation[] = [];
@@ -1350,7 +1691,7 @@ export class ChatbotManager {
           if (ghCite) cites.push(ghCite);
           const sec = this.unifiedIndex.find((it) => it.id === 'sec-contact')?.citation;
           if (sec) cites.push(sec);
-          return `GitHub: <a href="${c.github}" target="_blank" rel="noopener noreferrer">${c.github}</a>${this.buildCitationsHTML(cites)}`;
+          return `GitHub: <a href="${this.sanitizeUrl(c.github)}" target="_blank" rel="noopener noreferrer">${this.escapeHtml(c.github)}</a>${this.buildCitationsHTML(cites)}`;
         }
         if (/\blinked?in\b/.test(m)) {
           const cites: Citation[] = [];
@@ -1358,7 +1699,7 @@ export class ChatbotManager {
           if (liCite) cites.push(liCite);
           const sec = this.unifiedIndex.find((it) => it.id === 'sec-contact')?.citation;
           if (sec) cites.push(sec);
-          return `LinkedIn: <a href="${c.linkedin}" target="_blank" rel="noopener noreferrer">${c.linkedin}</a>${this.buildCitationsHTML(cites)}`;
+          return `LinkedIn: <a href="${this.sanitizeUrl(c.linkedin)}" target="_blank" rel="noopener noreferrer">${this.escapeHtml(c.linkedin)}</a>${this.buildCitationsHTML(cites)}`;
         }
         if (/\bresume\b|\bcv\b/.test(m)) {
           const cites: Citation[] = [];
@@ -1366,14 +1707,14 @@ export class ChatbotManager {
           if (cvCite) cites.push(cvCite);
           const sec = this.unifiedIndex.find((it) => it.id === 'sec-contact')?.citation;
           if (sec) cites.push(sec);
-          return `Resume: <a href="${c.resumeUrl}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>${this.buildCitationsHTML(cites)}`;
+          return `Resume: <a href="${this.sanitizeUrl(c.resumeUrl)}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>${this.buildCitationsHTML(cites)}`;
         }
         // Otherwise, show a compact contact card without trailing periods
         const body = [
-          `Email: <a href="mailto:${c.email}">${c.email}</a>`,
-          `GitHub: <a href="${c.github}" target="_blank" rel="noopener noreferrer">${c.github}</a>`,
-          `LinkedIn: <a href="${c.linkedin}" target="_blank" rel="noopener noreferrer">${c.linkedin}</a>`,
-          `Resume: <a href="${c.resumeUrl}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>`,
+          `Email: <a href="mailto:${this.escapeHtml(c.email)}">${this.escapeHtml(c.email)}</a>`,
+          `GitHub: <a href="${this.sanitizeUrl(c.github)}" target="_blank" rel="noopener noreferrer">${this.escapeHtml(c.github)}</a>`,
+          `LinkedIn: <a href="${this.sanitizeUrl(c.linkedin)}" target="_blank" rel="noopener noreferrer">${this.escapeHtml(c.linkedin)}</a>`,
+          `Resume: <a href="${this.sanitizeUrl(c.resumeUrl)}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>`,
         ].join('<br>');
         const cites: Citation[] = [];
         const sec = this.unifiedIndex.find((it) => it.id === 'sec-contact')?.citation;
@@ -1391,7 +1732,7 @@ export class ChatbotManager {
         if (cvCite) cites.push(cvCite);
         const sec = this.unifiedIndex.find((it) => it.id === 'sec-contact')?.citation;
         if (sec) cites.push(sec);
-        return `Resume: <a href="${c.resumeUrl}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>. For a quick glance, ask "skills" or "projects".${this.buildCitationsHTML(cites)}`;
+        return `Resume: <a href="${this.sanitizeUrl(c.resumeUrl)}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>. For a quick glance, ask "skills" or "projects".${this.buildCitationsHTML(cites)}`;
       }
       case 'SKILLS': {
         const body = this.buildSkillsHTML();
@@ -1406,11 +1747,11 @@ export class ChatbotManager {
         const cites: Citation[] = [];
         const sec = this.unifiedIndex.find((it) => it.id === 'sec-skills')?.citation;
         if (sec) cites.push(sec);
-        return `I have experience with ${dbs.join(', ')}. I've used them in various projects for data storage and management.${this.buildCitationsHTML(cites)}`;
+        return `Adriel has used ${dbs.map((db) => this.escapeHtml(db)).join(', ')} across web apps for auth, records, dashboards, and analytics workflows.${this.buildCitationsHTML(cites)}`;
       }
       case 'EDUCATION': {
         const e = KB.education
-          .map((ed) => `${ed.school}${ed.program ? ` — ${ed.program}` : ''}${ed.period ? ` (${ed.period})` : ''}`)
+          .map((ed) => `${this.escapeHtml(ed.school)}${ed.program ? ` — ${this.escapeHtml(ed.program)}` : ''}${ed.period ? ` (${this.escapeHtml(ed.period)})` : ''}`)
           .join('; ');
         const cites: Citation[] = [];
         const sec = this.unifiedIndex.find((it) => it.id === 'sec-education')?.citation;
@@ -1420,10 +1761,17 @@ export class ChatbotManager {
       }
       case 'ACHIEVEMENT_DETAILS': {
         const a = this.findAchievement(message);
-        const body = this.buildAchievementsHTML(a || undefined);
+        const indexedAchievement = a ? null : this.findIndexedAchievement(message);
+        const body = a
+          ? this.buildAchievementsHTML(a)
+          : indexedAchievement?.data
+            ? this.buildAchievementSnippetHTML(indexedAchievement.data as AchievementSnippet)
+            : this.buildAchievementsHTML();
         const cites: Citation[] = [];
         if (a) {
           cites.push(...this.unifiedIndex.filter((it) => it.kind === 'achievement' && this.normalize(it.title) === this.normalize(a.title)).map(it => it.citation));
+        } else if (indexedAchievement) {
+          cites.push(indexedAchievement.citation);
         }
         const sec = this.unifiedIndex.find((it) => it.id === 'sec-achievements')?.citation;
         if (sec) cites.push(sec);
@@ -1446,19 +1794,16 @@ export class ChatbotManager {
       case 'FAQ': {
         const m = message.toLowerCase();
         if (/how.*built|how.*site|stack|tech|technology/.test(m)) {
-          return this.formatResponse(
-            [
-              'This site runs a TypeScript SPA with modular managers for navigation, loading, images, performance, and accessibility.',
-              'It uses Vite tooling, intersection observers for lazy loading, and optimized `<picture>` elements for images.',
-              'Sections are navigable client-side with route syncing, and there’s a site-wide search overlay triggered via `?q=`.',
-            ].join(' '),
-            this.detailedMode ? 'detailed' : 'concise'
-          );
+          return [
+            'This site runs a TypeScript SPA with modular managers for navigation, loading, images, performance, and accessibility.',
+            'It uses Vite tooling, intersection observers for lazy loading, and optimized picture-based media.',
+            'Sections are navigable client-side with route syncing, and there is a site-wide search overlay triggered through query search.',
+          ].join(' ');
         }
         return `I can help you navigate sections, share highlights, and surface links (e.g., resume, projects, achievements). Ask me anything about the portfolio!`;
       }
       default: {
-        return `${KB.profile.title}. ${KB.profile.summary} Learn more via Projects, Skills, and Achievements — or ask for specifics.`;
+        return `${this.escapeHtml(KB.profile.title)}. ${this.escapeHtml(KB.profile.summary)} Learn more via Projects, Skills, and Achievements — or ask for specifics.`;
       }
     }
   }
@@ -1555,13 +1900,38 @@ Technologies: ${KB.skills.technologies.join(', ')}`;
       `- ${e.school}${e.program ? ` — ${e.program}` : ''}${e.period ? ` (${e.period})` : ''}${e.notes ? `. ${e.notes}` : ''}`
     ).join('\n');
 
-    const projects = KB.projects.slice(0, 10).map(p =>
-      `- ${p.title} (${p.category}): ${p.description?.slice(0, 150) || 'Project details available'}. Tech: ${p.technologies?.split(';')[0] || 'Various'}. ${p.githubUrl ? `GitHub: ${p.githubUrl}` : ''}${p.liveUrl ? ` Live: ${p.liveUrl}` : ''}`
+    const domProjects = this.getProjectsFromDOM();
+    const projectSource = domProjects.length ? domProjects : KB.projects;
+    const projects = projectSource.slice(0, 16).map(p =>
+      `- ${p.title} (${p.category}): ${this.cleanText(p.description, 170) || 'Project details available'}. Tech: ${this.cleanText(p.technologies, 140) || 'Various'}. ${p.githubUrl ? `GitHub: ${p.githubUrl}` : ''}${p.liveUrl ? ` Live: ${p.liveUrl}` : ''}${p.videoUrl ? ` Demo: ${p.videoUrl}` : ''}`
     ).join('\n');
 
-    const achievements = KB.achievements.slice(0, 6).map(a =>
-      `- ${a.title}: ${a.description?.slice(0, 100) || 'Achievement'} (${a.location}, ${a.date})${a.projectTitle ? ` — Project: ${a.projectTitle}` : ''}`
-    ).join('\n');
+    const domAchievements = this.getAchievementsFromDOM();
+    const achievementSource: AchievementSnippet[] = [
+      ...KB.achievements.map((achievement) => ({
+        title: achievement.title,
+        description: achievement.description,
+        date: achievement.date,
+        location: achievement.location,
+        organizer: achievement.organizer,
+        githubUrl: achievement.githubUrl,
+        linkedinUrl: achievement.linkedinUrl,
+        blogUrl: achievement.blogUrl,
+      })),
+      ...domAchievements,
+    ];
+    const seenAchievements = new Set<string>();
+    const achievements = achievementSource
+      .filter((a) => {
+        const key = this.normalize(a.title);
+        if (!key || seenAchievements.has(key)) return false;
+        seenAchievements.add(key);
+        return true;
+      })
+      .slice(0, 14)
+      .map(a =>
+        `- ${a.title}: ${this.cleanText(a.description, 130) || a.organizer || 'Achievement'}${a.location || a.date ? ` (${[a.location, a.date].filter(Boolean).join(', ')})` : ''}`
+      ).join('\n');
 
     const contact = `Email: ${KB.contact.email}
 GitHub: ${KB.contact.github}
@@ -1590,7 +1960,7 @@ Resume: ${KB.contact.resumeUrl}`;
   private async handleMessage(userMessage: string): Promise<void> {
     const controlResponse = this.handleControlCommand(userMessage);
     if (controlResponse) {
-      this.addMessage(this.formatResponse(controlResponse, this.detailedMode ? 'detailed' : 'concise'), 'bot');
+      this.addMessage(this.formatResponse(controlResponse, this.detailedMode ? 'detailed' : 'concise', 'html'), 'bot');
       return;
     }
 
@@ -1600,42 +1970,61 @@ Resume: ${KB.contact.resumeUrl}`;
       return;
     }
 
+    const smallTalkResponse = this.buildSmallTalkResponse(userMessage);
+    if (smallTalkResponse) {
+      this.addMessage(this.formatResponse(smallTalkResponse, 'concise', 'html'), 'bot');
+      return;
+    }
+
+    const profileResponse = this.buildProfileResponse(userMessage);
+    if (profileResponse) {
+      this.addMessage(this.formatResponse(profileResponse, 'concise', 'html'), 'bot');
+      return;
+    }
+
     // Detect intents/entities early so both Gemini and local fallback can reuse them
     const { intents, entities } = this.detectIntents(userMessage);
-    const scoredIntent = this.chooseTopIntent(intents, entities);
+    const scoredIntent = this.chooseTopIntent(intents, entities, userMessage);
     const intent = this.isFollowUpMessage(userMessage) && this.conversationContext.lastIntent
       ? this.conversationContext.lastIntent
       : scoredIntent;
 
     // Try Gemini first with conversation history for context
-    try {
+    let aiResponse: string | null = null;
+    if (this.geminiService.isAvailable()) {
+      this.setInputPending(true);
       this.showTypingIndicator();
-      const retrieved = this.buildRetrievedContextSnippet(userMessage);
-      const context = [
-        this.buildContext(),
-        retrieved ? `\n=== RETRIEVED MATCHES FOR CURRENT QUERY ===\n${retrieved}` : ''
-      ].join('');
-      // Pass recent conversation history for multi-turn awareness
-      const recentHistory = this.messages.slice(-10).map(m => ({
-        role: m.role as 'user' | 'bot',
-        content: m.content
-      }));
-      // Detect user sentiment and get tone instructions for adaptive responses
-      const sentiment = this.detectSentiment(userMessage);
-      const toneInstructions = this.getToneInstructions(sentiment);
-      const aiResponse = await this.geminiService.generateResponse(userMessage, context, recentHistory, toneInstructions);
-      this.hideTypingIndicator();
-
-      if (aiResponse) {
-        this.addMessage(this.formatResponse(aiResponse, this.detailedMode ? 'detailed' : 'concise'), 'bot');
-        this.updateConversationContext(userMessage, intent, entities);
-        return;
-      } else {
-        logger.warn('Gemini returned null response, falling back to local KB.');
+      try {
+        const retrieved = this.buildRetrievedContextSnippet(userMessage);
+        const context = [
+          this.buildContext(),
+          retrieved ? `\n=== RETRIEVED MATCHES FOR CURRENT QUERY ===\n${retrieved}` : ''
+        ].join('');
+        // Pass recent conversation history for multi-turn awareness
+        const recentHistory = this.messages.slice(-10).map(m => ({
+          role: m.role as 'user' | 'bot',
+          content: m.content
+        }));
+        // Detect user sentiment and get tone instructions for adaptive responses
+        const sentiment = this.detectSentiment(userMessage);
+        const toneInstructions = this.getToneInstructions(sentiment);
+        aiResponse = await this.geminiService.generateResponse(userMessage, context, recentHistory, toneInstructions);
+        if (!aiResponse) {
+          logger.warn('Gemini returned null response, falling back to local KB.');
+        }
+      } catch (err) {
+        logger.error('Gemini fallback due to error:', err);
+      } finally {
+        this.hideTypingIndicator();
+        this.setInputPending(false);
+        try { this.inputField?.focus({ preventScroll: true }); } catch { void 0; }
       }
-    } catch (err) {
-      logger.error('Gemini fallback due to error:', err);
-      this.hideTypingIndicator();
+    }
+
+    if (aiResponse) {
+      this.addMessage(this.formatResponse(aiResponse, this.detailedMode ? 'detailed' : 'concise'), 'bot');
+      this.updateConversationContext(userMessage, intent, entities);
+      return;
     }
 
     // Dev-only Gemini connectivity check trigger
@@ -1654,12 +2043,12 @@ Resume: ${KB.contact.resumeUrl}`;
 
     this.detailedMode = this.prefersDetailed(userMessage) || this.detailedMode;
     this.userPrefs.detailedMode = this.detailedMode;
+    const projectComparisonResponse = this.buildProjectComparisonHTML(userMessage);
     const multiIntentResponse = this.buildMultiIntentResponse(userMessage, intents);
-    const botResponse = multiIntentResponse
+    const botResponse = projectComparisonResponse
+      || multiIntentResponse
       || (intent === 'GENERAL' ? this.buildSmartGeneralResponse(userMessage) : this.routeIntent(intent, userMessage));
-    // Add a note that this is from local knowledge when Gemini was attempted but failed
-    const localNote = '<small style="opacity:0.7">📚 From local knowledge</small><br>';
-    this.addMessage(localNote + this.formatResponse(botResponse, this.detailedMode ? 'detailed' : 'concise'), 'bot');
+    this.addMessage(this.formatResponse(botResponse, this.detailedMode ? 'detailed' : 'concise', 'html'), 'bot');
     this.updateConversationContext(userMessage, intent, entities);
   }
 
@@ -1670,7 +2059,7 @@ Resume: ${KB.contact.resumeUrl}`;
         return 'Gemini connectivity check is disabled outside development.';
       }
       const key = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-      const model = (import.meta.env.VITE_GEMINI_MODEL as string | undefined) || 'gemini-2.5-flash';
+      const model = (import.meta.env.VITE_GEMINI_MODEL as string | undefined) || 'gemini-2.5-pro';
       if (!key) {
         return 'Gemini key not configured (VITE_GEMINI_API_KEY missing).';
       }

@@ -163,8 +163,12 @@ export class VideoThumbnails {
       }
 
       if (poster) {
-        // Warm the cache for the poster image to reduce time-to-first-paint
-        this.preloadPoster(poster);
+        // Only warm posters that are actually near the viewport. Most project
+        // videos live in hidden/off-screen sections, so preloading all posters
+        // competes with the avatar and first visible content.
+        if (this.isNearViewport(video)) {
+          this.preloadPoster(poster);
+        }
         video.poster = poster;
       }
     } catch (e) {
@@ -186,8 +190,7 @@ export class VideoThumbnails {
       link.rel = 'preload';
       link.as = 'image';
       link.href = url;
-      // Raise priority for above-the-fold thumbnails
-      link.setAttribute('fetchpriority', 'high');
+      link.setAttribute('fetchpriority', 'low');
       link.setAttribute('data-id', id);
       if (/^https?:\/\//i.test(url)) {
         link.setAttribute('crossorigin', 'anonymous');
@@ -196,6 +199,12 @@ export class VideoThumbnails {
     } catch (e) {
       logger.warn('VideoThumbnails: failed to preload poster', e);
     }
+  }
+
+  private isNearViewport(element: HTMLElement): boolean {
+    if (element.offsetParent === null) return false;
+    const rect = element.getBoundingClientRect();
+    return rect.top < window.innerHeight * 1.5 && rect.bottom > -window.innerHeight * 0.5;
   }
 
   private safePause(video: HTMLVideoElement): void {

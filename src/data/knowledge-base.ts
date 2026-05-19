@@ -211,6 +211,72 @@ export const KB: KnowledgeBase = {
   ],
   achievements: [
     {
+      title: 'CodeKada 2026',
+      images: ['/images/honors/2026/codekada/Adriel M. Magalona.avif'],
+      webpImages: ['/images/honors/2026/codekada/Adriel M. Magalona.avif'],
+      organizer: 'CodeKada',
+      date: 'May 3–9, 2026',
+      location: 'Online (Discord)',
+      teammates: [
+        { name: 'Jero' },
+        { name: 'Jordan' },
+        { name: 'Don' }
+      ],
+      description: 'Participated in CodeKada 2026: The Online Hackathon, held via Discord from May 3–9, 2026.',
+    },
+    {
+      title: 'The Innovation Labs',
+      images: [],
+      webpImages: [],
+      organizer: 'The Innovation Labs',
+      date: 'February 2026',
+      location: 'Online',
+      teammates: [
+        { name: 'Kiel Ethan Lanzanas' },
+        { name: 'Ellah Benerado' },
+        { name: 'John Carlo Santos' },
+      ],
+      description: 'Participated in The Innovation Labs in February 2026.',
+    },
+    {
+      title: 'SIKAPTala',
+      images: [],
+      webpImages: [],
+      organizer: 'SIKAPTala',
+      date: '2026',
+      location: 'De La Salle University - Dasmarinas',
+      description: 'Placed 2nd in SIKAPTala at De La Salle University - Dasmarinas.',
+    },
+    {
+      title: 'SIKAPTala 2026 Hackathon',
+      images: [],
+      webpImages: [],
+      organizer: 'SIKAPTala',
+      date: '2026',
+      location: 'De La Salle University - Dasmarinas',
+      description:
+        'Participated in the SIKAPTala 2026 Hackathon at De La Salle University - Dasmarinas.',
+    },
+    {
+      title: 'START-a-TON: Data & AI Innovation Challenge',
+      images: [],
+      webpImages: [],
+      organizer:
+        'Scholars Transforming Advancement and Research for Technology - DOST with DOST-SEI Science Teacher Academy for the Regions',
+      date: 'April 18, 2026',
+      location: 'Philippines',
+      teammates: [
+        { name: 'Gem Christian Lazo' },
+        { name: 'Marti Kier Trance' },
+        { name: 'Janel Rose Trongcoso' },
+        { name: 'Christine Rio' },
+      ],
+      description:
+        'Champion of START-a-TON, a nationwide two-week Data & AI innovation challenge for DOST techno-scholars. The team built STAR-LINK, a platform layer for the e-STAR.ph ecosystem that connects educators, organizes action research, surfaces regional insights, and supports collaboration across 18 regions of the Philippines.',
+      githubUrl: 'https://lnkd.in/g4e7JHPT',
+      blogUrl: 'https://lnkd.in/gMUq75nZ',
+    },
+    {
       title: 'Technovation Summit 2025 Start‑up Hackathon',
       images: [
         '/images/honors/technovation/1.jpeg',

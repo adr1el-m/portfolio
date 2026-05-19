@@ -21,6 +21,24 @@ const firebaseConfig = {
     measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
+function isConfigured(value: unknown): value is string {
+    if (typeof value !== 'string') return false;
+    const normalized = value.trim().toLowerCase();
+    return Boolean(normalized) &&
+        normalized !== 'undefined' &&
+        normalized !== 'null' &&
+        !normalized.startsWith('your_') &&
+        !normalized.includes('your-');
+}
+
+function hasValidFirebaseConfig(): boolean {
+    return isConfigured(firebaseConfig.apiKey) &&
+        isConfigured(firebaseConfig.projectId) &&
+        isConfigured(firebaseConfig.appId) &&
+        isConfigured(firebaseConfig.databaseURL) &&
+        String(firebaseConfig.databaseURL).startsWith('https://');
+}
+
 export class VisitorCounter {
     private visitorCountEl: HTMLElement | null = null;
     private isAdmin: boolean = false;
@@ -32,6 +50,11 @@ export class VisitorCounter {
     private async init(): Promise<void> {
         try {
             this.isAdmin = this.checkIfAdmin();
+
+            if (!hasValidFirebaseConfig()) {
+                logger.warn('VisitorCounter: Firebase config missing; skipping counter.');
+                return;
+            }
 
             const app = initializeApp(firebaseConfig);
             const db = getDatabase(app);

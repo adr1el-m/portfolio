@@ -1394,7 +1394,6 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 }
 
 .section-icon {
-  font-size: 2.5rem;
   width: 60px;
   height: 60px;
   display: flex;
@@ -1404,6 +1403,7 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   border-radius: 12px;
   position: relative;
   flex-shrink: 0;
+  color: var(--orange-yellow-crayola);
 }
 
 .section-icon::before {
@@ -1413,6 +1413,13 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   background: var(--bg-gradient-jet);
   border-radius: inherit;
   z-index: -1;
+}
+
+.section-icon svg {
+  width: 32px;
+  height: 32px;
+  display: block;
+  fill: currentColor;
 }
 
 .section-title {
@@ -2505,12 +2512,12 @@ article.active {
 /* Filter select dropdown now uses a slideFadeIn effect */
 
 /* Timeline items get a gentle hover lift & shadow */
-.timeline-item {
+.timeline-list .timeline-item {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.timeline-item:hover,
-.timeline-item:focus-within {
+.timeline-list .timeline-item:hover,
+.timeline-list .timeline-item:focus-within {
   transform: translateX(5px);
   box-shadow: none;
 }

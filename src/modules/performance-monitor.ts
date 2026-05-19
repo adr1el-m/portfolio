@@ -3,7 +3,7 @@
  * Tracks Core Web Vitals, performance metrics, and reports to analytics
  */
 
-import { onCLS, onLCP, onFCP, onTTFB, onINP, Metric } from 'web-vitals';
+import type { Metric } from 'web-vitals';
 import { logger } from '../config';
 
 interface PerformanceReport {
@@ -56,22 +56,45 @@ export class PerformanceMonitor {
    * Initialize Core Web Vitals tracking
    */
   private initializeWebVitals(): void {
-    // Largest Contentful Paint (LCP)
-    onLCP(this.handleMetric.bind(this), { reportAllChanges: false });
+    if (typeof window === 'undefined') return;
 
-    // Cumulative Layout Shift (CLS)
-    onCLS(this.handleMetric.bind(this), { reportAllChanges: false });
+    this.runWhenIdle(() => {
+      void import('web-vitals')
+        .then(({ onCLS, onLCP, onFCP, onTTFB, onINP }) => {
+          // Largest Contentful Paint (LCP)
+          onLCP(this.handleMetric.bind(this), { reportAllChanges: false });
 
-    // First Contentful Paint (FCP)
-    onFCP(this.handleMetric.bind(this), { reportAllChanges: false });
+          // Cumulative Layout Shift (CLS)
+          onCLS(this.handleMetric.bind(this), { reportAllChanges: false });
 
-    // Time to First Byte (TTFB)
-    onTTFB(this.handleMetric.bind(this), { reportAllChanges: false });
+          // First Contentful Paint (FCP)
+          onFCP(this.handleMetric.bind(this), { reportAllChanges: false });
 
-    // Interaction to Next Paint (INP) - New metric replacing FID
-    onINP(this.handleMetric.bind(this), { reportAllChanges: false });
+          // Time to First Byte (TTFB)
+          onTTFB(this.handleMetric.bind(this), { reportAllChanges: false });
 
-    logger.info('✅ Core Web Vitals monitoring initialized');
+          // Interaction to Next Paint (INP)
+          onINP(this.handleMetric.bind(this), { reportAllChanges: false });
+
+          logger.info('✅ Core Web Vitals monitoring initialized');
+        })
+        .catch((error) => {
+          logger.warn('PerformanceMonitor: web-vitals failed to load', error);
+        });
+    }, 1500);
+  }
+
+  private runWhenIdle(callback: () => void, timeout = 1500): void {
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number;
+    };
+
+    if (typeof idleWindow.requestIdleCallback === 'function') {
+      idleWindow.requestIdleCallback(callback, { timeout });
+      return;
+    }
+
+    window.setTimeout(callback, Math.min(timeout, 1000));
   }
 
   /**

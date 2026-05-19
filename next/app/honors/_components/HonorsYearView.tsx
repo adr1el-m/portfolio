@@ -47,6 +47,16 @@ export default function HonorsYearView({ year, awards }: HonorsYearViewProps) {
               </ul>
             ) : null}
 
+            {award.links && award.links.length > 0 ? (
+              <div className="honors-actions">
+                {award.links.map((link) => (
+                  <a key={link.href} href={link.href} className="text-link" target="_blank" rel="noreferrer">
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            ) : null}
+
             {award.images.length > 0 ? (
               <div className="award-media-grid">
                 {award.images.map((src, idx) => (

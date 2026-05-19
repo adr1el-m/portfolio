@@ -18,6 +18,9 @@ export default defineConfig({
             if (id.includes('three')) {
               return 'three';
             }
+            if (id.includes('firebase')) {
+              return 'firebase';
+            }
             if (id.includes('vanilla-tilt') || id.includes('web-vitals')) {
               return 'vendor';
             }
@@ -30,6 +33,19 @@ export default defineConfig({
 
           // Application chunks for deferred modules
           if (id.includes('src/modules')) {
+            if (id.includes('chatbot') || id.includes('gemini-service')) {
+              return 'chatbot';
+            }
+            if (id.includes('particle-background')) {
+              return 'visual-effects';
+            }
+            if (id.includes('pwa-manager')) {
+              return 'pwa';
+            }
+            if (id.includes('visitor-counter')) {
+              return 'visitor-counter';
+            }
+
             // Group deferred UI enhancements
             const uiModules = [
               'scroll-animations',
@@ -45,15 +61,7 @@ export default defineConfig({
               return 'deferred-ui';
             }
 
-            // Group heavier deferred features
-            const features = [
-              'chatbot',
-              'particle-background',
-              'pwa-manager',
-            ];
-            if (features.some(m => id.includes(m))) {
-              return 'deferred-features';
-            }
+            return undefined;
           }
         },
       },

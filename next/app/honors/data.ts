@@ -13,6 +13,10 @@ export type Award = {
   description: string;
   teammates?: Teammate[];
   images: string[];
+  links?: Array<{
+    label: string;
+    href: string;
+  }>;
 };
 
 export const awardsByYear: Record<string, Award[]> = {
@@ -61,6 +65,44 @@ export const awardsByYear: Record<string, Award[]> = {
       images: [],
     },
     {
+      title: "START-a-TON: Data & AI Innovation Challenge",
+      badge: "Champion",
+      subtitle: "STAR-LINK - Data & AI Innovation Challenge",
+      date: "April 18, 2026",
+      location: "Philippines",
+      organizer:
+        "Scholars Transforming Advancement and Research for Technology - DOST with DOST-SEI Science Teacher Academy for the Regions",
+      description:
+        "Won champion in START-a-TON, a nationwide two-week Data & AI innovation challenge for DOST techno-scholars. The team built STAR-LINK, a platform layer for the e-STAR.ph ecosystem that connects educators, organizes action research, surfaces regional insights, and supports collaboration across 18 regions of the Philippines.",
+      teammates: [
+        { name: "Gem Christian Lazo", role: "Team Member" },
+        { name: "Marti Kier Trance", role: "Team Member" },
+        { name: "Janel Rose Trongcoso", role: "Team Member" },
+        { name: "Christine Rio", role: "Team Member" },
+      ],
+      images: [],
+      links: [
+        { label: "Live Demo", href: "https://lnkd.in/gMUq75nZ" },
+        { label: "GitHub", href: "https://lnkd.in/g4e7JHPT" },
+      ],
+    },
+    {
+      title: "CodeKada 2026",
+      badge: "Participant",
+      subtitle: "The Online Hackathon Participation",
+      date: "May 3-9, 2026",
+      location: "Online (Discord)",
+      organizer: "CodeKada",
+      description:
+        "Participated in CodeKada 2026: The Online Hackathon, held via Discord from May 3-9, 2026.",
+      teammates: [
+        { name: "Jero", role: "Team Member" },
+        { name: "Jordan", role: "Team Member" },
+        { name: "Don", role: "Team Member" },
+      ],
+      images: ["/images/honors/2026/codekada/Adriel M. Magalona.avif"],
+    },
+    {
       title: "The Innovation Labs",
       badge: "Participant",
       subtitle: "Program Participant",
@@ -68,6 +110,32 @@ export const awardsByYear: Record<string, Award[]> = {
       location: "Online",
       organizer: "The Innovation Labs",
       description: "Participated in The Innovation Labs in February 2026.",
+      teammates: [
+        { name: "Kiel Ethan Lanzanas", role: "Team Member" },
+        { name: "Ellah Benerado", role: "Team Member" },
+        { name: "John Carlo Santos", role: "Team Member" },
+      ],
+      images: [],
+    },
+    {
+      title: "SIKAPTala",
+      badge: "2nd Place",
+      subtitle: "CS and IT Quiz Bee",
+      date: "2026",
+      location: "De La Salle University - Dasmarinas",
+      organizer: "SIKAPTala",
+      description: "Placed 2nd in SIKAPTala at De La Salle University - Dasmarinas.",
+      images: [],
+    },
+    {
+      title: "SIKAPTala 2026 Hackathon",
+      badge: "Participant",
+      subtitle: "Hackathon Participant",
+      date: "2026",
+      location: "De La Salle University - Dasmarinas",
+      organizer: "SIKAPTala",
+      description:
+        "Participated in the SIKAPTala 2026 Hackathon at De La Salle University - Dasmarinas.",
       images: [],
     },
   ],

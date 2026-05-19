@@ -31,6 +31,7 @@ export interface AchievementData {
   githubUrl?: string;
   description?: string;
   projectTitle?: string;
+  liveUrl?: string;
   linkedinUrl?: string;
   blogUrl?: string;
   facebookUrl?: string;

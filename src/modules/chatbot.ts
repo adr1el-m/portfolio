@@ -2,7 +2,7 @@ import type { ChatMessage, ProjectData, AchievementData } from '@/types';
 import { logger } from '@/config';
 import { KB } from '@/data/knowledge-base';
 import { Search } from '@/modules/search';
-import { GeminiService } from './gemini-service';
+import { AIService } from './ai-service';
 
 // Use explicit data interfaces to avoid accidental 'never' inference
 type ProjectItem = ProjectData;
@@ -92,7 +92,7 @@ export class ChatbotManager {
   private lastUserMessage: string | null = null;
   private detailedMode: boolean = false;
   private userPrefs: { detailedMode: boolean } = { detailedMode: false };
-  private geminiService: GeminiService;
+  private aiService: AIService;
   private isResponding: boolean = false;
   private conversationContext: {
     lastIntent: IntentType | null;
@@ -749,7 +749,7 @@ export class ChatbotManager {
     this.inputField = document.querySelector('.chatbox-input input') as HTMLInputElement;
     this.sendButton = document.querySelector('.chatbox-input button');
 
-    this.geminiService = new GeminiService();
+    this.aiService = new AIService();
 
     // Initialize ARIA state
     if (this.chatbotBtn) this.chatbotBtn.setAttribute('aria-expanded', 'false');
@@ -1991,7 +1991,7 @@ Resume: ${KB.contact.resumeUrl}`;
 
     // Try Gemini first with conversation history for context
     let aiResponse: string | null = null;
-    if (this.geminiService.isAvailable()) {
+    if (this.aiService.isAvailable()) {
       this.setInputPending(true);
       this.showTypingIndicator();
       try {
@@ -2008,12 +2008,14 @@ Resume: ${KB.contact.resumeUrl}`;
         // Detect user sentiment and get tone instructions for adaptive responses
         const sentiment = this.detectSentiment(userMessage);
         const toneInstructions = this.getToneInstructions(sentiment);
-        aiResponse = await this.geminiService.generateResponse(userMessage, context, recentHistory, toneInstructions);
+        aiResponse = await this.aiService.generateResponse(userMessage, context, recentHistory, toneInstructions);
         if (!aiResponse) {
-          logger.warn('Gemini returned null response, falling back to local KB.');
+          logger.warn('All AI providers returned null, falling back to local KB.');
+        } else {
+          logger.log(`Response served by: ${this.aiService.lastProvider}`);
         }
       } catch (err) {
-        logger.error('Gemini fallback due to error:', err);
+        logger.error('AI service fallback due to error:', err);
       } finally {
         this.hideTypingIndicator();
         this.setInputPending(false);

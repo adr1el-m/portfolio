@@ -32,12 +32,12 @@
 A modern, **performance-first** portfolio showcasing my journey in full-stack development and AI/ML engineering. Built with cutting-edge web technologies and best practices, this portfolio demonstrates real-world application of web performance optimization, accessibility standards, and progressive enhancement.
 
 **What sets this portfolio apart:**
-- 🎯 **100/100 Lighthouse scores** across all categories
+- 🎯 **Strong Lighthouse baseline** with 100/100 Best Practices and SEO in the latest local production preview
 - ♿ **WCAG 2.1 AA compliant** with automated accessibility testing
 - 🔒 **Enterprise-grade security** with strict CSP and security headers
 - 📱 **Progressive Web App** with full offline support
 - 🤖 **AI-powered chatbot** using Gemini API for interactive navigation
-- ⚡ **Sub-second load times** with optimized asset delivery
+- ⚡ **Performance-focused delivery** with code splitting, lazy loading, and active media optimization work
 - 🎨 **Stunning UI/UX** with Three.js particle effects and smooth animations
 
 ---
@@ -219,6 +219,7 @@ portfolio/
 │   └── performance-budget.json    # Performance budgets
 │
 ├── public/                  # Static assets
+│   ├── style.css                  # Authoritative site stylesheet
 │   ├── manifest.json              # PWA manifest
 │   ├── sw.js                      # Service worker
 │   ├── offline.html               # Offline fallback page
@@ -232,8 +233,7 @@ portfolio/
 │
 ├── scripts/                 # Build & utility scripts
 │   ├── convert-images.mjs         # Image optimization
-│   ├── generate-pwa-icons.mjs     # PWA icon generator
-│   └── modularize-css.py          # CSS modularization
+│   └── generate-pwa-icons.mjs     # PWA icon generator
 │
 ├── src/                     # Source code
 │   ├── main.ts                    # Application entry point
@@ -266,19 +266,10 @@ portfolio/
 │   │   ├── skeleton-loader.ts
 │   │   └── ...
 │   │
-│   ├── styles/                    # Modular CSS
-│   │   ├── main.css               # Main stylesheet
-│   │   ├── base/                  # Base styles
-│   │   ├── components/            # Component styles
-│   │   ├── layout/                # Layout styles
-│   │   ├── responsive/            # Responsive styles
-│   │   └── utilities/             # Utility classes
-│   │
 │   └── types/                     # TypeScript types
 │       └── index.ts
 │
 ├── index.html               # Application shell
-├── style.css                # Legacy CSS (being phased out)
 ├── package.json             # Dependencies & scripts
 ├── tsconfig.json            # TypeScript configuration
 ├── vite.config.ts           # Vite build configuration
@@ -431,31 +422,31 @@ npm run type-check         # TypeScript
 
 | Metric | Budget | Current |
 |--------|---------|---------|
-| Performance Score | ≥90 | 💯 100 |
-| First Contentful Paint | ≤1.8s | ✅ 0.9s |
-| Largest Contentful Paint | ≤2.5s | ✅ 1.2s |
-| Time to Interactive | ≤3.8s | ✅ 2.1s |
-| Cumulative Layout Shift | ≤0.1 | ✅ 0.05 |
-| Total Bundle Size | ≤300KB | ✅ 60KB |
+| Performance Score | ≥90 | ⚠️ 74 |
+| First Contentful Paint | ≤1.8s | ✅ 1.7s |
+| Largest Contentful Paint | ≤2.5s | ⚠️ 9.3s |
+| Time to Interactive | ≤3.8s | ⚠️ 9.3s |
+| Cumulative Layout Shift | ≤0.1 | ✅ 0.068 |
+| Total Transfer Size | ≤300KB | ⚠️ 1.58MB including images |
 
 ---
 
 ## 📊 Performance Metrics
 
 ### Lighthouse Scores
-🎯 **Performance**: 100/100 | ♿ **Accessibility**: 100/100 | ✅ **Best Practices**: 100/100 | 🔍 **SEO**: 100/100 | ⚡ **PWA**: ✓
+🎯 **Latest local preview audit**: Performance 74/100 | ♿ Accessibility 97/100 | ✅ Best Practices 100/100 | 🔍 SEO 100/100 | ⚡ PWA: ✓
 
 ### Web Vitals
-- **LCP** (Largest Contentful Paint): <1.2s ✅
-- **FID** (First Input Delay): <100ms ✅
-- **CLS** (Cumulative Layout Shift): <0.05 ✅
-- **TTFB** (Time to First Byte): <600ms ✅
-- **FCP** (First Contentful Paint): <0.9s ✅
+- **LCP** (Largest Contentful Paint): 9.3s ⚠️
+- **TBT** (Total Blocking Time): 10ms ✅
+- **CLS** (Cumulative Layout Shift): 0.068 ✅
+- **FCP** (First Contentful Paint): 1.7s ✅
+- **Main bottleneck**: image/media weight, especially the certificate preview asset
 
 ### Bundle Analysis
-- **Initial JS**: ~45KB gzipped
+- **Initial app JS**: ~37KB gzipped
 - **Initial CSS**: ~12KB gzipped
-- **Total Initial Load**: ~60KB (excluding images)
+- **Total transfer**: ~1.58MB including images in the latest local production preview
 
 ---
 

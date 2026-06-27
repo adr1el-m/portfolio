@@ -32,9 +32,9 @@ export class SidebarAnimations {
   private setupEntryAnimations(): void {
     if (!this.sidebar) return;
 
-    // Add initial hidden state
+    // Fade the shell in without moving layout-critical containers.
     this.sidebar.style.opacity = "0";
-    this.sidebar.style.transform = "translateX(-30px)";
+    this.sidebar.style.transform = "none";
 
     // Get all animatable elements
     const elements = [
@@ -47,9 +47,9 @@ export class SidebarAnimations {
     // Animate sidebar container first
     setTimeout(() => {
       if (this.sidebar) {
-        this.sidebar.style.transition = "opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)";
+        this.sidebar.style.transition = "opacity 0.35s ease-out";
         this.sidebar.style.opacity = "1";
-        this.sidebar.style.transform = "translateX(0)";
+        this.sidebar.style.transform = "none";
       }
     }, 100);
 

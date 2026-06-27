@@ -653,6 +653,20 @@
       border-radius: 3px;
     }
 
+    .article-title:focus {
+      outline: none;
+    }
+
+    .article-title.section-focus-target:focus {
+      border-radius: 10px;
+      box-shadow: 0 0 0 1px rgba(255, 219, 112, 0.18), inset 0 -1px 0 rgba(255, 219, 112, 0.35);
+    }
+
+    .article-title:focus-visible {
+      border-radius: 10px;
+      box-shadow: 0 0 0 1px rgba(255, 219, 112, 0.28), 0 0 0 5px rgba(255, 219, 112, 0.08);
+    }
+
     /* Ensure the initially active article is shown */
     article {
       display: none;
@@ -951,7 +965,7 @@
           <ul class="service-list">
             <li class="service-item">
               <div class="service-icon-box">
-                <div class="service-icon">💻</div>
+                <div class="service-icon"><ion-icon name="code-slash-outline" aria-hidden="true"></ion-icon></div>
               </div>
               <div class="service-content-box">
                 <h4 class="h4 service-item-title">Web Development</h4>
@@ -964,7 +978,7 @@
 
             <li class="service-item">
               <div class="service-icon-box">
-                <div class="service-icon">🎨</div>
+                <div class="service-icon"><ion-icon name="color-palette-outline" aria-hidden="true"></ion-icon></div>
               </div>
               <div class="service-content-box">
                 <h4 class="h4 service-item-title">UI/UX Design</h4>
@@ -977,7 +991,7 @@
 
             <li class="service-item">
               <div class="service-icon-box">
-                <div class="service-icon">🗄️</div>
+                <div class="service-icon"><ion-icon name="server-outline" aria-hidden="true"></ion-icon></div>
               </div>
               <div class="service-content-box">
                 <h4 class="h4 service-item-title">Database Management</h4>
@@ -990,7 +1004,7 @@
 
             <li class="service-item">
               <div class="service-icon-box">
-                <div class="service-icon">🤖</div>
+                <div class="service-icon"><ion-icon name="sparkles-outline" aria-hidden="true"></ion-icon></div>
               </div>
               <div class="service-content-box">
                 <h4 class="h4 service-item-title">AI Integration</h4>
@@ -1645,6 +1659,24 @@
               </div>
             </div>
 
+            <div class="timeline-item" data-timeline-item>
+              <div class="timeline-content">
+                <div class="timeline-badge current">Active</div>
+                <h4 class="h4 timeline-title">Taguig Scholar (Honors)</h4>
+                <div class="company-name">Lifeline Assistance for Neighbors In-Need</div>
+                <span class="timeline-period">2026 — Present</span>
+                <div class="timeline-tags">
+                  <span class="tag">Honors</span>
+                  <span class="tag">Taguig City</span>
+                  <span class="tag">Educational Assistance</span>
+                </div>
+                <p class="timeline-text">
+                  Recognized as a Taguig Scholar under the Lifeline Assistance for Neighbors In-Need program, receiving
+                  honors-based educational support beginning in 2026.
+                </p>
+              </div>
+            </div>
+
           </div>
 
         </section>
@@ -1865,7 +1897,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
                 <h3 class="project-title">YouTube Layout</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application" data-images="[]"
+            <li class="project-item active" data-featured="true" data-filter-item data-category="Web Application" data-images="[]"
               data-webp-images="[]"
               data-description="FinanceWise is a comprehensive financial advisory platform designed to help users make informed decisions about spending, investments, and loans."
               data-technologies="HTML5, CSS3, JavaScript, Particles.js, Responsive Design"
@@ -1881,7 +1913,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
                 <h3 class="project-title">FinanceWise</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application"
+            <li class="project-item active" data-featured="true" data-filter-item data-category="Web Application"
               data-video="/images/projects/greenPulse/GP-opt.mp4"
               data-description="GreenPulse is an interactive web application designed to promote sustainability through carbon footprint tracking, AI-powered eco-tips, and personalized progress monitoring."
               data-technologies="React, Vite, Tailwind CSS, Chart.js, Google Generative AI"
@@ -1925,7 +1957,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
                 <h3 class="project-title">Talambuhay</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application"
+            <li class="project-item active" data-featured="true" data-filter-item data-category="Web Application"
               data-video="/images/projects/barangayNav/BarangayNav-opt.mp4"
               data-description="BarangayNav is a transparent platform for navigating barangay services, powered by AI assistance and real-time tracking to support accountable governance. Features include: AI guidance via Gemini for service inquiries; clear requirements, fees, and processing timelines; responsive design across devices; a modern dark theme with glassmorphism; 24/7 automated support; and secure environment-based API key management."
               data-technologies="HTML, CSS, TypeScript, Angular, Gemini"
@@ -1941,7 +1973,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
                 <h3 class="project-title">BarangayNav</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="AI/ML"
+            <li class="project-item active" data-featured="true" data-filter-item data-category="AI/ML"
               data-video="/images/projects/agentic/Deansanitzy.mp4"
               data-description="Kita-Kita is an AI-powered financial co-pilot that combines intelligent agents, unified account management, and predictive analytics to help Filipinos achieve financial wellness."
               data-technologies="HTML5, CSS3, JavaScript (ES6+), Node.js, Express.js, Firebase Firestore, Llama 3, Chart.js, Helmet, Express Rate Limit"
@@ -1957,7 +1989,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
                 <h3 class="project-title">Kita-Kita (Agentic)</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application"
+            <li class="project-item active" data-featured="true" data-filter-item data-category="Web Application"
               data-images='["/images/projects/worksight/1.jpg", "/images/projects/worksight/2.jpg", "/images/projects/worksight/3.jpg"]'
               data-webp-images='["/images/projects/worksight/1-1200.avif", "/images/projects/worksight/2-1200.avif", "/images/projects/worksight/3-1200.avif"]'
               data-description="WorkSight is an AI-powered well-being analytics platform that uses behavioral data and psychological science to predict and prevent employee burnout."
@@ -1993,7 +2025,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
                 <h3 class="project-title">Tindahan ni Aling Nena</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application"
+            <li class="project-item active" data-featured="true" data-filter-item data-category="Web Application"
               data-images='["/images/projects/DokQ/1.jpg", "/images/projects/DokQ/2.jpg"]'
               data-webp-images='["/images/projects/DokQ/1-1200.avif", "/images/projects/DokQ/2-1200.avif"]'
               data-description="DokQ — Smart Queuing and Appointments for Healthcare"
@@ -2016,7 +2048,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
                 <h3 class="project-title">DokQ</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application" data-images="[]"
+            <li class="project-item active" data-featured="true" data-filter-item data-category="Web Application" data-images="[]"
               data-webp-images="[]"
               data-description="LingapLink is a comprehensive, modern healthcare platform designed to revolutionize the connection between patients and healthcare providers. Built with cutting-edge web technologies and a focus on security, accessibility, and user experience, LingapLink streamlines healthcare delivery through intelligent automation and seamless digital workflows."
               data-technologies="<strong class='section-title'>Frontend</strong><table class='tech-table'><thead><tr><th>Technology</th><th>Version</th><th>Purpose</th></tr></thead><tbody><tr><td>React</td><td>18.3.1</td><td>Modern UI framework with hooks and context</td></tr><tr><td>TypeScript</td><td>5.8.3</td><td>Type‑safe JavaScript development</td></tr><tr><td>Vite</td><td>6.3.5</td><td>Fast build tool and dev server</td></tr><tr><td>React Router</td><td>6.24.1</td><td>Client‑side routing and navigation</td></tr><tr><td>Lucide</td><td>0.523.0</td><td>Modern icon library</td></tr><tr><td>Recharts</td><td>3.0.0</td><td>Data visualization and analytics</td></tr></tbody></table><strong class='section-title'>Backend & Services</strong><table class='tech-table'><thead><tr><th>Technology</th><th>Version</th><th>Purpose</th></tr></thead><tbody><tr><td>Node.js</td><td>20+</td><td>JavaScript runtime environment</td></tr><tr><td>Express</td><td>4.19.2</td><td>Web application framework</td></tr><tr><td>Firebase</td><td>11.9.1</td><td>Backend‑as‑a‑Service platform</td></tr><tr><td>Firestore</td><td>11.9.1</td><td>NoSQL document database</td></tr><tr><td>Gemini</td><td>0.24.1</td><td>AI/ML services and natural language processing</td></tr></tbody></table>"
@@ -2051,7 +2083,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
                 <h3 class="project-title">Fireside september</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application"
+            <li class="project-item active" data-featured="true" data-filter-item data-category="Web Application"
               data-images='["/images/projects/fourFundamentalSpacesFinder/LandingPage.png", "/images/projects/fourFundamentalSpacesFinder/Computation-mac.jpeg", "/images/projects/fourFundamentalSpacesFinder/GeometricVisualization-mac.jpeg", "/images/projects/fourFundamentalSpacesFinder/GeometricVisualization.png"]'
               data-webp-images='[]'
               data-description="A comprehensive Linear Algebra tool designed to calculate and visualize the four fundamental subspaces of a matrix: Column Space, Row Space, Null Space, and Left Null Space. This application provides step-by-step Row Reduced Echelon Form (RREF) calculations, LaTeX support for equations, and interactive 2D/3D geometric visualizations."
@@ -2067,7 +2099,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
                 <h3 class="project-title">Four Fundamental Spaces Finder</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application"
+            <li class="project-item active" data-featured="true" data-filter-item data-category="Web Application"
               data-images='["/images/projects/veemahPay/landingPage.jpeg", "/images/projects/veemahPay/dashboard.png", "/images/projects/veemahPay/signIn.jpeg", "/images/projects/veemahPay/signUp.jpeg", "/images/projects/veemahPay/transactions.png"]'
               data-webp-images='[]'
               data-description="VeemahPay is a modern, secure, and user-friendly digital banking platform designed to simplify financial management. Built with enterprise-grade technologies, it features full CRUD operations, AI-powered assistance, and implements all four OOP pillars through its Java backend integration."
@@ -2083,7 +2115,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
                 <h3 class="project-title">VeemahPay</h3>
               </a>
             </li>
-            <li class="project-item active" data-filter-item data-category="Web Application"
+            <li class="project-item active" data-featured="true" data-filter-item data-category="Web Application"
               data-images='[]'
               data-webp-images='[]'
               data-technologies="React • TypeScript • Next.js • Mapping APIs • Community Verification"
@@ -2138,7 +2170,8 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
   </button>
 
   <!-- Chatbox Container -->
-  <div id="chatbox" class="chatbox" role="dialog" aria-labelledby="chatbox-title" aria-modal="true" aria-hidden="true">
+  <div id="chatbox" class="chatbox" role="dialog" aria-labelledby="chatbox-title" aria-modal="true" aria-hidden="true"
+    inert>
     <div class="chatbox-header">
       <div class="chatbox-title-block">
         <span class="chatbox-eyebrow">Portfolio Guide</span>
@@ -2174,7 +2207,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
 
   <!-- Project Modal -->
   <div id="projectModal" class="project-modal" role="dialog" aria-labelledby="project-modal-title" aria-modal="true"
-    aria-hidden="true">
+    aria-hidden="true" inert>
     <div class="project-modal-wrapper">
       <button class="project-modal-close" aria-label="Close project modal" type="button">
         <span aria-hidden="true">&times;</span>
@@ -2230,7 +2263,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
 
   <!-- Updated Achievement Modal -->
   <div id="achievementModal" class="achievement-modal" role="dialog" aria-labelledby="achievement-modal-title"
-    aria-modal="true" aria-hidden="true">
+    aria-modal="true" aria-hidden="true" inert>
     <div class="achievement-modal-content">
       <button class="achievement-modal-close" aria-label="Close achievement modal" type="button">
         <span aria-hidden="true">&times;</span>
@@ -2267,7 +2300,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
           </div>
           <div class="achievement-teammates" style="display: none;">
             <h4 class="teammates-title">
-              <span role="img" aria-label="Team">🤝</span> Team Members
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align: -3px; margin-right: 4px;"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg> Team Members
             </h4>
             <ul class="teammates-list"></ul>
           </div>
@@ -2689,19 +2722,19 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
     /* Mobile-friendly chatbot styles */
     @media (max-width: 768px) {
       .chatbot-btn {
-        bottom: calc(78px + env(safe-area-inset-bottom));
+        bottom: calc(118px + env(safe-area-inset-bottom));
         right: calc(18px + env(safe-area-inset-right));
-        width: 52px;
-        height: 52px;
+        width: 50px;
+        height: 50px;
       }
 
       .chatbox {
         position: fixed;
-        bottom: calc(74px + env(safe-area-inset-bottom));
+        bottom: calc(94px + env(safe-area-inset-bottom));
         right: 10px;
         width: calc(100% - 20px);
         max-width: none;
-        height: min(72dvh, 590px);
+        height: min(68dvh, 560px);
         min-height: 420px;
         margin: 0;
         border-radius: 16px;
@@ -2747,6 +2780,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
       .chatbot-btn {
         width: 45px;
         height: 45px;
+        bottom: calc(112px + env(safe-area-inset-bottom));
       }
 
       .chatbox-status {
@@ -2794,8 +2828,7 @@ The RGBC ATM Transaction System is a comprehensive Java Swing project that effec
       border-radius: 5px;
     }
 
-    /* Project Modal Styles moved to style.css to prevent conflicts and ensure consistency */
-    /* Inline project modal CSS removed. See `style.css` for authoritative styles. */
+    /* Project modal styles live in public/style.css. */
 
     /* Keep achievement item pointer styling */
     .achievement-item {

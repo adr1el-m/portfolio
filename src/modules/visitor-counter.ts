@@ -50,9 +50,11 @@ export class VisitorCounter {
     private async init(): Promise<void> {
         try {
             this.isAdmin = this.checkIfAdmin();
+            this.createCounterUI();
 
             if (!hasValidFirebaseConfig()) {
-                logger.warn('VisitorCounter: Firebase config missing; skipping counter.');
+                logger.warn('VisitorCounter: Firebase config missing; showing local fallback.');
+                this.updateDisplay(0);
                 return;
             }
 
@@ -90,7 +92,6 @@ export class VisitorCounter {
                 this.updateDisplay(0);
             });
 
-            this.createCounterUI();
             logger.log(`VisitorCounter: initialized (admin: ${this.isAdmin})`);
 
         } catch (error) {

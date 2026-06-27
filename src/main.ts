@@ -79,24 +79,6 @@ function runWhenIdle(callback: () => void, timeout = 1800): void {
   window.setTimeout(callback, Math.min(timeout, 1200));
 }
 
-function hasFirebaseConfig(): boolean {
-  const configured = (value: unknown): value is string => {
-    if (typeof value !== 'string') return false;
-    const normalized = value.trim().toLowerCase();
-    return Boolean(normalized) &&
-      normalized !== 'undefined' &&
-      normalized !== 'null' &&
-      !normalized.startsWith('your_') &&
-      !normalized.includes('your-');
-  };
-
-  return configured(import.meta.env.VITE_FIREBASE_API_KEY) &&
-    configured(import.meta.env.VITE_FIREBASE_PROJECT_ID) &&
-    configured(import.meta.env.VITE_FIREBASE_APP_ID) &&
-    configured(import.meta.env.VITE_FIREBASE_DATABASE_URL) &&
-    String(import.meta.env.VITE_FIREBASE_DATABASE_URL).startsWith('https://');
-}
-
 /**
  * Main Portfolio Application Class
  */
@@ -242,14 +224,12 @@ class PortfolioApp {
         });
       }, 200);
 
-      // Initialize real-time visitor counter only when Firebase is configured.
-      if (hasFirebaseConfig()) {
-        runWhenIdle(() => {
-          import('./modules/visitor-counter').then(({ VisitorCounter }) => {
-            new VisitorCounter();
-          });
-        }, 3000);
-      }
+      // Initialize visitor counter. The module handles missing Firebase config gracefully.
+      runWhenIdle(() => {
+        import('./modules/visitor-counter').then(({ VisitorCounter }) => {
+          new VisitorCounter();
+        });
+      }, 3000);
 
       // Initialize video thumbnails manager earlier for faster poster setup
       defer(() => {

@@ -33,7 +33,7 @@ export default defineConfig({
 
           // Application chunks for deferred modules
           if (id.includes('src/modules')) {
-            if (id.includes('chatbot') || id.includes('gemini-service')) {
+            if (id.includes('chatbot') || id.includes('gemini-service') || id.includes('ai-service')) {
               return 'chatbot';
             }
             if (id.includes('particle-background')) {

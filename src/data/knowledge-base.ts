@@ -20,12 +20,26 @@ export interface KnowledgeBase {
     period?: string;
     notes?: string;
   }>;
+  scholarships: Array<{
+    title: string;
+    provider: string;
+    program?: string;
+    period: string;
+    notes: string;
+  }>;
   experience: Array<{
     role: string;
     company: string;
     period: string;
     summary?: string;
   }>;
+  resume: {
+    headline: string;
+    location: string;
+    highlights: string[];
+    certifications: string[];
+    organizations: string[];
+  };
   skills: {
     core: string[];
     technologies: string[];
@@ -37,9 +51,9 @@ export interface KnowledgeBase {
 export const KB: KnowledgeBase = {
   profile: {
     name: 'Adriel Magalona',
-    title: 'Full-stack Developer & AI Engineer',
+    title: 'Computer Science Student, Full-stack Developer & AI Builder',
     summary:
-      'Full-stack Developer and AI/ML Engineer specializing in web development, machine learning, and creative technology solutions. Passionate about performance, accessibility, and building delightful user experiences.',
+      'Adriel is a BS Computer Science student at the Polytechnic University of the Philippines, a DOST-SEI undergraduate scholar, and a hands-on builder focused on full-stack web apps, AI-assisted products, civic technology, healthcare tools, and competition-grade prototypes.',
     nationality: 'Filipino',
   },
   contact: {
@@ -63,17 +77,73 @@ export const KB: KnowledgeBase = {
       notes: 'Built ODRS and PHP/MySQL systems during coursework',
     },
   ],
+  scholarships: [
+    {
+      title: 'DOST-SEI Scholar under RA 7687',
+      provider: 'Department of Science and Technology - Science Education Institute',
+      program: 'Republic Act 7687 Science and Technology Scholarship',
+      period: '2024–present',
+      notes:
+        'Merit-based undergraduate scholarship supporting his BS Computer Science studies and recognizing academic potential in science and technology.',
+    },
+    {
+      title: 'MACEMCO Scholar',
+      provider: 'Makati City Employees Multi-Purpose Cooperative',
+      period: '2024–present',
+      notes:
+        'Community-based scholarship supporting educational advancement and academic excellence.',
+    },
+    {
+      title: 'Taguig Scholar (Honors)',
+      provider: 'City Government of Taguig',
+      program: 'Lifeline Assistance for Neighbors In-Need',
+      period: '2026–present',
+      notes:
+        'Honors-based educational assistance under Taguig City’s LANI scholarship program.',
+    },
+  ],
   experience: [
     {
       role: 'Workflow Architect',
       company: 'Eskwelabs',
-      period: '2024 — Present',
+      period: 'October 2025 — December 2025',
       summary:
-        'Automating pitch‑deck creation and investor outreach for funding; designing cross‑team workflows with Google technologies and n8n to streamline processes, improve reliability, and document standards.',
+        'Assisted in designing and optimizing cross-team workflows and automations, collaborating with stakeholders to improve process reliability and document operational standards.',
+    },
+    {
+      role: 'Senior Front-end Web Developer',
+      company: 'PUP Manila Microsoft Student Community',
+      period: 'October 2024 — Present',
+      summary:
+        'Leads front-end web development initiatives and collaborates on responsive, organization-facing web experiences.',
     },
   ],
+  resume: {
+    headline:
+      'BS Computer Science student at PUP Manila, DOST-SEI undergraduate scholar, full-stack developer, AI builder, and hackathon lead from Taguig City.',
+    location: 'Taguig City, Metro Manila, Philippines',
+    highlights: [
+      'Technical stack includes C, C++, Python, HTML, CSS, Java, JavaScript, PHP, React, Bootstrap, Tailwind CSS, Axios, Express, CORS, MySQL, Firebase, Git, GitHub, XAMPP, npm, Vercel, Vite, ESLint, dotenv, and Multer.',
+      'Built the Online Document Request System for the University of Makati with AJAX-powered status updates, uploads, sessions, approvals, and admin workflows.',
+      'Placed 2nd Runner-Up at Springboard Philippines Hack-it: The New Era of Banking AI Hackathon with Kita-Kita, an AI-powered personal finance app.',
+      'Won Excalicode Knight Category in Data Structures and Algorithms at PUP with over 30 participants.',
+      'Placed 3rd in an Entrepreneurship Educators Association national competition with EcoSiklo after a month-long bootcamp.',
+      'Won National Champion at the Technovation Summit 2025 Start-up Hackathon with LingapLink, representing NCR among 12 regional teams nationwide.',
+    ],
+    certifications: [
+      'Java Object Oriented Programming Basics Workshop with Microsoft Learn Integration — PUP Manila Microsoft Student Community',
+      'Introduction to Microsoft Copilot — PUP Manila Microsoft Student Community',
+    ],
+    organizations: [
+      'PUP Manila Microsoft Student Community — Senior Front-end Web Developer and Web Development Team Member',
+      'Cisco NetConnect PUP Manila — Programming Department Cadet Member',
+      'Google Developer Groups on Campus PUP — Cybersecurity Team Cadet',
+      'Junior Blockchain Education Consortium of the Philippines PUP Manila — Member',
+      'Information and Communications Technology Society, Higher School ng UMak — Layout Committee leadership',
+    ],
+  },
   skills: {
-    core: ['Web Development', 'Database Management', 'AI Integration'],
+    core: ['Full-stack Web Development', 'AI Integration', 'Database-backed Systems', 'Hackathon Product Strategy'],
     technologies: [
       'TypeScript',
       'JavaScript',
@@ -96,7 +166,7 @@ export const KB: KnowledgeBase = {
       images: [],
       webpImages: [],
       description:
-        'Comprehensive financial advisory platform with calculators, budgets, dashboards, and AI tips. Built for clarity, usability, and practical decision support.',
+        "Purpose: Help users evaluate spending, investments, and loan decisions through a guided financial interface.\nBuild: Responsive web app using HTML, CSS, JavaScript, and visual effects to present advisory content and decision support.\nOutcome: Demonstrates financial UX, interactive presentation, and accessible information design for personal finance topics.",
       technologies:
         'Frontend: HTML, CSS, JavaScript, React, Vite; Backend: Node/Express; Data: Firebase Firestore; Charts: Chart.js; AI: Google Generative AI',
       githubUrl: 'https://github.com/adr1el-m/finance-and-ai',
@@ -110,7 +180,7 @@ export const KB: KnowledgeBase = {
       images: [],
       webpImages: [],
       description:
-        'GreenPulse is an interactive web application designed to promote sustainability through carbon footprint tracking, AI-powered eco-tips, and personalized progress monitoring.',
+        "Purpose: Encourage sustainable habits through carbon footprint awareness and personalized eco-guidance.\nBuild: React, Vite, Tailwind CSS, Chart.js, and Gemini-powered tips for tracking emissions, visualizing progress, and recommending actions.\nOutcome: Turns environmental awareness into a measurable, interactive workflow for everyday users.",
       technologies:
         'React, Vite, Tailwind CSS, Chart.js, Google Generative AI',
       githubUrl: 'https://github.com/adr1el-m/green-pulse',
@@ -122,7 +192,7 @@ export const KB: KnowledgeBase = {
       images: [],
       webpImages: [],
       description:
-        'Kita-Kita is an AI-powered financial co-pilot that combines intelligent agents, unified account management, and predictive analytics to help Filipinos achieve financial wellness.',
+        "Purpose: Help Filipinos manage money through an AI financial co-pilot.\nBuild: Agent-driven platform with unified account management, expense intelligence, forecasting, charts, Firebase data storage, and Llama 3 assistance.\nOutcome: Demonstrates how agentic AI can turn financial data into practical recommendations and user-friendly planning workflows.",
       technologies:
         'HTML, CSS, JavaScript, AI agent orchestration, charts, backend services',
       videoUrl: '/images/projects/agentic/Deansanitzy.mp4',
@@ -134,7 +204,7 @@ export const KB: KnowledgeBase = {
       images: [],
       webpImages: [],
       description:
-        'WorkSight is an AI-powered well-being analytics platform that uses behavioral data and psychological science to predict and prevent employee burnout.',
+        "Purpose: Help organizations identify and prevent employee burnout before it becomes a crisis.\nBuild: Next.js, Supabase, TypeScript, and analytics workflows that combine behavioral signals with psychological science.\nOutcome: Won 3rd place at BPI DataWave 2025 by presenting a practical future-of-work platform for leaders and teams.",
       technologies:
         'Next.js, Supabase, TypeScript, Tailwind CSS, AI/ML',
       githubUrl: 'https://github.com/4sightorg/worksight',
@@ -145,7 +215,7 @@ export const KB: KnowledgeBase = {
       images: [],
       webpImages: [],
       description:
-        'Java Swing application simulating ATM functionalities: authentication, transactions, and admin management. Focus on error handling and modular design.',
+        "Purpose: Model ATM and basic banking operations through a Java desktop simulation.\nBuild: Java Swing application with login attempts, balance inquiry, deposits, withdrawals, fund transfers, admin account management, and validation rules.\nOutcome: Demonstrates object-oriented design, GUI event handling, and secure transaction flow in a controlled banking scenario.",
       technologies: 'Java, Swing',
     },
     {
@@ -164,7 +234,7 @@ export const KB: KnowledgeBase = {
         '/images/projects/loan/4-400.webp',
       ],
       description:
-        'Web-based Loan Management System simulating real-world lending workflows, including user authentication, loan calculation, and confirmation.',
+        "Purpose: Manage loan records and borrower workflows through a web-based PHP system.\nBuild: PHP, MySQL, Bootstrap, and CRUD interfaces for loan applications, payment tracking, and administrative monitoring.\nOutcome: Provides a practical school project for database-backed financial record management and admin operations.",
       technologies: 'PHP, MySQL, HTML, CSS, JavaScript',
       githubUrl: 'https://github.com/adr1el-m/PHP-Loan-System',
     },
@@ -188,7 +258,7 @@ export const KB: KnowledgeBase = {
         '/images/projects/ODRS/6-400.webp',
       ],
       description:
-        'Web platform for Grade 12 students at University of Makati to request and manage school documents with tracking and admin control.',
+        "Purpose: Digitize document requests for Grade 12 students at the University of Makati Higher School.\nBuild: PHP and MySQL system with authentication, request tracking, status updates, and admin controls.\nOutcome: Reduced manual coordination by giving students and staff a clearer workflow for submitting, processing, and monitoring school documents.",
       technologies: 'HTML, CSS, JavaScript, PHP, MySQL',
       githubUrl: 'https://github.com/adr1el-m/Online-Document-Request-System',
     },
@@ -203,7 +273,7 @@ export const KB: KnowledgeBase = {
       ],
       webpImages: [],
       description:
-        'A comprehensive Linear Algebra tool designed to calculate and visualize the four fundamental subspaces of a matrix: Column Space, Row Space, Null Space, and Left Null Space. This application provides step-by-step Row Reduced Echelon Form (RREF) calculations, LaTeX support for equations, and interactive 2D/3D geometric visualizations.',
+        "Purpose: Make linear algebra subspaces easier to compute, inspect, and understand.\nBuild: Next.js and Swift/SwiftUI experience with RREF steps, LaTeX rendering, and 2D/3D visualizations for column, row, null, and left-null spaces.\nOutcome: Turns abstract matrix concepts into an interactive study and visualization tool.",
       technologies: 'Next.js, Swift, SwiftUI, LaTeX, MathJax',
       githubUrl:
         'https://github.com/adr1el-m/Four-Fundamental-Spaces-Finder?tab=readme-ov-file',
@@ -222,11 +292,12 @@ export const KB: KnowledgeBase = {
         { name: 'Jordan' },
         { name: 'Don' }
       ],
-      description: 'Participated in CodeKada 2026: The Online Hackathon, held via Discord from May 3–9, 2026.',
+      description:
+        "Participation: Joined CodeKada 2026, an online hackathon conducted through Discord.\nScope: Collaborated with a distributed team across a week-long build period.\nContribution: Practiced remote teamwork, rapid implementation, and concise technical communication under competition constraints.",
     },
     {
       title: 'The Innovation Labs',
-      images: [],
+      images: ['/images/honors/2026/The Innovation Labs/innovation-labs.avif'],
       webpImages: [],
       organizer: 'The Innovation Labs',
       date: 'February 2026',
@@ -236,30 +307,40 @@ export const KB: KnowledgeBase = {
         { name: 'Ellah Benerado' },
         { name: 'John Carlo Santos' },
       ],
-      description: 'Participated in The Innovation Labs in February 2026.',
+      description:
+        "Participation: Joined The Innovation Labs with a collaborative student team.\nScope: Developed and evaluated an early-stage innovation concept through a structured program.\nContribution: Practiced product framing, team coordination, and concise pitch communication.",
     },
     {
-      title: 'SIKAPTala',
-      images: [],
+      title: 'SIKAPTala 2026 Quiz Bee',
+      images: [
+        '/images/honors/2026/sikaptala/quizbee/quiz-bee-photo.avif',
+        '/images/honors/2026/sikaptala/quizbee/quiz-bee-certificate-1.avif',
+        '/images/honors/2026/sikaptala/quizbee/quiz-bee-certificate-2.avif',
+      ],
       webpImages: [],
       organizer: 'SIKAPTala',
-      date: '2026',
+      date: 'May 13, 2026',
       location: 'De La Salle University - Dasmarinas',
-      description: 'Placed 2nd in SIKAPTala at De La Salle University - Dasmarinas.',
+      description:
+        "Recognition: Placed 2nd in the SIKAPTala 2026 CS and IT Quiz Bee at De La Salle University - Dasmarinas.\nScope: Competed against 67 college students from across the Philippines in computer science and information technology topics.\nContribution: Applied self-study in algorithms, data structures, and CS fundamentals to perform competitively on a national academic stage.",
     },
     {
       title: 'SIKAPTala 2026 Hackathon',
-      images: [],
+      images: ['/images/honors/2026/sikaptala/Hackathon/hackathon-certificate.avif'],
       webpImages: [],
       organizer: 'SIKAPTala',
       date: '2026',
       location: 'De La Salle University - Dasmarinas',
       description:
-        'Participated in the SIKAPTala 2026 Hackathon at De La Salle University - Dasmarinas.',
+        "Participation: Joined the SIKAPTala 2026 Hackathon at De La Salle University - Dasmarinas.\nScope: Worked within a competitive university hackathon environment focused on fast ideation and implementation.\nContribution: Strengthened rapid product planning, technical collaboration, and pitch-readiness under time pressure.",
     },
     {
       title: 'START-a-TON: Data & AI Innovation Challenge',
-      images: [],
+      images: [
+        '/images/honors/2026/Start-a-Ton/geminated.avif',
+        '/images/honors/2026/Start-a-Ton/winners-champion.avif',
+        '/images/honors/2026/Start-a-Ton/winners-special-award.avif',
+      ],
       webpImages: [],
       organizer:
         'Scholars Transforming Advancement and Research for Technology - DOST with DOST-SEI Science Teacher Academy for the Regions',
@@ -272,7 +353,7 @@ export const KB: KnowledgeBase = {
         { name: 'Christine Rio' },
       ],
       description:
-        'Champion of START-a-TON, a nationwide two-week Data & AI innovation challenge for DOST techno-scholars. The team built STAR-LINK, a platform layer for the e-STAR.ph ecosystem that connects educators, organizes action research, surfaces regional insights, and supports collaboration across 18 regions of the Philippines.',
+        "Recognition: Won Champion at START-a-TON, a nationwide two-week Data and AI innovation challenge for DOST techno-scholars.\nScope: Built STAR-LINK, a platform layer for e-STAR.ph that connects educators, organizes action research, and surfaces regional teaching insights.\nContribution: Helped shape the product concept, AI-assisted knowledge synthesis, collaboration features, and presentation narrative for a scalable education technology solution.",
       githubUrl: 'https://lnkd.in/g4e7JHPT',
       blogUrl: 'https://lnkd.in/gMUq75nZ',
     },
@@ -298,7 +379,7 @@ export const KB: KnowledgeBase = {
       ],
       githubUrl: 'https://github.com/adr1el-m/technovation-2025',
       description:
-        'LingapLink — AI‑powered healthcare platform streamlining triage, booking, communication, and record management to improve efficiency and access. Won ₱30,000.',
+        "Recognition: Won National Champion at the Technovation Summit 2025 Start-up Hackathon.\nScope: Built LingapLink, an AI-powered healthcare platform for triage, booking, communication, and record management.\nContribution: Helped shape the healthcare workflow, technical implementation, and pitch strategy for a competition-winning product.",
       projectTitle: 'LingapLink',
       linkedinUrl:
         'https://www.linkedin.com/posts/adr1el_nationaltechnovationsummit-activity-7369257090281791488-SXY8',
@@ -313,7 +394,7 @@ export const KB: KnowledgeBase = {
       teammates: [],
       githubUrl: 'https://github.com/adr1el-m/worksight',
       description:
-        'WorkSight is an AI-powered well-being analytics platform that uses behavioral data and psychological science to predict and prevent employee burnout. Won ₱20,000.',
+        "Recognition: Placed 3rd in the Workplace Productivity and Future of Work category at BPI DataWave Hackathon 2025.\nScope: Built WorkSight, an AI-powered well-being analytics platform for identifying burnout risk through behavioral and organizational signals.\nContribution: Helped develop the product narrative, system workflow, and competition pitch for a workplace analytics solution.",
       projectTitle: 'WorkSight',
     },
     {
@@ -325,7 +406,7 @@ export const KB: KnowledgeBase = {
       date: 'August 15–16, 2025',
       location: 'Gokongwei Hall, De La Salle University',
       description:
-        'DokQ — smart appointment system with patient portal and provider dashboard to reduce queues and improve healthcare workflow.',
+        "Participation: Competed in the De La Salle University Hackercup with Team 4Sight.\nScope: Built DokQ, a healthcare queueing and appointment system designed to reduce friction in clinic workflows.\nContribution: Helped translate everyday healthcare waiting problems into a practical patient-and-provider platform.",
       projectTitle: 'DokQ',
     },
     {
@@ -337,7 +418,7 @@ export const KB: KnowledgeBase = {
       date: 'May 17, 2025',
       location: 'Polytechnic University of the Philippines — Manila',
       description:
-        'Station‑based competition highlighting teamwork, problem solving, and endurance.',
+        "Recognition: Earned Second Runner-Up at Spark Rush 2025 by GDG on Campus PUP.\nScope: Completed a station-based competition requiring teamwork, problem solving, and endurance across multiple challenge formats.\nContribution: Demonstrated adaptability, communication, and composure in a fast-paced technical event.",
     },
     {
       title: "Data Structures & Algorithms — Knight Category Winner (PUP)",
@@ -357,7 +438,7 @@ export const KB: KnowledgeBase = {
       date: 'November 21, 2024',
       location: 'Bulwagang Balagtas NALLRC, Polytechnic University of the Philippines — Manila',
       description:
-        'Recognition for excellence in national entrepreneurship competition.',
+        "Recognition: Received Gawad Pagkilala recognition at Polytechnic University of the Philippines for national competition achievement.\nScope: Honored for placing 3rd in an Entrepreneurship Educators' Association national competition.\nContribution: Marked an early milestone in applying technical creativity, entrepreneurship, and team-based execution.",
     },
     {
       title: 'Codebility Portfolio Contest 2025 — 2nd Place',
@@ -367,7 +448,7 @@ export const KB: KnowledgeBase = {
       date: 'October 2025',
       location: 'Online',
       description:
-        'Secured 2nd place; received an internship offer and a ₱800 award.',
+        "Recognition: Placed 2nd in the Codebility Portfolio Contest 2025, receiving an internship offer and cash award.\nScope: Submitted a portfolio evaluated on presentation, technical clarity, and professional readiness.\nContribution: Demonstrated the ability to communicate projects, experience, and technical growth through a polished personal site.",
       projectTitle: 'Portfolio Contest 2025',
       linkedinUrl: 'https://www.linkedin.com/posts/adr1el_this-comes-a-bit-late-but-its-a-milestone-activity-7419437733170896897-nULW?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFCMwAABUwVcMwAFxdORbMcULlqBOAyuSpU',
       facebookUrl: 'https://www.facebook.com/share/p/19mEFhhtCv/',

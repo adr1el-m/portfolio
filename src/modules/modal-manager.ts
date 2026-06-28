@@ -61,6 +61,50 @@ export class ModalManager {
     });
   }
 
+  private escapeHtml(value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  private renderStructuredDescription(description?: string): string | null {
+    if (!description) return null;
+
+    const allowedLabels = new Set([
+      'Recognition',
+      'Participation',
+      'Scope',
+      'Contribution',
+      'Purpose',
+      'Build',
+      'Outcome',
+    ]);
+    const rows = description
+      .split(/\r?\n+/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const match = line.match(/^([A-Za-z ]+):\s*(.+)$/);
+        if (!match) return null;
+        const label = match[1].trim();
+        if (!allowedLabels.has(label)) return null;
+        return { label, body: match[2].trim() };
+      });
+
+    if (!rows.length || rows.some((row) => row === null)) return null;
+
+    return `<div class="structured-description">${rows.map((row) => {
+      const item = row as { label: string; body: string };
+      return `<section class="structured-description-item">
+        <span class="structured-description-label">${this.escapeHtml(item.label)}</span>
+        <p>${this.escapeHtml(item.body)}</p>
+      </section>`;
+    }).join('')}</div>`;
+  }
+
   private init(): void {
     this.setupEventListeners();
   }
@@ -297,8 +341,16 @@ export class ModalManager {
     // New: add description content if present
     const descriptionEl = document.querySelector('.achievement-description') as HTMLElement;
     if (descriptionEl) {
-      descriptionEl.textContent = data.description || '';
-      descriptionEl.style.whiteSpace = data.description ? 'pre-line' : '';
+      const structuredDescription = this.renderStructuredDescription(data.description);
+      if (structuredDescription) {
+        descriptionEl.classList.add('rich');
+        descriptionEl.innerHTML = structuredDescription;
+        descriptionEl.style.whiteSpace = '';
+      } else {
+        descriptionEl.classList.remove('rich');
+        descriptionEl.textContent = data.description || '';
+        descriptionEl.style.whiteSpace = data.description ? 'pre-line' : '';
+      }
       descriptionEl.style.display = data.description ? '' : 'none';
     }
 
@@ -589,6 +641,12 @@ export class ModalManager {
       }
     }
     if (projectDescription) {
+      const structuredDescription = this.renderStructuredDescription(data.description);
+      if (structuredDescription) {
+        projectDescription.classList.add('rich', 'structured');
+        projectDescription.innerHTML = structuredDescription;
+      } else {
+      projectDescription.classList.remove('structured');
       // Render rich HTML for RGBC ATM project
       const rgTitleMatch = data.title.startsWith('RGBC: Richard Gwapo Banking Corporation');
       if (rgTitleMatch) {
@@ -1816,6 +1874,7 @@ export class ModalManager {
       } else {
         projectDescription.classList.remove('rich');
         projectDescription.textContent = data.description;
+      }
       }
     }
     if (projectTechStack) projectTechStack.innerHTML = data.technologies;

@@ -35,7 +35,7 @@ export class ScrollProgress {
             pointerEvents: 'none',
         });
 
-        document.body.appendChild(this.progressBar);
+        (document.querySelector('main') || document.body).appendChild(this.progressBar);
 
         // Listen for scroll events with passive option for performance
         window.addEventListener('scroll', () => this.updateProgress(), { passive: true });

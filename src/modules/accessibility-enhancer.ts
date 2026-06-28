@@ -223,8 +223,13 @@ export class AccessibilityEnhancer {
           const article = document.querySelector('article.active');
           const heading = article?.querySelector('h2');
           if (heading) {
-            (heading as HTMLElement).setAttribute('tabindex', '-1');
-            (heading as HTMLElement).focus();
+            const focusTarget = heading as HTMLElement;
+            focusTarget.setAttribute('tabindex', '-1');
+            focusTarget.classList.add('section-focus-target');
+            focusTarget.focus({ preventScroll: true });
+            window.setTimeout(() => {
+              focusTarget.classList.remove('section-focus-target');
+            }, 1200);
           }
         }, 100);
       });

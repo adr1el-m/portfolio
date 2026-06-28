@@ -18,6 +18,8 @@ export class AISummaries {
         this.tooltip = document.createElement('div');
         this.tooltip.id = 'project-summary-tooltip';
         this.tooltip.setAttribute('role', 'tooltip');
+        this.tooltip.setAttribute('aria-label', 'Project summary');
+        this.tooltip.setAttribute('aria-hidden', 'true');
         Object.assign(this.tooltip.style, {
             position: 'fixed',
             maxWidth: '280px',
@@ -129,11 +131,13 @@ export class AISummaries {
         if (!this.tooltip) return;
 
         this.tooltip.innerHTML = content;
+        this.tooltip.setAttribute('aria-label', this.tooltip.textContent?.trim() || 'Project summary');
         this.positionTooltip(e);
 
         // Show with animation
         requestAnimationFrame(() => {
             if (this.tooltip) {
+                this.tooltip.setAttribute('aria-hidden', 'false');
                 this.tooltip.style.opacity = '1';
                 this.tooltip.style.transform = 'translateY(0)';
             }
@@ -167,6 +171,7 @@ export class AISummaries {
 
         this.hideTimeout = window.setTimeout(() => {
             if (this.tooltip) {
+                this.tooltip.setAttribute('aria-hidden', 'true');
                 this.tooltip.style.opacity = '0';
                 this.tooltip.style.transform = 'translateY(6px)';
             }

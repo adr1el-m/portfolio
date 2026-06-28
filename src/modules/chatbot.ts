@@ -22,6 +22,8 @@ type IntentType =
   | 'RESUME'
   | 'GENERAL';
 
+type VisitorProfile = 'recruiter' | 'technical' | 'collaborator' | 'student' | 'general';
+
 type ExtractedEntities = {
   projects: string[];
   achievements: string[];
@@ -44,7 +46,7 @@ type ProjectFacts = {
 };
 type IndexedItem = {
   id: string;
-  kind: 'project' | 'achievement' | 'skill' | 'contact' | 'education';
+  kind: 'profile' | 'resume' | 'experience' | 'project' | 'achievement' | 'skill' | 'contact' | 'education';
   title: string;
   text?: string;
   tags?: string[];
@@ -99,11 +101,17 @@ export class ChatbotManager {
     lastProjectTitle: string | null;
     lastAchievementTitle: string | null;
     lastTechnology: string | null;
+    lastTopic: string | null;
+    lastRetrievedTitles: string[];
+    visitorProfile: VisitorProfile;
   } = {
     lastIntent: null,
     lastProjectTitle: null,
     lastAchievementTitle: null,
     lastTechnology: null,
+    lastTopic: null,
+    lastRetrievedTitles: [],
+    visitorProfile: 'general',
   };
 
   // Add focus management state
@@ -186,6 +194,26 @@ export class ChatbotManager {
     return this.normalize(text).split(' ').filter(Boolean);
   }
 
+  private contentTokens(text: string): string[] {
+    const stopWords = new Set([
+      'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'he', 'his', 'i', 'in', 'is',
+      'it', 'me', 'of', 'on', 'or', 'our', 'show', 'tell', 'that', 'the', 'this', 'to', 'what',
+      'who', 'why', 'with', 'you', 'your',
+    ]);
+    return this.tokenize(text).filter((token) => token.length > 2 && !stopWords.has(token));
+  }
+
+  private keywordOverlapScore(query: string, haystack: string): number {
+    const queryTokens = new Set(this.contentTokens(query));
+    if (!queryTokens.size) return 0;
+    const hayTokens = new Set(this.contentTokens(haystack));
+    let overlap = 0;
+    queryTokens.forEach((token) => {
+      if (hayTokens.has(token)) overlap += 1;
+    });
+    return overlap / queryTokens.size;
+  }
+
   // Jaccard similarity between token sets
   private jaccard(aTokens: string[], bTokens: string[]): number {
     if (!aTokens.length || !bTokens.length) return 0;
@@ -248,10 +276,11 @@ export class ChatbotManager {
     if (/^(\/)?help$/.test(m) || /what can you do|capabilities|how can you help/.test(m)) {
       return [
         '<strong>AdrAI capabilities</strong>',
-        '1) Project intelligence: summaries, stack, links, and related achievements',
-        '2) Achievement deep-dives: context, date, organizer, and related project',
-        '3) Navigation actions: open projects, open honors, open resume, search site',
-        '4) Contact & profile: email, LinkedIn, GitHub, education, and skill highlights',
+        '1) Candidate fit: why hire Adriel, strongest proof, resume-backed highlights',
+        '2) Project intelligence: summaries, stack, links, comparisons, and related awards',
+        '3) Achievement deep-dives: context, date, organizer, and related project',
+        '4) Navigation actions: open projects, open honors, open resume, search site',
+        '5) Contact & profile: email, LinkedIn, GitHub, scholarships, education, and skill highlights',
         'Tip: use <code>/detailed</code> for richer answers or <code>/concise</code> for short replies',
       ].join('<br>');
     }
@@ -295,87 +324,286 @@ export class ChatbotManager {
       ? `${primaryEducation.program || 'Computer Science'} student at ${primaryEducation.school}${primaryEducation.period ? ` (${primaryEducation.period})` : ''}`
       : 'computer science student';
     const core = KB.skills.core.slice(0, 3).join(', ');
+    const scholarships = KB.scholarships
+      .map((scholarship) => scholarship.title.replace(/\s+under\s+RA\s+7687$/i, ''))
+      .join(', ');
     return [
-      `<strong>${this.escapeHtml(KB.profile.name)}</strong> is a ${this.escapeHtml(KB.profile.title)} from the Philippines.`,
-      this.escapeHtml(this.cleanText(KB.profile.summary, 240)),
+      `<strong>${this.escapeHtml(KB.profile.name)}</strong> is a ${this.escapeHtml(KB.profile.title)} from Taguig City, Philippines.`,
       `He is a ${this.escapeHtml(education)}.`,
       `Core strengths: ${this.escapeHtml(core)}.`,
+      `<strong>Resume-backed highlights</strong>: scholarships include ${this.escapeHtml(scholarships)}; Workflow Architect Intern at Eskwelabs; Senior Front-end Web Developer at PUP Manila Microsoft Student Community; builder of ODRS, WorkSight, LingapLink, Kita-Kita, and civic/healthcare AI products.`,
+      '<strong>Competition profile</strong>: National Champion at Technovation Summit 2025, Champion at START-a-TON, Excalicode Knight Category winner, and 2nd Runner-Up at Springboard Hack-it.',
       'Ask me for his best projects, awards, resume, or contact links.',
-    ].join('<br>');
+    ].filter(Boolean).join('<br>');
+  }
+
+  private isScholarshipQuery(userMessage: string): boolean {
+    const m = this.normalize(userMessage);
+    return /(?:\bscholarships?\b|\bscholar\b|\bfinancial aid\b|\bgrants?\b|\bdost[-\s]sei\b|\bra 7687\b|\bmacemco\b|\btaguig scholar\b|\blani\b|\blifeline assistance\b)/.test(m);
+  }
+
+  private shouldUseStructuredScholarshipAnswer(userMessage: string): boolean {
+    if (!this.isScholarshipQuery(userMessage)) return false;
+    const m = this.normalize(userMessage);
+    return !/\b(why|how|compare|reflect|impact|mean|means|significance|significant)\b/.test(m);
+  }
+
+  private isCompleteScholarshipAnswer(text: string): boolean {
+    const m = this.normalize(text);
+    return ['dost', 'macemco', 'taguig'].every((marker) => m.includes(marker));
+  }
+
+  private inferVisitorProfile(userMessage: string): VisitorProfile {
+    const m = this.normalize(userMessage);
+    if (/\b(hire|hiring|recruit|recruiter|candidate|role|position|intern|internship|job|qualified|fit)\b/.test(m)) {
+      return 'recruiter';
+    }
+    if (/\b(architecture|code|stack|api|database|frontend|backend|implementation|technical|scalable|security|performance)\b/.test(m)) {
+      return 'technical';
+    }
+    if (/\b(collaborate|partnership|startup|team|founder|client|work with|build with)\b/.test(m)) {
+      return 'collaborator';
+    }
+    if (/\b(student|scholarship|school|college|education|learn|study|course|major)\b/.test(m)) {
+      return 'student';
+    }
+    return 'general';
+  }
+
+  private visitorProfileInstruction(): string {
+    switch (this.conversationContext.visitorProfile) {
+      case 'recruiter':
+        return 'Visitor appears to be evaluating Adriel as a candidate. Emphasize concrete proof, scope, impact, ownership, and resume links.';
+      case 'technical':
+        return 'Visitor appears technical. Emphasize architecture, stack, implementation choices, tradeoffs, and project evidence.';
+      case 'collaborator':
+        return 'Visitor appears collaboration-oriented. Emphasize product thinking, teamwork, communication, and ways to contact Adriel.';
+      case 'student':
+        return 'Visitor appears education-oriented. Emphasize learning path, scholarships, competitions, and academic background.';
+      default:
+        return 'Visitor profile is general. Keep answers clear, grounded, and easy to explore.';
+    }
   }
 
   private retrieveRelevantItems(query: string, kinds?: Array<IndexedItem['kind']>, limit = 5): IndexedItem[] {
     const q = this.normalize(query);
     if (!q) return [];
     const isFollowUp = this.isFollowUpMessage(query);
+    const intentHints = this.normalize(`${query} ${this.conversationContext.lastTopic || ''}`);
 
     const scored = this.unifiedIndex
       .filter((item) => !kinds || kinds.includes(item.kind))
       .map((item) => {
-        const titleScore = this.fuzzyScore(item.title || '', q) * 3;
-        const textScore = this.fuzzyScore(item.text || '', q) * 1.4;
-        const tagScore = (item.tags || []).reduce((acc, t) => acc + this.fuzzyScore(t, q), 0) * 0.9;
-        const lexicalScore = titleScore + textScore + tagScore;
-        const contextBoost = isFollowUp && this.conversationContext.lastProjectTitle && this.normalize(item.title) === this.normalize(this.conversationContext.lastProjectTitle)
-          ? 1.2
-          : 0;
+        const searchable = [item.title, item.text, ...(item.tags || [])].filter(Boolean).join(' ');
+        const titleScore = this.fuzzyScore(item.title || '', q) * 3.2;
+        const textScore = this.fuzzyScore(item.text || '', q) * 1.5;
+        const tagScore = (item.tags || []).reduce((acc, t) => acc + this.fuzzyScore(t, q), 0) * 0.85;
+        const keywordScore = this.keywordOverlapScore(query, searchable) * 3.2;
+        const kindBoost =
+          /\b(hire|qualified|candidate|resume|experience|intern|role|work)\b/.test(intentHints) && ['profile', 'resume', 'experience', 'project', 'achievement'].includes(item.kind) ? 0.9 :
+          /\b(ai|machine learning|agent|llama|gemini|automation)\b/.test(intentHints) && ['project', 'achievement', 'skill'].includes(item.kind) ? 0.8 :
+          /\b(scholarship|education|school|college|study)\b/.test(intentHints) && item.kind === 'education' ? 0.8 :
+          0;
+        const lexicalScore = titleScore + textScore + tagScore + keywordScore + kindBoost;
+        const contextBoost =
+          isFollowUp && this.conversationContext.lastProjectTitle && this.normalize(item.title) === this.normalize(this.conversationContext.lastProjectTitle) ? 1.2 :
+          isFollowUp && this.conversationContext.lastAchievementTitle && this.normalize(item.title) === this.normalize(this.conversationContext.lastAchievementTitle) ? 1.2 :
+          isFollowUp && this.conversationContext.lastRetrievedTitles.some((title) => this.normalize(item.title) === this.normalize(title)) ? 0.75 :
+          0;
         return { item, score: lexicalScore + contextBoost, lexicalScore };
       })
-      .filter((x) => x.score >= 1.1 && (x.lexicalScore >= 0.25 || isFollowUp))
+      .filter((x) => x.score >= 0.9 && (x.lexicalScore >= 0.25 || isFollowUp))
       .sort((a, b) => b.score - a.score)
       .slice(0, limit)
       .map((x) => x.item);
 
+    this.conversationContext.lastRetrievedTitles = scored.map((item) => item.title).slice(0, 5);
     return scored;
   }
 
   private buildRetrievedContextSnippet(query: string): string {
-    const top = this.retrieveRelevantItems(query, undefined, 6);
+    const top = this.retrieveRelevantItems(query, undefined, 10);
     if (!top.length) return '';
     return top
       .map((item) => {
-        const text = this.cleanText(item.text, 180);
-        const tags = item.tags?.slice(0, 4).join(', ');
+        const text = this.cleanText(item.text, 240);
+        const tags = item.tags?.slice(0, 5).join(', ');
         return `- [${item.kind}] ${item.title}${text ? `: ${text}` : ''}${tags ? ` | tags: ${tags}` : ''}${item.url ? ` | link: ${item.url}` : ''}`;
       })
       .join('\n');
   }
 
+  private isOpportunityQuery(userMessage: string): boolean {
+    const m = this.normalize(userMessage);
+    return /\b(hire|recruit|candidate|qualified|fit|role|position|intern|internship|job|why should|work with|collaborate)\b/.test(m);
+  }
+
+  private isProofQuery(userMessage: string): boolean {
+    const m = this.normalize(userMessage);
+    return /\b(proof|evidence|prove|convince|strongest|impressive|standout|why is he good|what makes him good|ai skill|technical depth|best work)\b/.test(m);
+  }
+
+  private buildOpportunityHTML(): string {
+    const allProjects = this.getAllProjectSummaries();
+    const topProjects = ['WorkSight', 'LingapLink', 'Kita-Kita', 'Online Document Request System']
+      .map((title) => allProjects.find((project) => this.normalize(project.title).includes(this.normalize(title))))
+      .filter(Boolean) as ProjectSummary[];
+    const projectProof = topProjects.slice(0, 3)
+      .map((project) => `• <strong>${this.escapeHtml(project.title)}</strong>: ${this.escapeHtml(this.cleanText(project.description, 160))}`)
+      .join('<br>');
+    const priorityAchievements = [
+      'Technovation Summit',
+      'START-a-TON',
+      'BPI DataWave',
+      'Hack-it',
+      'Data Structures',
+    ]
+      .map((title) => KB.achievements.find((achievement) => this.normalize(achievement.title).includes(this.normalize(title))))
+      .filter(Boolean) as AchievementItem[];
+    const achievementProof = priorityAchievements.slice(0, 4)
+      .map((achievement) => `• ${this.escapeHtml(achievement.title)}${achievement.date ? ` (${this.escapeHtml(achievement.date)})` : ''}`)
+      .join('<br>');
+    const experience = KB.experience
+      .map((item) => `• <strong>${this.escapeHtml(item.role)}</strong>, ${this.escapeHtml(item.company)} (${this.escapeHtml(item.period)})`)
+      .join('<br>');
+    return [
+      '<strong>Why Adriel is a strong candidate</strong>',
+      `${this.escapeHtml(KB.resume.headline)} He is strongest where full-stack execution, AI-assisted product thinking, and competition pressure meet.`,
+      `<strong>Proof from experience</strong><br>${experience}`,
+      `<strong>Project evidence</strong><br>${projectProof}`,
+      `<strong>Signal from awards</strong><br>${achievementProof}`,
+      `Resume: <a href="${this.sanitizeUrl(KB.contact.resumeUrl)}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>`,
+    ].filter(Boolean).join('<br><br>');
+  }
+
+  private buildProofPackHTML(userMessage: string): string {
+    const m = this.normalize(userMessage);
+    const wantsAI = /\b(ai|machine learning|agent|agentic|llama|gemini|automation)\b/.test(m);
+    const allProjects = this.getAllProjectSummaries();
+    const projectPool = allProjects
+      .map((project) => ({ project, score: wantsAI ? this.aiProjectScore(project) : this.keywordOverlapScore(userMessage, `${project.title} ${project.description || ''} ${project.technologies || ''}`) }))
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(({ project }) => project);
+    const preferredAiProjects = wantsAI
+      ? ['WorkSight', 'LingapLink', 'Kita']
+        .map((title) => allProjects.find((project) => this.normalize(project.title).includes(this.normalize(title))))
+        .filter(Boolean) as ProjectSummary[]
+      : [];
+    const projectCandidates = wantsAI
+      ? [...preferredAiProjects, ...projectPool.filter((project) => this.aiProjectScore(project) >= 3)]
+      : projectPool;
+    const seenProjectKeys = new Set<string>();
+    const strongProjects = projectCandidates
+      .filter((project) => {
+        const key = /\bkita\b/.test(this.normalize(project.title)) ? 'kita-kita' : this.normalize(project.title);
+        if (seenProjectKeys.has(key)) return false;
+        seenProjectKeys.add(key);
+        return true;
+      })
+      .slice(0, 3);
+
+    const achievementPool = KB.achievements
+      .map((achievement) => {
+        const hay = `${achievement.title} ${achievement.description || ''} ${achievement.projectTitle || ''} ${achievement.organizer || ''}`;
+        const aiRelevant = /\b(ai-powered|data and ai|agentic|agent|triage|analytics|fintech|healthcare|workplace|hack-it|technovation|start-a-ton|bpi)\b/i.test(hay);
+        const aiBoost = wantsAI && aiRelevant ? 2 : 0;
+        const winBoost = /\b(champion|runner|placed|won|hackathon|competition)\b/i.test(hay) ? 1.2 : 0;
+        const score = this.keywordOverlapScore(userMessage, hay) + aiBoost + winBoost;
+        return { achievement, score: wantsAI && !aiRelevant ? 0 : score };
+      })
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(({ achievement }) => achievement);
+
+    const seenAchievementTitles = new Set<string>();
+    const strongAchievements = achievementPool
+      .filter((achievement) => {
+        const key = this.normalize(achievement.title);
+        if (seenAchievementTitles.has(key)) return false;
+        seenAchievementTitles.add(key);
+        return true;
+      })
+      .slice(0, 3);
+
+    const resume = this.retrieveRelevantItems(userMessage, ['resume', 'experience', 'skill'], 3);
+    const projectLines = strongProjects
+      .map((project) => `• <strong>${this.escapeHtml(project.title)}</strong>: ${this.escapeHtml(this.cleanText(project.description, 150))}`)
+      .join('<br>');
+    const achievementLines = strongAchievements
+      .map((achievement) => `• <strong>${this.escapeHtml(achievement.title)}</strong>: ${this.escapeHtml(this.cleanText(achievement.description, 130))}`)
+      .join('<br>');
+    const resumeLines = resume.length
+      ? `<strong>Resume-backed signal</strong><br>${resume.map((item) => `• ${this.escapeHtml(this.cleanText(item.text, 150))}`).join('<br>')}`
+      : '';
+    return [
+      '<strong>Best evidence from the portfolio</strong>',
+      projectLines ? `<strong>Build proof</strong><br>${projectLines}` : '',
+      achievementLines ? `<strong>Competitive proof</strong><br>${achievementLines}` : '',
+      resumeLines,
+    ].filter(Boolean).join('<br><br>');
+  }
+
   private buildSmartGeneralResponse(userMessage: string): string {
-    const matches = this.retrieveRelevantItems(userMessage, undefined, 4);
+    if (this.isOpportunityQuery(userMessage)) {
+      return this.buildOpportunityHTML();
+    }
+    if (this.isProofQuery(userMessage)) {
+      return this.buildProofPackHTML(userMessage);
+    }
+
+    const matches = this.retrieveRelevantItems(userMessage, undefined, 5);
     if (!matches.length) {
-      return 'I didn’t find a clear portfolio match for that. Try asking about projects, skills, achievements, resume, education, or contact links.';
+      return [
+        '<strong>I can answer from Adriel’s portfolio, but I need a sharper target.</strong>',
+        'Try asking about his strongest AI project, why he is hireable, scholarships, resume highlights, project stack, awards, or contact links.',
+      ].join('<br>');
     }
 
     const body = matches
       .map((m) => {
-        const shortText = this.cleanText(m.text, 150);
+        const shortText = this.cleanText(m.text, 170);
         const links = m.url ? ` <a href="${this.sanitizeUrl(m.url)}" target="_blank" rel="noopener noreferrer">Open</a>` : '';
         return `<strong>${this.escapeHtml(m.title)}</strong>${shortText ? ` — ${this.escapeHtml(shortText)}` : ''}${links}`;
       })
       .join('<br>');
 
     const citations = matches.map((m) => m.citation);
-    return `<strong>I found a few strong matches.</strong><br>${body}${this.buildCitationsHTML(citations)}`;
+    return `<strong>Here’s what matches best.</strong><br>${body}${this.buildCitationsHTML(citations)}`;
   }
 
   private updateConversationContext(userMessage: string, intent: IntentType, entities: ExtractedEntities): void {
     this.conversationContext.lastIntent = intent;
+    this.conversationContext.lastTopic = intent.toLowerCase().replace(/_/g, ' ');
+
+    const visitorProfile = this.inferVisitorProfile(userMessage);
+    if (visitorProfile !== 'general') {
+      this.conversationContext.visitorProfile = visitorProfile;
+    }
 
     const project = this.findProject(userMessage)
       || this.findProjectByTitle(entities.projects[0] || null)
       || (this.isFollowUpMessage(userMessage) ? this.findProjectByTitle(this.conversationContext.lastProjectTitle) : null);
-    if (project) this.conversationContext.lastProjectTitle = project.title;
+    if (project) {
+      this.conversationContext.lastProjectTitle = project.title;
+      this.conversationContext.lastTopic = project.title;
+    }
 
     const achievement = this.findAchievement(userMessage)
       || this.findAchievementByTitle(entities.achievements[0] || null)
       || (this.isFollowUpMessage(userMessage) ? this.findAchievementByTitle(this.conversationContext.lastAchievementTitle) : null);
-    if (achievement) this.conversationContext.lastAchievementTitle = achievement.title;
+    if (achievement) {
+      this.conversationContext.lastAchievementTitle = achievement.title;
+      this.conversationContext.lastTopic = achievement.title;
+    }
 
     const explicitTech = entities.technologies[0]
       || KB.skills.technologies.find((t) => this.normalize(userMessage).includes(this.normalize(t)))
       || null;
-    if (explicitTech) this.conversationContext.lastTechnology = explicitTech;
+    if (explicitTech) {
+      this.conversationContext.lastTechnology = explicitTech;
+      this.conversationContext.lastTopic = explicitTech;
+    }
   }
 
   private findProject(userMessage: string): ProjectItem | null {
@@ -458,6 +686,62 @@ export class ChatbotManager {
   // Build unified index from KB + DOM + Search
   private buildUnifiedIndex(): void {
     const index: IndexedItem[] = [];
+
+    index.push({
+      id: 'kb-profile-summary',
+      kind: 'profile',
+      title: KB.profile.name,
+      text: `${KB.profile.title}. ${KB.profile.summary}`,
+      tags: ['profile', 'about', 'bio', 'candidate', 'developer', 'ai builder', KB.profile.title],
+      citation: { label: 'KB › Profile', section: 'about', origin: 'KB' },
+      data: KB.profile,
+    });
+
+    index.push({
+      id: 'kb-resume-headline',
+      kind: 'resume',
+      title: 'Resume Headline',
+      text: `${KB.resume.headline} Location: ${KB.resume.location}`,
+      tags: ['resume', 'cv', 'candidate', 'qualifications', 'background', 'hire'],
+      url: KB.contact.resumeUrl,
+      citation: { label: 'KB › Resume › Headline', section: 'contact', origin: 'KB', href: KB.contact.resumeUrl },
+      data: KB.resume,
+    });
+
+    KB.resume.highlights.forEach((highlight, i) => {
+      index.push({
+        id: `kb-resume-highlight-${i}`,
+        kind: 'resume',
+        title: `Resume Highlight ${i + 1}`,
+        text: highlight,
+        tags: ['resume', 'proof', 'highlight', 'qualification', 'evidence'],
+        url: KB.contact.resumeUrl,
+        citation: { label: `KB › Resume › Highlight ${i + 1}`, section: 'contact', origin: 'KB', href: KB.contact.resumeUrl },
+      });
+    });
+
+    KB.resume.organizations.forEach((organization, i) => {
+      index.push({
+        id: `kb-organization-${i}`,
+        kind: 'experience',
+        title: `Organization ${i + 1}`,
+        text: organization,
+        tags: ['organization', 'leadership', 'community', 'experience'],
+        citation: { label: `KB › Resume › Organization ${i + 1}`, section: 'about', origin: 'KB' },
+      });
+    });
+
+    KB.experience.forEach((experience, i) => {
+      index.push({
+        id: `kb-exp-${i}`,
+        kind: 'experience',
+        title: `${experience.role} at ${experience.company}`,
+        text: `${experience.role} at ${experience.company} (${experience.period}). ${experience.summary || ''}`,
+        tags: ['experience', 'work', 'internship', 'professional', experience.company, experience.role],
+        citation: { label: `KB › Experience › ${experience.company}`, section: 'about', origin: 'KB' },
+        data: experience,
+      });
+    });
 
     // KB projects
     KB.projects.forEach((p, i) => {
@@ -545,6 +829,30 @@ export class ChatbotManager {
         text: [e.program, e.period].filter(Boolean).join(' — '),
         citation: { label: `KB › Education › ${e.school}`, section: 'education', origin: 'KB' },
         data: e,
+      });
+    });
+
+    // KB scholarships
+    KB.scholarships.forEach((scholarship, i) => {
+      index.push({
+        id: `kb-scholarship-${i}`,
+        kind: 'education',
+        title: scholarship.title,
+        text: [
+          scholarship.provider,
+          scholarship.program,
+          scholarship.period,
+          scholarship.notes,
+        ].filter(Boolean).join(' — '),
+        tags: [
+          'scholarship',
+          'scholar',
+          scholarship.provider,
+          scholarship.program,
+          scholarship.period,
+        ].filter(Boolean) as string[],
+        citation: { label: `KB › Scholarships › ${scholarship.title}`, section: 'education', origin: 'KB' },
+        data: scholarship,
       });
     });
 
@@ -688,6 +996,50 @@ export class ChatbotManager {
     return [
       `<strong>Core strengths</strong>: ${s.core.map((skill) => this.escapeHtml(skill)).join(', ')}`,
       `<strong>Main stack</strong>: ${s.technologies.map((tech) => this.escapeHtml(tech)).join(', ')}`,
+    ].join('<br>');
+  }
+
+  private buildResumeSummaryHTML(): string {
+    const highlights = KB.resume.highlights.slice(0, 5)
+      .map((highlight) => `• ${this.escapeHtml(this.cleanText(highlight, 190))}`)
+      .join('<br>');
+    const certifications = KB.resume.certifications.slice(0, 2)
+      .map((certification) => `• ${this.escapeHtml(certification)}`)
+      .join('<br>');
+
+    return [
+      `<strong>Resume summary</strong>: ${this.escapeHtml(KB.resume.headline)}`,
+      highlights,
+      certifications ? `<strong>Certifications</strong>:<br>${certifications}` : '',
+      `Resume PDF: <a href="${this.sanitizeUrl(KB.contact.resumeUrl)}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>`,
+    ].filter(Boolean).join('<br>');
+  }
+
+  private buildScholarshipsHTML(): string {
+    const items = KB.scholarships
+      .map((scholarship) => {
+        const title = this.escapeHtml(scholarship.title);
+        const period = this.escapeHtml(scholarship.period);
+        const provider = this.escapeHtml(scholarship.provider);
+        const program = scholarship.program ? ` — ${this.escapeHtml(scholarship.program)}` : '';
+        const notes = this.escapeHtml(scholarship.notes);
+        return `• <strong>${title}</strong> (${period})<br><span>${provider}${program}. ${notes}</span>`;
+      })
+      .join('<br>');
+    const cites = this.unifiedIndex
+      .filter((item) => item.id.startsWith('kb-scholarship-') || item.id === 'sec-education')
+      .map((item) => item.citation);
+    return `<strong>Adriel’s scholarships</strong><br>${items}${this.buildCitationsHTML(cites)}`;
+  }
+
+  private buildScholarshipImpactHTML(): string {
+    return [
+      '<strong>Why the scholarships matter</strong>',
+      'They show that Adriel’s academic work is backed by multiple forms of external recognition, not just self-description.',
+      '• <strong>DOST-SEI RA 7687</strong> signals national STEM potential and supports his BS Computer Science path.',
+      '• <strong>MACEMCO Scholar</strong> adds community-backed educational support.',
+      '• <strong>Taguig Scholar (Honors)</strong> shows honors-based local recognition through the LANI program beginning in 2026.',
+      'Together, they strengthen the portfolio’s education story: consistent academic promise, civic support, and technical direction.',
     ].join('<br>');
   }
 
@@ -863,8 +1215,8 @@ export class ChatbotManager {
   }
 
   private displayWelcomeMessage(): void {
-    const welcomeMessage = "Hi, I'm AdrAI, Adriel's portfolio guide. I can brief you on his strongest projects, tech stack, awards, education, resume, and contact links. Try asking: \"Which project best shows AI skill?\" or \"Compare WorkSight and LingapLink.\"";
-    this.addMessage(welcomeMessage, 'bot');
+    const welcomeMessage = "Hi, I'm AdrAI, Adriel's portfolio agent. I can explain why Adriel is hireable, compare projects, surface proof of AI skill, summarize awards, or open resume/contact links. Try: \"Why hire Adriel?\" or \"Show proof of AI skill.\"";
+    this.addMessage(welcomeMessage, 'bot', ['Why hire Adriel?', 'Show proof of AI skill', 'Best AI project', 'Share contact info']);
   }
 
   private sendMessage(): void {
@@ -918,18 +1270,18 @@ export class ChatbotManager {
     }
   }
 
-  public addMessage(text: string, sender: 'user' | 'bot'): void {
+  public addMessage(text: string, sender: 'user' | 'bot', suggestions?: string[]): void {
     const message: ChatMessage = {
       role: sender,
       content: text,
       timestamp: new Date(),
     };
     this.messages.push(message);
-    this.displayMessage(text, sender);
+    this.displayMessage(text, sender, suggestions);
     this.maybeSummarize();
   }
 
-  private displayMessage(text: string, sender: 'user' | 'bot'): void {
+  private displayMessage(text: string, sender: 'user' | 'bot', suggestions?: string[]): void {
     if (!this.messagesContainer) return;
 
     const messageDiv = document.createElement('div');
@@ -948,8 +1300,8 @@ export class ChatbotManager {
       actions.className = 'bot-actions';
 
       const intent = this.detectIntent(this.lastUserMessage || '');
-      const suggestions = this.getSuggestions(intent);
-      suggestions.forEach((sugg) => {
+      const actionsToShow = suggestions?.length ? suggestions : this.getSuggestions(intent);
+      actionsToShow.slice(0, 4).forEach((sugg) => {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.textContent = sugg;
@@ -1032,6 +1384,10 @@ export class ChatbotManager {
         .map(pr => `<a href="${this.sanitizeUrl(pr.githubUrl || '')}" target="_blank" rel="noopener noreferrer">${this.escapeHtml(pr.title)}</a>`);
       const html = repos.length ? `<strong>GitHub Repos</strong><br>${repos.join('<br>')}` : 'No GitHub repositories listed.';
       this.addMessage(html, 'bot');
+      return;
+    }
+    if (t.includes('why do these matter') && this.conversationContext.lastIntent === 'EDUCATION') {
+      this.addMessage(this.buildScholarshipImpactHTML(), 'bot', ['Show education background', 'Open resume', 'Top achievements']);
       return;
     }
     if (t.startsWith('search ') || t.includes('search site')) {
@@ -1185,6 +1541,9 @@ export class ChatbotManager {
   private aiProjectScore(project: ProjectSummary): number {
     const hay = this.normalize(`${project.title} ${project.category} ${project.description || ''} ${this.cleanText(project.technologies, 600)}`);
     let score = 0;
+    if (/\bworksight\b/.test(hay)) score += 4;
+    if (/\blingaplink\b/.test(hay)) score += 4;
+    if (/\bkita\b/.test(hay)) score += 3;
     if (/\b(ai|ml|machine learning)\b/.test(hay)) score += 3;
     if (/\bagentic|agent\b/.test(hay)) score += 3;
     if (/\bllama|gemini|generative ai\b/.test(hay)) score += 2;
@@ -1349,7 +1708,7 @@ export class ChatbotManager {
     if (/(\bcontact\b|email|reach|message)/.test(m)) bump('CONTACT', 2);
     if (/(\bskill(s)?\b|tech|technology|stack|language|framework|tools)/.test(m)) bump('SKILLS', 2);
     if (/(\bdatabase(s)?\b|sql|mysql|firebase|firestore)/.test(m)) bump('DATABASE', 2);
-    if (/(\beducation\b|school|university|study|major|graduate)/.test(m)) bump('EDUCATION', 2);
+    if (/(\beducation\b|school|university|study|major|graduate|scholarships?|\bscholar\b|financial aid|grants?|dost[-\s]sei|macemco|taguig scholar|lani)/.test(m)) bump('EDUCATION', 2);
     if (/(\baward(s)?\b|achievement(s)?\b|hackathon|win|won|prize|finalist|honorable mention)/.test(m)) bump('ACHIEVEMENTS', 2);
     if (/(\bresume\b|cv)/.test(m)) bump('RESUME', 2);
     if (/(\bfaq\b|how is|what is|why is|explain)/.test(m)) bump('FAQ', 1);
@@ -1466,7 +1825,7 @@ export class ChatbotManager {
     if (/(contact|email|reach|message)\b/.test(m)) return 'CONTACT';
     if (/(skill|skills|tech|technology|stack)\b/.test(m)) return 'SKILLS';
     if (/(database|databases|sql|mysql|firebase|firestore)\b/.test(m)) return 'DATABASE';
-    if (/(education|school|university|study)\b/.test(m)) return 'EDUCATION';
+    if (/(education|school|university|study|scholarships?|\bscholar\b|financial aid|grants?|dost[-\s]sei|macemco|taguig scholar|lani)\b/.test(m)) return 'EDUCATION';
     if (/(award|awards|achievement|achievements|hackathon|win)\b/.test(m)) {
       const a = this.findAchievement(userMessage);
       return a ? 'ACHIEVEMENT_DETAILS' : 'ACHIEVEMENTS';
@@ -1510,7 +1869,7 @@ export class ChatbotManager {
       case 'DATABASE':
         return ['What databases are you familiar with?', 'Show projects using Firebase', 'Show projects using MySQL'];
       case 'EDUCATION':
-        return ['Where do you study?', 'What’s your major?', 'Graduation year?'];
+        return ['List scholarships', 'Where do you study?', 'What’s your major?', 'Graduation year?'];
       case 'ACHIEVEMENTS':
         return ['Top hackathon wins', 'Details on Technovation 2025', 'Show awards timeline'];
       case 'FAQ':
@@ -1528,6 +1887,59 @@ export class ChatbotManager {
         }
         return ['Best AI project', 'Compare WorkSight and LingapLink', 'Share contact info', 'List skills'];
     }
+  }
+
+  private buildTurnSuggestions(userMessage: string, intent: IntentType, responseText = ''): string[] {
+    const normalizedResponse = this.normalize(responseText);
+    const project = this.findProject(userMessage)
+      || this.findProjectByTitle(this.conversationContext.lastProjectTitle);
+    const achievement = this.findAchievement(userMessage)
+      || this.findAchievementByTitle(this.conversationContext.lastAchievementTitle);
+
+    if (this.isScholarshipQuery(userMessage)) {
+      return ['Why do these matter?', 'Show education background', 'Open resume', 'Top achievements'];
+    }
+
+    if (this.isOpportunityQuery(userMessage)) {
+      return ['Open resume', 'Show strongest projects', 'Share contact info', 'Show proof of AI skill'];
+    }
+
+    if (this.isProofQuery(userMessage)) {
+      return ['Best AI project', 'Compare WorkSight and LingapLink', 'Open Projects section', 'Open resume'];
+    }
+
+    if (project) {
+      const suggestions = ['Show highlights', 'Show tech stack', 'Open Projects section'];
+      if (project.githubUrl) suggestions.unshift('Open GitHub repo');
+      if (project.liveUrl || project.videoUrl) suggestions.unshift('Any live demo?');
+      return suggestions.slice(0, 4);
+    }
+
+    if (achievement) {
+      return ['Any related project?', 'Show awards timeline', 'Why is this impressive?', 'Open honors section'];
+    }
+
+    if (intent === 'SKILLS' || /\bskill|stack|technology|frontend|backend|database\b/.test(normalizedResponse)) {
+      return ['Show proof of AI skill', 'Show projects using Firebase', 'Compare WorkSight and LingapLink', 'Open Projects section'];
+    }
+
+    if (intent === 'ACHIEVEMENTS') {
+      return ['Top hackathon wins', 'Details on Technovation 2025', 'Show proof of AI skill', 'Open honors section'];
+    }
+
+    if (intent === 'CONTACT') {
+      return ['Open resume', 'How to connect on LinkedIn?', 'Share GitHub link', 'Why hire Adriel?'];
+    }
+
+    if (intent === 'RESUME') {
+      return ['Why hire Adriel?', 'Show strongest projects', 'Share contact info', 'List skills'];
+    }
+
+    if (this.conversationContext.visitorProfile === 'recruiter') {
+      return ['Open resume', 'Show strongest projects', 'Share contact info', 'Show proof of AI skill'];
+    }
+
+    return ['Why hire Adriel?', 'Best AI project', 'Show proof of AI skill', 'Share contact info'];
   }
 
   private applyGuardrails(userMessage: string): string | null {
@@ -1707,7 +2119,7 @@ export class ChatbotManager {
           if (cvCite) cites.push(cvCite);
           const sec = this.unifiedIndex.find((it) => it.id === 'sec-contact')?.citation;
           if (sec) cites.push(sec);
-          return `Resume: <a href="${this.sanitizeUrl(c.resumeUrl)}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>${this.buildCitationsHTML(cites)}`;
+          return `${this.buildResumeSummaryHTML()}${this.buildCitationsHTML(cites)}`;
         }
         // Otherwise, show a compact contact card without trailing periods
         const body = [
@@ -1726,13 +2138,12 @@ export class ChatbotManager {
         return `${body}${this.buildCitationsHTML(cites)}`;
       }
       case 'RESUME': {
-        const c = KB.contact;
         const cites: Citation[] = [];
         const cvCite = this.unifiedIndex.find((it) => it.id === 'kb-contact-resume')?.citation;
         if (cvCite) cites.push(cvCite);
         const sec = this.unifiedIndex.find((it) => it.id === 'sec-contact')?.citation;
         if (sec) cites.push(sec);
-        return `Resume: <a href="${this.sanitizeUrl(c.resumeUrl)}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>. For a quick glance, ask "skills" or "projects".${this.buildCitationsHTML(cites)}`;
+        return `${this.buildResumeSummaryHTML()}${this.buildCitationsHTML(cites)}`;
       }
       case 'SKILLS': {
         const body = this.buildSkillsHTML();
@@ -1750,6 +2161,9 @@ export class ChatbotManager {
         return `Adriel has used ${dbs.map((db) => this.escapeHtml(db)).join(', ')} across web apps for auth, records, dashboards, and analytics workflows.${this.buildCitationsHTML(cites)}`;
       }
       case 'EDUCATION': {
+        if (this.isScholarshipQuery(message)) {
+          return this.buildScholarshipsHTML();
+        }
         const e = KB.education
           .map((ed) => `${this.escapeHtml(ed.school)}${ed.program ? ` — ${this.escapeHtml(ed.program)}` : ''}${ed.period ? ` (${this.escapeHtml(ed.period)})` : ''}`)
           .join('; ');
@@ -1892,12 +2306,25 @@ Nationality: ${KB.profile.nationality || 'Filipino'}`;
     const skills = `Core Skills: ${KB.skills.core.join(', ')}
 Technologies: ${KB.skills.technologies.join(', ')}`;
 
+    const resume = `Headline: ${KB.resume.headline}
+Location: ${KB.resume.location}
+Resume Highlights:
+${KB.resume.highlights.map((item) => `- ${item}`).join('\n')}
+Certifications:
+${KB.resume.certifications.map((item) => `- ${item}`).join('\n')}
+Organizations:
+${KB.resume.organizations.map((item) => `- ${item}`).join('\n')}`;
+
     const experience = KB.experience.map(e =>
       `- ${e.role} at ${e.company} (${e.period}): ${e.summary || 'Professional experience'}`
     ).join('\n');
 
     const education = KB.education.map(e =>
       `- ${e.school}${e.program ? ` — ${e.program}` : ''}${e.period ? ` (${e.period})` : ''}${e.notes ? `. ${e.notes}` : ''}`
+    ).join('\n');
+
+    const scholarships = KB.scholarships.map(s =>
+      `- ${s.title} (${s.period}): ${s.provider}${s.program ? ` — ${s.program}` : ''}. ${s.notes}`
     ).join('\n');
 
     const domProjects = this.getProjectsFromDOM();
@@ -1938,6 +2365,13 @@ GitHub: ${KB.contact.github}
 LinkedIn: ${KB.contact.linkedin}
 Resume: ${KB.contact.resumeUrl}`;
 
+    const agentState = `Visitor Profile: ${this.conversationContext.visitorProfile}
+Active Topic: ${this.conversationContext.lastTopic || 'none'}
+Last Project: ${this.conversationContext.lastProjectTitle || 'none'}
+Last Achievement: ${this.conversationContext.lastAchievementTitle || 'none'}
+Last Technology: ${this.conversationContext.lastTechnology || 'none'}
+Instruction: ${this.visitorProfileInstruction()}`;
+
     // Include topic summaries if available for conversation context
     const topicContext = [
       this.topicSummaries.projects,
@@ -1946,10 +2380,13 @@ Resume: ${KB.contact.resumeUrl}`;
     ].filter(Boolean).join('\n');
 
     return [
+      '=== AGENT STATE ===', agentState,
       '=== PROFILE ===', profile,
+      '\n=== RESUME FACTS ===', resume,
       '\n=== SKILLS ===', skills,
       '\n=== EXPERIENCE ===', experience || 'Currently focused on studies and hackathons',
       '\n=== EDUCATION ===', education,
+      '\n=== SCHOLARSHIPS ===', scholarships,
       '\n=== PROJECTS (Highlights) ===', projects,
       '\n=== ACHIEVEMENTS ===', achievements,
       '\n=== CONTACT ===', contact,
@@ -1982,15 +2419,46 @@ Resume: ${KB.contact.resumeUrl}`;
       return;
     }
 
+    const scholarshipResponse = this.isScholarshipQuery(userMessage)
+      ? this.buildScholarshipsHTML()
+      : null;
+    const scholarshipImpactResponse = scholarshipResponse && !this.shouldUseStructuredScholarshipAnswer(userMessage)
+      ? this.buildScholarshipImpactHTML()
+      : null;
+    const opportunityResponse = this.isOpportunityQuery(userMessage)
+      ? this.buildOpportunityHTML()
+      : null;
+    const proofResponse = this.isProofQuery(userMessage)
+      ? this.buildProofPackHTML(userMessage)
+      : null;
+    const projectComparisonResponse = this.buildProjectComparisonHTML(userMessage);
+    const structuredResponse = scholarshipResponse && this.shouldUseStructuredScholarshipAnswer(userMessage)
+      ? scholarshipResponse
+      : scholarshipImpactResponse || opportunityResponse || proofResponse || projectComparisonResponse;
+
     // Detect intents/entities early so both Gemini and local fallback can reuse them
     const { intents, entities } = this.detectIntents(userMessage);
     const scoredIntent = this.chooseTopIntent(intents, entities, userMessage);
-    const intent = this.isFollowUpMessage(userMessage) && this.conversationContext.lastIntent
+    const intent = scholarshipResponse
+      ? 'EDUCATION'
+      : this.isFollowUpMessage(userMessage) && this.conversationContext.lastIntent
       ? this.conversationContext.lastIntent
       : scoredIntent;
 
+    if (structuredResponse || (scholarshipResponse && !this.aiService.isAvailable())) {
+      const response = structuredResponse || scholarshipResponse || '';
+      this.addMessage(
+        this.formatResponse(response, this.detailedMode ? 'detailed' : 'concise', 'html'),
+        'bot',
+        this.buildTurnSuggestions(userMessage, intent, response)
+      );
+      this.updateConversationContext(userMessage, intent, entities);
+      return;
+    }
+
     // Try Gemini first with conversation history for context
     let aiResponse: string | null = null;
+    let aiResponseIsHtml = false;
     if (this.aiService.isAvailable()) {
       this.setInputPending(true);
       this.showTypingIndicator();
@@ -2024,7 +2492,15 @@ Resume: ${KB.contact.resumeUrl}`;
     }
 
     if (aiResponse) {
-      this.addMessage(this.formatResponse(aiResponse, this.detailedMode ? 'detailed' : 'concise'), 'bot');
+      if (scholarshipResponse && !this.isCompleteScholarshipAnswer(aiResponse)) {
+        aiResponse = scholarshipResponse;
+        aiResponseIsHtml = true;
+      }
+      this.addMessage(
+        this.formatResponse(aiResponse, this.detailedMode ? 'detailed' : 'concise', aiResponseIsHtml ? 'html' : 'markdown'),
+        'bot',
+        this.buildTurnSuggestions(userMessage, intent, aiResponse)
+      );
       this.updateConversationContext(userMessage, intent, entities);
       return;
     }
@@ -2045,12 +2521,16 @@ Resume: ${KB.contact.resumeUrl}`;
 
     this.detailedMode = this.prefersDetailed(userMessage) || this.detailedMode;
     this.userPrefs.detailedMode = this.detailedMode;
-    const projectComparisonResponse = this.buildProjectComparisonHTML(userMessage);
     const multiIntentResponse = this.buildMultiIntentResponse(userMessage, intents);
-    const botResponse = projectComparisonResponse
+    const botResponse = scholarshipResponse
+      || projectComparisonResponse
       || multiIntentResponse
       || (intent === 'GENERAL' ? this.buildSmartGeneralResponse(userMessage) : this.routeIntent(intent, userMessage));
-    this.addMessage(this.formatResponse(botResponse, this.detailedMode ? 'detailed' : 'concise', 'html'), 'bot');
+    this.addMessage(
+      this.formatResponse(botResponse, this.detailedMode ? 'detailed' : 'concise', 'html'),
+      'bot',
+      this.buildTurnSuggestions(userMessage, intent, botResponse)
+    );
     this.updateConversationContext(userMessage, intent, entities);
   }
 

@@ -262,7 +262,8 @@ export class ModalManager {
     }
     if (this.modalEl) {
       this.modalEl.setAttribute('aria-labelledby', this.titleEl?.id || 'achievement-modal-title');
-      this.modalEl.removeAttribute('aria-hidden');
+      this.modalEl.setAttribute('aria-hidden', 'false');
+      this.modalEl.removeAttribute('inert');
       this.modalEl.setAttribute('tabindex', '-1');
     }
 
@@ -313,7 +314,7 @@ export class ModalManager {
         const fb = SecurityManager.createSafeAnchor(data.facebookUrl, 'View Facebook Post', 'github-button', true);
         const iconSpan = document.createElement('span');
         iconSpan.className = 'link-icon';
-        iconSpan.textContent = '🔗';
+        iconSpan.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>';
         fb.prepend(iconSpan);
         if (detailsBlock && detailsBlock.parentElement) {
           detailsBlock.parentElement.insertBefore(fb, detailsBlock.nextSibling);
@@ -1928,8 +1929,10 @@ export class ModalManager {
 
     // Show modal
     if (projectModal) {
+      projectModal.classList.add('active');
       projectModal.style.display = 'flex';
-      projectModal.removeAttribute('aria-hidden');
+      projectModal.setAttribute('aria-hidden', 'false');
+      projectModal.removeAttribute('inert');
       projectModal.setAttribute('tabindex', '-1');
       (projectModal as HTMLElement).focus();
       logger.log('Modal opened for project:', data.title);
@@ -1965,8 +1968,10 @@ export class ModalManager {
     }
 
     if (projectModal) {
+      projectModal.classList.remove('active');
       projectModal.style.display = 'none';
       projectModal.setAttribute('aria-hidden', 'true');
+      projectModal.setAttribute('inert', '');
     }
     this.previousFocus = null;
     document.body.style.overflow = ''; // Restore scrolling
@@ -2184,6 +2189,7 @@ export class ModalManager {
     this.modalEl?.classList.remove('active');
     if (this.modalEl) {
       this.modalEl.setAttribute('aria-hidden', 'true');
+      this.modalEl.setAttribute('inert', '');
     }
     this.previousFocus = null;
     document.body.style.overflow = ''; // Restore scrolling

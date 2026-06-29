@@ -8,6 +8,24 @@ export interface AIProvider {
   readonly name: string;
   isAvailable(): boolean;
   generateResponse(prompt: string): Promise<string | null>;
+  getStatus(): AIProviderStatus;
+}
+
+export type AIProviderStatus = {
+  name: string;
+  configured: boolean;
+  model: string;
+  mode: 'client' | 'server-proxy' | 'off';
+  timeoutMs: number;
+};
+
+function cleanEnvValue(value: unknown, fallback = ''): string {
+  if (typeof value !== 'string') return fallback;
+  const cleaned = value
+    .replace(/\s+#.*$/, '')
+    .replace(/^['"]|['"]$/g, '')
+    .trim();
+  return cleaned || fallback;
 }
 
 // ─── Groq Provider ───────────────────────────────────────────────────────────
@@ -20,12 +38,22 @@ class GroqProvider implements AIProvider {
   private model: string;
 
   constructor() {
-    this.apiKey = import.meta.env.VITE_GROQ_API_KEY || '';
-    this.model = import.meta.env.VITE_GROQ_MODEL || 'llama-3.3-70b-versatile';
+    this.apiKey = cleanEnvValue(import.meta.env.VITE_GROQ_API_KEY);
+    this.model = cleanEnvValue(import.meta.env.VITE_GROQ_MODEL, 'llama-3.3-70b-versatile');
   }
 
   isAvailable(): boolean {
     return !!this.apiKey;
+  }
+
+  getStatus(): AIProviderStatus {
+    return {
+      name: this.name,
+      configured: this.isAvailable(),
+      model: this.model,
+      mode: this.isAvailable() ? 'client' : 'off',
+      timeoutMs: GROQ_TIMEOUT_MS,
+    };
   }
 
   async generateResponse(prompt: string): Promise<string | null> {
@@ -81,12 +109,22 @@ class MistralProvider implements AIProvider {
   private model: string;
 
   constructor() {
-    this.apiKey = import.meta.env.VITE_MISTRAL_API_KEY || '';
-    this.model = import.meta.env.VITE_MISTRAL_MODEL || 'mistral-large-latest';
+    this.apiKey = cleanEnvValue(import.meta.env.VITE_MISTRAL_API_KEY);
+    this.model = cleanEnvValue(import.meta.env.VITE_MISTRAL_MODEL, 'mistral-large-latest');
   }
 
   isAvailable(): boolean {
     return !!this.apiKey;
+  }
+
+  getStatus(): AIProviderStatus {
+    return {
+      name: this.name,
+      configured: this.isAvailable(),
+      model: this.model,
+      mode: this.isAvailable() ? 'client' : 'off',
+      timeoutMs: MISTRAL_TIMEOUT_MS,
+    };
   }
 
   async generateResponse(prompt: string): Promise<string | null> {
@@ -148,35 +186,48 @@ class GeminiProvider implements AIProvider {
   private apiKey: string;
   private clientApiKey: string;
   private model: string;
+  private serverModelLabel: string;
   private baseUrl: string;
   private useProxy: boolean;
 
   constructor() {
-    this.clientApiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
+    this.clientApiKey = cleanEnvValue(import.meta.env.VITE_GEMINI_API_KEY);
     const allowClientKey = import.meta.env.DEV || import.meta.env.VITE_GEMINI_USE_CLIENT_KEY === 'true';
     const canUseDirect = allowClientKey && !!this.clientApiKey;
     const allowDevProxy = import.meta.env.VITE_GEMINI_USE_PROXY_IN_DEV === 'true';
+    const explicitClientModel = cleanEnvValue(import.meta.env.VITE_GEMINI_MODEL);
+    this.serverModelLabel = explicitClientModel || 'server default (GEMINI_MODEL)';
 
     if (canUseDirect) {
       this.useProxy = false;
       this.apiKey = this.clientApiKey;
-      this.model = import.meta.env.VITE_GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
+      this.model = explicitClientModel || DEFAULT_GEMINI_MODEL;
       this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
     } else if (import.meta.env.DEV && !allowDevProxy) {
       this.useProxy = false;
       this.apiKey = '';
-      this.model = import.meta.env.VITE_GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
+      this.model = explicitClientModel || DEFAULT_GEMINI_MODEL;
       this.baseUrl = '';
     } else {
       this.useProxy = true;
       this.apiKey = '';
-      this.model = import.meta.env.VITE_GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
+      this.model = explicitClientModel;
       this.baseUrl = '/api/gemini';
     }
   }
 
   isAvailable(): boolean {
     return this.useProxy || !!this.apiKey;
+  }
+
+  getStatus(): AIProviderStatus {
+    return {
+      name: this.name,
+      configured: this.isAvailable(),
+      model: this.useProxy ? this.serverModelLabel : this.model,
+      mode: this.useProxy ? 'server-proxy' : this.isAvailable() ? 'client' : 'off',
+      timeoutMs: GEMINI_TIMEOUT_MS,
+    };
   }
 
   async generateResponse(prompt: string): Promise<string | null> {
@@ -186,12 +237,13 @@ class GeminiProvider implements AIProvider {
     const first = await this.callModel(this.model, prompt);
     if (first.text) return first.text;
 
-    // If model not found, try fallback model
+    // If model not found, try fallback model.
     const shouldRetryForModel = first.status === 404 || /not found|model/i.test(first.errorText || '');
     if (shouldRetryForModel && this.model !== FALLBACK_GEMINI_MODEL) {
       const second = await this.callModel(FALLBACK_GEMINI_MODEL, prompt);
       if (second.text) {
         this.model = FALLBACK_GEMINI_MODEL;
+        this.serverModelLabel = FALLBACK_GEMINI_MODEL;
         return second.text;
       }
     }
@@ -222,6 +274,7 @@ class GeminiProvider implements AIProvider {
         });
         if (directSecond.text) {
           this.model = FALLBACK_GEMINI_MODEL;
+          this.serverModelLabel = FALLBACK_GEMINI_MODEL;
           return directSecond.text;
         }
       }
@@ -246,7 +299,7 @@ class GeminiProvider implements AIProvider {
         ? fetch(baseUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model, prompt }),
+          body: JSON.stringify(model ? { model, prompt } : { prompt }),
           signal: controller.signal,
         })
         : fetch(`${baseUrl}/${model}:generateContent?key=${apiKey}`, {
@@ -339,6 +392,11 @@ export class AIService {
     return this._lastProvider;
   }
 
+  /** Safe provider diagnostics for UI/debug display. Never includes API keys. */
+  public getProviderStatuses(): AIProviderStatus[] {
+    return this.providers.map((provider) => provider.getStatus());
+  }
+
   /**
    * Generate a response by trying each available provider in order.
    * Returns the first successful response, or null if all providers fail.
@@ -420,6 +478,11 @@ RESPONSE GUIDELINES:
 8. Suggest one natural follow-up only when it genuinely helps
 9. For project questions, mention key features and available links
 10. Keep formatting clean — no long disclaimers, no excessive headers, no raw source labels
+
+SOURCE BEHAVIOR:
+- Use the RETRIEVED MATCHES section as the strongest evidence for the current answer
+- Retrieved matches may include source IDs like [S1], [S2]; use their facts, but do not print fake footnotes
+- The interface appends a portfolio source list after your answer, so keep the prose natural and source-backed
 
 ${historyStr ? `RECENT CONVERSATION:\n${historyStr}\n` : ''}PORTFOLIO CONTEXT:
 ${context}

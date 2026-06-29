@@ -202,6 +202,9 @@ class PortfolioApp {
         import('./modules/awards-accordion').then(({ AwardsAccordion }) => {
           new AwardsAccordion();
         });
+        import('./modules/honors-gallery').then(({ HonorsGallery }) => {
+          new HonorsGallery();
+        });
       }, 50);
 
       defer(() => {
@@ -228,6 +231,9 @@ class PortfolioApp {
       runWhenIdle(() => {
         import('./modules/visitor-counter').then(({ VisitorCounter }) => {
           new VisitorCounter();
+        });
+        import('./modules/contact-flow').then(({ ContactFlow }) => {
+          new ContactFlow();
         });
       }, 3000);
 
@@ -349,6 +355,15 @@ class PortfolioApp {
         },
         lazy: {},
       };
+
+      defer(() => {
+        import('./modules/analytics-dashboard').then(({ AnalyticsDashboard }) => {
+          const dashboard = new AnalyticsDashboard();
+          if (window.Portfolio?.lazy) {
+            window.Portfolio.lazy.AnalyticsDashboard = dashboard;
+          }
+        });
+      }, 450);
 
       this.setupChatbotLoader();
 

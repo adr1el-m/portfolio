@@ -75,6 +75,20 @@ type ProjectSummary = {
   videoUrl?: string;
   codedexUrl?: string;
 };
+type StoredAgentMemory = {
+  conversationSummary?: string;
+  conversationContext?: Partial<{
+    lastIntent: IntentType | null;
+    lastProjectTitle: string | null;
+    lastAchievementTitle: string | null;
+    lastTechnology: string | null;
+    lastTopic: string | null;
+    lastRetrievedTitles: string[];
+    visitorProfile: VisitorProfile;
+  }>;
+  topicSummaries?: Partial<{ projects: string; skills: string; achievements: string }>;
+  updatedAt?: string;
+};
 
 /**
  * Chatbot Manager Module
@@ -91,6 +105,7 @@ export class ChatbotManager {
 
   private conversationSummary: string = '';
   private summaryEveryTurns = 6;
+  private readonly memoryKey = 'adrAI:memory:v1';
   private lastUserMessage: string | null = null;
   private detailedMode: boolean = false;
   private userPrefs: { detailedMode: boolean } = { detailedMode: false };
@@ -178,15 +193,24 @@ export class ChatbotManager {
   }
 
   private sourceLabel(citation: Citation): string {
-    if (citation.section) {
-      return citation.section.charAt(0).toUpperCase() + citation.section.slice(1);
-    }
-    return citation.label
+    const cleaned = citation.label
       .replace(/^KB\s*›\s*/i, '')
       .replace(/^DOM\s*›\s*/i, '')
       .replace(/^Section\s*›\s*/i, '')
       .replace(/^Projects\s*›\s*Card\s*›\s*/i, 'Projects: ')
-      .replace(/^About\s*›\s*Achievement Card\s*›\s*/i, 'Achievements: ');
+      .replace(/^About\s*›\s*Achievement Card\s*›\s*/i, 'Achievements: ')
+      .replace(/^Scholarships\s*›\s*/i, 'Scholarships: ')
+      .replace(/^Achievements\s*›\s*/i, 'Achievements: ')
+      .replace(/^Projects\s*›\s*/i, 'Projects: ')
+      .replace(/^Contact\s*›\s*/i, 'Contact: ')
+      .replace(/^Resume\s*›\s*/i, 'Resume: ')
+      .replace(/^Education\s*›\s*/i, 'Education: ');
+
+    if (cleaned && cleaned !== citation.label) return cleaned;
+    if (citation.section) {
+      return citation.section.charAt(0).toUpperCase() + citation.section.slice(1);
+    }
+    return cleaned;
   }
 
   // Tokenize for fuzzy matching
@@ -284,7 +308,65 @@ export class ChatbotManager {
         'Tip: use <code>/detailed</code> for richer answers or <code>/concise</code> for short replies',
       ].join('<br>');
     }
+    if (/^(\/)?(ai|model|provider)(s)?\s*(status|check|diagnostics?)$/.test(m) || /^what ai/.test(m)) {
+      return this.buildAIStatusHTML();
+    }
+    if (/^(\/)?(memory|context)\s*(status|check)?$/.test(m)) {
+      return this.buildMemoryStatusHTML();
+    }
+    if (/^(\/)?(clear|reset|forget)\s+(memory|context|me)$/.test(m)) {
+      this.resetMemory();
+      return 'AdrAI memory cleared for this browser.';
+    }
     return null;
+  }
+
+  private buildAIStatusHTML(): string {
+    const statuses = this.aiService.getProviderStatuses();
+    const rows = statuses.map((provider, index) => {
+      const state = provider.configured ? 'ready' : 'not configured';
+      const mode = provider.mode === 'server-proxy' ? 'server proxy' : provider.mode;
+      return `${index + 1}. <strong>${this.escapeHtml(provider.name)}</strong> — ${this.escapeHtml(state)} · ${this.escapeHtml(mode)} · model: <code>${this.escapeHtml(provider.model)}</code> · timeout: ${provider.timeoutMs / 1000}s`;
+    });
+    rows.push(`${statuses.length + 1}. <strong>Local portfolio knowledge</strong> — always available if every AI provider fails`);
+    const last = this.aiService.lastProvider
+      ? `<br><br>Last AI response came from <strong>${this.escapeHtml(this.aiService.lastProvider)}</strong>.`
+      : '';
+    return `<strong>AdrAI provider chain</strong><br>${rows.join('<br>')}${last}<br><br>No API keys are displayed here.`;
+  }
+
+  private buildMemoryStatusHTML(): string {
+    const active = [
+      this.conversationContext.visitorProfile !== 'general' ? `visitor profile: ${this.conversationContext.visitorProfile}` : '',
+      this.conversationContext.lastTopic ? `active topic: ${this.conversationContext.lastTopic}` : '',
+      this.conversationContext.lastProjectTitle ? `last project: ${this.conversationContext.lastProjectTitle}` : '',
+      this.conversationContext.lastAchievementTitle ? `last honor: ${this.conversationContext.lastAchievementTitle}` : '',
+      this.conversationSummary ? this.conversationSummary : '',
+    ].filter(Boolean);
+
+    return [
+      '<strong>AdrAI memory</strong>',
+      active.length ? active.map((item) => `• ${this.escapeHtml(item)}`).join('<br>') : 'No saved topic memory yet.',
+      '<br>Memory is local to this browser and only used to make follow-up answers more coherent.',
+      'Use <code>clear memory</code> to reset it.',
+    ].join('<br>');
+  }
+
+  private resetMemory(): void {
+    this.conversationSummary = '';
+    this.topicSummaries = { projects: '', skills: '', achievements: '' };
+    this.conversationContext = {
+      lastIntent: null,
+      lastProjectTitle: null,
+      lastAchievementTitle: null,
+      lastTechnology: null,
+      lastTopic: null,
+      lastRetrievedTitles: [],
+      visitorProfile: 'general',
+    };
+    try {
+      localStorage.removeItem(this.memoryKey);
+    } catch { /* ignore */ }
   }
 
   private buildSmallTalkResponse(userMessage: string): string | null {
@@ -425,12 +507,36 @@ export class ChatbotManager {
     const top = this.retrieveRelevantItems(query, undefined, 10);
     if (!top.length) return '';
     return top
-      .map((item) => {
+      .map((item, index) => {
         const text = this.cleanText(item.text, 240);
         const tags = item.tags?.slice(0, 5).join(', ');
-        return `- [${item.kind}] ${item.title}${text ? `: ${text}` : ''}${tags ? ` | tags: ${tags}` : ''}${item.url ? ` | link: ${item.url}` : ''}`;
+        return `- [S${index + 1}] [${item.kind}] ${item.title}${text ? `: ${text}` : ''}${tags ? ` | tags: ${tags}` : ''}${item.url ? ` | link: ${item.url}` : ''} | source: ${this.sourceLabel(item.citation)}`;
       })
       .join('\n');
+  }
+
+  private getCitationsForQuery(query: string, intent?: IntentType, limit = 4): Citation[] {
+    const cites = this.retrieveRelevantItems(query, undefined, limit)
+      .map((item) => item.citation);
+
+    const sectionByIntent: Partial<Record<IntentType, string>> = {
+      PROJECTS: 'sec-projects',
+      PROJECT_DETAILS: 'sec-projects',
+      SKILLS: 'sec-skills',
+      DATABASE: 'sec-skills',
+      ACHIEVEMENTS: 'sec-achievements',
+      ACHIEVEMENT_DETAILS: 'sec-achievements',
+      CONTACT: 'sec-contact',
+      RESUME: 'sec-contact',
+      EDUCATION: 'sec-education',
+    };
+    const sectionId = intent ? sectionByIntent[intent] : undefined;
+    const sectionCitation = sectionId
+      ? this.unifiedIndex.find((item) => item.id === sectionId)?.citation
+      : undefined;
+    if (sectionCitation) cites.push(sectionCitation);
+
+    return cites;
   }
 
   private isOpportunityQuery(userMessage: string): boolean {
@@ -604,6 +710,8 @@ export class ChatbotManager {
       this.conversationContext.lastTechnology = explicitTech;
       this.conversationContext.lastTopic = explicitTech;
     }
+
+    this.saveMemory();
   }
 
   private findProject(userMessage: string): ProjectItem | null {
@@ -943,7 +1051,7 @@ export class ChatbotManager {
   }
 
   private buildCitationsHTML(cites: Citation[]): string {
-    if (!cites.length || !this.detailedMode) return '';
+    if (!cites.length) return '';
     const unique = cites.filter((cite, index, all) =>
       all.findIndex((candidate) => candidate.label === cite.label && candidate.href === cite.href) === index
     );
@@ -1112,6 +1220,7 @@ export class ChatbotManager {
     }
 
     this.loadPreferences();
+    this.loadMemory();
     this.detailedMode = this.userPrefs.detailedMode;
     // Build unified retrieval index once UI is ready
     this.buildUnifiedIndex();
@@ -1225,6 +1334,9 @@ export class ChatbotManager {
     const userMessage = this.inputField.value.trim();
     this.lastUserMessage = userMessage;
     this.addMessage(userMessage, 'user');
+    window.dispatchEvent(new CustomEvent('portfolio:analytics', {
+      detail: { type: 'chatbot-question', label: userMessage },
+    }));
     this.inputField.value = '';
 
     void this.handleMessage(userMessage);
@@ -2294,6 +2406,7 @@ export class ChatbotManager {
 
       // Persist preferences on summarize
       this.savePreferences();
+      this.saveMemory();
     }
   }
 
@@ -2372,6 +2485,13 @@ Last Achievement: ${this.conversationContext.lastAchievementTitle || 'none'}
 Last Technology: ${this.conversationContext.lastTechnology || 'none'}
 Instruction: ${this.visitorProfileInstruction()}`;
 
+    const localMemory = [
+      this.conversationSummary,
+      this.topicSummaries.projects,
+      this.topicSummaries.skills,
+      this.topicSummaries.achievements,
+    ].filter(Boolean).join('\n');
+
     // Include topic summaries if available for conversation context
     const topicContext = [
       this.topicSummaries.projects,
@@ -2390,6 +2510,7 @@ Instruction: ${this.visitorProfileInstruction()}`;
       '\n=== PROJECTS (Highlights) ===', projects,
       '\n=== ACHIEVEMENTS ===', achievements,
       '\n=== CONTACT ===', contact,
+      localMemory ? `\n=== LOCAL FOLLOW-UP MEMORY ===\n${localMemory}` : '',
       topicContext ? `\n=== CURRENT DISCUSSION ===\n${topicContext}` : ''
     ].join('\n');
   }
@@ -2496,8 +2617,14 @@ Instruction: ${this.visitorProfileInstruction()}`;
         aiResponse = scholarshipResponse;
         aiResponseIsHtml = true;
       }
+      const citations = this.getCitationsForQuery(userMessage, intent);
+      const formattedResponse = this.formatResponse(
+        aiResponse,
+        this.detailedMode ? 'detailed' : 'concise',
+        aiResponseIsHtml ? 'html' : 'markdown'
+      );
       this.addMessage(
-        this.formatResponse(aiResponse, this.detailedMode ? 'detailed' : 'concise', aiResponseIsHtml ? 'html' : 'markdown'),
+        `${formattedResponse}${this.buildCitationsHTML(citations)}`,
         'bot',
         this.buildTurnSuggestions(userMessage, intent, aiResponse)
       );
@@ -2582,6 +2709,44 @@ Instruction: ${this.visitorProfileInstruction()}`;
         const p = JSON.parse(raw);
         if (typeof p?.detailedMode === 'boolean') this.userPrefs.detailedMode = p.detailedMode;
       }
+    } catch { /* ignore */ }
+  }
+
+  private loadMemory(): void {
+    try {
+      const raw = localStorage.getItem(this.memoryKey);
+      if (!raw) return;
+      const memory = JSON.parse(raw) as StoredAgentMemory;
+      if (typeof memory.conversationSummary === 'string') {
+        this.conversationSummary = memory.conversationSummary;
+      }
+      if (memory.topicSummaries) {
+        this.topicSummaries = {
+          ...this.topicSummaries,
+          ...memory.topicSummaries,
+        };
+      }
+      if (memory.conversationContext) {
+        this.conversationContext = {
+          ...this.conversationContext,
+          ...memory.conversationContext,
+          lastRetrievedTitles: Array.isArray(memory.conversationContext.lastRetrievedTitles)
+            ? memory.conversationContext.lastRetrievedTitles.slice(0, 5)
+            : [],
+        };
+      }
+    } catch { /* ignore */ }
+  }
+
+  private saveMemory(): void {
+    try {
+      const memory: StoredAgentMemory = {
+        conversationSummary: this.conversationSummary,
+        conversationContext: this.conversationContext,
+        topicSummaries: this.topicSummaries,
+        updatedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(this.memoryKey, JSON.stringify(memory));
     } catch { /* ignore */ }
   }
 

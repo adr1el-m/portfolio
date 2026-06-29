@@ -201,7 +201,7 @@ export const KB: KnowledgeBase = {
     {
       title: 'GeneSync',
       category: 'Mobile Bioinformatics App',
-      images: [],
+      images: ['/images/projects/genesync/GeneSyncDemo.gif'],
       webpImages: [],
       description:
         "Purpose: Optimize global pairwise biological sequence alignment using the Needleman-Wunsch dynamic programming algorithm.\nTeam: Group 5 presentation project.\nBuild: Validates DNA, RNA, and protein sequences, cleans FASTA-style input, fills the scoring matrix, performs traceback, calculates percentage identity, evaluates significance through sequence shuffling, maps gap or mismatch hotspots, and packages the result for playback and reporting.\nOutcome: Demonstrates why Needleman-Wunsch guarantees an optimal global alignment while turning matrix filling, traceback, and biological similarity analysis into an observable learning workflow.",
@@ -209,7 +209,6 @@ export const KB: KnowledgeBase = {
         'Swift, SwiftUI, Needleman-Wunsch, Bioinformatics, FASTA, Dynamic Programming, Monte Carlo Testing, iOS 17',
       githubUrl: 'https://github.com/adr1el-m/genesync',
       liveUrl: 'https://www.youtube.com/watch?v=tuJthrRh8Ik',
-      videoUrl: '/images/projects/genesync/GeneSyncDemo.mp4',
     },
     {
       title: 'WorkSight',
@@ -294,36 +293,6 @@ export const KB: KnowledgeBase = {
   ],
   achievements: [
     {
-      title: 'CodeKada 2026',
-      images: ['/images/honors/2026/codekada/Adriel M. Magalona.avif'],
-      webpImages: ['/images/honors/2026/codekada/Adriel M. Magalona.avif'],
-      organizer: 'CodeKada',
-      date: 'May 3–9, 2026',
-      location: 'Online (Discord)',
-      teammates: [
-        { name: 'Jero' },
-        { name: 'Jordan' },
-        { name: 'Don' }
-      ],
-      description:
-        "Participation: Joined CodeKada 2026, an online hackathon conducted through Discord.\nScope: Collaborated with a distributed team across a week-long build period.\nContribution: Practiced remote teamwork, rapid implementation, and concise technical communication under competition constraints.",
-    },
-    {
-      title: 'The Innovation Labs',
-      images: ['/images/honors/2026/The Innovation Labs/innovation-labs.avif'],
-      webpImages: [],
-      organizer: 'The Innovation Labs',
-      date: 'February 2026',
-      location: 'Online',
-      teammates: [
-        { name: 'Kiel Ethan Lanzanas' },
-        { name: 'Ellah Benerado' },
-        { name: 'John Carlo Santos' },
-      ],
-      description:
-        "Participation: Joined The Innovation Labs with a collaborative student team.\nScope: Developed and evaluated an early-stage innovation concept through a structured program.\nContribution: Practiced product framing, team coordination, and concise pitch communication.",
-    },
-    {
       title: 'SIKAPTala 2026 Quiz Bee',
       images: [
         '/images/honors/2026/sikaptala/quizbee/quiz-bee-photo.avif',
@@ -337,17 +306,22 @@ export const KB: KnowledgeBase = {
       description:
         "Recognition: Placed 2nd in the SIKAPTala 2026 CS and IT Quiz Bee at De La Salle University - Dasmarinas.\nScope: Competed against 67 college students from across the Philippines in computer science and information technology topics.\nContribution: Applied self-study in algorithms, data structures, and CS fundamentals to perform competitively on a national academic stage.",
     },
-    {
-      title: 'SIKAPTala 2026 Hackathon',
-      images: ['/images/honors/2026/sikaptala/Hackathon/hackathon-certificate.avif'],
-      webpImages: [],
-      organizer: 'SIKAPTala',
-      date: '2026',
-      location: 'De La Salle University - Dasmarinas',
+{
+      title: 'CodeKada 2026',
+      images: ['/images/honors/2026/codekada/Adriel M. Magalona.avif'],
+      webpImages: ['/images/honors/2026/codekada/Adriel M. Magalona.avif'],
+      organizer: 'CodeKada',
+      date: 'May 3–9, 2026',
+      location: 'Online (Discord)',
+      teammates: [
+        { name: 'Rolan Jero Pinton', role: 'University of Makati' },
+        { name: 'Jordan Faciol', role: 'Working' },
+        { name: 'Angelo Florentino', role: 'Working' }
+      ],
       description:
-        "Participation: Joined the SIKAPTala 2026 Hackathon at De La Salle University - Dasmarinas.\nScope: Worked within a competitive university hackathon environment focused on fast ideation and implementation.\nContribution: Strengthened rapid product planning, technical collaboration, and pitch-readiness under time pressure.",
+        "Participation: Joined CodeKada 2026, an online hackathon conducted through Discord.\nScope: Collaborated with a distributed team across a week-long build period.\nContribution: Practiced remote teamwork, rapid implementation, and concise technical communication under competition constraints.",
     },
-    {
+{
       title: 'START-a-TON: Data & AI Innovation Challenge',
       images: [
         '/images/honors/2026/Start-a-Ton/geminated.avif',
@@ -360,17 +334,77 @@ export const KB: KnowledgeBase = {
       date: 'April 18, 2026',
       location: 'Philippines',
       teammates: [
-        { name: 'Gem Christian Lazo' },
-        { name: 'Marti Kier Trance' },
-        { name: 'Janel Rose Trongcoso' },
-        { name: 'Christine Rio' },
+        { name: 'Gem Christian Lazo', role: 'Tarlac State University' },
+        { name: 'Marti Kier Trance', role: 'Polytechnic University of the Philippines - Maragondon' },
+        { name: 'Janel Rose Trongcoso', role: 'De La Salle University - Dasmarinas' },
+        { name: 'Christine Rio', role: 'Polytechnic University of the Philippines - Manila' },
       ],
       description:
         "Recognition: Won Champion at START-a-TON, a nationwide two-week Data and AI innovation challenge for DOST techno-scholars.\nScope: Built STAR-LINK, a platform layer for e-STAR.ph that connects educators, organizes action research, and surfaces regional teaching insights.\nContribution: Helped shape the product concept, AI-assisted knowledge synthesis, collaboration features, and presentation narrative for a scalable education technology solution.",
       githubUrl: 'https://lnkd.in/g4e7JHPT',
       blogUrl: 'https://lnkd.in/gMUq75nZ',
     },
-    {
+{
+      title: 'The Innovation Labs',
+      images: ['/images/honors/2026/The Innovation Labs/innovation-labs.avif'],
+      webpImages: [],
+      organizer: 'The Innovation Labs',
+      date: 'February 2026',
+      location: 'Online',
+      teammates: [
+        { name: 'Kiel Ethan Lanzanas', role: 'Technological University of the Philippines' },
+        { name: 'Ellah Benerado', role: 'Adamson University' },
+        { name: 'John Carlo Santos', role: 'Bulacan State University' },
+      ],
+      description:
+        "Participation: Joined The Innovation Labs with a collaborative student team.\nScope: Developed and evaluated an early-stage innovation concept through a structured program.\nContribution: Practiced product framing, team coordination, and concise pitch communication.",
+    },
+{
+      title: 'SIKAPTala 2026 Hackathon',
+      images: ['/images/honors/2026/sikaptala/Hackathon/hackathon-certificate.avif'],
+      webpImages: [],
+      organizer: 'SIKAPTala',
+      date: '2026',
+      location: 'De La Salle University - Dasmarinas',
+      teammates: [
+        { name: 'Eliazar Inso', role: 'Polytechnic University of the Philippines - Manila' },
+        { name: 'Jude Vincent Puti', role: 'Polytechnic University of the Philippines - Manila' },
+        { name: 'Mark Elijah Sevilla', role: 'Polytechnic University of the Philippines - Manila' },
+      ],
+      description:
+        "Participation: Joined the SIKAPTala 2026 Hackathon at De La Salle University - Dasmarinas.\nScope: Worked within a competitive university hackathon environment focused on fast ideation and implementation.\nContribution: Strengthened rapid product planning, technical collaboration, and pitch-readiness under time pressure.",
+    },
+{
+      title: 'BPI DataWave Hackathon 2025',
+      images: [],
+      webpImages: [],
+      organizer: 'BPI — Workplace Productivity & Future of Work (Team 4Sight) — 3rd Place — ₱20,000',
+      date: 'October 1, 2025',
+      location: 'AIM Conference Center, Makati City',
+      teammates: [
+        { name: 'Kiel Ethan Lanzanas', role: 'Technological University of the Philippines' },
+        { name: 'Ellah Benerado', role: 'Adamson University' },
+        { name: 'John Carlo Santos', role: 'Bulacan State University' },
+      ],
+      githubUrl: 'https://github.com/adr1el-m/worksight',
+      description:
+        "Recognition: Placed 3rd in the Workplace Productivity and Future of Work category at BPI DataWave Hackathon 2025.\nScope: Built WorkSight, an AI-powered well-being analytics platform for identifying burnout risk through behavioral and organizational signals.\nContribution: Helped develop the product narrative, system workflow, and competition pitch for a workplace analytics solution.",
+      projectTitle: 'WorkSight',
+    },
+{
+      title: 'Codebility Portfolio Contest 2025 — 2nd Place',
+      images: ['/images/honors/codebility/portfolio-contest-2025.jpg'],
+      webpImages: ['/images/honors/codebility/portfolio-contest-2025-400.webp'],
+      organizer: 'Codebility — Portfolio Contest 2025',
+      date: 'October 2025',
+      location: 'Online',
+      description:
+        "Recognition: Placed 2nd in the Codebility Portfolio Contest 2025, receiving an internship offer and cash award.\nScope: Submitted a portfolio evaluated on presentation, technical clarity, and professional readiness.\nContribution: Demonstrated the ability to communicate projects, experience, and technical growth through a polished personal site.",
+      projectTitle: 'Portfolio Contest 2025',
+      linkedinUrl: 'https://www.linkedin.com/posts/adr1el_this-comes-a-bit-late-but-its-a-milestone-activity-7419437733170896897-nULW?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFCMwAABUwVcMwAFxdORbMcULlqBOAyuSpU',
+      facebookUrl: 'https://www.facebook.com/share/p/19mEFhhtCv/',
+    },
+{
       title: 'Technovation Summit 2025 Start‑up Hackathon',
       images: [
         '/images/honors/technovation/1.jpeg',
@@ -387,8 +421,10 @@ export const KB: KnowledgeBase = {
       date: 'August 31, 2025',
       location: 'Marco Polo Plaza Hotel, Cebu',
       teammates: [
-        { name: 'Juanito Ramos II' },
-        { name: 'Maxxinne Fernan' },
+        { name: 'Juanito Ramos II', role: 'Rizal Technological University - Bonifacio Campus' },
+        { name: 'Maxxinne Fernandez', role: 'Rizal Technological University - Bonifacio Campus' },
+        { name: 'Threshia Saut', role: 'Rizal Technological University - Bonifacio Campus' },
+        { name: 'Franchezca Natividad Banayad', role: 'Pamantasang Lungsod ng Maynila' },
       ],
       githubUrl: 'https://github.com/adr1el-m/technovation-2025',
       description:
@@ -397,20 +433,7 @@ export const KB: KnowledgeBase = {
       linkedinUrl:
         'https://www.linkedin.com/posts/adr1el_nationaltechnovationsummit-activity-7369257090281791488-SXY8',
     },
-    {
-      title: 'BPI DataWave Hackathon 2025',
-      images: [],
-      webpImages: [],
-      organizer: 'BPI — Workplace Productivity & Future of Work (Team 4Sight) — 3rd Place — ₱20,000',
-      date: 'October 1, 2025',
-      location: 'AIM Conference Center, Makati City',
-      teammates: [],
-      githubUrl: 'https://github.com/adr1el-m/worksight',
-      description:
-        "Recognition: Placed 3rd in the Workplace Productivity and Future of Work category at BPI DataWave Hackathon 2025.\nScope: Built WorkSight, an AI-powered well-being analytics platform for identifying burnout risk through behavioral and organizational signals.\nContribution: Helped develop the product narrative, system workflow, and competition pitch for a workplace analytics solution.",
-      projectTitle: 'WorkSight',
-    },
-    {
+{
       title: 'De La Salle University HackerCup 2025',
       images: [],
       webpImages: [],
@@ -418,11 +441,16 @@ export const KB: KnowledgeBase = {
         "DLSU HackerCup — Theme: 'Convenience: Hacking Everyday Hassles for Better Communities' — 9th Place",
       date: 'August 15–16, 2025',
       location: 'Gokongwei Hall, De La Salle University',
+      teammates: [
+        { name: 'Ellah Benerado', role: 'Adamson University' },
+        { name: 'Kiel Ethan Lanzanas', role: 'Technological University of the Philippines' },
+        { name: 'John Carlo Santos', role: 'Bulacan State University' },
+      ],
       description:
         "Participation: Competed in the De La Salle University Hackercup with Team 4Sight.\nScope: Built DokQ, a healthcare queueing and appointment system designed to reduce friction in clinic workflows.\nContribution: Helped translate everyday healthcare waiting problems into a practical patient-and-provider platform.",
       projectTitle: 'DokQ',
     },
-    {
+{
       title: 'Spark Rush 2025 — GDGC PUP',
       images: [],
       webpImages: [],
@@ -430,10 +458,16 @@ export const KB: KnowledgeBase = {
         'Google Developer Groups on Campus — Polytechnic University of the Philippines — Second Runner‑Up',
       date: 'May 17, 2025',
       location: 'Polytechnic University of the Philippines — Manila',
+      teammates: [
+        { name: 'Alvic Decipolo', role: 'Polytechnic University of the Philippines - Manila' },
+        { name: 'Russell Khyle David (Russ David)', role: 'Polytechnic University of the Philippines - Manila' },
+        { name: 'Rheinz Owen Alpon', role: 'Polytechnic University of the Philippines - Manila' },
+        { name: 'Vinzed Diala', role: 'Polytechnic University of the Philippines - Manila' },
+      ],
       description:
         "Recognition: Earned Second Runner-Up at Spark Rush 2025 by GDG on Campus PUP.\nScope: Completed a station-based competition requiring teamwork, problem solving, and endurance across multiple challenge formats.\nContribution: Demonstrated adaptability, communication, and composure in a fast-paced technical event.",
     },
-    {
+{
       title: "Data Structures & Algorithms — Knight Category Winner (PUP)",
       images: [],
       webpImages: [],
@@ -443,28 +477,21 @@ export const KB: KnowledgeBase = {
       description:
         'Competition focused on DSA fundamentals and practical coding challenges.',
     },
-    {
+{
       title: 'Gawad Pagkilala Taong 2024 — National Competition (3rd Place)',
       images: [],
       webpImages: [],
       organizer: "Entrepreneurship Educators' Association — Polytechnic University of the Philippines",
       date: 'November 21, 2024',
       location: 'Bulwagang Balagtas NALLRC, Polytechnic University of the Philippines — Manila',
+      teammates: [
+        { name: 'Mc Henry Sarcia', role: 'Polytechnic University of the Philippines - Manila' },
+        { name: 'Sean Russell Villeza', role: 'Polytechnic University of the Philippines - Manila' },
+        { name: 'Jermaine Falcutila', role: 'Polytechnic University of the Philippines - Manila' },
+        { name: 'Kenchie Baylon', role: 'Polytechnic University of the Philippines - Manila' },
+      ],
       description:
         "Recognition: Received Gawad Pagkilala recognition at Polytechnic University of the Philippines for national competition achievement.\nScope: Honored for placing 3rd in an Entrepreneurship Educators' Association national competition.\nContribution: Marked an early milestone in applying technical creativity, entrepreneurship, and team-based execution.",
-    },
-    {
-      title: 'Codebility Portfolio Contest 2025 — 2nd Place',
-      images: ['/images/honors/codebility/portfolio-contest-2025.jpg'],
-      webpImages: ['/images/honors/codebility/portfolio-contest-2025-400.webp'],
-      organizer: 'Codebility — Portfolio Contest 2025',
-      date: 'October 2025',
-      location: 'Online',
-      description:
-        "Recognition: Placed 2nd in the Codebility Portfolio Contest 2025, receiving an internship offer and cash award.\nScope: Submitted a portfolio evaluated on presentation, technical clarity, and professional readiness.\nContribution: Demonstrated the ability to communicate projects, experience, and technical growth through a polished personal site.",
-      projectTitle: 'Portfolio Contest 2025',
-      linkedinUrl: 'https://www.linkedin.com/posts/adr1el_this-comes-a-bit-late-but-its-a-milestone-activity-7419437733170896897-nULW?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFCMwAABUwVcMwAFxdORbMcULlqBOAyuSpU',
-      facebookUrl: 'https://www.facebook.com/share/p/19mEFhhtCv/',
     },
   ],
 };

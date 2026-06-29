@@ -2,6 +2,17 @@ import type { AchievementData, ProjectData } from '@/types';
 import { logger } from '@/config';
 import { SecurityManager } from '@/modules/security';
 
+const TRANSPARENT_PLACEHOLDER = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+const ICONS = {
+  external: '<svg class="link-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>',
+  document: '<svg class="link-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M8 13h8"></path><path d="M8 17h5"></path></svg>',
+  edit: '<svg class="link-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>',
+  trophy: '<svg class="link-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 22"></path><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 22"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M6 2h12v7a6 6 0 0 1-12 0Z"></path><path d="M6 22h12"></path></svg>',
+  collection: '<svg class="link-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 8h11"></path><path d="M10 12h11"></path><path d="M10 16h11"></path><path d="M3 8h.01"></path><path d="M3 12h.01"></path><path d="M3 16h.01"></path></svg>',
+  link: '<svg class="link-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11.5 4.43"></path><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07l1.33-1.33"></path></svg>',
+  article: '<svg class="link-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16"></path><path d="M6 2h9l5 5v13H6z"></path><path d="M14 2v6h6"></path><path d="M9 13h6"></path><path d="M9 17h6"></path></svg>',
+};
+
 /**
  * Modal Manager Module
  * Handles modal dialogs for projects and achievements.
@@ -27,18 +38,6 @@ export class ModalManager {
 
   constructor() {
     this.init();
-  }
-
-  /**
-   * Convert an original image path to its optimized version (AVIF or WebP)
-   */
-  private getOptimizedImagePath(originalPath: string, format: 'avif' | 'webp'): string {
-    // Match common image extensions
-    const extMatch = originalPath.match(/\.(jpe?g|png)$/i);
-    if (!extMatch) return originalPath;
-    
-    // Replace extension with optimized format
-    return originalPath.replace(/\.(jpe?g|png)$/i, `.${format}`);
   }
 
   /**
@@ -70,6 +69,16 @@ export class ModalManager {
       .replace(/'/g, '&#39;');
   }
 
+  private normalizeTitle(value: string): string {
+    return value
+      .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   private renderStructuredDescription(description?: string): string | null {
     if (!description) return null;
 
@@ -79,6 +88,7 @@ export class ModalManager {
       'Scope',
       'Contribution',
       'Purpose',
+      'Team',
       'Build',
       'Outcome',
     ]);
@@ -222,6 +232,52 @@ export class ModalManager {
 
     // Setup project modal event listeners
     this.setupProjectModalListeners();
+
+    window.addEventListener('portfolio:open-project', (event) => {
+      const detail = (event as CustomEvent<{ title?: string }>).detail;
+      this.openProjectByTitle(detail?.title || '');
+    });
+
+    window.addEventListener('portfolio:open-honor-modal', (event) => {
+      const detail = (event as CustomEvent<{ title?: string }>).detail;
+      this.openAchievementByTitle(detail?.title || '');
+    });
+  }
+
+  public openProjectByTitle(title: string): boolean {
+    const needle = this.normalizeTitle(title);
+    if (!needle) return false;
+
+    const target = Array.from(document.querySelectorAll<HTMLElement>('.project-item')).find((item) => {
+      const itemTitle = item.querySelector('.project-title')?.textContent?.trim() || '';
+      const normalized = this.normalizeTitle(itemTitle);
+      return normalized.includes(needle) || needle.includes(normalized);
+    });
+
+    if (!target) return false;
+    const data = this.getProjectData(target);
+    if (!data) return false;
+
+    this.openProjectModal(data);
+    return true;
+  }
+
+  public openAchievementByTitle(title: string): boolean {
+    const needle = this.normalizeTitle(title);
+    if (!needle) return false;
+
+    const target = Array.from(document.querySelectorAll<HTMLElement>('.achievement-card')).find((card) => {
+      const cardTitle = card.querySelector('.card-title')?.textContent?.trim() || '';
+      const normalized = this.normalizeTitle(cardTitle);
+      return normalized.includes(needle) || needle.includes(normalized);
+    });
+
+    if (!target) return false;
+    const data = this.getAchievementData(target);
+    if (!data) return false;
+
+    this.openAchievementModal(data);
+    return true;
   }
 
   private setupProjectModalListeners(): void {
@@ -311,16 +367,15 @@ export class ModalManager {
       this.modalEl.setAttribute('tabindex', '-1');
     }
 
-    // Convert original image paths to optimized WebP versions
     const originalImages = data.images || [];
-    const webpImages = originalImages.map((src) => this.getOptimizedImagePath(src, 'webp'));
+    const optimizedImages = data.webpImages || [];
     
-    // Prefer WebP > original (the modal picture element declares webp/jpeg sources)
+    // Prefer explicitly provided optimized assets only; do not invent paths that may not exist.
     const supportsWebp = document.documentElement.classList.contains('webp');
     
-    if (supportsWebp) {
-      this.images = webpImages;
-      this.achievementWebpImages = webpImages;
+    if (supportsWebp && optimizedImages.length > 0) {
+      this.images = optimizedImages;
+      this.achievementWebpImages = optimizedImages;
     } else {
       this.images = originalImages;
       this.achievementWebpImages = [];
@@ -475,7 +530,7 @@ export class ModalManager {
       if (sliderControls) sliderControls.style.display = 'none';
       if (this.imgEl) {
         this.imgEl.style.display = 'none';
-        this.imgEl.src = '';
+        this.imgEl.src = TRANSPARENT_PLACEHOLDER;
         this.imgEl.alt = '';
         this.imgEl.classList.remove('image-error');
         this.imgEl.removeAttribute('loading');
@@ -573,7 +628,7 @@ export class ModalManager {
       projectCodedex.rel = 'noopener noreferrer';
       projectCodedex.setAttribute('aria-label', 'View Codédex post (opens in new tab)');
       projectCodedex.style.display = 'none';
-      projectCodedex.innerHTML = '<span class="link-icon">📝</span> View Codédex Post';
+      projectCodedex.innerHTML = `${ICONS.edit} View Codédex Post`;
       linksContainer.appendChild(projectCodedex);
     }
     let projectDevpost = document.querySelector('.project-devpost') as HTMLAnchorElement | null;
@@ -584,7 +639,7 @@ export class ModalManager {
       projectDevpost.rel = 'noopener noreferrer';
       projectDevpost.setAttribute('aria-label', 'View Devpost submission (opens in new tab)');
       projectDevpost.style.display = 'none';
-      projectDevpost.innerHTML = '<span class="link-icon">🏆</span> Devpost Submission';
+      projectDevpost.innerHTML = `${ICONS.trophy} Devpost Submission`;
       linksContainer.appendChild(projectDevpost);
     }
 
@@ -616,7 +671,10 @@ export class ModalManager {
     }
     if (liveLink) {
       if (data.liveUrl) {
+        const isVideoDemo = /youtube\.com|youtu\.be/i.test(data.liveUrl) || data.title.trim() === 'GeneSync';
         liveLink.href = data.liveUrl;
+        liveLink.setAttribute('aria-label', isVideoDemo ? 'Watch demo video (opens in new tab)' : 'View live demo (opens in new tab)');
+        liveLink.innerHTML = `${ICONS.external} ${isVideoDemo ? 'Demo Video' : 'Live Demo'}`;
         liveLink.style.display = '';
       } else {
         liveLink.style.display = 'none';
@@ -626,6 +684,7 @@ export class ModalManager {
     if (docsLink) {
       if (data.docsUrl) {
         docsLink.href = data.docsUrl;
+        docsLink.innerHTML = `${ICONS.document} Documentation`;
         docsLink.style.display = '';
       } else {
         docsLink.style.display = 'none';
@@ -1044,7 +1103,7 @@ export class ModalManager {
     </div>
     <hr class="desc-divider" />
     <div class="desc-section"><h4>🌟 Core Features</h4>
-      <div class="desc-subsection"><h5>🤖 The Kita Companions</h5>
+      <div class="desc-subsection"><h5>The Kita Companions</h5>
         <div class="feature-grid">
           <div class="feature-column">
             <h5>Gabay Gastos</h5>
@@ -1349,7 +1408,7 @@ export class ModalManager {
               <li>Secure wallet connection handling</li>
             </ul>
           </div>
-          <div class="desc-subsection"><h5>🚀 Performance Optimizations</h5>
+          <div class="desc-subsection"><h5>Performance Optimizations</h5>
             <ul>
               <li>Code splitting with dynamic imports</li>
               <li>Optimized bundle size</li>
@@ -1653,7 +1712,7 @@ export class ModalManager {
               </ul>
             </div>
             <div class="feature-column">
-              <h5>📖 Biography</h5>
+              <h5>Biography</h5>
               <ul>
                 <li>Personal story presentation</li>
                 <li>Interactive timeline</li>
@@ -1702,7 +1761,7 @@ export class ModalManager {
         <div class="desc-section"><h4>Key Features</h4>
           <div class="feature-grid">
             <div class="feature-column">
-              <h5>🤖 AI Guidance</h5>
+              <h5>AI Guidance</h5>
               <ul>
                 <li>Powered by Gemini AI</li>
                 <li>Service inquiry assistance</li>
@@ -1765,7 +1824,7 @@ export class ModalManager {
               </ul>
             </div>
             <div class="feature-column">
-              <h5>🤖 AI Assistance</h5>
+              <h5>AI Assistance</h5>
               <ul>
                 <li>Intelligent automation</li>
                 <li>Natural language processing</li>
@@ -1942,7 +2001,7 @@ export class ModalManager {
       // Show video, hide image
       if (projectImage) {
         projectImage.style.display = 'none';
-        projectImage.src = '';
+        projectImage.src = TRANSPARENT_PLACEHOLDER;
         projectImage.classList.remove('image-error');
       }
       projectVideo.style.display = 'block';
@@ -2192,7 +2251,7 @@ export class ModalManager {
     visit.className = 'github-button';
     // accessibility: rely on link semantics and visible label
     // remove role and aria-label to avoid label/content mismatch
-    visit.innerHTML = '<span class="link-icon">🚀</span> Visit Project';
+    visit.innerHTML = `${ICONS.collection} Visit Project`;
     visit.addEventListener('click', (e) => {
       e.preventDefault();
       const targetTitle = (data.projectTitle || 'Kita-Kita').trim();
@@ -2219,7 +2278,7 @@ export class ModalManager {
       const link = SecurityManager.createSafeAnchor(data.linkedinUrl, 'View LinkedIn Post', 'github-button', true);
       const iconSpan = document.createElement('span');
       iconSpan.className = 'link-icon';
-      iconSpan.textContent = '🔗';
+      iconSpan.innerHTML = ICONS.link;
       link.prepend(iconSpan);
       section.appendChild(link);
     }
@@ -2229,7 +2288,7 @@ export class ModalManager {
       const blog = SecurityManager.createSafeAnchor(data.blogUrl, 'View Blog', 'github-button', true);
       const blogIcon = document.createElement('span');
       blogIcon.className = 'link-icon';
-      blogIcon.textContent = '📰';
+      blogIcon.innerHTML = ICONS.article;
       blog.prepend(blogIcon);
       section.appendChild(blog);
     }

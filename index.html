@@ -11,7 +11,7 @@
 
   <!-- SEO Meta Tags -->
   <meta name="description"
-    content="Adriel Magalona - Full-stack Developer, AI/ML Engineer, and Tech Innovator. Specializing in web development, machine learning, and creative technology solutions. View my projects, awards, and achievements.">
+    content="Adriel Magalona is a PUP BS Computer Science student, DOST-SEI scholar, full-stack developer, and AI builder focused on civic tech, healthcare, fintech, and competition-grade prototypes.">
   <meta name="keywords"
     content="Adriel Magalona, Full-stack Developer, Web Developer, AI Engineer, Machine Learning, Software Engineer, Portfolio, Tech Projects, Innovation, Philippines">
   <meta name="author" content="Adriel Magalona">
@@ -24,9 +24,9 @@
   <!-- Open Graph Meta Tags (Facebook, LinkedIn, etc.) -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://adriel.dev">
-  <meta property="og:title" content="Adriel Magalona - Full-stack Developer & AI Engineer">
+  <meta property="og:title" content="Adriel Magalona - Full-stack Developer & AI Builder">
   <meta property="og:description"
-    content="Full-stack Developer and AI/ML Engineer specializing in web development, machine learning, and creative technology solutions. Explore my portfolio of innovative projects and achievements.">
+    content="PUP BS Computer Science student, DOST-SEI scholar, full-stack developer, and AI builder. Explore projects, awards, and proof of practical execution.">
   <meta property="og:image" content="/images/my-avatar.png">
   <meta property="og:image:alt" content="Adriel Magalona Portfolio">
   <meta property="og:image:width" content="1200">
@@ -37,9 +37,9 @@
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://adriel.dev">
-  <meta name="twitter:title" content="Adriel Magalona - Full-stack Developer & AI Engineer">
+  <meta name="twitter:title" content="Adriel Magalona - Full-stack Developer & AI Builder">
   <meta name="twitter:description"
-    content="Full-stack Developer and AI/ML Engineer specializing in web development, machine learning, and creative technology solutions. Explore my portfolio of innovative projects and achievements.">
+    content="PUP BS Computer Science student, DOST-SEI scholar, full-stack developer, and AI builder. Explore projects, awards, and proof of practical execution.">
   <meta name="twitter:image" content="/images/my-avatar.png">
   <meta name="twitter:image:alt" content="Adriel Magalona Portfolio">
   <meta name="twitter:creator" content="@adrielmagalona">
@@ -51,7 +51,7 @@
   <meta name="format-detection" content="telephone=no">
 
   <!-- Content Security Policy will be set by server headers -->
-  <title>Adriel Magalona - Full-stack Developer & AI Engineer | Portfolio</title>
+  <title>Adriel Magalona - Full-stack Developer & AI Builder | Portfolio</title>
   <link rel="shortcut icon" href="/images/my-avatar@2x.png" type="image/x-icon">
 
   <!-- JSON-LD Structured Data for Rich Search Results -->
@@ -67,12 +67,21 @@
       "https://linkedin.com/in/adrielmagalona",
       "https://twitter.com/adr1el_m"
     ],
-    "jobTitle": "Full-stack Developer & AI Engineer",
+    "jobTitle": "Computer Science Student, Full-stack Developer & AI Builder",
     "worksFor": {
       "@type": "Organization",
       "name": "Freelance"
     },
-    "alumniOf": "De La Salle University",
+    "alumniOf": [
+      {
+        "@type": "EducationalOrganization",
+        "name": "Polytechnic University of the Philippines"
+      },
+      {
+        "@type": "EducationalOrganization",
+        "name": "University of Makati"
+      }
+    ],
     "knowsAbout": [
       "Web Development",
       "Machine Learning",
@@ -85,7 +94,7 @@
       "React",
       "Node.js"
     ],
-    "description": "Full-stack Developer and AI/ML Engineer specializing in web development, machine learning, and creative technology solutions.",
+    "description": "BS Computer Science student at the Polytechnic University of the Philippines, DOST-SEI undergraduate scholar, full-stack developer, and AI builder focused on civic technology, healthcare tools, fintech, and hackathon prototypes.",
     "nationality": "Filipino"
   }
   </script>
@@ -680,6 +689,7 @@
   <!-- Preload and load main stylesheet -->
   <link rel="preload" href="/style.css" as="style">
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/styles/portfolio-enhancements.css">
 
   <!-- Preload hero avatar with responsive sources -->
   <link rel="preload" as="image" href="/images/my-avatar.avif"
@@ -774,7 +784,7 @@
         <a href="#about">About</a>
         <a href="#background">Background</a>
         <a href="#projects">Projects</a>
-        <a href="#faq">FAQ</a>
+        <a href="#gear">Gear</a>
       </nav>
       <div class="noscript-section">
         <h3 class="h3" style="margin-top:10px">Project Links</h3>
@@ -947,6 +957,10 @@
             <button class="navbar-link" data-nav-link aria-label="Navigate to Projects section">Projects</button>
           </li>
 
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link aria-label="Navigate to Gear section">Gear</button>
+          </li>
+
         </ul>
 
       </nav>
@@ -1088,7 +1102,7 @@
                   </li>
 
                   <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
-                    data-images='[]' data-webp-images='[]' data-organizer="Apple Swift Student Challenge"
+                    data-images='["/images/honors/2026/apple/apple-swift-challenge.png"]' data-webp-images='[]' data-organizer="Apple Swift Student Challenge"
                     data-date="March 28, 2026" data-location="Online"
 
               data-description="Participation: Submitted to the Apple Swift Student Challenge.&#10;Scope: Applied Swift-based product thinking, interaction design, and app prototyping.&#10;Contribution: Used the challenge as a focused exercise in building polished, learner-centered software.">
@@ -1951,6 +1965,23 @@
                 <h3 class="project-title">Kita-Kita (Agentic)</h3>
               </a>
             </li>
+            <li class="project-item active" data-featured="true" data-filter-item data-category="Mobile App"
+              data-images='[]'
+              data-webp-images='[]'
+              data-video="/images/projects/genesync/GeneSyncDemo.mp4"
+              data-description="Purpose: Optimize global pairwise biological sequence alignment using the Needleman-Wunsch dynamic programming algorithm.&#10;Team: Group 5 presentation project.&#10;Build: Validates DNA, RNA, and protein sequences, cleans FASTA-style input, fills the scoring matrix, performs traceback, calculates percentage identity, evaluates significance through sequence shuffling, maps gap or mismatch hotspots, and packages the result for playback and reporting.&#10;Outcome: Demonstrates why Needleman-Wunsch guarantees an optimal global alignment while turning matrix filling, traceback, and biological similarity analysis into an observable learning workflow."
+              data-technologies="Swift • SwiftUI • Needleman-Wunsch • Bioinformatics • FASTA • Dynamic Programming • Monte Carlo Testing • iOS 17"
+              data-github="https://github.com/adr1el-m/genesync"
+              data-live="https://www.youtube.com/watch?v=tuJthrRh8Ik">
+              <a href="#">
+                <figure class="project-img">
+                  <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
+                  <video class="project-card-video" data-src="/images/projects/genesync/GeneSyncDemo.mp4" muted
+                    playsinline preload="none" width="400" height="300"></video>
+                </figure>
+                <h3 class="project-title">GeneSync</h3>
+              </a>
+            </li>
             <li class="project-item active" data-featured="true" data-filter-item data-category="Web Application"
               data-images='["/images/projects/worksight/1.jpg", "/images/projects/worksight/2.jpg", "/images/projects/worksight/3.jpg"]'
               data-webp-images='["/images/projects/worksight/1-1200.avif", "/images/projects/worksight/2-1200.avif", "/images/projects/worksight/3-1200.avif"]'
@@ -2104,28 +2135,133 @@
 
       </article>
 
-      <!-- Add this section for FAQ -->
-      <article id="faq" class="faq" data-page="faq">
+      <article id="gear" class="gear" data-page="gear">
+
         <header>
-          <h2 class="h2 article-title">Frequently Asked Questions</h2>
+          <h2 class="h2 article-title">Gear</h2>
         </header>
 
-        <section class="faq-section">
-          <div class="faq-item">
-            <h3 class="faq-question">What is your background?</h3>
-            <p class="faq-answer">I am a Computer Science student with a passion for technology and programming.</p>
+        <section class="gear-page" aria-labelledby="gear-title">
+          <div class="gear-intro">
+            <p class="gear-kicker" id="gear-title">Desk setup and everyday carry</p>
+            <p class="gear-lead">
+              The hardware I use for development, school work, content, and daily productivity.
+            </p>
           </div>
-          <div class="faq-item">
-            <h3 class="faq-question">What services do you offer?</h3>
-            <p class="faq-answer">I offer web development, database administration, graphic design, and UI/UX design
-              services.</p>
-          </div>
-          <!-- Add more FAQ items as needed -->
-        </section>
-      </article>
 
-      <article id="achievements" class="achievements" data-page="achievements">
-        <!-- All achievements content removed -->
+          <div class="gear-section">
+            <h3 class="gear-section-title">Desk Setup</h3>
+
+            <ul class="gear-grid">
+              <li>
+                <a class="gear-card" href="https://www.apple.com/ph/shop/buy-mac/mac-mini" target="_blank"
+                  rel="noopener noreferrer" aria-label="View Mac Mini M4 16GB 512GB product page">
+                  <span class="gear-card-media" aria-hidden="true">
+                    <span class="gear-visual gear-visual-mac-mini"></span>
+                  </span>
+                  <span class="gear-card-body">
+                    <span class="gear-card-title">Mac Mini M4</span>
+                    <span class="gear-card-spec">16GB unified memory - 512GB SSD.</span>
+                    <span class="gear-card-arrow"><ion-icon name="arrow-up-outline"></ion-icon></span>
+                  </span>
+                </a>
+              </li>
+
+              <li>
+                <a class="gear-card" href="https://www.mi.com/global/product/xiaomi-2k-gaming-monitor-g27qi/"
+                  target="_blank" rel="noopener noreferrer"
+                  aria-label="View Xiaomi 2K Gaming Monitor G27Qi 2026 27 inch product page">
+                  <span class="gear-card-media" aria-hidden="true">
+                    <span class="gear-visual gear-visual-monitor"></span>
+                  </span>
+                  <span class="gear-card-body">
+                    <span class="gear-card-title">Xiaomi 2K Gaming Monitor G27Qi</span>
+                    <span class="gear-card-spec">2026 model - 27-inch 2K gaming display.</span>
+                    <span class="gear-card-arrow"><ion-icon name="arrow-up-outline"></ion-icon></span>
+                  </span>
+                </a>
+              </li>
+
+              <li>
+                <a class="gear-card" href="https://www.hp.com/ph-en/shop/laptops-tablets.html" target="_blank"
+                  rel="noopener noreferrer" aria-label="View HP 14s laptop product page">
+                  <span class="gear-card-media" aria-hidden="true">
+                    <span class="gear-visual gear-visual-laptop"></span>
+                  </span>
+                  <span class="gear-card-body">
+                    <span class="gear-card-title">HP 14s Laptop</span>
+                    <span class="gear-card-spec">Portable daily laptop for school and backup work.</span>
+                    <span class="gear-card-arrow"><ion-icon name="arrow-up-outline"></ion-icon></span>
+                  </span>
+                </a>
+              </li>
+
+              <li>
+                <a class="gear-card" href="https://www.mi.com/global/product/mi-computer-monitor-light-bar/"
+                  target="_blank" rel="noopener noreferrer" aria-label="View Xiaomi Monitor Light Bar product page">
+                  <span class="gear-card-media" aria-hidden="true">
+                    <span class="gear-visual gear-visual-lightbar"></span>
+                  </span>
+                  <span class="gear-card-body">
+                    <span class="gear-card-title">Xiaomi Monitor Light Bar</span>
+                    <span class="gear-card-spec">Desk lighting without screen glare.</span>
+                    <span class="gear-card-arrow"><ion-icon name="arrow-up-outline"></ion-icon></span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="gear-section">
+            <h3 class="gear-section-title">Everyday Carry</h3>
+
+            <ul class="gear-grid">
+              <li>
+                <a class="gear-card" href="https://www.apple.com/ph/shop/buy-iphone/iphone-15" target="_blank"
+                  rel="noopener noreferrer" aria-label="View iPhone 15 256GB product page">
+                  <span class="gear-card-media" aria-hidden="true">
+                    <span class="gear-visual gear-visual-phone"></span>
+                  </span>
+                  <span class="gear-card-body">
+                    <span class="gear-card-title">iPhone 15</span>
+                    <span class="gear-card-spec">256GB storage - daily phone and camera.</span>
+                    <span class="gear-card-arrow"><ion-icon name="arrow-up-outline"></ion-icon></span>
+                  </span>
+                </a>
+              </li>
+
+              <li>
+                <a class="gear-card" href="https://www.apple.com/ph/shop/buy-ipad/ipad" target="_blank"
+                  rel="noopener noreferrer" aria-label="View iPad A16 128GB product page">
+                  <span class="gear-card-media" aria-hidden="true">
+                    <span class="gear-visual gear-visual-ipad"></span>
+                  </span>
+                  <span class="gear-card-body">
+                    <span class="gear-card-title">iPad A16</span>
+                    <span class="gear-card-spec">128GB storage - notes, reading, and second-screen work.</span>
+                    <span class="gear-card-arrow"><ion-icon name="arrow-up-outline"></ion-icon></span>
+                  </span>
+                </a>
+              </li>
+
+              <li>
+                <a class="gear-card" href="https://www.apple.com/ph/shop/buy-watch/apple-watch" target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="View Apple Watch Series 11 46mm Jet Black GPS product page">
+                  <span class="gear-card-media" aria-hidden="true">
+                    <span class="gear-visual gear-visual-watch"></span>
+                  </span>
+                  <span class="gear-card-body">
+                    <span class="gear-card-title">Apple Watch Series 11</span>
+                    <span class="gear-card-spec">46mm Jet Black aluminum - GPS.</span>
+                    <span class="gear-card-arrow"><ion-icon name="arrow-up-outline"></ion-icon></span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </section>
+
       </article>
 
     </div>
@@ -2192,7 +2328,7 @@
             <picture class="project-modal-picture">
               <source class="project-image-webp" type="image/webp" />
               <source class="project-image-jpeg" type="image/jpeg" />
-              <img src="" alt="" class="project-gallery-image" id="project-modal-image">
+              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="" class="project-gallery-image" id="project-modal-image">
             </picture>
             <video id="project-modal-video" class="project-gallery-video" controls playsinline preload="metadata"
               style="display: none;"></video>
@@ -2219,11 +2355,24 @@
           </a>
           <a href="#" class="project-link project-live" target="_blank" rel="noopener noreferrer"
             aria-label="View live demo (opens in new tab)" style="display: none;">
-            <span class="link-icon">🚀</span> Live Demo
+            <svg class="link-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true">
+              <path d="M15 3h6v6"></path>
+              <path d="M10 14 21 3"></path>
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            </svg> Live Demo
           </a>
           <a href="#" class="project-link project-docs" target="_blank" rel="noopener noreferrer"
             aria-label="View documentation (opens in new tab)" style="display: none;">
-            <span class="link-icon">📖</span> Documentation
+            <svg class="link-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true">
+              <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
+              <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+              <path d="M8 13h8"></path>
+              <path d="M8 17h5"></path>
+            </svg> Documentation
           </a>
         </div>
       </div>
@@ -2244,7 +2393,7 @@
             <picture class="achievement-slide-picture">
               <source class="achievement-image-webp" type="image/webp" />
               <source class="achievement-image-jpeg" type="image/jpeg" />
-              <img class="achievement-slide-image" src="" alt="" loading="lazy" id="achievement-slide-image">
+              <img class="achievement-slide-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="" loading="lazy" id="achievement-slide-image">
             </picture>
           </div>
           <div class="achievement-slider-controls" role="group" aria-label="Achievement image navigation">

@@ -173,6 +173,9 @@ class PortfolioApp {
       securityManager.ensureSafeExternalLinks();
       // Apply text placeholders early to avoid image errors
       new TextPlaceholders().init();
+      import('./modules/structured-data').then(({ StructuredData }) => {
+        new StructuredData();
+      });
       const imageOptimizer = new ImageOptimizer();
       const loadingManager = new LoadingManager();
       const modalManager = new ModalManager();
@@ -181,6 +184,24 @@ class PortfolioApp {
       new ScrollProgress();
       // Initialize client-side search (activates when URL has ?q=)
       const search = new Search();
+
+      window.Portfolio = {
+        core: {
+          version: '2.0.0',
+          initialized: true,
+          auditMode,
+          prefersReducedMotion,
+        },
+        modules: {
+          SecurityManager: securityManager,
+          LoadingManager: loadingManager,
+          ImageOptimizer: imageOptimizer,
+          ModalManager: modalManager,
+          NavigationManager: navigationManager,
+          Search: search,
+        },
+        lazy: window.Portfolio?.lazy || {},
+      };
 
       // Helper to defer non-critical work to after first paint
       const defer = (cb: () => void, delay = 0) => {
@@ -205,6 +226,9 @@ class PortfolioApp {
         import('./modules/honors-gallery').then(({ HonorsGallery }) => {
           new HonorsGallery();
         });
+        import('./modules/honor-routes').then(({ HonorRoutes }) => {
+          new HonorRoutes();
+        });
       }, 50);
 
       defer(() => {
@@ -218,7 +242,28 @@ class PortfolioApp {
         import('./modules/tech-stack').then(({ TechStack }) => {
           new TechStack();
         });
+        import('./modules/timeline-filters').then(({ TimelineFilters }) => {
+          new TimelineFilters();
+        });
       }, 150);
+
+      defer(() => {
+        import('./modules/project-previews').then(({ ProjectPreviews }) => {
+          new ProjectPreviews();
+        });
+        import('./modules/honor-project-links').then(({ HonorProjectLinks }) => {
+          new HonorProjectLinks();
+        });
+      }, 175);
+
+      defer(() => {
+        import('./modules/public-analytics').then(({ PublicAnalytics }) => {
+          new PublicAnalytics();
+        });
+        import('./modules/command-palette').then(({ CommandPalette }) => {
+          new CommandPalette();
+        });
+      }, 225);
 
       // Initialize AI summaries for project hover tooltips
       defer(() => {
@@ -259,6 +304,7 @@ class PortfolioApp {
 
       // Initialize Skeleton Loader (runs first for loading states)
       const skeletonLoader = new SkeletonLoader();
+      window.Portfolio.modules.SkeletonLoader = skeletonLoader;
 
       // Initialize Sidebar Animations (after skeleton loader)
       new SidebarAnimations();
@@ -335,26 +381,6 @@ class PortfolioApp {
           });
         }
       }, 3500);
-
-      // Initialize core components
-      window.Portfolio = {
-        core: {
-          version: '2.0.0',
-          initialized: true,
-          auditMode,
-          prefersReducedMotion,
-        },
-        modules: {
-          SecurityManager: securityManager,
-          LoadingManager: loadingManager,
-          ImageOptimizer: imageOptimizer,
-          ModalManager: modalManager,
-          NavigationManager: navigationManager,
-          Search: search,
-          SkeletonLoader: skeletonLoader,
-        },
-        lazy: {},
-      };
 
       defer(() => {
         import('./modules/analytics-dashboard').then(({ AnalyticsDashboard }) => {

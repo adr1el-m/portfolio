@@ -87,7 +87,7 @@ export class HonorsGallery {
       images,
       projectTitle,
       isWin: /\b(won|winner|champion|placed|place|runner|top\s*5|awardee|2nd|3rd)\b/.test(hay),
-      isHackathon: /\bhackathon|challenge|start-a-ton|technovation|datawave|hack-it|hackercup\b/.test(hay),
+      isHackathon: /\bhackathon|start-a-ton|technovation|datawave|hack-it|hackercup\b/.test(hay),
       isAI: /\b(ai|data|agentic|gemini|llama|machine learning|analytics|voice)\b/.test(hay),
     };
   }
@@ -147,7 +147,6 @@ export class HonorsGallery {
         ['all', 'All'],
         ['wins', 'Recognitions'],
         ['hackathons', 'Hackathons'],
-        ['ai', 'AI/Data'],
         ['media', 'With Media'],
       ].map(([value, label]) => `
           <button type="button" class="honors-filter${value === 'all' ? ' active' : ''}" data-honor-filter="${value}" aria-pressed="${value === 'all' ? 'true' : 'false'}">${label}</button>
@@ -172,8 +171,6 @@ export class HonorsGallery {
         return honor.isWin;
       case 'hackathons':
         return honor.isHackathon;
-      case 'ai':
-        return honor.isAI;
       case 'media':
         return honor.images.length > 0;
       default:

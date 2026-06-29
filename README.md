@@ -157,25 +157,8 @@ npm run build          # Build optimized production bundle
 npm run preview        # Preview production build locally
 ```
 
-### Gradual Next.js Migration (Parallel App)
-This repo now includes a parallel Next.js app under [next](next) for gradual migration.
-
-Use these commands from the repository root:
-
-```bash
-npm run next:dev       # Run Next.js app at http://localhost:3000
-npm run next:build     # Build Next.js migration app
-npm run next:start     # Start Next.js production server
-```
-
-Current migrated slice:
-- 2026 Honors page at [next/app/honors/2026/page.tsx](next/app/honors/2026/page.tsx)
-
-Migration strategy:
-1. Move one section at a time (data + UI) into Next.js routes/components.
-2. Validate parity with the existing Vite page.
-3. Switch navigation to the Next.js route only after verification.
-4. Repeat until the legacy static page can be retired.
+### Archived Next.js Prototype
+The active portfolio is the root Vite app. The previous Next.js honors prototype now lives under [archive/next-honors-prototype](archive/next-honors-prototype) as reference material only.
 
 ---
 
@@ -210,8 +193,13 @@ portfolio/
 │       └── badges.yml              # Badge generation
 │
 ├── api/                     # Serverless API routes
+│   ├── analytics.js                # Optional persistent visitor analytics
+│   ├── contact.js                  # Contact form endpoint
 │   ├── csp-report.js              # CSP violation reporting
 │   └── gemini.js                  # AI chatbot endpoint
+│
+├── archive/                 # Non-active prototypes/reference work
+│   └── next-honors-prototype/      # Archived Next honors experiment
 │
 ├── config/                  # Configuration files
 │   ├── lighthouserc.json          # Lighthouse CI config
@@ -220,6 +208,7 @@ portfolio/
 │
 ├── public/                  # Static assets
 │   ├── style.css                  # Authoritative site stylesheet
+│   ├── styles/                    # Enhancement CSS split from legacy styles
 │   ├── manifest.json              # PWA manifest
 │   ├── sw.js                      # Service worker
 │   ├── offline.html               # Offline fallback page
@@ -385,6 +374,13 @@ Optimized deployment with custom headers and rewrites:
 - `VERCEL_TOKEN` - Vercel deployment token
 - `VERCEL_ORG_ID` - Vercel organization ID
 - `VERCEL_PROJECT_ID` - Vercel project ID
+
+### Optional Backend Enhancements
+- `PORTFOLIO_ALLOWED_ORIGINS` - CORS allowlist for portfolio API endpoints
+- `PORTFOLIO_ADMIN_KEY` - Optional key for reading server analytics
+- `FIREBASE_DATABASE_URL` - Optional persistent store for analytics/contact submissions
+- `RESEND_API_KEY` - Optional email provider for `/api/contact`
+- `PORTFOLIO_CONTACT_TO` - Contact recipient email
 
 ### Cache Strategy
 - **Images**: `max-age=31536000, immutable`

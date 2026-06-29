@@ -3,7 +3,8 @@ type AnalyticsEventType =
   | 'project-open'
   | 'honor-open'
   | 'contact-action'
-  | 'chatbot-question';
+  | 'chatbot-question'
+  | 'contact-submit';
 
 type AnalyticsEvent = {
   type: AnalyticsEventType;
@@ -20,6 +21,17 @@ type AnalyticsState = {
   honorOpens: Record<string, number>;
   contactActions: Record<string, number>;
   chatbotQuestions: AnalyticsEvent[];
+};
+
+type RemoteSummary = {
+  totalEvents: number;
+  lastSeen: string | null;
+  pageViews: Array<{ label: string; count: number }>;
+  projectOpens: Array<{ label: string; count: number }>;
+  honorOpens: Array<{ label: string; count: number }>;
+  contactActions: Array<{ label: string; count: number }>;
+  contactSubmissions?: Array<{ label: string; count: number }>;
+  recentQuestions: Array<{ label: string; at: string }>;
 };
 
 const STORAGE_KEY = 'portfolio:analytics:v1';
@@ -68,6 +80,7 @@ export class AnalyticsDashboard {
   private toggleButton: HTMLButtonElement | null = null;
   private isAdmin = false;
   private refreshTimer: number | null = null;
+  private remoteSummary: RemoteSummary | null = null;
 
   constructor() {
     this.state = this.loadState();
@@ -78,6 +91,7 @@ export class AnalyticsDashboard {
 
     if (this.isAdmin) {
       this.createDashboard();
+      void this.loadRemoteSummary();
       this.refresh();
       this.refreshTimer = window.setInterval(() => this.refresh(), 3500);
     }
@@ -193,6 +207,9 @@ export class AnalyticsDashboard {
       case 'contact-action':
         increment(this.state.contactActions, safeLabel);
         break;
+      case 'contact-submit':
+        increment(this.state.contactActions, `Submit: ${safeLabel}`);
+        break;
       case 'chatbot-question':
         this.state.chatbotQuestions.push({ type, label: safeLabel, at: nowIso() });
         this.state.chatbotQuestions = this.state.chatbotQuestions.slice(-20);
@@ -200,7 +217,37 @@ export class AnalyticsDashboard {
     }
 
     this.saveState();
+    void this.sendRemote(type, safeLabel);
     this.refresh();
+  }
+
+  private async sendRemote(type: AnalyticsEventType, label: string): Promise<void> {
+    if (window.location.protocol === 'file:') return;
+    try {
+      await fetch('/api/analytics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, label, path: window.location.pathname }),
+        keepalive: true,
+      });
+    } catch {
+      // Remote analytics is optional; local dashboard remains useful.
+    }
+  }
+
+  private async loadRemoteSummary(): Promise<void> {
+    if (window.location.protocol === 'file:') return;
+    try {
+      const adminKey = localStorage.getItem('portfolio-admin-key') || '';
+      const response = await fetch('/api/analytics', {
+        headers: adminKey ? { 'X-Portfolio-Admin-Key': adminKey } : {},
+      });
+      if (!response.ok) return;
+      this.remoteSummary = await response.json() as RemoteSummary;
+      this.refresh();
+    } catch {
+      this.remoteSummary = null;
+    }
   }
 
   private createDashboard(): void {
@@ -247,11 +294,13 @@ export class AnalyticsDashboard {
   private refresh(): void {
     if (!this.dashboard) return;
     const recentQuestions = this.state.chatbotQuestions.slice(-5).reverse();
+    const remote = this.remoteSummary;
     this.dashboard.innerHTML = `
       <div class="analytics-dashboard-header">
         <div>
           <span class="analytics-eyebrow">Private</span>
           <h2>Visitor Analytics</h2>
+          <span class="analytics-remote-badge">${remote ? `Server ${remote.totalEvents} events` : 'Local + server-ready'}</span>
         </div>
         <button type="button" class="analytics-close" aria-label="Close analytics dashboard">Close</button>
       </div>
@@ -282,13 +331,25 @@ export class AnalyticsDashboard {
         ? recentQuestions.map((event) => `<li><span>${escapeHtml(event.label)}</span></li>`).join('')
         : '<li class="analytics-empty">No chatbot questions yet</li>'}</ul>
       </section>
+      ${remote ? `
+      <section>
+        <h3>Server Snapshot</h3>
+        <ul>
+          <li><span>Total server events</span><strong>${remote.totalEvents}</strong></li>
+          <li><span>Last event</span><strong>${remote.lastSeen ? new Date(remote.lastSeen).toLocaleString() : 'None'}</strong></li>
+        </ul>
+      </section>` : ''}
       <div class="analytics-dashboard-actions">
+        <button type="button" data-analytics-refresh>Refresh Server</button>
         <button type="button" data-analytics-export>Copy JSON</button>
         <button type="button" data-analytics-reset>Reset Local</button>
       </div>
     `;
 
     this.dashboard.querySelector('.analytics-close')?.addEventListener('click', () => this.toggleDashboard(false));
+    this.dashboard.querySelector('[data-analytics-refresh]')?.addEventListener('click', () => {
+      void this.loadRemoteSummary();
+    });
     this.dashboard.querySelector('[data-analytics-export]')?.addEventListener('click', () => {
       void navigator.clipboard?.writeText(JSON.stringify(this.state, null, 2));
     });

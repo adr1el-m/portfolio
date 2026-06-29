@@ -3,6 +3,7 @@ import { logger } from '@/config';
 import { KB } from '@/data/knowledge-base';
 import { Search } from '@/modules/search';
 import { AIService } from './ai-service';
+import { findHonorRecord, findProjectRecord } from './portfolio-data';
 
 // Use explicit data interfaces to avoid accidental 'never' inference
 type ProjectItem = ProjectData;
@@ -1325,7 +1326,7 @@ export class ChatbotManager {
 
   private displayWelcomeMessage(): void {
     const welcomeMessage = "Hi, I'm AdrAI, Adriel's portfolio agent. I can explain why Adriel is hireable, compare projects, surface proof of AI skill, summarize awards, or open resume/contact links. Try: \"Why hire Adriel?\" or \"Show proof of AI skill.\"";
-    this.addMessage(welcomeMessage, 'bot', ['Why hire Adriel?', 'Show proof of AI skill', 'Best AI project', 'Share contact info']);
+    this.addMessage(welcomeMessage, 'bot', ['Why hire Adriel?', 'Open LingapLink', 'Filter scholarships', 'Open contact']);
   }
 
   private sendMessage(): void {
@@ -1416,6 +1417,7 @@ export class ChatbotManager {
       actionsToShow.slice(0, 4).forEach((sugg) => {
         const btn = document.createElement('button');
         btn.type = 'button';
+        if (this.isToolSuggestion(sugg)) btn.className = 'bot-action-tool';
         btn.textContent = sugg;
         btn.setAttribute('aria-label', `Suggestion: ${sugg}`);
         btn.addEventListener('click', () => this.handleSuggestionClick(sugg));
@@ -1428,10 +1430,78 @@ export class ChatbotManager {
     this.scrollToBottom();
   }
 
+  private isToolSuggestion(text: string): boolean {
+    const normalized = this.normalize(text);
+    return /\b(open|view|filter|github|demo|site|resume|contact|related project|projects section|honors section|awards timeline)\b/.test(normalized);
+  }
+
+  private resolveToolProject(text = ''): ProjectItem | null {
+    return findProjectRecord(text)
+      || findProjectRecord(this.conversationContext.lastProjectTitle)
+      || this.findProject(text || this.lastUserMessage || '')
+      || this.findProjectByTitle(this.conversationContext.lastProjectTitle);
+  }
+
+  private resolveToolAchievement(text = ''): AchievementItem | null {
+    return findHonorRecord(text)
+      || findHonorRecord(this.conversationContext.lastAchievementTitle)
+      || this.findAchievement(text || this.lastUserMessage || '')
+      || this.findAchievementByTitle(this.conversationContext.lastAchievementTitle);
+  }
+
   private handleSuggestionClick(text: string): void {
     if (!text) return;
     // Actionable suggestions
     const t = text.toLowerCase();
+    const normalizedSuggestion = this.normalize(text);
+
+    if (t.includes('open linked project') || t.includes('any related project')) {
+      const explicitProject = text.includes(':') ? text.split(':').pop()?.trim() : '';
+      const achievement = this.resolveToolAchievement(text);
+      const title = explicitProject || achievement?.projectTitle || null;
+      const project = this.resolveToolProject(title || '');
+      if (project) {
+        this.openProjectAction(project.title);
+        return;
+      }
+      this.addMessage('I could not find a linked project for this honor yet.', 'bot');
+      return;
+    }
+
+    if ((t.includes('open github') || (t.startsWith('open') && t.includes('github'))) && !t.includes('list')) {
+      const project = this.resolveToolProject(text);
+      if (project?.githubUrl) {
+        try { window.open(project.githubUrl, '_blank', 'noopener,noreferrer'); } catch { /* ignore */ }
+        this.addMessage(`Opening GitHub repo for ${this.escapeHtml(project.title)}...`, 'bot');
+        return;
+      }
+      this.addMessage('I couldn’t find a matching project with a GitHub link.', 'bot');
+      return;
+    }
+
+    if (t.includes('open live site') || (t.startsWith('open') && t.includes('site'))) {
+      const project = this.resolveToolProject(text);
+      if (project?.liveUrl) {
+        try { window.open(project.liveUrl, '_blank', 'noopener,noreferrer'); } catch { /* ignore */ }
+        this.addMessage(`Opening live site for ${this.escapeHtml(project.title)}...`, 'bot');
+        return;
+      }
+      this.addMessage('I couldn’t find a matching project with a live site.', 'bot');
+      return;
+    }
+
+    if (t.includes('any live demo') || t.includes('open demo') || (t.startsWith('open') && t.includes('demo'))) {
+      const project = this.resolveToolProject(text);
+      const url = project ? (project.videoUrl || project.liveUrl) : undefined;
+      if (project && url) {
+        try { window.open(url, '_blank', 'noopener,noreferrer'); } catch { void 0; }
+        this.addMessage(`Opening demo for ${this.escapeHtml(project.title)}...`, 'bot');
+        return;
+      }
+      this.addMessage('No demo or live link matched your request.', 'bot');
+      return;
+    }
+
     if (t.includes('open projects')) {
       this.addMessage('Navigating to Projects…', 'bot');
       this.navigateToSection('projects');
@@ -1455,39 +1525,42 @@ export class ChatbotManager {
         return;
       }
     }
-    if ((t.includes('open github repo') || (t.startsWith('open') && t.includes('github'))) && !t.includes('list')) {
-      const p = this.findProject(this.lastUserMessage || '');
-      if (p && p.githubUrl) {
-        try { window.open(p.githubUrl, '_blank', 'noopener,noreferrer'); } catch { /* ignore */ }
-        this.addMessage(`Opening GitHub repo for ${this.escapeHtml(p.title)}...`, 'bot');
-        return;
-      } else {
-        this.addMessage('I couldn’t find a matching project with a GitHub link.', 'bot');
-        return;
-      }
+    if (t.includes('open contact') || t.includes('share contact info')) {
+      this.addMessage('Opening contact options…', 'bot');
+      this.navigateToSection('contact');
+      return;
     }
-    if (t.includes('open live site') || (t.startsWith('open') && t.includes('site'))) {
-      const p = this.findProject(this.lastUserMessage || '');
-      if (p && p.liveUrl) {
-        try { window.open(p.liveUrl, '_blank', 'noopener,noreferrer'); } catch { /* ignore */ }
-        this.addMessage(`Opening live site for ${this.escapeHtml(p.title)}...`, 'bot');
-        return;
-      } else {
-        this.addMessage('I couldn’t find a matching project with a live site.', 'bot');
-        return;
-      }
+    if (t.includes('filter scholarships')) {
+      this.addMessage('Filtering the background timeline to scholarships…', 'bot');
+      this.navigateToSection('background');
+      setTimeout(() => window.dispatchEvent(new CustomEvent('portfolio:timeline-filter', { detail: { filter: 'scholarship' } })), 120);
+      return;
     }
-    if (t.includes('any live demo')) {
-      const p = this.findProject(this.lastUserMessage || '');
-      const url = p ? (p.videoUrl || p.liveUrl) : undefined;
-      if (url) {
-        try { window.open(url, '_blank', 'noopener,noreferrer'); } catch { void 0; }
-        this.addMessage(`Opening demo for ${p ? this.escapeHtml(p.title) : 'project'}...`, 'bot');
-        return;
-      } else {
-        this.addMessage('No demo or live link matched your request.', 'bot');
-        return;
-      }
+    if (t.includes('filter education')) {
+      this.addMessage('Filtering the background timeline to education…', 'bot');
+      this.navigateToSection('background');
+      setTimeout(() => window.dispatchEvent(new CustomEvent('portfolio:timeline-filter', { detail: { filter: 'education' } })), 120);
+      return;
+    }
+    if (t.includes('filter experience')) {
+      this.addMessage('Filtering the background timeline to experience…', 'bot');
+      this.navigateToSection('background');
+      setTimeout(() => window.dispatchEvent(new CustomEvent('portfolio:timeline-filter', { detail: { filter: 'experience' } })), 120);
+      return;
+    }
+
+    const projectBySuggestion = findProjectRecord(text)
+      || KB.projects.find((project) => normalizedSuggestion.includes(this.normalize(project.title)));
+    if (projectBySuggestion && (t.includes('open') || t.includes('view'))) {
+      this.openProjectAction(projectBySuggestion.title);
+      return;
+    }
+
+    const achievementBySuggestion = findHonorRecord(text)
+      || KB.achievements.find((achievement) => normalizedSuggestion.includes(this.normalize(achievement.title)));
+    if (achievementBySuggestion && (t.includes('open') || t.includes('view'))) {
+      this.openHonorAction(achievementBySuggestion.title);
+      return;
     }
     if (t.includes('list github repos')) {
       const repos = KB.projects
@@ -1529,6 +1602,107 @@ export class ChatbotManager {
     if (section === 'contact') {
       setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
     }
+  }
+
+  private openProjectAction(title: string): void {
+    this.navigateToSection('projects');
+    window.setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('portfolio:open-project', { detail: { title } }));
+    }, 160);
+    this.addMessage(`Opening project details for <strong>${this.escapeHtml(title)}</strong>...`, 'bot');
+  }
+
+  private openHonorAction(title: string): void {
+    this.navigateToSection('about');
+    window.setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('portfolio:open-honor', { detail: { title } }));
+    }, 160);
+    this.addMessage(`Opening honor details for <strong>${this.escapeHtml(title)}</strong>...`, 'bot');
+  }
+
+  private tryHandleDirectAction(userMessage: string): boolean {
+    const normalized = this.normalize(userMessage);
+    if (!/\b(open|show|view|go to|filter)\b/.test(normalized)) return false;
+
+    if (/\b(open|show|view)\b.*\b(contact|email)\b/.test(normalized)) {
+      this.navigateToSection('contact');
+      this.addMessage('Opening contact options...', 'bot');
+      return true;
+    }
+
+    if (/\b(open|show|view)\b.*\b(resume|cv)\b/.test(normalized)) {
+      try { window.open(KB.contact.resumeUrl, '_blank', 'noopener,noreferrer'); } catch { void 0; }
+      this.addMessage('Opening resume...', 'bot');
+      return true;
+    }
+
+    const timelineMatch = normalized.match(/\b(filter|show|view)\b.*\b(education|experience|scholarships?|background)\b/);
+    if (timelineMatch) {
+      const rawFilter = timelineMatch[2] || 'all';
+      const filter = rawFilter.startsWith('scholarship') ? 'scholarship'
+        : rawFilter === 'education' ? 'education'
+          : rawFilter === 'experience' ? 'experience'
+            : 'all';
+      this.navigateToSection('background');
+      window.setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('portfolio:timeline-filter', { detail: { filter } }));
+      }, 120);
+      this.addMessage(`Filtering background to <strong>${this.escapeHtml(filter === 'all' ? 'all timeline items' : filter)}</strong>...`, 'bot');
+      return true;
+    }
+
+    const projectTitle = this.findActionProjectTitle(userMessage);
+    if (projectTitle && /\b(project|demo|site|modal|details)\b/.test(normalized)) {
+      this.openProjectAction(projectTitle);
+      return true;
+    }
+
+    const achievementTitle = this.findActionAchievementTitle(userMessage);
+    if (achievementTitle && /\b(honor|award|achievement|hackathon|quiz|competition|details|modal)\b/.test(normalized)) {
+      this.openHonorAction(achievementTitle);
+      return true;
+    }
+
+    return false;
+  }
+
+  private findActionProjectTitle(userMessage: string): string | null {
+    const normalized = this.normalize(userMessage);
+    const command = normalized.replace(/\b(open|show|view|project|details|modal|site|demo)\b/g, '').trim();
+    const candidates = this.getAllProjectSummaries();
+    const scored = candidates
+      .map((project) => {
+        const title = this.normalize(project.title);
+        let score = 0;
+        if (normalized.includes(title)) score += 5;
+        if (command.length > 2 && title.includes(command)) score += 4;
+        score += this.fuzzyScore(project.title, userMessage);
+        return { title: project.title, score };
+      })
+      .filter((item) => item.score >= 2.2)
+      .sort((a, b) => b.score - a.score);
+    return scored[0]?.title || this.findProject(userMessage)?.title || null;
+  }
+
+  private findActionAchievementTitle(userMessage: string): string | null {
+    const normalized = this.normalize(userMessage);
+    const command = normalized.replace(/\b(open|show|view|honor|award|achievement|details|modal)\b/g, '').trim();
+    const candidates = [
+      ...KB.achievements.map((item) => ({ title: item.title })),
+      ...this.getAchievementsFromDOM().map((item) => ({ title: item.title })),
+    ];
+    const scored = candidates
+      .map((achievement) => {
+        const title = this.normalize(achievement.title);
+        let score = 0;
+        if (normalized.includes(title)) score += 5;
+        if (command.length > 2 && title.includes(command)) score += 4;
+        score += this.fuzzyScore(achievement.title, userMessage);
+        return { title: achievement.title, score };
+      })
+      .filter((item) => item.score >= 2.2)
+      .sort((a, b) => b.score - a.score);
+    return scored[0]?.title || this.findAchievement(userMessage)?.title || null;
   }
 
   private openSearchOverlay(query: string): void {
@@ -2004,8 +2178,10 @@ export class ChatbotManager {
   private buildTurnSuggestions(userMessage: string, intent: IntentType, responseText = ''): string[] {
     const normalizedResponse = this.normalize(responseText);
     const project = this.findProject(userMessage)
+      || findProjectRecord(responseText)
       || this.findProjectByTitle(this.conversationContext.lastProjectTitle);
     const achievement = this.findAchievement(userMessage)
+      || findHonorRecord(responseText)
       || this.findAchievementByTitle(this.conversationContext.lastAchievementTitle);
 
     if (this.isScholarshipQuery(userMessage)) {
@@ -2021,14 +2197,16 @@ export class ChatbotManager {
     }
 
     if (project) {
-      const suggestions = ['Show highlights', 'Show tech stack', 'Open Projects section'];
-      if (project.githubUrl) suggestions.unshift('Open GitHub repo');
-      if (project.liveUrl || project.videoUrl) suggestions.unshift('Any live demo?');
+      const suggestions = [`Open ${project.title} project`, 'Show tech stack', 'Open Projects section'];
+      if (project.githubUrl) suggestions.unshift(`Open ${project.title} GitHub`);
+      if (project.liveUrl || project.videoUrl) suggestions.unshift(`Open ${project.title} demo`);
       return suggestions.slice(0, 4);
     }
 
     if (achievement) {
-      return ['Any related project?', 'Show awards timeline', 'Why is this impressive?', 'Open honors section'];
+      const suggestions = [`Open ${achievement.title} honor`, 'Show awards timeline', 'Why is this impressive?', 'Open honors section'];
+      if (achievement.projectTitle) suggestions.unshift(`Open linked project: ${achievement.projectTitle}`);
+      return suggestions.slice(0, 4);
     }
 
     if (intent === 'SKILLS' || /\bskill|stack|technology|frontend|backend|database\b/.test(normalizedResponse)) {
@@ -2525,6 +2703,10 @@ Instruction: ${this.visitorProfileInstruction()}`;
     const guard = this.applyGuardrails(userMessage);
     if (guard) {
       this.addMessage(this.formatResponse(guard, 'concise'), 'bot');
+      return;
+    }
+
+    if (this.tryHandleDirectAction(userMessage)) {
       return;
     }
 

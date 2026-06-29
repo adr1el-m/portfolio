@@ -2756,7 +2756,7 @@ article.active {
   justify-content: center;
   align-items: center;
   z-index: 1001;
-  padding: 20px;
+  padding: clamp(8px, 3vw, 20px);
   overflow: hidden;
 }
 
@@ -2767,9 +2767,9 @@ article.active {
 .project-modal-wrapper {
   background: linear-gradient(180deg, #1e1e1e 0%, #1a1a1a 100%);
   border-radius: 12px;
-  max-width: 900px;
-  width: 95%;
-  max-height: 95vh;
+  max-width: min(920px, 100%);
+  width: min(95vw, 920px);
+  max-height: min(95vh, 920px);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -2870,7 +2870,7 @@ article.active {
   grid-template-rows: 1fr auto;
   align-items: center;
   justify-items: center;
-  padding: 20px 100px;
+  padding: clamp(14px, 3vw, 20px) clamp(56px, 10vw, 100px);
   /* extra horizontal space so buttons don’t overlap media */
   position: relative;
   box-sizing: border-box;
@@ -2878,7 +2878,7 @@ article.active {
 
 .project-gallery-image {
   max-width: 100%;
-  max-height: 100%;
+  max-height: min(58vh, 560px);
   width: auto;
   height: auto;
   border-radius: 8px;
@@ -2899,7 +2899,7 @@ article.active {
   max-width: 100%;
   width: 100%;
   height: auto;
-  max-height: 100%;
+  max-height: min(58vh, 560px);
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
   object-fit: contain;
@@ -3199,6 +3199,7 @@ article.active {
 
 .project-info-links {
   display: flex;
+  flex-wrap: wrap;
   gap: 15px;
   margin-top: 5px;
 }
@@ -3231,6 +3232,9 @@ article.active {
 
 .link-icon {
   font-size: 1.1rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
 }
 
 /* ============================================
@@ -3239,8 +3243,8 @@ article.active {
 
 @media (max-width: 768px) {
   .project-modal-wrapper {
-    max-height: 90vh;
-    width: 98%;
+    max-height: calc(100dvh - 18px);
+    width: 100%;
   }
 
   .project-modal-info {
@@ -3253,7 +3257,12 @@ article.active {
   }
 
   .project-gallery-image-container {
-    padding: 15px 50px;
+    padding: 14px 64px;
+  }
+
+  .project-gallery-image,
+  .project-gallery-video {
+    max-height: 42dvh;
   }
 
   .project-gallery-prev,
@@ -3284,11 +3293,13 @@ article.active {
 
 @media (max-width: 480px) {
   .project-modal {
-    padding: 10px;
+    align-items: stretch;
+    padding: 8px;
   }
 
   .project-modal-wrapper {
     border-radius: 8px;
+    max-height: calc(100dvh - 16px);
   }
 
   .project-modal-info {
@@ -3306,7 +3317,12 @@ article.active {
   }
 
   .project-gallery-image-container {
-    padding: 10px 40px;
+    padding: 96px 10px 12px;
+  }
+
+  .project-gallery-image,
+  .project-gallery-video {
+    max-height: 34dvh;
   }
 
   .project-gallery-prev,
@@ -3315,6 +3331,26 @@ article.active {
     height: 35px;
     font-size: 1.3rem;
     border-radius: 10px;
+    top: 32px;
+    transform: none;
+  }
+
+  .project-gallery-prev:hover,
+  .project-gallery-next:hover {
+    transform: scale(1.05);
+  }
+
+  .project-gallery-prev:active,
+  .project-gallery-next:active {
+    transform: scale(0.96);
+  }
+
+  .project-gallery-prev {
+    left: 12px;
+  }
+
+  .project-gallery-next {
+    right: 68px;
   }
 
   .project-modal-close {
@@ -4144,24 +4180,30 @@ article.active {
 
 /* Award Ribbon */
 .award-ribbon {
-  position: absolute;
-  top: 15px;
-  left: -10px;
-  background: linear-gradient(90deg, var(--orange-yellow-crayola), hsl(35, 100%, 68%));
-  color: var(--eerie-black-1);
-  padding: 5px 20px 5px 15px;
-  font-size: var(--fs-8);
+  position: relative;
+  top: auto;
+  left: auto;
+  align-self: flex-start;
+  width: fit-content;
+  max-width: 100%;
+  background: rgba(255, 219, 112, 0.1);
+  border: 1px solid var(--polish-border-strong, rgba(255, 219, 112, 0.28));
+  border-radius: 999px;
+  color: var(--orange-yellow-crayola);
+  padding: 6px 10px;
+  font-size: var(--type-xs);
   font-weight: var(--fw-600);
   text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  clip-path: polygon(0 0, 100% 0, 90% 50%, 100% 100%, 0 100%);
-  z-index: 1;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  box-shadow: none;
+  clip-path: none;
+  z-index: 2;
 }
 
 .achievement-card .card-content {
   transform: translateZ(20px);
-  margin-top: 20px;
+  margin-top: 12px;
 }
 
 .achievement-card .card-title {
@@ -4830,9 +4872,7 @@ picture img {
 
   .award-ribbon {
     font-size: var(--type-xs);
-    padding: 4px 10px;
-    top: 8px;
-    right: 8px;
+    padding: 5px 9px;
   }
 
   .card-content {

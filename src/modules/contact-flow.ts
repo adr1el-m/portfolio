@@ -18,6 +18,7 @@ function trackContact(label: string): void {
 export class ContactFlow {
   private selectedReason = 'Project inquiry';
   private statusTimer: number | null = null;
+  private isSending = false;
 
   constructor() {
     this.init();
@@ -46,6 +47,12 @@ export class ContactFlow {
           <button type="button" class="contact-flow-reason${index === 0 ? ' active' : ''}" data-reason="${escapeHtml(reason)}" aria-pressed="${index === 0 ? 'true' : 'false'}">${escapeHtml(reason)}</button>
         `).join('')}
       </div>
+      <div class="contact-flow-fields">
+        <label class="visually-hidden" for="contact-flow-name">Your name</label>
+        <input id="contact-flow-name" class="contact-flow-input" type="text" maxlength="120" autocomplete="name" placeholder="Your name">
+        <label class="visually-hidden" for="contact-flow-email">Your email</label>
+        <input id="contact-flow-email" class="contact-flow-input" type="email" maxlength="180" autocomplete="email" placeholder="Your email for replies">
+      </div>
       <label class="contact-flow-label" for="contact-flow-message">Message</label>
       <textarea id="contact-flow-message" class="contact-flow-message" rows="3" maxlength="420" placeholder="Optional context for the email draft"></textarea>
       <div class="contact-flow-actions">
@@ -57,6 +64,10 @@ export class ContactFlow {
           <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
           Draft Email
         </button>
+        <button type="button" class="contact-flow-action contact-flow-send" data-analytics-label="Contact flow: send message">
+          <ion-icon name="send-outline" aria-hidden="true"></ion-icon>
+          Send
+        </button>
       </div>
       <p class="contact-flow-status" role="status" aria-live="polite"></p>
     `;
@@ -67,9 +78,12 @@ export class ContactFlow {
 
   private bind(card: HTMLElement): void {
     const reasonButtons = Array.from(card.querySelectorAll<HTMLButtonElement>('.contact-flow-reason'));
+    const name = card.querySelector<HTMLInputElement>('#contact-flow-name');
+    const email = card.querySelector<HTMLInputElement>('#contact-flow-email');
     const message = card.querySelector<HTMLTextAreaElement>('.contact-flow-message');
     const copy = card.querySelector<HTMLButtonElement>('.contact-flow-copy');
     const draft = card.querySelector<HTMLButtonElement>('.contact-flow-draft');
+    const send = card.querySelector<HTMLButtonElement>('.contact-flow-send');
 
     reasonButtons.forEach((button) => {
       button.addEventListener('click', () => {
@@ -99,6 +113,61 @@ export class ContactFlow {
       this.setStatus(card, 'Opening email draft.');
       trackContact(`Contact flow: drafted ${this.selectedReason}`);
     });
+
+    send?.addEventListener('click', async () => {
+      if (this.isSending) return;
+      await this.sendContact(card, {
+        name: name?.value || '',
+        email: email?.value || '',
+        message: message?.value || '',
+      });
+    });
+  }
+
+  private async sendContact(card: HTMLElement, payload: { name: string; email: string; message: string }): Promise<void> {
+    const send = card.querySelector<HTMLButtonElement>('.contact-flow-send');
+    const message = payload.message.trim() || `I saw your portfolio and wanted to reach out about ${this.selectedReason.toLowerCase()}.`;
+    const email = payload.email.trim();
+
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      this.setStatus(card, 'Please enter a valid reply email.');
+      return;
+    }
+
+    this.isSending = true;
+    if (send) send.disabled = true;
+    this.setStatus(card, 'Sending message...');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          reason: this.selectedReason,
+          name: payload.name.trim(),
+          email,
+          message,
+          path: window.location.pathname,
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result?.error || 'Contact endpoint failed.');
+      }
+
+      window.dispatchEvent(new CustomEvent('portfolio:analytics', {
+        detail: { type: 'contact-submit', label: this.selectedReason },
+      }));
+      this.setStatus(card, result?.queued === false ? 'Message noted. Email delivery needs deploy env setup.' : 'Message sent. Thanks.');
+    } catch {
+      this.setStatus(card, 'Could not send here. Opening email draft instead.');
+      window.setTimeout(() => {
+        window.location.href = this.buildMailto(message);
+      }, 650);
+    } finally {
+      this.isSending = false;
+      if (send) send.disabled = false;
+    }
   }
 
   private buildMailto(message: string): string {
@@ -130,18 +199,23 @@ export class ContactFlow {
     style.textContent = `
       .contact-flow-card {
         margin-top: 16px;
-        padding: 14px;
+        padding: 12px;
         border-radius: 12px;
         background: linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018));
         border: 1px solid rgba(255, 255, 255, 0.08);
+        overflow: hidden;
       }
 
       .contact-flow-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 10px;
+        gap: 8px;
         margin-bottom: 12px;
+      }
+
+      .contact-flow-header > div {
+        min-width: 0;
       }
 
       .contact-flow-eyebrow {
@@ -156,11 +230,12 @@ export class ContactFlow {
         color: var(--white-2);
         font-size: 14px;
         line-height: 1.2;
+        overflow-wrap: anywhere;
       }
 
       .contact-flow-resume {
         flex: none;
-        min-height: 34px;
+        min-height: 36px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -174,25 +249,28 @@ export class ContactFlow {
       }
 
       .contact-flow-reasons {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 6px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
         margin-bottom: 10px;
       }
 
       .contact-flow-reason {
-        min-height: 34px;
+        min-height: 32px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 6px 7px;
+        flex: 1 1 max-content;
+        min-width: min(100%, 82px);
+        padding: 7px 8px;
         border-radius: 8px;
         color: var(--light-gray);
         border: 1px solid rgba(255, 255, 255, 0.08);
         background: rgba(255, 255, 255, 0.035);
         font-size: 11px;
-        line-height: 1.1;
+        line-height: 1.15;
         text-align: center;
+        white-space: normal;
       }
 
       .contact-flow-reason.active {
@@ -249,6 +327,7 @@ export class ContactFlow {
         font-size: 12px;
         font-weight: 700;
         text-align: center;
+        min-width: 0;
       }
 
       .contact-flow-action:hover,
@@ -267,9 +346,18 @@ export class ContactFlow {
       }
 
       @media (max-width: 360px) {
-        .contact-flow-reasons,
         .contact-flow-actions {
           grid-template-columns: 1fr;
+        }
+
+        .contact-flow-header {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .contact-flow-resume,
+        .contact-flow-reason {
+          width: 100%;
         }
       }
 

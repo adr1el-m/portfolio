@@ -133,7 +133,7 @@ export class NavigationManager {
             currentPage.classList.remove('active');
           }
           targetPage.classList.add('active');
-          window.scrollTo({ top: 0, behavior: 'auto' });
+          this.scrollToPageStart(targetPage);
           this.isTransitioning = false;
 
           // Push SPA route for the active section and update canonical
@@ -262,6 +262,7 @@ export class NavigationManager {
       case '/about': return 'about';
       case '/background': return 'background';
       case '/projects': return 'projects';
+      case '/gear': return 'gear';
       case '/contact': return 'contact';
       default: return 'about';
     }
@@ -275,6 +276,7 @@ export class NavigationManager {
       case 'about': return '/about';
       case 'background': return '/background';
       case 'projects': return '/projects';
+      case 'gear': return '/gear';
       case 'contact': return '/contact';
       default: return '/';
     }
@@ -314,12 +316,33 @@ export class NavigationManager {
         }, 60);
       }
     } else {
-      window.scrollTo({ top: 0, behavior: 'auto' });
+      this.scrollToPageStart(targetPage || undefined);
     }
 
     // Update canonical using normalized key to avoid stale/removed routes
     const canonicalPath = this.pathFromKey(key);
     this.updateCanonical(canonicalPath);
+  }
+
+  /**
+   * Keep mobile navigation focused on the selected article below the stacked sidebar.
+   */
+  private scrollToPageStart(page?: HTMLElement): void {
+    const shouldScrollToArticle = Boolean(
+      page && window.matchMedia && window.matchMedia('(max-width: 1023px)').matches
+    );
+
+    if (shouldScrollToArticle && page) {
+      window.requestAnimationFrame(() => {
+        page.scrollIntoView({ behavior: 'auto', block: 'start' });
+        window.setTimeout(() => {
+          page.scrollIntoView({ behavior: 'auto', block: 'start' });
+        }, 220);
+      });
+      return;
+    }
+
+    window.scrollTo({ top: 0, behavior: 'auto' });
   }
 
   /**

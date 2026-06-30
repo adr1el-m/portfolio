@@ -77,7 +77,7 @@ export class CommandPalette {
         icon: 'document-text-outline',
         keywords: 'resume cv pdf hire',
         action: () => {
-          try { window.open('/files/MAGALONA-CV.pdf', '_blank', 'noopener,noreferrer'); } catch { void 0; }
+          try { window.open('/files/resume.pdf', '_blank', 'noopener,noreferrer'); } catch { void 0; }
         },
       },
       {

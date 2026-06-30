@@ -579,7 +579,7 @@ export class ChatbotManager {
       `<strong>Proof from experience</strong><br>${experience}`,
       `<strong>Project evidence</strong><br>${projectProof}`,
       `<strong>Signal from awards</strong><br>${achievementProof}`,
-      `Resume: <a href="${this.sanitizeUrl(KB.contact.resumeUrl)}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>`,
+      `Resume: <a href="${this.sanitizeUrl(KB.contact.resumeUrl)}" target="_blank" rel="noopener noreferrer">resume.pdf</a>`,
     ].filter(Boolean).join('<br><br>');
   }
 
@@ -1120,7 +1120,7 @@ export class ChatbotManager {
       `<strong>Resume summary</strong>: ${this.escapeHtml(KB.resume.headline)}`,
       highlights,
       certifications ? `<strong>Certifications</strong>:<br>${certifications}` : '',
-      `Resume PDF: <a href="${this.sanitizeUrl(KB.contact.resumeUrl)}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>`,
+      `Resume PDF: <a href="${this.sanitizeUrl(KB.contact.resumeUrl)}" target="_blank" rel="noopener noreferrer">resume.pdf</a>`,
     ].filter(Boolean).join('<br>');
   }
 
@@ -2416,7 +2416,7 @@ export class ChatbotManager {
           `Email: <a href="mailto:${this.escapeHtml(c.email)}">${this.escapeHtml(c.email)}</a>`,
           `GitHub: <a href="${this.sanitizeUrl(c.github)}" target="_blank" rel="noopener noreferrer">${this.escapeHtml(c.github)}</a>`,
           `LinkedIn: <a href="${this.sanitizeUrl(c.linkedin)}" target="_blank" rel="noopener noreferrer">${this.escapeHtml(c.linkedin)}</a>`,
-          `Resume: <a href="${this.sanitizeUrl(c.resumeUrl)}" target="_blank" rel="noopener noreferrer">MAGALONA-CV.pdf</a>`,
+          `Resume: <a href="${this.sanitizeUrl(c.resumeUrl)}" target="_blank" rel="noopener noreferrer">resume.pdf</a>`,
         ].join('<br>');
         const cites: Citation[] = [];
         const sec = this.unifiedIndex.find((it) => it.id === 'sec-contact')?.citation;

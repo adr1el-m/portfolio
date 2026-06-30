@@ -36,6 +36,10 @@ type RemoteSummary = {
 };
 
 const STORAGE_KEY = 'portfolio:analytics:v1';
+const FIREBASE_DATABASE_URL = (import.meta.env.VITE_FIREBASE_DATABASE_URL || '').trim().replace(/\/+$/, '');
+const FIREBASE_ANALYTICS_PATH = (import.meta.env.VITE_PORTFOLIO_ANALYTICS_FIREBASE_PATH || 'portfolioAnalytics/summary')
+  .trim()
+  .replace(/^\/+|\/+$/g, '');
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -73,6 +77,54 @@ function escapeHtml(text: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function firebaseAnalyticsUrl(): string {
+  if (!FIREBASE_DATABASE_URL || !FIREBASE_DATABASE_URL.startsWith('https://')) return '';
+  return `${FIREBASE_DATABASE_URL}/${FIREBASE_ANALYTICS_PATH}.json`;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function incrementPersistentCount(summary: Record<string, unknown>, type: AnalyticsEventType, label: string): void {
+  const counts = isRecord(summary.counts) ? summary.counts : {};
+  summary.counts = counts;
+  const countKeyByType: Partial<Record<AnalyticsEventType, string>> = {
+    'page-view': 'pageViews',
+    'project-open': 'projectOpens',
+    'honor-open': 'honorOpens',
+    'contact-action': 'contactActions',
+    'contact-submit': 'contactSubmissions',
+  };
+  const countKey = countKeyByType[type];
+  if (!countKey) return;
+
+  const bucket = isRecord(counts[countKey]) ? counts[countKey] as Record<string, number> : {};
+  counts[countKey] = bucket;
+  bucket[label] = Number(bucket[label] || 0) + 1;
+}
+
+function updatePersistentSummary(current: unknown, event: AnalyticsEvent): Record<string, unknown> {
+  const summary = isRecord(current)
+    ? { ...current }
+    : {};
+  summary.totalEvents = Number(summary.totalEvents || 0) + 1;
+  summary.lastSeen = event.at;
+  incrementPersistentCount(summary, event.type, event.label);
+
+  if (event.type === 'chatbot-question') {
+    const allQuestions = Array.isArray(summary.chatbotQuestions) ? summary.chatbotQuestions : [];
+    allQuestions.push({ label: event.label, at: event.at });
+    summary.chatbotQuestions = allQuestions;
+
+    const recentQuestions = Array.isArray(summary.recentQuestions) ? summary.recentQuestions : [];
+    recentQuestions.push({ label: event.label, at: event.at });
+    summary.recentQuestions = recentQuestions.slice(-20);
+  }
+
+  return summary;
 }
 
 export class AnalyticsDashboard {
@@ -223,15 +275,41 @@ export class AnalyticsDashboard {
 
   private async sendRemote(type: AnalyticsEventType, label: string): Promise<void> {
     if (window.location.protocol === 'file:') return;
+    const event = { type, label, at: nowIso() };
     try {
-      await fetch('/api/analytics', {
+      const response = await fetch('/api/analytics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type, label, path: window.location.pathname }),
         keepalive: true,
       });
+      if (response.ok) {
+        const result = await response.json().catch(() => null) as { persisted?: boolean } | null;
+        if (result?.persisted) return;
+      }
     } catch {
       // Remote analytics is optional; local dashboard remains useful.
+    }
+
+    await this.sendFirebaseFallback(event);
+  }
+
+  private async sendFirebaseFallback(event: AnalyticsEvent): Promise<void> {
+    const url = firebaseAnalyticsUrl();
+    if (!url) return;
+
+    try {
+      const currentResponse = await fetch(url, { headers: { Accept: 'application/json' } });
+      const current = currentResponse.ok ? await currentResponse.json() : null;
+      const next = updatePersistentSummary(current, event);
+      await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(next),
+        keepalive: true,
+      });
+    } catch {
+      // Firebase fallback is best-effort; local analytics still captures the event.
     }
   }
 

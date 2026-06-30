@@ -1248,9 +1248,9 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 
 .github-heatmap-board {
   max-width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: hidden;
-  padding-bottom: 2px;
+  padding: 4px 0 2px;
   scrollbar-width: thin;
   scrollbar-color: var(--jet) transparent;
 }
@@ -1267,17 +1267,17 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 .github-heatmap-grid {
   display: grid;
   grid-auto-flow: column;
-  grid-template-rows: repeat(7, 9px);
-  grid-auto-columns: 9px;
-  gap: 6px;
-  width: max-content;
-  min-width: 100%;
+  grid-template-columns: repeat(53, minmax(10px, 1fr));
+  grid-template-rows: repeat(7, 11px);
+  grid-auto-columns: minmax(10px, 1fr);
+  gap: clamp(5px, 0.56vw, 9px);
+  width: 100%;
   align-items: center;
 }
 
 .github-heatmap-cell {
-  width: 5px;
-  height: 5px;
+  width: clamp(5px, 0.52vw, 8px);
+  height: clamp(5px, 0.52vw, 8px);
   align-self: center;
   justify-self: center;
   border-radius: 999px;
@@ -1289,26 +1289,26 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 }
 
 .github-heatmap-cell[data-level="1"] {
-  width: 6px;
-  height: 6px;
+  width: clamp(6px, 0.62vw, 9px);
+  height: clamp(6px, 0.62vw, 9px);
   background: hsla(0, 0%, 100%, 0.44);
 }
 
 .github-heatmap-cell[data-level="2"] {
-  width: 7px;
-  height: 7px;
+  width: clamp(7px, 0.72vw, 10px);
+  height: clamp(7px, 0.72vw, 10px);
   background: hsla(0, 0%, 100%, 0.68);
 }
 
 .github-heatmap-cell[data-level="3"] {
-  width: 8px;
-  height: 8px;
+  width: clamp(8px, 0.82vw, 11px);
+  height: clamp(8px, 0.82vw, 11px);
   background: hsla(0, 0%, 100%, 0.86);
 }
 
 .github-heatmap-cell[data-level="4"] {
-  width: 10px;
-  height: 10px;
+  width: clamp(9px, 0.92vw, 12px);
+  height: clamp(9px, 0.92vw, 12px);
   background: var(--white-2);
 }
 
@@ -1329,9 +1329,19 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   }
 
   .github-heatmap-grid {
+    grid-template-columns: repeat(53, minmax(5px, 1fr));
     grid-template-rows: repeat(7, 8px);
-    grid-auto-columns: 8px;
-    gap: 5px;
+    grid-auto-columns: minmax(5px, 1fr);
+    gap: 3px;
+  }
+
+  .github-heatmap-cell,
+  .github-heatmap-cell[data-level="1"],
+  .github-heatmap-cell[data-level="2"],
+  .github-heatmap-cell[data-level="3"],
+  .github-heatmap-cell[data-level="4"] {
+    width: 5px;
+    height: 5px;
   }
 }
 

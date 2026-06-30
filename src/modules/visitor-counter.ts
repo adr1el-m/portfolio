@@ -39,8 +39,14 @@ function hasValidFirebaseConfig(): boolean {
         String(firebaseConfig.databaseURL).startsWith('https://');
 }
 
+function isLocalRuntime(): boolean {
+    return ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname) ||
+        window.location.protocol === 'file:';
+}
+
 export class VisitorCounter {
     private visitorCountEl: HTMLElement | null = null;
+    private visitorLabelEl: HTMLElement | null = null;
     private isAdmin: boolean = false;
 
     constructor() {
@@ -52,9 +58,14 @@ export class VisitorCounter {
             this.isAdmin = this.checkIfAdmin();
             this.createCounterUI();
 
+            if (isLocalRuntime()) {
+                this.showLocalVisits();
+                return;
+            }
+
             if (!hasValidFirebaseConfig()) {
                 logger.warn('VisitorCounter: Firebase config missing; showing local fallback.');
-                this.updateDisplay(0);
+                this.showLocalVisits();
                 return;
             }
 
@@ -89,7 +100,7 @@ export class VisitorCounter {
                 }
             }, (error) => {
                 logger.error('VisitorCounter: subscription error', error);
-                this.updateDisplay(0);
+                this.showLocalVisits();
             });
 
             logger.log(`VisitorCounter: initialized (admin: ${this.isAdmin})`);
@@ -97,8 +108,24 @@ export class VisitorCounter {
         } catch (error) {
             logger.error('VisitorCounter: initialization failed', error);
             this.createCounterUI();
-            this.updateDisplay(0);
+            this.showLocalVisits();
         }
+    }
+
+    private showLocalVisits(): void {
+        const storageKey = 'portfolio:local-visits';
+        const sessionKey = 'portfolio:local-visits:session';
+        const current = Number(localStorage.getItem(storageKey) || '0');
+        const next = sessionStorage.getItem(sessionKey) ? current : current + 1;
+
+        if (!sessionStorage.getItem(sessionKey)) {
+            sessionStorage.setItem(sessionKey, '1');
+            localStorage.setItem(storageKey, String(next));
+        }
+
+        this.updateLabel('Local Visits');
+        this.updateDisplay(next);
+        logger.log(`VisitorCounter: local visits ${next}`);
     }
 
     private checkIfAdmin(): boolean {
@@ -134,6 +161,7 @@ export class VisitorCounter {
         }
 
         this.visitorCountEl = document.getElementById('visitor-count');
+        this.visitorLabelEl = counterWrapper.querySelector('.visitor-label');
         this.addStyles();
     }
 
@@ -198,6 +226,16 @@ export class VisitorCounter {
         if (this.visitorCountEl) {
             // Format with commas (e.g., 1,234)
             this.visitorCountEl.textContent = new Intl.NumberFormat().format(count);
+        }
+    }
+
+    private updateLabel(label: string): void {
+        if (!this.visitorLabelEl) {
+            this.visitorLabelEl = document.querySelector('.visitor-label');
+        }
+
+        if (this.visitorLabelEl) {
+            this.visitorLabelEl.textContent = label;
         }
     }
 

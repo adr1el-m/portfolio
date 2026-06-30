@@ -49,13 +49,13 @@ export class ResumePreview {
           </div>
           <div class="resume-preview-actions">
             <a class="resume-preview-action" href="${RESUME_URL}" target="_blank" rel="noopener noreferrer" aria-label="Open resume PDF in a new tab">
-              <ion-icon name="open-outline" aria-hidden="true"></ion-icon>
+              Open
             </a>
             <a class="resume-preview-action" href="${RESUME_URL}" download aria-label="Download resume PDF">
-              <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
+              Download
             </a>
             <button class="resume-preview-action" type="button" data-resume-preview-close aria-label="Close resume preview">
-              <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+              Close
             </button>
           </div>
         </header>

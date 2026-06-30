@@ -132,6 +132,7 @@ function emptyPersistentSummary() {
       contactSubmissions: {},
     },
     recentQuestions: [],
+    chatbotQuestions: [],
   };
 }
 
@@ -139,14 +140,19 @@ function incrementCount(record, label) {
   record[label] = (record[label] || 0) + 1;
 }
 
-function persistentToPublic(data) {
+function persistentToPublic(data, includePrivate = false) {
   const summaryData = data || emptyPersistentSummary();
   const toTop = (record) => Object.entries(record || {})
     .sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])))
     .slice(0, 8)
     .map(([label, count]) => ({ label, count }));
+  const allQuestions = Array.isArray(summaryData.chatbotQuestions)
+    ? summaryData.chatbotQuestions
+    : Array.isArray(summaryData.recentQuestions)
+      ? summaryData.recentQuestions
+      : [];
 
-  return {
+  const publicSummary = {
     totalEvents: summaryData.totalEvents || 0,
     lastSeen: summaryData.lastSeen || null,
     pageViews: toTop(summaryData.counts?.pageViews),
@@ -154,12 +160,21 @@ function persistentToPublic(data) {
     honorOpens: toTop(summaryData.counts?.honorOpens),
     contactActions: toTop(summaryData.counts?.contactActions),
     contactSubmissions: toTop(summaryData.counts?.contactSubmissions),
-    recentQuestions: Array.isArray(summaryData.recentQuestions) ? summaryData.recentQuestions.slice(-8).reverse() : [],
+    recentQuestions: allQuestions.slice(-8).reverse(),
   };
+
+  if (includePrivate) {
+    publicSummary.chatbotQuestions = allQuestions;
+  }
+
+  return publicSummary;
 }
 
-function summary(events) {
-  return {
+function summary(events, includePrivate = false) {
+  const chatbotQuestions = events
+    .filter((event) => event.type === 'chatbot-question')
+    .map((event) => ({ label: event.label, at: event.at }));
+  const publicSummary = {
     totalEvents: events.length,
     lastSeen: events.at(-1)?.at || null,
     pageViews: topCounts(events, 'page-view'),
@@ -167,12 +182,14 @@ function summary(events) {
     honorOpens: topCounts(events, 'honor-open'),
     contactActions: topCounts(events, 'contact-action'),
     contactSubmissions: topCounts(events, 'contact-submit'),
-    recentQuestions: events
-      .filter((event) => event.type === 'chatbot-question')
-      .slice(-8)
-      .reverse()
-      .map((event) => ({ label: event.label, at: event.at })),
+    recentQuestions: chatbotQuestions.slice(-8).reverse(),
   };
+
+  if (includePrivate) {
+    publicSummary.chatbotQuestions = chatbotQuestions;
+  }
+
+  return publicSummary;
 }
 
 function firebaseBaseUrl() {
@@ -219,6 +236,12 @@ async function writePersistentSummary(event) {
   if (event.type === 'contact-action') incrementCount(current.counts.contactActions, event.label);
   if (event.type === 'contact-submit') incrementCount(current.counts.contactSubmissions, event.label);
   if (event.type === 'chatbot-question') {
+    current.chatbotQuestions = Array.isArray(current.chatbotQuestions)
+      ? current.chatbotQuestions
+      : Array.isArray(current.recentQuestions)
+        ? current.recentQuestions
+        : [];
+    current.chatbotQuestions.push({ label: event.label, at: event.at });
     current.recentQuestions = Array.isArray(current.recentQuestions) ? current.recentQuestions : [];
     current.recentQuestions.push({ label: event.label, at: event.at });
     current.recentQuestions = current.recentQuestions.slice(-20);
@@ -262,7 +285,7 @@ export default async function handler(req, res) {
       return;
     }
     const persistent = await readPersistentSummary();
-    res.status(200).json(persistent ? persistentToPublic(persistent) : summary(events));
+    res.status(200).json(persistent ? persistentToPublic(persistent, !isPublicSnapshot) : summary(events, !isPublicSnapshot));
     return;
   }
 

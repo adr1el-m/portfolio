@@ -401,14 +401,20 @@ main {
 }
 
 .resume-preview-action {
-  display: inline-grid;
-  place-items: center;
-  width: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 66px;
   height: 38px;
+  padding: 0 12px;
   border: 1px solid var(--polish-border, var(--jet));
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.045);
   color: var(--light-gray);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-decoration: none;
   cursor: pointer;
   transition: color 160ms ease, border-color 160ms ease, background 160ms ease, transform 160ms ease;
 }
@@ -419,11 +425,6 @@ main {
   border-color: var(--polish-border-strong, var(--jet));
   background: rgba(255, 255, 255, 0.075);
   transform: translateY(-1px);
-}
-
-.resume-preview-action ion-icon {
-  width: 18px;
-  height: 18px;
 }
 
 .resume-preview-frame-wrap {
@@ -1522,8 +1523,10 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   }
 
   .resume-preview-action {
-    width: 34px;
+    min-width: 0;
     height: 34px;
+    padding: 0 10px;
+    font-size: 0.68rem;
   }
 
   .github-heatmap {

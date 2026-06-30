@@ -50,7 +50,7 @@ function readLocalSummary(): PublicAnalyticsSummary {
       projectOpens: toTop(parsed.projectOpens),
       honorOpens: toTop(parsed.honorOpens),
       contactActions: toTop(parsed.contactActions),
-      recentQuestions: Array.isArray(parsed.chatbotQuestions) ? parsed.chatbotQuestions.slice(-5).reverse() : [],
+      recentQuestions: Array.isArray(parsed.chatbotQuestions) ? parsed.chatbotQuestions.slice(-8).reverse() : [],
     };
   } catch {
     return {};

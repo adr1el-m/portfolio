@@ -32,6 +32,7 @@ type RemoteSummary = {
   contactActions: Array<{ label: string; count: number }>;
   contactSubmissions?: Array<{ label: string; count: number }>;
   recentQuestions: Array<{ label: string; at: string }>;
+  chatbotQuestions?: Array<{ label: string; at: string }>;
 };
 
 const STORAGE_KEY = 'portfolio:analytics:v1';
@@ -118,7 +119,7 @@ export class AnalyticsDashboard {
         projectOpens: parsed.projectOpens || {},
         honorOpens: parsed.honorOpens || {},
         contactActions: parsed.contactActions || {},
-        chatbotQuestions: Array.isArray(parsed.chatbotQuestions) ? parsed.chatbotQuestions.slice(-20) : [],
+        chatbotQuestions: Array.isArray(parsed.chatbotQuestions) ? parsed.chatbotQuestions : [],
       };
     } catch {
       return emptyState();
@@ -212,7 +213,6 @@ export class AnalyticsDashboard {
         break;
       case 'chatbot-question':
         this.state.chatbotQuestions.push({ type, label: safeLabel, at: nowIso() });
-        this.state.chatbotQuestions = this.state.chatbotQuestions.slice(-20);
         break;
     }
 
@@ -293,7 +293,8 @@ export class AnalyticsDashboard {
 
   private refresh(): void {
     if (!this.dashboard) return;
-    const recentQuestions = this.state.chatbotQuestions.slice(-5).reverse();
+    const allQuestions = this.remoteSummary?.chatbotQuestions || this.state.chatbotQuestions;
+    const recentQuestions = allQuestions.slice(-12).reverse();
     const remote = this.remoteSummary;
     this.dashboard.innerHTML = `
       <div class="analytics-dashboard-header">
@@ -326,9 +327,9 @@ export class AnalyticsDashboard {
         <ul>${this.renderList(topEntries(this.state.contactActions), 'No contact actions yet')}</ul>
       </section>
       <section>
-        <h3>Recent AdrAI Questions</h3>
+        <h3>AdrAI Prompts</h3>
         <ul>${recentQuestions.length
-        ? recentQuestions.map((event) => `<li><span>${escapeHtml(event.label)}</span></li>`).join('')
+        ? recentQuestions.map((event) => `<li><span>${escapeHtml(event.label)}</span><strong>${new Date(event.at).toLocaleDateString()}</strong></li>`).join('')
         : '<li class="analytics-empty">No chatbot questions yet</li>'}</ul>
       </section>
       ${remote ? `
@@ -336,6 +337,7 @@ export class AnalyticsDashboard {
         <h3>Server Snapshot</h3>
         <ul>
           <li><span>Total server events</span><strong>${remote.totalEvents}</strong></li>
+          <li><span>Stored AdrAI prompts</span><strong>${remote.chatbotQuestions?.length || remote.recentQuestions?.length || 0}</strong></li>
           <li><span>Last event</span><strong>${remote.lastSeen ? new Date(remote.lastSeen).toLocaleString() : 'None'}</strong></li>
         </ul>
       </section>` : ''}

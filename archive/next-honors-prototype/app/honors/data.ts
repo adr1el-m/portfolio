@@ -40,7 +40,7 @@ export const awardsByYear: Record<string, Award[]> = {
       badge: "Participant",
       subtitle: "Team MAF",
       date: "March 17, 2026",
-      location: "Online",
+      location: "AWS Office, Arthaland Century Pacific Towers",
       organizer: "Agora Voice AI Hackathon",
       description: "Participated as Team MAF in the Agora Voice AI Hackathon.",
       teammates: [
@@ -69,7 +69,7 @@ export const awardsByYear: Record<string, Award[]> = {
       badge: "Champion",
       subtitle: "STAR-LINK - Data & AI Innovation Challenge",
       date: "April 18, 2026",
-      location: "Philippines",
+      location: "Online",
       organizer:
         "Scholars Transforming Advancement and Research for Technology - DOST with DOST-SEI Science Teacher Academy for the Regions",
       description:
@@ -103,13 +103,13 @@ export const awardsByYear: Record<string, Award[]> = {
       images: ["/images/honors/2026/codekada/Adriel M. Magalona.avif"],
     },
     {
-      title: "The Innovation Labs",
+      title: "The Innovation Lab 2026: The Mindful Harvest",
       badge: "Participant",
       subtitle: "Program Participant",
       date: "February 2026",
-      location: "Online",
-      organizer: "The Innovation Labs",
-      description: "Participated in The Innovation Labs in February 2026.",
+      location: "University of the Philippines Los Baños",
+      organizer: "The Innovation Lab 2026: The Mindful Harvest",
+      description: "Participated in The Innovation Lab 2026: The Mindful Harvest in February 2026.",
       teammates: [
         { name: "Kiel Ethan Lanzanas", role: "Team Member" },
         { name: "Ellah Benerado", role: "Team Member" },
@@ -122,9 +122,9 @@ export const awardsByYear: Record<string, Award[]> = {
       badge: "2nd Place",
       subtitle: "CS and IT Quiz Bee",
       date: "2026",
-      location: "De La Salle University - Dasmarinas",
+      location: "De La Salle University - Dasmariñas",
       organizer: "SIKAPTala",
-      description: "Placed 2nd in SIKAPTala at De La Salle University - Dasmarinas.",
+      description: "Placed 2nd in SIKAPTala at De La Salle University - Dasmariñas.",
       images: [],
     },
     {
@@ -132,10 +132,10 @@ export const awardsByYear: Record<string, Award[]> = {
       badge: "Participant",
       subtitle: "Hackathon Participant",
       date: "2026",
-      location: "De La Salle University - Dasmarinas",
+      location: "De La Salle University - Dasmariñas",
       organizer: "SIKAPTala",
       description:
-        "Participated in the SIKAPTala 2026 Hackathon at De La Salle University - Dasmarinas.",
+        "Participated in the SIKAPTala 2026 Hackathon at De La Salle University - Dasmariñas.",
       images: [],
     },
   ],
@@ -342,8 +342,8 @@ export const awardsByYear: Record<string, Award[]> = {
       title: "Excalicode - Data Structures & Algorithms Competition",
       badge: "1st Place",
       subtitle: "Knight Category Winner",
-      date: "September 2024",
-      location: "Polytechnic University of the Philippines",
+      date: "September 9, 2024",
+      location: "Polytechnic University of the Philippines - Manila",
       organizer:
         "The Programmers' Guild at Polytechnic University of the Philippines",
       description:
@@ -362,6 +362,12 @@ export const awardsByYear: Record<string, Award[]> = {
       organizer: "Entrepreneurship Educators Association",
       description:
         "Our team Piyutech placed 3rd out of 6 teams by developing EcoSiklo, a circular economy solution that transforms fabric scraps into essential pet products.",
+      links: [
+        {
+          label: "LinkedIn Post",
+          href: "https://www.linkedin.com/posts/adr1el_after-a-month-of-intense-preparation-and-activity-7242927278001639426-AT2U?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFCMwAABUwVcMwAFxdORbMcULlqBOAyuSpU",
+        },
+      ],
       teammates: [
         { name: "Mc Henry Sarcia", role: "Team Member" },
         { name: "Sean Russell Villeza", role: "Team Member" },
@@ -386,6 +392,12 @@ export const awardsByYear: Record<string, Award[]> = {
       organizer: "Gawad Pagkilala Taong 2024",
       description:
         "Recognized for securing 3rd place in the Entrepreneurship Educators' Association National Competition.",
+      links: [
+        {
+          label: "LinkedIn Post",
+          href: "https://www.linkedin.com/posts/adr1el_gawadpagkilala2024-activity-7266006537779691521-bKxn?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFCMwAABUwVcMwAFxdORbMcULlqBOAyuSpU",
+        },
+      ],
       images: ["/images/honors/2024/gawad_pagkilala/1.avif"],
     },
   ],

@@ -213,6 +213,9 @@ class PortfolioApp {
         // Initialize Wow Factors
         import('./modules/scroll-animations').then(({ ScrollAnimations }) => new ScrollAnimations());
         import('./modules/custom-cursor').then(({ CustomCursor }) => new CustomCursor());
+        import('./modules/github-heatmap').then(({ GitHubHeatmap }) => {
+          new GitHubHeatmap().init();
+        });
 
         import('./modules/about-enhancements').then(({ AboutEnhancements }) => {
           new AboutEnhancements();

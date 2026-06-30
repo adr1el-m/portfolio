@@ -302,9 +302,9 @@ export const KB: KnowledgeBase = {
       webpImages: [],
       organizer: 'SIKAPTala',
       date: 'May 13, 2026',
-      location: 'De La Salle University - Dasmarinas',
+      location: 'De La Salle University - Dasmariñas',
       description:
-        "Recognition: Placed 2nd in the SIKAPTala 2026 CS and IT Quiz Bee at De La Salle University - Dasmarinas.\nScope: Competed against 67 college students from across the Philippines in computer science and information technology topics.\nContribution: Applied self-study in algorithms, data structures, and CS fundamentals to perform competitively on a national academic stage.",
+        "Recognition: Placed 2nd in the SIKAPTala 2026 CS and IT Quiz Bee at De La Salle University - Dasmariñas.\nScope: Competed against 67 college students from across the Philippines in computer science and information technology topics.\nContribution: Applied self-study in algorithms, data structures, and CS fundamentals to perform competitively on a national academic stage.",
     },
 {
       title: 'CodeKada 2026',
@@ -332,11 +332,11 @@ export const KB: KnowledgeBase = {
       organizer:
         'Scholars Transforming Advancement and Research for Technology - DOST with DOST-SEI Science Teacher Academy for the Regions',
       date: 'April 18, 2026',
-      location: 'Philippines',
+      location: 'Online',
       teammates: [
-        { name: 'Gem Christian Lazo', role: 'Tarlac State University' },
-        { name: 'Marti Kier Trance', role: 'Polytechnic University of the Philippines - Maragondon' },
-        { name: 'Janel Rose Trongcoso', role: 'De La Salle University - Dasmarinas' },
+        { name: 'Gem Christian Lazo', role: 'Technological University of the Philippines' },
+        { name: 'Marti Kier Trance', role: 'De La Salle University - Dasmariñas' },
+        { name: 'Janel Rose Trongcoso', role: 'Tarlac State University' },
         { name: 'Christine Rio', role: 'Polytechnic University of the Philippines - Manila' },
       ],
       description:
@@ -345,19 +345,38 @@ export const KB: KnowledgeBase = {
       blogUrl: 'https://lnkd.in/gMUq75nZ',
     },
 {
-      title: 'The Innovation Labs',
+      title: 'Agora Voice AI Hackathon',
+      images: [
+        '/images/honors/2026/agora/1.avif',
+        '/images/honors/2026/agora/2.avif',
+        '/images/honors/2026/agora/3.avif',
+      ],
+      webpImages: [],
+      organizer: 'Agora Voice AI Hackathon',
+      date: 'March 17, 2026',
+      location: 'AWS Office, Arthaland Century Pacific Towers',
+      teammates: [
+        { name: 'Eliazar Inso', role: 'Polytechnic University of the Philippines - Manila' },
+        { name: 'Hanzlei Jamison', role: 'Polytechnic University of the Philippines - Manila' },
+        { name: 'Jude Vincent Puti', role: 'Polytechnic University of the Philippines - Manila' },
+      ],
+      description:
+        "Participation: Competed with Team MAF in the Agora Voice AI Hackathon.\nScope: Explored voice AI product concepts and rapid prototyping within a short build cycle.\nContribution: Practiced translating conversational AI capabilities into clear, user-facing workflows.",
+    },
+{
+      title: 'The Innovation Lab 2026: The Mindful Harvest',
       images: ['/images/honors/2026/The Innovation Labs/innovation-labs.avif'],
       webpImages: [],
-      organizer: 'The Innovation Labs',
+      organizer: 'The Innovation Lab 2026: The Mindful Harvest',
       date: 'February 2026',
-      location: 'Online',
+      location: 'University of the Philippines Los Baños',
       teammates: [
-        { name: 'Kiel Ethan Lanzanas', role: 'Technological University of the Philippines' },
-        { name: 'Ellah Benerado', role: 'Adamson University' },
+        { name: 'Kiel Ethan Lanzanas', role: 'Adamson University' },
+        { name: 'Ellah Benerado', role: 'Bulacan State University' },
         { name: 'John Carlo Santos', role: 'Bulacan State University' },
       ],
       description:
-        "Participation: Joined The Innovation Labs with a collaborative student team.\nScope: Developed and evaluated an early-stage innovation concept through a structured program.\nContribution: Practiced product framing, team coordination, and concise pitch communication.",
+        "Participation: Joined The Innovation Lab 2026: The Mindful Harvest with a collaborative student team.\nScope: Developed and evaluated an early-stage innovation concept through a structured program.\nContribution: Practiced product framing, team coordination, and concise pitch communication.",
     },
 {
       title: 'SIKAPTala 2026 Hackathon',
@@ -365,14 +384,14 @@ export const KB: KnowledgeBase = {
       webpImages: [],
       organizer: 'SIKAPTala',
       date: '2026',
-      location: 'De La Salle University - Dasmarinas',
+      location: 'De La Salle University - Dasmariñas',
       teammates: [
         { name: 'Eliazar Inso', role: 'Polytechnic University of the Philippines - Manila' },
         { name: 'Jude Vincent Puti', role: 'Polytechnic University of the Philippines - Manila' },
         { name: 'Mark Elijah Sevilla', role: 'Polytechnic University of the Philippines - Manila' },
       ],
       description:
-        "Participation: Joined the SIKAPTala 2026 Hackathon at De La Salle University - Dasmarinas.\nScope: Worked within a competitive university hackathon environment focused on fast ideation and implementation.\nContribution: Strengthened rapid product planning, technical collaboration, and pitch-readiness under time pressure.",
+        "Participation: Joined the SIKAPTala 2026 Hackathon at De La Salle University - Dasmariñas.\nScope: Worked within a competitive university hackathon environment focused on fast ideation and implementation.\nContribution: Strengthened rapid product planning, technical collaboration, and pitch-readiness under time pressure.",
     },
 {
       title: 'BPI DataWave Hackathon 2025',
@@ -382,8 +401,8 @@ export const KB: KnowledgeBase = {
       date: 'October 1, 2025',
       location: 'AIM Conference Center, Makati City',
       teammates: [
-        { name: 'Kiel Ethan Lanzanas', role: 'Technological University of the Philippines' },
-        { name: 'Ellah Benerado', role: 'Adamson University' },
+        { name: 'Kiel Ethan Lanzanas', role: 'Adamson University' },
+        { name: 'Ellah Benerado', role: 'Bulacan State University' },
         { name: 'John Carlo Santos', role: 'Bulacan State University' },
       ],
       githubUrl: 'https://github.com/adr1el-m/worksight',
@@ -442,8 +461,8 @@ export const KB: KnowledgeBase = {
       date: 'August 15–16, 2025',
       location: 'Gokongwei Hall, De La Salle University',
       teammates: [
-        { name: 'Ellah Benerado', role: 'Adamson University' },
-        { name: 'Kiel Ethan Lanzanas', role: 'Technological University of the Philippines' },
+        { name: 'Ellah Benerado', role: 'Bulacan State University' },
+        { name: 'Kiel Ethan Lanzanas', role: 'Adamson University' },
         { name: 'John Carlo Santos', role: 'Bulacan State University' },
       ],
       description:
@@ -459,7 +478,7 @@ export const KB: KnowledgeBase = {
       date: 'May 17, 2025',
       location: 'Polytechnic University of the Philippines — Manila',
       teammates: [
-        { name: 'Alvic Decipolo', role: 'Polytechnic University of the Philippines - Manila' },
+        { name: 'Alvic Decipolo', role: 'Polytechnic University of the Philippines - Maragondon' },
         { name: 'Russell Khyle David (Russ David)', role: 'Polytechnic University of the Philippines - Manila' },
         { name: 'Rheinz Owen Alpon', role: 'Polytechnic University of the Philippines - Manila' },
         { name: 'Vinzed Diala', role: 'Polytechnic University of the Philippines - Manila' },
@@ -468,22 +487,31 @@ export const KB: KnowledgeBase = {
         "Recognition: Earned Second Runner-Up at Spark Rush 2025 by GDG on Campus PUP.\nScope: Completed a station-based competition requiring teamwork, problem solving, and endurance across multiple challenge formats.\nContribution: Demonstrated adaptability, communication, and composure in a fast-paced technical event.",
     },
 {
-      title: "Data Structures & Algorithms — Knight Category Winner (PUP)",
-      images: [],
-      webpImages: [],
-      organizer: "The Programmers' Guild — Polytechnic University of the Philippines",
-      date: '2025',
-      location: 'Polytechnic University of the Philippines',
-      description:
-        'Competition focused on DSA fundamentals and practical coding challenges.',
-    },
-{
       title: 'Gawad Pagkilala Taong 2024 — National Competition (3rd Place)',
-      images: [],
+      images: ['/images/honors/2024/gawad_pagkilala/1.avif'],
       webpImages: [],
-      organizer: "Entrepreneurship Educators' Association — Polytechnic University of the Philippines",
+      organizer: 'Gawad Pagkilala Taong 2024',
       date: 'November 21, 2024',
       location: 'Bulwagang Balagtas NALLRC, Polytechnic University of the Philippines — Manila',
+      description:
+        "Recognition: Received Gawad Pagkilala recognition at Polytechnic University of the Philippines for national competition achievement.\nScope: Honored for placing 3rd in an Entrepreneurship Educators' Association national competition.\nContribution: Marked an early milestone in applying technical creativity, entrepreneurship, and team-based execution.",
+      linkedinUrl:
+        'https://www.linkedin.com/posts/adr1el_gawadpagkilala2024-activity-7266006537779691521-bKxn?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFCMwAABUwVcMwAFxdORbMcULlqBOAyuSpU',
+    },
+{
+      title: 'Entrepreneurship Educators Association Hackathon',
+      images: [
+        '/images/honors/2024/eneda/1.avif',
+        '/images/honors/2024/eneda/2.avif',
+        '/images/honors/2024/eneda/3.avif',
+        '/images/honors/2024/eneda/4.avif',
+        '/images/honors/2024/eneda/5.avif',
+        '/images/honors/2024/eneda/6.avif',
+      ],
+      webpImages: [],
+      organizer: "Entrepreneurship Educators' Association",
+      date: 'September 14, 2024',
+      location: 'Miriam College, Quezon City',
       teammates: [
         { name: 'Mc Henry Sarcia', role: 'Polytechnic University of the Philippines - Manila' },
         { name: 'Sean Russell Villeza', role: 'Polytechnic University of the Philippines - Manila' },
@@ -491,7 +519,23 @@ export const KB: KnowledgeBase = {
         { name: 'Kenchie Baylon', role: 'Polytechnic University of the Philippines - Manila' },
       ],
       description:
-        "Recognition: Received Gawad Pagkilala recognition at Polytechnic University of the Philippines for national competition achievement.\nScope: Honored for placing 3rd in an Entrepreneurship Educators' Association national competition.\nContribution: Marked an early milestone in applying technical creativity, entrepreneurship, and team-based execution.",
+        "Recognition: Placed 3rd in a national competition recognized during Gawad Pagkilala Taong 2024.\nScope: Developed EcoSiklo with Team Piyutech, a circular-economy concept that transforms fabric scraps into useful pet products.\nContribution: Helped connect sustainability, entrepreneurship, and product validation in an early college competition.",
+      linkedinUrl:
+        'https://www.linkedin.com/posts/adr1el_after-a-month-of-intense-preparation-and-activity-7242927278001639426-AT2U?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFCMwAABUwVcMwAFxdORbMcULlqBOAyuSpU',
+    },
+{
+      title: "Data Structures & Algorithms — Knight Category Winner (PUP)",
+      images: [
+        '/images/honors/2024/excalicode/1.avif',
+        '/images/honors/2024/excalicode/2.avif',
+        '/images/honors/2024/excalicode/3.avif',
+      ],
+      webpImages: [],
+      organizer: "The Programmers' Guild — Polytechnic University of the Philippines",
+      date: 'September 9, 2024',
+      location: 'Polytechnic University of the Philippines - Manila',
+      description:
+        'Competition focused on DSA fundamentals and practical coding challenges.',
     },
   ],
 };

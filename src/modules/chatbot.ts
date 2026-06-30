@@ -1520,8 +1520,8 @@ export class ChatbotManager {
     if (t.includes('open resume')) {
       const url = KB.contact.resumeUrl;
       if (url) {
-        try { window.open(url, '_blank', 'noopener,noreferrer'); } catch { /* ignore */ }
-        this.addMessage('Opening resume…', 'bot');
+        this.openResumePreview(url);
+        this.addMessage('Opening resume preview…', 'bot');
         return;
       }
     }
@@ -1620,6 +1620,12 @@ export class ChatbotManager {
     this.addMessage(`Opening honor details for <strong>${this.escapeHtml(title)}</strong>...`, 'bot');
   }
 
+  private openResumePreview(url = KB.contact.resumeUrl): void {
+    window.dispatchEvent(new CustomEvent('portfolio:open-resume-preview', {
+      detail: { url },
+    }));
+  }
+
   private tryHandleDirectAction(userMessage: string): boolean {
     const normalized = this.normalize(userMessage);
     if (!/\b(open|show|view|go to|filter)\b/.test(normalized)) return false;
@@ -1631,8 +1637,8 @@ export class ChatbotManager {
     }
 
     if (/\b(open|show|view)\b.*\b(resume|cv)\b/.test(normalized)) {
-      try { window.open(KB.contact.resumeUrl, '_blank', 'noopener,noreferrer'); } catch { void 0; }
-      this.addMessage('Opening resume...', 'bot');
+      this.openResumePreview();
+      this.addMessage('Opening resume preview...', 'bot');
       return true;
     }
 

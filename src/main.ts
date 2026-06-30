@@ -216,6 +216,9 @@ class PortfolioApp {
         import('./modules/github-heatmap').then(({ GitHubHeatmap }) => {
           new GitHubHeatmap().init();
         });
+        import('./modules/resume-preview').then(({ ResumePreview }) => {
+          new ResumePreview();
+        });
 
         import('./modules/about-enhancements').then(({ AboutEnhancements }) => {
           new AboutEnhancements();

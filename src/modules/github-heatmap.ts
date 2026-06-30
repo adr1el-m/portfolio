@@ -37,6 +37,7 @@ export class GitHubHeatmap {
       grid.innerHTML = '';
       const weekCount = Math.ceil(payload.days.length / 7);
       grid.style.setProperty('--week-count', String(weekCount));
+      this.renderMonthLabels(grid, payload.days, weekCount);
       payload.days.forEach((day, index) => {
         const label = day.label || this.formatContributionLabel(day);
         const cell = document.createElement('span');
@@ -58,8 +59,48 @@ export class GitHubHeatmap {
     } catch (error) {
       console.warn('GitHub heatmap unavailable:', error);
       grid.innerHTML = '';
+      this.clearMonthLabels(grid);
       this.setStatus('GitHub activity unavailable right now.');
     }
+  }
+
+  private renderMonthLabels(grid: HTMLElement, days: ContributionDay[], weekCount: number): void {
+    const board = grid.parentElement;
+    if (!board) return;
+
+    let months = board.querySelector<HTMLElement>('[data-github-months]');
+    if (!months) {
+      months = document.createElement('div');
+      months.className = 'github-heatmap-months';
+      months.dataset.githubMonths = '';
+      months.setAttribute('aria-hidden', 'true');
+      board.insertBefore(months, grid);
+    }
+
+    months.innerHTML = '';
+    months.style.setProperty('--week-count', String(weekCount));
+
+    let previousMonth = '';
+    days.forEach((day, index) => {
+      if (index % 7 !== 0) return;
+
+      const date = new Date(`${day.date}T00:00:00`);
+      if (Number.isNaN(date.getTime())) return;
+
+      const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+      if (monthKey === previousMonth) return;
+      previousMonth = monthKey;
+
+      const label = document.createElement('span');
+      label.className = 'github-heatmap-month';
+      label.textContent = date.toLocaleString('en-US', { month: 'short' });
+      label.style.gridColumn = String(Math.floor(index / 7) + 1);
+      months.appendChild(label);
+    });
+  }
+
+  private clearMonthLabels(grid: HTMLElement): void {
+    grid.parentElement?.querySelector<HTMLElement>('[data-github-months]')?.remove();
   }
 
   private bindTooltip(grid: HTMLElement): void {

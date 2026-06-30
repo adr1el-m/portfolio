@@ -71,13 +71,15 @@ export class CommandPalette {
       },
       {
         id: 'resume',
-        title: 'Open Resume',
-        subtitle: 'View the latest CV PDF',
+        title: 'Preview Resume',
+        subtitle: 'View the latest resume PDF',
         group: 'Actions',
         icon: 'document-text-outline',
         keywords: 'resume cv pdf hire',
         action: () => {
-          try { window.open('/files/resume.pdf', '_blank', 'noopener,noreferrer'); } catch { void 0; }
+          window.dispatchEvent(new CustomEvent('portfolio:open-resume-preview', {
+            detail: { url: '/files/resume.pdf' },
+          }));
         },
       },
       {

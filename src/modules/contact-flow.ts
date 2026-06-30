@@ -40,7 +40,7 @@ export class ContactFlow {
           <span class="contact-flow-eyebrow">Open to</span>
           <h2 id="contact-flow-title">Contact</h2>
         </div>
-        <a class="contact-flow-resume contact-flow-action" href="${escapeHtml(KB.contact.resumeUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-label="Contact flow: resume">Resume</a>
+        <a class="contact-flow-resume contact-flow-action" href="${escapeHtml(KB.contact.resumeUrl)}" target="_blank" rel="noopener noreferrer" data-resume-preview data-analytics-label="Contact flow: resume">Resume</a>
       </div>
       <div class="contact-flow-reasons" role="group" aria-label="Contact reason">
         ${['Project inquiry', 'Internship', 'Collaboration'].map((reason, index) => `

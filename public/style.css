@@ -317,6 +317,128 @@ main {
   cursor: pointer;
 }
 
+.resume-preview-open {
+  overflow: hidden;
+}
+
+.resume-preview-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: clamp(12px, 2vw, 22px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+
+.resume-preview-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.resume-preview-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 10, 12, 0.78);
+  backdrop-filter: blur(10px);
+}
+
+.resume-preview-panel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(1040px, 100%);
+  height: min(88vh, 980px);
+  min-height: 520px;
+  overflow: hidden;
+  border: 1px solid var(--polish-border-strong, var(--jet));
+  border-radius: var(--polish-radius, 14px);
+  background: #17191d;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+  transform: translateY(10px) scale(0.985);
+  transition: transform 180ms ease;
+}
+
+.resume-preview-modal.active .resume-preview-panel {
+  transform: translateY(0) scale(1);
+}
+
+.resume-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--polish-border, var(--jet));
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.resume-preview-eyebrow {
+  margin-bottom: 4px;
+  color: var(--polish-accent, var(--orange-yellow-crayola));
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.resume-preview-header h2 {
+  color: var(--white-2);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.resume-preview-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.resume-preview-action {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--polish-border, var(--jet));
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--light-gray);
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.resume-preview-action:hover,
+.resume-preview-action:focus-visible {
+  color: var(--polish-accent, var(--orange-yellow-crayola));
+  border-color: var(--polish-border-strong, var(--jet));
+  background: rgba(255, 255, 255, 0.075);
+  transform: translateY(-1px);
+}
+
+.resume-preview-action ion-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.resume-preview-frame-wrap {
+  min-height: 0;
+  background: #101115;
+}
+
+.resume-preview-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #24262b;
+}
+
 .sidebar {
   margin-bottom: 15px;
   max-height: none;
@@ -1198,6 +1320,8 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   position: relative;
   margin-bottom: 34px;
   padding: 18px;
+  --heatmap-column-gap: clamp(4px, 0.42vw, 8px);
+  --heatmap-row-gap: clamp(3px, 0.34vw, 6px);
   background: var(--polish-panel-soft, var(--eerie-black-1));
   border: 1px solid var(--polish-border, var(--jet));
   border-radius: var(--polish-radius, 14px);
@@ -1269,10 +1393,33 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   display: grid;
   grid-template-columns: repeat(var(--week-count, 53), minmax(0, 1fr));
   grid-template-rows: repeat(7, clamp(12px, 1.05vw, 16px));
-  column-gap: clamp(4px, 0.42vw, 8px);
-  row-gap: clamp(3px, 0.34vw, 6px);
+  column-gap: var(--heatmap-column-gap);
+  row-gap: var(--heatmap-row-gap);
   width: 100%;
   align-items: center;
+}
+
+.github-heatmap-months {
+  display: grid;
+  grid-template-columns: repeat(var(--week-count, 53), minmax(0, 1fr));
+  column-gap: var(--heatmap-column-gap);
+  width: 100%;
+  min-height: 13px;
+  margin-bottom: 7px;
+  color: var(--light-gray-70);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.62rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.github-heatmap-month {
+  display: block;
+  justify-self: start;
+  white-space: nowrap;
+  transform: translateX(-1px);
 }
 
 .github-heatmap-cell {
@@ -1350,8 +1497,39 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 }
 
 @media (max-width: 580px) {
+  .resume-preview-modal {
+    padding: 0;
+    place-items: stretch;
+  }
+
+  .resume-preview-panel {
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    border-radius: 0;
+  }
+
+  .resume-preview-header {
+    padding: 12px;
+  }
+
+  .resume-preview-header h2 {
+    font-size: 0.92rem;
+  }
+
+  .resume-preview-actions {
+    gap: 6px;
+  }
+
+  .resume-preview-action {
+    width: 34px;
+    height: 34px;
+  }
+
   .github-heatmap {
     padding: 16px;
+    --heatmap-column-gap: 2px;
+    --heatmap-row-gap: 2px;
   }
 
   .github-heatmap-header {
@@ -1363,8 +1541,14 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   .github-heatmap-grid {
     grid-template-columns: repeat(var(--week-count, 53), minmax(0, 1fr));
     grid-template-rows: repeat(7, 8px);
-    column-gap: 2px;
-    row-gap: 2px;
+    column-gap: var(--heatmap-column-gap);
+    row-gap: var(--heatmap-row-gap);
+  }
+
+  .github-heatmap-months {
+    min-height: 11px;
+    margin-bottom: 6px;
+    font-size: 0.5rem;
   }
 
   .github-heatmap-cell,

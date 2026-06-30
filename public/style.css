@@ -1195,6 +1195,7 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 }
 
 .github-heatmap {
+  position: relative;
   margin-bottom: 34px;
   padding: 18px;
   background: var(--polish-panel-soft, var(--eerie-black-1));
@@ -1248,9 +1249,9 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 
 .github-heatmap-board {
   max-width: 100%;
-  overflow-x: hidden;
+  overflow: visible;
   overflow-y: hidden;
-  padding: 4px 0 2px;
+  padding: 6px 0 2px;
   scrollbar-width: thin;
   scrollbar-color: var(--jet) transparent;
 }
@@ -1266,18 +1267,17 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 
 .github-heatmap-grid {
   display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: repeat(53, minmax(10px, 1fr));
-  grid-template-rows: repeat(7, 11px);
-  grid-auto-columns: minmax(10px, 1fr);
-  gap: clamp(5px, 0.56vw, 9px);
+  grid-template-columns: repeat(var(--week-count, 53), minmax(0, 1fr));
+  grid-template-rows: repeat(7, clamp(12px, 1.05vw, 16px));
+  column-gap: clamp(4px, 0.42vw, 8px);
+  row-gap: clamp(3px, 0.34vw, 6px);
   width: 100%;
   align-items: center;
 }
 
 .github-heatmap-cell {
-  width: clamp(5px, 0.52vw, 8px);
-  height: clamp(5px, 0.52vw, 8px);
+  width: clamp(6px, 0.58vw, 9px);
+  height: clamp(6px, 0.58vw, 9px);
   align-self: center;
   justify-self: center;
   border-radius: 999px;
@@ -1286,30 +1286,62 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   transform: scale(0.65);
   animation: heatmapDotIn 420ms ease forwards;
   animation-delay: calc(var(--stagger, 0) * 18ms);
+  transition: background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.github-heatmap-cell:hover {
+  box-shadow: 0 0 0 4px hsla(0, 0%, 100%, 0.08);
+  transform: scale(1.22);
 }
 
 .github-heatmap-cell[data-level="1"] {
-  width: clamp(6px, 0.62vw, 9px);
-  height: clamp(6px, 0.62vw, 9px);
+  width: clamp(7px, 0.68vw, 10px);
+  height: clamp(7px, 0.68vw, 10px);
   background: hsla(0, 0%, 100%, 0.44);
 }
 
 .github-heatmap-cell[data-level="2"] {
-  width: clamp(7px, 0.72vw, 10px);
-  height: clamp(7px, 0.72vw, 10px);
+  width: clamp(8px, 0.78vw, 11px);
+  height: clamp(8px, 0.78vw, 11px);
   background: hsla(0, 0%, 100%, 0.68);
 }
 
 .github-heatmap-cell[data-level="3"] {
-  width: clamp(8px, 0.82vw, 11px);
-  height: clamp(8px, 0.82vw, 11px);
+  width: clamp(9px, 0.88vw, 12px);
+  height: clamp(9px, 0.88vw, 12px);
   background: hsla(0, 0%, 100%, 0.86);
 }
 
 .github-heatmap-cell[data-level="4"] {
-  width: clamp(9px, 0.92vw, 12px);
-  height: clamp(9px, 0.92vw, 12px);
+  width: clamp(10px, 0.98vw, 13px);
+  height: clamp(10px, 0.98vw, 13px);
   background: var(--white-2);
+}
+
+.github-heatmap-tooltip {
+  position: absolute;
+  z-index: 4;
+  max-width: min(280px, calc(100% - 24px));
+  padding: 7px 10px;
+  border: 1px solid var(--polish-border-strong, var(--jet));
+  border-radius: 8px;
+  background: #111317;
+  color: var(--white-2);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.github-heatmap-tooltip.active {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 
 .github-heatmap-summary {
@@ -1329,10 +1361,10 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   }
 
   .github-heatmap-grid {
-    grid-template-columns: repeat(53, minmax(5px, 1fr));
+    grid-template-columns: repeat(var(--week-count, 53), minmax(0, 1fr));
     grid-template-rows: repeat(7, 8px);
-    grid-auto-columns: minmax(5px, 1fr);
-    gap: 3px;
+    column-gap: 2px;
+    row-gap: 2px;
   }
 
   .github-heatmap-cell,

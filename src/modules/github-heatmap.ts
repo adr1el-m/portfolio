@@ -17,6 +17,7 @@ const GITHUB_FALLBACK_ENDPOINT = '/data/github-contributions.json';
 
 export class GitHubHeatmap {
   private readonly root = document.querySelector<HTMLElement>('[data-github-heatmap]');
+  private tooltip: HTMLElement | null = null;
 
   async init(): Promise<void> {
     if (!this.root) return;
@@ -34,24 +35,81 @@ export class GitHubHeatmap {
       }
 
       grid.innerHTML = '';
+      const weekCount = Math.ceil(payload.days.length / 7);
+      grid.style.setProperty('--week-count', String(weekCount));
       payload.days.forEach((day, index) => {
+        const label = day.label || this.formatContributionLabel(day);
         const cell = document.createElement('span');
         cell.className = 'github-heatmap-cell';
         cell.dataset.level = String(day.level);
+        cell.dataset.label = label;
         cell.setAttribute('role', 'gridcell');
-        cell.setAttribute('aria-label', day.label || this.formatContributionLabel(day));
-        cell.setAttribute('title', day.label || this.formatContributionLabel(day));
+        cell.setAttribute('aria-label', label);
+        cell.setAttribute('title', label);
+        cell.style.gridColumn = String(Math.floor(index / 7) + 1);
+        cell.style.gridRow = String((index % 7) + 1);
         cell.style.setProperty('--stagger', `${index % 17}`);
         grid.appendChild(cell);
       });
 
       summary.textContent = payload.summary;
       this.root.dataset.githubHeatmapState = 'ready';
+      this.bindTooltip(grid);
     } catch (error) {
       console.warn('GitHub heatmap unavailable:', error);
       grid.innerHTML = '';
       this.setStatus('GitHub activity unavailable right now.');
     }
+  }
+
+  private bindTooltip(grid: HTMLElement): void {
+    if (!this.root) return;
+    this.tooltip = this.root.querySelector<HTMLElement>('.github-heatmap-tooltip');
+    if (!this.tooltip) {
+      this.tooltip = document.createElement('div');
+      this.tooltip.className = 'github-heatmap-tooltip';
+      this.tooltip.setAttribute('role', 'tooltip');
+      this.root.appendChild(this.tooltip);
+    }
+
+    const show = (target: HTMLElement) => {
+      if (!this.root || !this.tooltip) return;
+      const label = target.dataset.label || target.getAttribute('aria-label') || '';
+      if (!label) return;
+
+      this.tooltip.textContent = label;
+      this.tooltip.classList.add('active');
+
+      const rootRect = this.root.getBoundingClientRect();
+      const cellRect = target.getBoundingClientRect();
+      const tooltipRect = this.tooltip.getBoundingClientRect();
+      const centerX = cellRect.left - rootRect.left + (cellRect.width / 2);
+      const minX = tooltipRect.width / 2 + 8;
+      const maxX = rootRect.width - (tooltipRect.width / 2) - 8;
+      const left = Math.max(minX, Math.min(maxX, centerX));
+      const topCandidate = cellRect.top - rootRect.top - tooltipRect.height - 10;
+      const top = topCandidate > 44 ? topCandidate : cellRect.bottom - rootRect.top + 10;
+
+      this.tooltip.style.left = `${left}px`;
+      this.tooltip.style.top = `${top}px`;
+    };
+
+    const hide = () => {
+      this.tooltip?.classList.remove('active');
+    };
+
+    grid.addEventListener('pointerover', (event) => {
+      const target = (event.target as Element | null)?.closest<HTMLElement>('.github-heatmap-cell');
+      if (target) show(target);
+    });
+    grid.addEventListener('pointermove', (event) => {
+      const target = (event.target as Element | null)?.closest<HTMLElement>('.github-heatmap-cell');
+      if (target) show(target);
+    });
+    grid.addEventListener('pointerout', (event) => {
+      const next = event.relatedTarget as Element | null;
+      if (!next?.closest('.github-heatmap-cell')) hide();
+    });
   }
 
   private async fetchContributions(): Promise<ContributionResponse> {

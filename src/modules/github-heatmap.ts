@@ -13,6 +13,7 @@ type ContributionResponse = {
 };
 
 const GITHUB_ENDPOINT = '/api/github-contributions';
+const GITHUB_FALLBACK_ENDPOINT = '/data/github-contributions.json';
 
 export class GitHubHeatmap {
   private readonly root = document.querySelector<HTMLElement>('[data-github-heatmap]');
@@ -27,20 +28,7 @@ export class GitHubHeatmap {
     this.setStatus('Loading GitHub contributions...');
 
     try {
-      const response = await fetch(GITHUB_ENDPOINT, {
-        headers: { Accept: 'application/json' },
-      });
-
-      if (!response.ok) {
-        throw new Error(`GitHub contribution request failed: ${response.status}`);
-      }
-
-      const contentType = response.headers.get('content-type') || '';
-      if (!contentType.includes('application/json')) {
-        throw new Error(`GitHub contribution endpoint returned ${contentType || 'an unknown content type'}.`);
-      }
-
-      const payload = await response.json() as ContributionResponse;
+      const payload = await this.fetchContributions();
       if (!Array.isArray(payload.days) || payload.days.length === 0) {
         throw new Error('GitHub contribution response was empty.');
       }
@@ -64,6 +52,32 @@ export class GitHubHeatmap {
       grid.innerHTML = '';
       this.setStatus('GitHub activity unavailable right now.');
     }
+  }
+
+  private async fetchContributions(): Promise<ContributionResponse> {
+    const errors: string[] = [];
+    for (const endpoint of [GITHUB_ENDPOINT, GITHUB_FALLBACK_ENDPOINT]) {
+      try {
+        const response = await fetch(endpoint, {
+          headers: { Accept: 'application/json' },
+        });
+
+        if (!response.ok) {
+          throw new Error(`${response.status}`);
+        }
+
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          throw new Error(`unexpected content type: ${contentType || 'unknown'}`);
+        }
+
+        return await response.json() as ContributionResponse;
+      } catch (error) {
+        errors.push(`${endpoint}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
+
+    throw new Error(`GitHub contribution sources failed (${errors.join('; ')}).`);
   }
 
   private setStatus(message: string): void {

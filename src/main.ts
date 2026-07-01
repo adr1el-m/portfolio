@@ -79,6 +79,10 @@ function runWhenIdle(callback: () => void, timeout = 1800): void {
   window.setTimeout(callback, Math.min(timeout, 1200));
 }
 
+function enabledFlag(value: string | null | undefined): boolean {
+  return ['1', 'true', 'yes'].includes((value || '').toLowerCase());
+}
+
 /**
  * Main Portfolio Application Class
  */
@@ -263,9 +267,13 @@ class PortfolioApp {
       }, 175);
 
       defer(() => {
-        import('./modules/public-analytics').then(({ PublicAnalytics }) => {
-          new PublicAnalytics();
-        });
+        const showPublicAnalytics = enabledFlag(import.meta.env.VITE_PUBLIC_ANALYTICS_SNAPSHOT)
+          || (import.meta.env.DEV && enabledFlag(qs.get('publicAnalytics')));
+        if (showPublicAnalytics) {
+          import('./modules/public-analytics').then(({ PublicAnalytics }) => {
+            new PublicAnalytics();
+          });
+        }
         import('./modules/command-palette').then(({ CommandPalette }) => {
           new CommandPalette();
         });

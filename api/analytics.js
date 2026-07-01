@@ -1,6 +1,8 @@
 const DEFAULT_ALLOWED_ORIGINS = [
   'https://adriel.dev',
   'https://www.adriel.dev',
+  'https://adrielmagalona.dev',
+  'https://www.adrielmagalona.dev',
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'http://localhost:5174',
@@ -280,7 +282,7 @@ export default async function handler(req, res) {
     const providedKey = typeof req.headers['x-portfolio-admin-key'] === 'string'
       ? req.headers['x-portfolio-admin-key']
       : '';
-    if (!isPublicSnapshot && adminKey && providedKey !== adminKey) {
+    if (!isPublicSnapshot && (!adminKey || providedKey !== adminKey)) {
       res.status(401).json({ error: 'Missing or invalid admin key.' });
       return;
     }

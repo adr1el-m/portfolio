@@ -39,6 +39,10 @@ function hasValidFirebaseConfig(): boolean {
         String(firebaseConfig.databaseURL).startsWith('https://');
 }
 
+function enabledFlag(value: string | null): boolean {
+    return ['1', 'true', 'yes', 'me'].includes((value || '').toLowerCase());
+}
+
 export class VisitorCounter {
     private visitorCountEl: HTMLElement | null = null;
     private isAdmin: boolean = false;
@@ -103,11 +107,13 @@ export class VisitorCounter {
 
     private checkIfAdmin(): boolean {
         const params = new URLSearchParams(window.location.search);
-        if (params.get('admin') === 'true' || params.get('exclude') === 'me') {
-            localStorage.setItem('portfolio-admin', 'true');
+        localStorage.removeItem('portfolio-admin');
+
+        if (enabledFlag(params.get('admin')) || enabledFlag(params.get('exclude'))) {
+            sessionStorage.setItem('portfolio-visitor-counter-excluded', 'true');
             return true;
         }
-        return localStorage.getItem('portfolio-admin') === 'true';
+        return sessionStorage.getItem('portfolio-visitor-counter-excluded') === 'true';
     }
 
     private createCounterUI(): void {

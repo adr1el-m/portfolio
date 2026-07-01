@@ -10,6 +10,7 @@ type PublicAnalyticsSummary = {
 };
 
 const LOCAL_STORAGE_KEY = 'portfolio:analytics:v1';
+const PUBLIC_ANALYTICS_ENABLED = (import.meta.env.VITE_PUBLIC_ANALYTICS_SNAPSHOT || '').toLowerCase() === 'true';
 
 function escapeHtml(text: string): string {
   return text
@@ -76,6 +77,8 @@ export class PublicAnalytics {
   }
 
   private init(): void {
+    if (import.meta.env.PROD && !PUBLIC_ANALYTICS_ENABLED) return;
+
     const about = document.querySelector<HTMLElement>('article.about');
     if (!about || document.getElementById('public-analytics-snapshot')) return;
 

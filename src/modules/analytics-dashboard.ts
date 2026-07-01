@@ -40,6 +40,7 @@ const FIREBASE_DATABASE_URL = (import.meta.env.VITE_FIREBASE_DATABASE_URL || '')
 const FIREBASE_ANALYTICS_PATH = (import.meta.env.VITE_PORTFOLIO_ANALYTICS_FIREBASE_PATH || 'portfolioAnalytics/summary')
   .trim()
   .replace(/^\/+|\/+$/g, '');
+const PRIVATE_DASHBOARD_ENABLED = (import.meta.env.VITE_ENABLE_PRIVATE_ANALYTICS_DASHBOARD || '').toLowerCase() === 'true';
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -77,6 +78,14 @@ function escapeHtml(text: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function enabledFlag(value: string | null): boolean {
+  return ['1', 'true', 'yes'].includes((value || '').toLowerCase());
+}
+
+function isLocalHost(): boolean {
+  return ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
 }
 
 function firebaseAnalyticsUrl(): string {
@@ -152,11 +161,20 @@ export class AnalyticsDashboard {
 
   private checkIfAdmin(): boolean {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('admin') === 'true' || params.get('analytics') === '1') {
-      localStorage.setItem('portfolio-admin', 'true');
+    const requested = enabledFlag(params.get('admin')) || enabledFlag(params.get('analytics'));
+    const canShowDashboard = import.meta.env.DEV || isLocalHost() || PRIVATE_DASHBOARD_ENABLED;
+
+    if (!canShowDashboard) {
+      localStorage.removeItem('portfolio-admin');
+      sessionStorage.removeItem('portfolio-admin');
+      return false;
+    }
+
+    if (requested) {
+      sessionStorage.setItem('portfolio-admin', 'true');
       return true;
     }
-    return localStorage.getItem('portfolio-admin') === 'true';
+    return sessionStorage.getItem('portfolio-admin') === 'true';
   }
 
   private loadState(): AnalyticsState {

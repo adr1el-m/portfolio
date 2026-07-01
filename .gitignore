@@ -116,3 +116,5 @@ __pycache__/
 
 # Backup files
 *.backup
+.vercel
+.env.local

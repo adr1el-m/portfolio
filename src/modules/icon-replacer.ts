@@ -7,6 +7,26 @@ import { logger } from '@/config';
 export class IconReplacer {
   private readonly iconMap: Record<string, string> = {
     'chevron-down': '▼',
+    'search-outline': '⌕',
+    'close-outline': '×',
+    'person-outline': '◉',
+    'school-outline': '▣',
+    'document-text-outline': '▤',
+    'ribbon-outline': '◇',
+    'library-outline': '▥',
+    'briefcase-outline': '▢',
+    'cube-outline': '⬡',
+    'copy-outline': '⧉',
+    'send-outline': '↗',
+    'open-outline': '↗',
+    'newspaper-outline': '▤',
+    'analytics-outline': '◌',
+    'shield-checkmark-outline': '✓',
+    'wallet-outline': '▭',
+    'calculator-outline': '#',
+    'log-in-outline': '↪',
+    'cash-outline': '$',
+    'checkmark-circle-outline': '✓',
     // 'mail-outline': '✉️', // Replaced by SVG
     // 'location-outline': '📍', // Replaced by SVG
     // 'logo-linkedin': '💼', // Replaced by SVG
@@ -43,34 +63,72 @@ export class IconReplacer {
   };
 
   constructor() {
-    this.replaceIcons();
+    this.replaceIcons(document, true);
+    this.observeDynamicIcons();
   }
 
-  private replaceIcons(): void {
-    document.querySelectorAll('ion-icon').forEach(icon => {
+  private replacementFor(iconName: string): string {
+    if (this.svgMap[iconName]) return this.svgMap[iconName];
+    if (this.iconMap[iconName]) return this.iconMap[iconName];
+    if (iconName.startsWith('logo-')) return '●';
+    if (iconName.includes('arrow')) return '→';
+    if (iconName.includes('calendar')) return '▣';
+    if (iconName.includes('location')) return '◆';
+    if (iconName.includes('mail')) return '✉';
+    if (iconName.includes('link')) return '↗';
+    if (iconName.includes('trophy') || iconName.includes('medal')) return '◇';
+    return '•';
+  }
+
+  private styleIcon(icon: Element, isSvg: boolean): void {
+    icon.setAttribute('aria-hidden', 'true');
+    icon.setAttribute('data-icon-replaced', 'true');
+
+    const element = icon as HTMLElement;
+    element.style.display = 'inline-grid';
+    element.style.placeItems = 'center';
+    element.style.width = isSvg ? '1.2em' : '1.25em';
+    element.style.height = isSvg ? '1.2em' : '1.25em';
+    element.style.lineHeight = '1';
+    element.style.verticalAlign = 'middle';
+    if (!isSvg) element.style.fontSize = '1.1em';
+  }
+
+  private replaceIcon(icon: Element): void {
+    if (icon.getAttribute('data-icon-replaced') === 'true') return;
+
+    const iconName = icon.getAttribute('name');
+    if (!iconName) return;
+
+    if (this.svgMap[iconName]) {
+      icon.innerHTML = this.svgMap[iconName];
+      this.styleIcon(icon, true);
+      return;
+    }
+
+    icon.textContent = this.replacementFor(iconName);
+    this.styleIcon(icon, false);
+  }
+
+  private replaceIcons(root: ParentNode = document, shouldLog = false): void {
+    root.querySelectorAll('ion-icon').forEach(icon => {
       const iconName = icon.getAttribute('name');
-      if (iconName) {
-        if (this.svgMap[iconName]) {
-          // Use innerHTML for SVGs
-          icon.innerHTML = this.svgMap[iconName];
-          icon.setAttribute('aria-hidden', 'true');
-          const element = icon as HTMLElement;
-          element.style.display = 'inline-block';
-          element.style.width = '1.2em';
-          element.style.height = '1.2em';
-          element.style.verticalAlign = 'middle';
-        } else if (this.iconMap[iconName]) {
-          // Use textContent for Unicode replacements
-          icon.textContent = this.iconMap[iconName];
-          // Hide decorative icons from assistive technologies
-          icon.setAttribute('aria-hidden', 'true');
-          // Apply some basic styling to make them look right
-          const element = icon as HTMLElement;
-          element.style.fontSize = '1.2em';
-          element.style.display = 'inline-block';
-        }
-      }
+      if (iconName) this.replaceIcon(icon);
     });
-    logger.log('✅ Icons replaced with Unicode/SVG equivalents.');
+    if (shouldLog) logger.log('✅ Icons replaced with Unicode/SVG equivalents.');
+  }
+
+  private observeDynamicIcons(): void {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (!(node instanceof Element)) return;
+          if (node.matches('ion-icon')) this.replaceIcon(node);
+          this.replaceIcons(node);
+        });
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
   }
 }

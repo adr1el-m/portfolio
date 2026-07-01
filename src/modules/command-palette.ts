@@ -45,10 +45,10 @@ export class CommandPalette {
       {
         id: 'page-about',
         title: 'Open About',
-        subtitle: 'Profile, services, tech stack, honors, and analytics snapshot',
+        subtitle: 'Profile, services, tech stack, and honors',
         group: 'Navigate',
         icon: 'person-outline',
-        keywords: 'about profile services tech honors achievements analytics',
+        keywords: 'about profile services tech honors achievements',
         action: () => this.navigate('about'),
       },
       {
@@ -222,12 +222,12 @@ export class CommandPalette {
       if (event.key === 'ArrowDown') {
         event.preventDefault();
         this.activeIndex = Math.min(this.filtered.length - 1, this.activeIndex + 1);
-        this.render();
+        this.updateActiveItem();
       }
       if (event.key === 'ArrowUp') {
         event.preventDefault();
         this.activeIndex = Math.max(0, this.activeIndex - 1);
-        this.render();
+        this.updateActiveItem();
       }
       if (event.key === 'Enter') {
         event.preventDefault();
@@ -258,9 +258,20 @@ export class CommandPalette {
     const query = normalizeKey(this.input?.value || '');
     const queryTokens = query.split(' ').filter(Boolean);
     const score = (command: Command) => {
-      const haystack = normalizeKey(`${command.title} ${command.subtitle} ${command.group} ${command.keywords}`);
       if (!queryTokens.length) return command.group === 'Navigate' ? 3 : command.group === 'Actions' ? 2 : 1;
-      return queryTokens.reduce((sum, token) => sum + (haystack.includes(token) ? 1 : 0), 0);
+      const title = normalizeKey(command.title);
+      const subtitle = normalizeKey(command.subtitle);
+      const group = normalizeKey(command.group);
+      const keywords = normalizeKey(command.keywords);
+      const exactPageBoost = title === `open ${query}` ? 8 : 0;
+      return queryTokens.reduce((sum, token) => {
+        let tokenScore = 0;
+        if (title.includes(token)) tokenScore += 4;
+        if (keywords.includes(token)) tokenScore += 2;
+        if (subtitle.includes(token)) tokenScore += 1;
+        if (group.includes(token)) tokenScore += 1;
+        return sum + tokenScore;
+      }, exactPageBoost);
     };
 
     this.filtered = this.commands
@@ -288,9 +299,17 @@ export class CommandPalette {
     this.list.querySelectorAll<HTMLButtonElement>('.command-palette-item').forEach((button, index) => {
       button.addEventListener('mouseenter', () => {
         this.activeIndex = index;
-        this.render();
+        this.updateActiveItem();
       });
       button.addEventListener('click', () => this.run(this.filtered[index]));
+    });
+  }
+
+  private updateActiveItem(): void {
+    this.list?.querySelectorAll<HTMLButtonElement>('.command-palette-item').forEach((button, index) => {
+      const isActive = index === this.activeIndex;
+      button.classList.toggle('active', isActive);
+      button.setAttribute('aria-selected', String(isActive));
     });
   }
 

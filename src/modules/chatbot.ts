@@ -1,9 +1,9 @@
 import type { ChatMessage, ProjectData, AchievementData } from '@/types';
 import { logger } from '@/config';
 import { KB } from '@/data/knowledge-base';
-import { Search } from '@/modules/search';
 import { AIService } from './ai-service';
 import { findHonorRecord, findProjectRecord } from './portfolio-data';
+import { openPortfolioSearch } from './portfolio-actions';
 
 // Use explicit data interfaces to avoid accidental 'never' inference
 type ProjectItem = ProjectData;
@@ -24,6 +24,11 @@ type IntentType =
   | 'GENERAL';
 
 type VisitorProfile = 'recruiter' | 'technical' | 'collaborator' | 'student' | 'general';
+type PortfolioContext = {
+  type: 'page' | 'project' | 'honor' | 'search';
+  title: string;
+  detail?: string;
+};
 
 type ExtractedEntities = {
   projects: string[];
@@ -108,6 +113,8 @@ export class ChatbotManager {
   private summaryEveryTurns = 6;
   private readonly memoryKey = 'adrAI:memory:v1';
   private lastUserMessage: string | null = null;
+  private currentPortfolioContext: PortfolioContext | null = null;
+  private lastContextNudgeKey = '';
   private detailedMode: boolean = false;
   private userPrefs: { detailedMode: boolean } = { detailedMode: false };
   private aiService: AIService;
@@ -1226,6 +1233,7 @@ export class ChatbotManager {
     // Build unified retrieval index once UI is ready
     this.buildUnifiedIndex();
     this.initializeEventListeners();
+    this.initializeContextListeners();
     this.displayWelcomeMessage();
     logger.log('ChatbotManager initialized');
   }
@@ -1258,6 +1266,48 @@ export class ChatbotManager {
           this.sendMessage();
         }
       });
+    }
+  }
+
+  private initializeContextListeners(): void {
+    window.addEventListener('portfolio:context', (event) => {
+      const detail = (event as CustomEvent<PortfolioContext>).detail;
+      if (detail?.type && detail.title) {
+        this.setCurrentContext(detail);
+      }
+    });
+
+    window.addEventListener('portfolio:open-project', (event) => {
+      const title = (event as CustomEvent<{ title?: string }>).detail?.title;
+      if (title) this.setCurrentContext({ type: 'project', title });
+    });
+
+    window.addEventListener('portfolio:open-honor', (event) => {
+      const title = (event as CustomEvent<{ title?: string }>).detail?.title;
+      if (title) this.setCurrentContext({ type: 'honor', title });
+    });
+
+    window.addEventListener('portfolio:ask-adrai', (event) => {
+      const prompt = (event as CustomEvent<{ prompt?: string }>).detail?.prompt?.trim();
+      this.openChatbox();
+      if (prompt && this.inputField) {
+        this.inputField.value = prompt;
+        this.sendMessage();
+      } else {
+        this.renderContextualPromptNudge();
+      }
+    });
+  }
+
+  private setCurrentContext(context: PortfolioContext): void {
+    this.currentPortfolioContext = context;
+    if (context.type === 'project') {
+      this.conversationContext.lastProjectTitle = context.title;
+      this.conversationContext.lastTopic = context.title;
+    }
+    if (context.type === 'honor') {
+      this.conversationContext.lastAchievementTitle = context.title;
+      this.conversationContext.lastTopic = context.title;
     }
   }
 
@@ -1322,11 +1372,80 @@ export class ChatbotManager {
     if (!this.chatbox?.classList.contains('active')) {
       this.toggleChatbox();
     }
+    this.renderContextualPromptNudge();
   }
 
   private displayWelcomeMessage(): void {
     const welcomeMessage = "Hi, I'm AdrAI, Adriel's portfolio agent. I can explain why Adriel is hireable, compare projects, surface proof of AI skill, summarize awards, or open resume/contact links. Try: \"Why hire Adriel?\" or \"Show proof of AI skill.\"";
-    this.addMessage(welcomeMessage, 'bot', ['Why hire Adriel?', 'Open LingapLink', 'Filter scholarships', 'Open contact']);
+    this.addMessage(welcomeMessage, 'bot', this.getContextualPromptSuggestions());
+  }
+
+  private getActivePortfolioContext(): PortfolioContext {
+    if (this.currentPortfolioContext) return this.currentPortfolioContext;
+    const activePage = document.querySelector<HTMLElement>('article[data-page].active')?.dataset.page || 'about';
+    const labels: Record<string, string> = {
+      about: 'About',
+      background: 'Background',
+      projects: 'Projects',
+      gear: 'Gear',
+    };
+    return {
+      type: 'page',
+      title: labels[activePage] || 'Portfolio',
+    };
+  }
+
+  private renderContextualPromptNudge(): void {
+    if (!this.messagesContainer) return;
+    const context = this.getActivePortfolioContext();
+    const key = `${context.type}:${context.title}:${context.detail || ''}`;
+    if (this.lastContextNudgeKey === key) return;
+    this.lastContextNudgeKey = key;
+
+    const label = this.escapeHtml(context.title);
+    const message = context.type === 'project'
+      ? `You're viewing <strong>${label}</strong>. I can explain its stack, impact, related honors, or why it matters.`
+      : context.type === 'honor'
+      ? `You're viewing <strong>${label}</strong>. I can unpack the event, result, linked project, or career signal.`
+      : context.type === 'search'
+      ? `You're searching for <strong>${label}</strong>. I can help narrow the result or compare related items.`
+      : `You're on the <strong>${label}</strong> section. I can summarize what matters here or open the next useful item.`;
+
+    this.addMessage(message, 'bot', this.getContextualPromptSuggestions(context));
+  }
+
+  private getContextualPromptSuggestions(context = this.getActivePortfolioContext()): string[] {
+    if (context.type === 'project') {
+      return [
+        `Show ${context.title} details`,
+        `Open ${context.title} project`,
+        'Any related project?',
+        'Open resume',
+      ];
+    }
+
+    if (context.type === 'honor') {
+      return [
+        `Open ${context.title} honor`,
+        'Any related project?',
+        'Why is this impressive?',
+        'Show awards timeline',
+      ];
+    }
+
+    if (context.title.toLowerCase().includes('background')) {
+      return ['Filter scholarships', 'Filter experience', 'Where do you study?', 'Open resume'];
+    }
+
+    if (context.title.toLowerCase().includes('projects')) {
+      return ['Best AI project', 'Compare WorkSight and LingapLink', 'Search site for Firebase', 'Open resume'];
+    }
+
+    if (context.title.toLowerCase().includes('gear')) {
+      return ['How is the site built?', 'Show tech stack', 'Open Projects section', 'Share contact info'];
+    }
+
+    return ['Why hire Adriel?', 'Show proof of AI skill', 'Search site for AI', 'Share contact info'];
   }
 
   private sendMessage(): void {
@@ -1575,6 +1694,12 @@ export class ChatbotManager {
       this.addMessage(this.buildScholarshipImpactHTML(), 'bot', ['Show education background', 'Open resume', 'Top achievements']);
       return;
     }
+    if (t.includes('search portfolio')) {
+      this.addMessage('Opening portfolio search…', 'bot');
+      this.openSearchOverlay('');
+      return;
+    }
+
     if (t.startsWith('search ') || t.includes('search site')) {
       const qMatch = text.replace(/^(search\s+site\s+for\s+|search\s+)/i, '').trim();
       const q = qMatch || (this.lastUserMessage || '').trim();
@@ -1712,13 +1837,7 @@ export class ChatbotManager {
   }
 
   private openSearchOverlay(query: string): void {
-    try {
-      const url = new URL(window.location.href);
-      url.searchParams.set('q', query);
-      window.history.replaceState({}, '', url.toString());
-    } catch { /* ignore */ }
-    // Instantiate overlay (module guards and builds overlay if ?q exists)
-    try { new Search(); } catch { /* ignore */ }
+    openPortfolioSearch(query);
   }
   // === New: DOM-driven Projects extraction and listing ===
   private getProjectsFromDOM(): ProjectSummary[] {
@@ -2662,11 +2781,13 @@ GitHub: ${KB.contact.github}
 LinkedIn: ${KB.contact.linkedin}
 Resume: ${KB.contact.resumeUrl}`;
 
+    const activePortfolioContext = this.getActivePortfolioContext();
     const agentState = `Visitor Profile: ${this.conversationContext.visitorProfile}
 Active Topic: ${this.conversationContext.lastTopic || 'none'}
 Last Project: ${this.conversationContext.lastProjectTitle || 'none'}
 Last Achievement: ${this.conversationContext.lastAchievementTitle || 'none'}
 Last Technology: ${this.conversationContext.lastTechnology || 'none'}
+Current Portfolio Context: ${activePortfolioContext.type} — ${activePortfolioContext.title}${activePortfolioContext.detail ? ` (${activePortfolioContext.detail})` : ''}
 Instruction: ${this.visitorProfileInstruction()}`;
 
     const localMemory = [

@@ -230,16 +230,45 @@ export class NavigationManager {
    */
   private filterFunc(selectedValue: string): void {
     const filterItems = document.querySelectorAll<HTMLElement>("[data-filter-item]");
+    let visibleCount = 0;
 
     filterItems.forEach((item) => {
       if (selectedValue === "all") {
         item.classList.add("active");
+        visibleCount += 1;
       } else if (selectedValue === item.dataset.category) {
         item.classList.add("active");
+        visibleCount += 1;
       } else {
         item.classList.remove("active");
       }
     });
+
+    this.updateProjectEmptyState(selectedValue, visibleCount);
+  }
+
+  private updateProjectEmptyState(selectedValue: string, visibleCount: number): void {
+    const projectList = document.querySelector<HTMLElement>('article.projects .project-list');
+    if (!projectList) return;
+
+    let emptyState = document.querySelector<HTMLElement>('[data-project-empty-state]');
+    if (!emptyState) {
+      emptyState = document.createElement('div');
+      emptyState.className = 'project-empty-state';
+      emptyState.dataset.projectEmptyState = '';
+      emptyState.innerHTML = `
+        <ion-icon name="file-tray-outline" aria-hidden="true"></ion-icon>
+        <strong>No projects match this filter</strong>
+        <span>Try another category or return to all projects.</span>
+      `;
+      projectList.insertAdjacentElement('afterend', emptyState);
+    }
+
+    const isEmpty = visibleCount === 0;
+    emptyState.hidden = !isEmpty;
+    if (isEmpty) {
+      emptyState.querySelector('span')!.textContent = `No projects found for "${selectedValue}". Try All or search the portfolio.`;
+    }
   }
 
   /**

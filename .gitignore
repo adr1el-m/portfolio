@@ -22,6 +22,7 @@ yarn-error.log*
 lerna-debug.log*
 .playwright-mcp/
 portfolio-mobile-*.png
+.visual-regression/current/
 
 # macOS metadata
 .DS_Store

@@ -1,310 +1,374 @@
-// No logger needed for search overlay
+import type { PortfolioSearchEntry } from './portfolio-data';
+import { getPortfolioSearchEntries, normalizeKey } from './portfolio-data';
+import {
+  filterTimeline,
+  navigateToPage,
+  openAdrAI,
+  openExternalUrl,
+  openPortfolioHonor,
+  openPortfolioProject,
+  openResumePreview,
+} from './portfolio-actions';
 
-interface SearchResult {
-  title: string;
-  section: 'about' | 'background' | 'projects';
-  element: HTMLElement | null;
-  snippet?: string;
-}
+type SearchResult = PortfolioSearchEntry & {
+  score: number;
+};
 
 export class Search {
   private overlayEl: HTMLElement | null = null;
   private resultsEl: HTMLElement | null = null;
   private inputRef: HTMLInputElement | null = null;
+  private countEl: HTMLElement | null = null;
 
   constructor() {
     this.init();
     this.bindGlobalHotkeys();
+    this.bindEvents();
   }
 
   private init(): void {
     const params = new URLSearchParams(window.location.search);
     const q = (params.get('q') || '').trim();
-    if (!q) return;
+    if (q) this.open(q);
+  }
 
+  public open(initialQuery = ''): void {
     this.renderOverlay();
-    this.updateResults(q);
+    this.updateQueryParam(initialQuery);
+    if (this.inputRef) {
+      this.inputRef.value = initialQuery;
+      try { this.inputRef.focus({ preventScroll: true }); } catch { void 0; }
+    }
+    this.updateResults(initialQuery);
   }
 
   private renderOverlay(): void {
     if (this.overlayEl) return;
 
-    const style = document.createElement('style');
-    style.textContent = `
-      .search-overlay{position:fixed;inset:20px 20px auto 20px;z-index:1000;background:var(--eerie-black-2);border:1px solid var(--jet);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.4);padding:16px;max-height:60vh;overflow:auto}
-      .search-header{display:flex;gap:8px;margin-bottom:12px;align-items:center}
-      .search-input{flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--jet);background:var(--eerie-black-1);color:var(--white-1)}
-      .search-close{padding:10px 12px;border-radius:8px;border:1px solid var(--jet);background:var(--border-gradient-onyx);color:var(--white-1);cursor:pointer}
-      .search-results{display:flex;flex-direction:column;gap:10px}
-      .search-result{padding:10px;border-radius:10px;border:1px solid var(--jet);background:var(--bg-gradient-jet)}
-      .search-result h4{margin:0 0 6px 0;color:var(--orange-yellow-crayola)}
-      .search-result small{color:var(--light-gray-70)}
-      .search-open{margin-top:8px;padding:8px 10px;border-radius:8px;border:1px solid var(--jet);background:var(--border-gradient-onyx);color:var(--white-1);cursor:pointer}
-      .search-empty{color:var(--light-gray-70)}
-      .search-highlight{outline:2px solid var(--orange-yellow-crayola);outline-offset:2px;border-radius:8px}
-    `;
-    document.head.appendChild(style);
-
     const overlay = document.createElement('div');
     overlay.className = 'search-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-labelledby', 'portfolio-search-title');
+    overlay.innerHTML = `
+      <div class="search-panel">
+        <div class="search-header">
+          <div>
+            <p class="search-kicker">Global Search</p>
+            <h2 id="portfolio-search-title">Find anything in the portfolio</h2>
+          </div>
+          <button type="button" class="search-close" aria-label="Close search">
+            <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+        <div class="search-box">
+          <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+          <input type="search" class="search-input" placeholder="Search projects, honors, tech, background, contact" autocomplete="off" spellcheck="false" />
+        </div>
+        <div class="search-meta" aria-live="polite">
+          <span data-search-count>Type to search the full site.</span>
+          <span>/ opens search · Esc closes</span>
+        </div>
+        <div class="search-results" role="listbox" aria-label="Search results"></div>
+      </div>
+    `;
 
-    const header = document.createElement('div');
-    header.className = 'search-header';
-
-    const input = document.createElement('input');
-    input.type = 'search';
-    input.className = 'search-input';
-    input.placeholder = 'Search projects, achievements, background…';
-    input.value = new URLSearchParams(window.location.search).get('q') || '';
-
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'search-close';
-    closeBtn.type = 'button';
-    closeBtn.textContent = 'Close';
-
-    const results = document.createElement('div');
-    results.className = 'search-results';
-
-    header.appendChild(input);
-    header.appendChild(closeBtn);
-    overlay.appendChild(header);
-    overlay.appendChild(results);
     document.body.appendChild(overlay);
-
     this.overlayEl = overlay;
-    this.resultsEl = results;
-    this.inputRef = input as HTMLInputElement;
+    this.resultsEl = overlay.querySelector<HTMLElement>('.search-results');
+    this.inputRef = overlay.querySelector<HTMLInputElement>('.search-input');
+    this.countEl = overlay.querySelector<HTMLElement>('[data-search-count]');
 
-    input.addEventListener('keydown', (e) => {
-      if ((e as KeyboardEvent).key === 'Enter') {
-        const q = input.value.trim();
-        this.updateQueryParam(q);
-        this.updateResults(q);
-      }
-    });
-
-    input.addEventListener('input', () => {
-      const q = input.value.trim();
+    this.inputRef?.addEventListener('input', () => {
+      const q = this.inputRef?.value.trim() || '';
+      this.updateQueryParam(q);
       this.updateResults(q);
     });
 
-    closeBtn.addEventListener('click', () => {
-      this.closeOverlay();
+    this.inputRef?.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        const first = this.resultsEl?.querySelector<HTMLButtonElement>('[data-search-open]');
+        first?.click();
+      }
+    });
+
+    overlay.querySelector<HTMLButtonElement>('.search-close')?.addEventListener('click', () => this.closeOverlay());
+    overlay.addEventListener('click', (event) => {
+      if (event.target === overlay) this.closeOverlay();
+    });
+  }
+
+  private bindEvents(): void {
+    window.addEventListener('portfolio:open-search', (event) => {
+      const detail = (event as CustomEvent<{ query?: string }>).detail;
+      this.open(detail?.query || '');
     });
   }
 
   private updateQueryParam(q: string): void {
     try {
       const url = new URL(window.location.href);
-      if (q) url.searchParams.set('q', q); else url.searchParams.delete('q');
+      if (q) url.searchParams.set('q', q);
+      else url.searchParams.delete('q');
       window.history.replaceState({}, '', url.toString());
     } catch { void 0; }
   }
 
   private updateResults(query: string): void {
-    const resultsEl = this.resultsEl;
-    if (!resultsEl) return;
-    resultsEl.innerHTML = '';
-    const q = query.toLowerCase();
+    if (!this.resultsEl) return;
+    this.resultsEl.innerHTML = '';
+    const q = query.trim();
     if (!q) {
-      const p = document.createElement('p');
-      p.className = 'search-empty';
-      p.textContent = 'Type to search. Results update as you type.';
-      resultsEl.appendChild(p);
+      if (this.countEl) {
+        this.countEl.textContent = 'Search pages, projects, honors, tech, and contact actions.';
+      }
+      this.renderSuggestedResults();
       return;
     }
 
     const results = this.findResults(q);
+    if (this.countEl) {
+      this.countEl.textContent = results.length
+        ? `${results.length} match${results.length === 1 ? '' : 'es'} for "${q}"`
+        : `No matches for "${q}"`;
+    }
+
     if (results.length === 0) {
-      const p = document.createElement('p');
-      p.className = 'search-empty';
-      p.textContent = `No matches for "${query}"`;
-      resultsEl.appendChild(p);
+      this.renderEmpty(q);
       return;
     }
 
-    results.slice(0, 20).forEach((r) => {
-      const card = document.createElement('div');
-      card.className = 'search-result';
+    results.slice(0, 24).forEach((result) => this.resultsEl?.appendChild(this.createResultButton(result, q)));
+  }
 
-      const title = document.createElement('h4');
-      title.textContent = r.title;
+  private renderSuggestedResults(): void {
+    const suggestions = getPortfolioSearchEntries()
+      .filter((entry) => ['page', 'action', 'contact'].includes(entry.type))
+      .slice(0, 8)
+      .map((entry) => ({ ...entry, score: 1 }));
+    suggestions.forEach((result) => this.resultsEl?.appendChild(this.createResultButton(result, '')));
+  }
 
-      const meta = document.createElement('small');
-      const sectionName = this.sectionLabel(r.section);
-      meta.textContent = sectionName;
+  private renderEmpty(query: string): void {
+    if (!this.resultsEl) return;
+    const empty = document.createElement('div');
+    empty.className = 'search-empty';
+    empty.innerHTML = `
+      <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+      <strong>No exact match yet</strong>
+      <span>Try a project name, award, tech stack term, scholarship, or contact action.</span>
+    `;
+    const askBtn = document.createElement('button');
+    askBtn.type = 'button';
+    askBtn.textContent = 'Ask AdrAI';
+    askBtn.addEventListener('click', () => {
+      this.closeOverlay();
+      openAdrAI(`Search the portfolio for ${query}`);
+    });
+    empty.appendChild(askBtn);
+    this.resultsEl.appendChild(empty);
+  }
 
-      const snippet = document.createElement('div');
-      snippet.innerHTML = r.snippet ? r.snippet : '';
+  private createResultButton(result: SearchResult, query: string): HTMLButtonElement {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'search-result';
+    button.dataset.searchOpen = result.id;
+    button.setAttribute('role', 'option');
 
-      const openBtn = document.createElement('button');
-      openBtn.className = 'search-open';
-      openBtn.type = 'button';
-      openBtn.textContent = 'Open';
-      openBtn.addEventListener('click', () => {
-        this.activateSection(r.section);
-        if (r.element) {
-          // Brief highlight
-          r.element.classList.add('search-highlight');
-          r.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          setTimeout(() => r.element?.classList.remove('search-highlight'), 2000);
+    const icon = document.createElement('span');
+    icon.className = 'search-result-icon';
+    icon.innerHTML = `<ion-icon name="${this.iconFor(result.type)}" aria-hidden="true"></ion-icon>`;
+
+    const copy = document.createElement('span');
+    copy.className = 'search-result-copy';
+
+    const title = document.createElement('strong');
+    title.textContent = result.title;
+
+    const subtitle = document.createElement('small');
+    subtitle.textContent = [this.typeLabel(result.type), result.subtitle].filter(Boolean).join(' • ');
+
+    const snippet = document.createElement('span');
+    snippet.className = 'search-result-snippet';
+    snippet.textContent = result.description ? this.trimSnippet(result.description, query) : this.sectionLabel(result.section);
+
+    copy.append(title, subtitle, snippet);
+
+    const action = document.createElement('span');
+    action.className = 'search-result-action';
+    action.textContent = this.actionLabel(result);
+
+    button.append(icon, copy, action);
+    button.addEventListener('click', () => this.activateResult(result));
+    return button;
+  }
+
+  private findResults(query: string): SearchResult[] {
+    const normalized = normalizeKey(query);
+    const tokens = normalized.split(' ').filter(Boolean);
+    if (!tokens.length) return [];
+
+    return getPortfolioSearchEntries()
+      .map((entry) => {
+        const title = normalizeKey(entry.title);
+        const subtitle = normalizeKey(entry.subtitle || '');
+        const description = normalizeKey(entry.description || '');
+        const keywords = normalizeKey(entry.keywords.join(' '));
+        const haystack = `${title} ${subtitle} ${description} ${keywords}`;
+        const score = tokens.reduce((sum, token) => {
+          let tokenScore = 0;
+          if (title === token || title.startsWith(token)) tokenScore += 7;
+          if (title.includes(token)) tokenScore += 5;
+          if (keywords.includes(token)) tokenScore += 3;
+          if (subtitle.includes(token)) tokenScore += 2;
+          if (description.includes(token)) tokenScore += 1;
+          return sum + tokenScore;
+        }, haystack.includes(normalized) ? 4 : 0);
+        return { ...entry, score };
+      })
+      .filter((entry) => entry.score > 0)
+      .sort((a, b) => b.score - a.score || this.typeWeight(a.type) - this.typeWeight(b.type) || a.title.localeCompare(b.title));
+  }
+
+  private activateResult(result: PortfolioSearchEntry): void {
+    this.closeOverlay();
+
+    switch (result.type) {
+      case 'project':
+        openPortfolioProject(result.target || result.title);
+        break;
+      case 'honor':
+        openPortfolioHonor(result.target || result.title);
+        break;
+      case 'timeline':
+        navigateToPage('background', { track: false });
+        if (result.target === 'education' || result.target === 'experience' || result.target === 'scholarship') {
+          filterTimeline(result.target);
         }
-        // Close overlay for focus
-        this.overlayEl?.remove();
-        this.overlayEl = null;
-        this.resultsEl = null;
-        this.updateQueryParam('');
-      });
-
-      card.appendChild(title);
-      card.appendChild(meta);
-      if (r.snippet) card.appendChild(snippet);
-      card.appendChild(openBtn);
-      resultsEl.appendChild(card);
-    });
-  }
-
-  private sectionLabel(section: SearchResult['section']): string {
-    switch (section) {
-      case 'about': return 'About → Achievements';
-      case 'background': return 'Background';
-      case 'projects': return 'Projects';
-      default: return 'Section';
+        this.highlightElement(result.element);
+        break;
+      case 'skill':
+        navigateToPage('about', { scrollSelector: '.tech-stack-section', track: false });
+        break;
+      case 'contact':
+        if (result.id === 'contact-github' && result.url) openExternalUrl(result.url, 'GitHub profile');
+        else if (result.id === 'contact-linkedin' && result.url) openExternalUrl(result.url, 'LinkedIn profile');
+        else navigateToPage('contact', { track: false });
+        break;
+      case 'action':
+        if (result.id === 'action-resume') openResumePreview(result.url);
+        else if (result.id === 'action-adrai') openAdrAI();
+        break;
+      default:
+        if (result.target === 'about' || result.target === 'background' || result.target === 'projects' || result.target === 'gear' || result.target === 'contact') {
+          navigateToPage(result.target, { track: false });
+        }
+        break;
     }
   }
 
-  private findResults(q: string): SearchResult[] {
-    const res: SearchResult[] = [];
-
-    // Projects
-    document.querySelectorAll<HTMLElement>('.project-item').forEach((el) => {
-      const title = el.querySelector('.project-title')?.textContent?.trim() || '';
-      const desc = el.getAttribute('data-description') || '';
-      const tech = el.getAttribute('data-technologies') || '';
-      const cat = el.getAttribute('data-category') || '';
-      const hay = (title + ' ' + desc + ' ' + tech + ' ' + cat).toLowerCase();
-      if (hay.includes(q)) {
-        res.push({
-          title: title || 'Project',
-          section: 'projects',
-          element: el,
-          snippet: desc ? `<span style="color:var(--light-gray-70)">${this.trimSnippet(desc, q)}</span>` : undefined,
-        });
-      }
-    });
-
-    // Achievements (inside About)
-    document.querySelectorAll<HTMLElement>('.achievement-card, .achievement-item .achievement-card').forEach((el) => {
-      const title = el.querySelector('.card-title, .h4.card-title')?.textContent?.trim() || '';
-      const desc = el.querySelector('.card-subtitle')?.textContent?.trim() || '';
-      const organizer = el.getAttribute('data-organizer') || '';
-      const loc = el.getAttribute('data-location') || '';
-      const date = el.getAttribute('data-date') || '';
-      const hay = (title + ' ' + desc + ' ' + organizer + ' ' + loc + ' ' + date).toLowerCase();
-      if (hay.includes(q)) {
-        res.push({
-          title: title || 'Achievement',
-          section: 'about',
-          element: el,
-          snippet: desc ? `<span style="color:var(--light-gray-70)">${this.trimSnippet(desc, q)}</span>` : undefined,
-        });
-      }
-    });
-
-    // Background → Timeline
-    document.querySelectorAll<HTMLElement>('.timeline-item').forEach((el) => {
-      const title = el.querySelector('.timeline-title, .h4.timeline-title')?.textContent?.trim() || '';
-      const company = el.querySelector('.company-name')?.textContent?.trim() || '';
-      const period = el.querySelector('.timeline-period')?.textContent?.trim() || '';
-      const text = el.querySelector('.timeline-text')?.textContent?.trim() || '';
-      const hay = (title + ' ' + company + ' ' + period + ' ' + text).toLowerCase();
-      if (hay.includes(q)) {
-        res.push({
-          title: title || 'Background',
-          section: 'background',
-          element: el,
-          snippet: text ? `<span style="color:var(--light-gray-70)">${this.trimSnippet(text, q)}</span>` : undefined,
-        });
-      }
-    });
-
-    return res;
+  private highlightElement(element?: HTMLElement): void {
+    if (!element) return;
+    window.setTimeout(() => {
+      element.classList.add('search-highlight');
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      window.setTimeout(() => element.classList.remove('search-highlight'), 2000);
+    }, 220);
   }
 
-  private trimSnippet(text: string, q: string, len: number = 120): string {
-    const t = text.replace(/\s+/g, ' ').trim();
-    const i = t.toLowerCase().indexOf(q.toLowerCase());
-    if (i < 0) return t.slice(0, len) + (t.length > len ? '…' : '');
+  private trimSnippet(text: string, query: string, len = 132): string {
+    const cleaned = text.replace(/\s+/g, ' ').trim();
+    if (!query) return cleaned.length > len ? `${cleaned.slice(0, len).trim()}...` : cleaned;
+    const normalizedText = cleaned.toLowerCase();
+    const i = normalizedText.indexOf(query.toLowerCase());
+    if (i < 0) return cleaned.length > len ? `${cleaned.slice(0, len).trim()}...` : cleaned;
     const start = Math.max(0, i - Math.floor(len / 2));
-    const end = Math.min(t.length, start + len);
-    return (start > 0 ? '…' : '') + t.slice(start, end) + (end < t.length ? '…' : '');
+    const end = Math.min(cleaned.length, start + len);
+    return `${start > 0 ? '...' : ''}${cleaned.slice(start, end)}${end < cleaned.length ? '...' : ''}`;
   }
 
-  private activateSection(section: SearchResult['section']): void {
-    const labelMap: Record<SearchResult['section'], string> = {
-      about: 'about',
-      background: 'background',
-      projects: 'projects',
-    };
-
-    // Use existing navigation manager handlers by simulating a click on the navbar
-    const targetLabel = this.navButtonLabel(section);
-    const btns = Array.from(document.querySelectorAll<HTMLElement>('[data-nav-link]'));
-    const targetBtn = btns.find((b) => (b.textContent || '').trim().toLowerCase() === targetLabel);
-    if (targetBtn) {
-      targetBtn.click();
-      return;
+  private iconFor(type: PortfolioSearchEntry['type']): string {
+    switch (type) {
+      case 'project': return 'cube-outline';
+      case 'honor': return 'trophy-outline';
+      case 'timeline': return 'time-outline';
+      case 'contact': return 'mail-outline';
+      case 'action': return 'flash-outline';
+      case 'skill': return 'construct-outline';
+      default: return 'document-text-outline';
     }
-
-    // Fallback: toggle articles directly
-    document.querySelectorAll<HTMLElement>('[data-page]').forEach((a) => a.classList.remove('active'));
-    const art = document.querySelector<HTMLElement>(`[data-page="${labelMap[section]}"]`);
-    art?.classList.add('active');
   }
 
-  private navButtonLabel(section: SearchResult['section']): string {
+  private typeLabel(type: PortfolioSearchEntry['type']): string {
+    switch (type) {
+      case 'project': return 'Project';
+      case 'honor': return 'Honor';
+      case 'timeline': return 'Background';
+      case 'contact': return 'Contact';
+      case 'action': return 'Action';
+      case 'skill': return 'Tech';
+      default: return 'Page';
+    }
+  }
+
+  private actionLabel(result: PortfolioSearchEntry): string {
+    if (result.type === 'contact' && result.url && result.id !== 'contact-email') return 'Open';
+    if (result.type === 'action') return 'Run';
+    return 'Go';
+  }
+
+  private sectionLabel(section: PortfolioSearchEntry['section']): string {
     switch (section) {
-      case 'about': return 'about';
-      case 'background': return 'background';
-      case 'projects': return 'projects';
+      case 'about': return 'About section';
+      case 'background': return 'Background section';
+      case 'projects': return 'Projects section';
+      case 'gear': return 'Gear section';
+      case 'contact': return 'Contact section';
+      default: return 'Portfolio action';
     }
   }
 
-  private openOverlay(initialQuery: string = ''): void {
-    this.renderOverlay();
-    this.updateQueryParam(initialQuery);
-    if (this.inputRef) {
-      this.inputRef.value = initialQuery;
-      try { this.inputRef.focus(); } catch { void 0; }
-    }
-    this.updateResults(initialQuery);
+  private typeWeight(type: PortfolioSearchEntry['type']): number {
+    const weights: Record<PortfolioSearchEntry['type'], number> = {
+      page: 0,
+      project: 1,
+      honor: 2,
+      timeline: 3,
+      contact: 4,
+      action: 5,
+      skill: 6,
+    };
+    return weights[type] ?? 9;
   }
 
   private closeOverlay(): void {
     this.overlayEl?.remove();
     this.overlayEl = null;
     this.resultsEl = null;
+    this.inputRef = null;
+    this.countEl = null;
     this.updateQueryParam('');
   }
 
   private bindGlobalHotkeys(): void {
-    document.addEventListener('keydown', (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement | null;
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
       const tag = (target?.tagName || '').toLowerCase();
       const editable = tag === 'input' || tag === 'textarea' || target?.isContentEditable === true;
-      if (editable) return;
 
-      const slash = e.key === '/';
-      const cmdk = (e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey);
-      if ((slash && !e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey) || cmdk) {
-        e.preventDefault();
-        this.openOverlay('');
+      if (this.overlayEl && event.key === 'Escape') {
+        event.preventDefault();
+        this.closeOverlay();
         return;
       }
 
-      if (this.overlayEl && e.key === 'Escape') {
-        e.preventDefault();
-        this.closeOverlay();
+      if (editable) return;
+
+      if (event.key === '/' && !event.altKey && !event.shiftKey && !event.ctrlKey && !event.metaKey) {
+        event.preventDefault();
+        this.open('');
       }
     });
   }

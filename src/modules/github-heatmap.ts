@@ -12,6 +12,16 @@ type ContributionResponse = {
   source: string;
 };
 
+type ContributionStats = {
+  total: number;
+  activeDays: number;
+  bestDay: ContributionDay | null;
+  currentStreak: number;
+  longestStreak: number;
+  bestMonth: { label: string; count: number } | null;
+  bestWeek: { label: string; count: number } | null;
+};
+
 const GITHUB_ENDPOINT = '/api/github-contributions';
 const GITHUB_FALLBACK_ENDPOINT = '/data/github-contributions.json';
 
@@ -54,13 +64,15 @@ export class GitHubHeatmap {
       });
 
       summary.textContent = payload.summary;
+      this.renderDrilldown(payload);
       this.root.dataset.githubHeatmapState = 'ready';
       this.bindTooltip(grid);
     } catch (error) {
       console.warn('GitHub heatmap unavailable:', error);
       grid.innerHTML = '';
       this.clearMonthLabels(grid);
-      this.setStatus('GitHub activity unavailable right now.');
+      this.setStatus('GitHub activity unavailable right now.', 'error');
+      this.renderUnavailableState();
     }
   }
 
@@ -179,11 +191,129 @@ export class GitHubHeatmap {
     throw new Error(`GitHub contribution sources failed (${errors.join('; ')}).`);
   }
 
-  private setStatus(message: string): void {
+  private renderDrilldown(payload: ContributionResponse): void {
+    if (!this.root) return;
+    const stats = this.calculateStats(payload.days);
+    let panel = this.root.querySelector<HTMLElement>('[data-github-drilldown]');
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.className = 'github-heatmap-drilldown';
+      panel.dataset.githubDrilldown = '';
+      this.root.appendChild(panel);
+    }
+
+    const bestDayLabel = stats.bestDay
+      ? `${stats.bestDay.count} on ${this.formatShortDate(stats.bestDay.date)}`
+      : 'No activity';
+
+    panel.innerHTML = `
+      <div class="github-drilldown-stat">
+        <span>Total</span>
+        <strong>${stats.total.toLocaleString()}</strong>
+      </div>
+      <div class="github-drilldown-stat">
+        <span>Active days</span>
+        <strong>${stats.activeDays}</strong>
+      </div>
+      <div class="github-drilldown-stat">
+        <span>Best day</span>
+        <strong>${bestDayLabel}</strong>
+      </div>
+      <div class="github-drilldown-stat">
+        <span>Current streak</span>
+        <strong>${stats.currentStreak}d</strong>
+      </div>
+      <div class="github-drilldown-stat">
+        <span>Longest streak</span>
+        <strong>${stats.longestStreak}d</strong>
+      </div>
+      <div class="github-drilldown-stat">
+        <span>Best month</span>
+        <strong>${stats.bestMonth ? `${stats.bestMonth.label} · ${stats.bestMonth.count}` : 'None'}</strong>
+      </div>
+    `;
+  }
+
+  private renderUnavailableState(): void {
+    if (!this.root) return;
+    let panel = this.root.querySelector<HTMLElement>('[data-github-drilldown]');
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.className = 'github-heatmap-drilldown github-heatmap-drilldown--empty';
+      panel.dataset.githubDrilldown = '';
+      this.root.appendChild(panel);
+    }
+    panel.innerHTML = `
+      <div class="github-drilldown-empty">
+        <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon>
+        <strong>Contribution data did not load</strong>
+        <span>The portfolio will retry when this section reloads.</span>
+      </div>
+    `;
+  }
+
+  private calculateStats(days: ContributionDay[]): ContributionStats {
+    const total = days.reduce((sum, day) => sum + day.count, 0);
+    const activeDays = days.filter((day) => day.count > 0).length;
+    const bestDay = days.reduce<ContributionDay | null>((best, day) => {
+      if (!best || day.count > best.count) return day;
+      return best;
+    }, null);
+
+    let currentStreak = 0;
+    for (let index = days.length - 1; index >= 0; index -= 1) {
+      if (days[index].count <= 0) break;
+      currentStreak += 1;
+    }
+
+    let longestStreak = 0;
+    let runningStreak = 0;
+    days.forEach((day) => {
+      if (day.count > 0) {
+        runningStreak += 1;
+        longestStreak = Math.max(longestStreak, runningStreak);
+      } else {
+        runningStreak = 0;
+      }
+    });
+
+    const monthCounts = new Map<string, number>();
+    const weekCounts = new Map<string, number>();
+    days.forEach((day, index) => {
+      const date = new Date(`${day.date}T00:00:00`);
+      if (!Number.isNaN(date.getTime())) {
+        const monthLabel = date.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+        monthCounts.set(monthLabel, (monthCounts.get(monthLabel) || 0) + day.count);
+      }
+      const weekLabel = `Week ${Math.floor(index / 7) + 1}`;
+      weekCounts.set(weekLabel, (weekCounts.get(weekLabel) || 0) + day.count);
+    });
+
+    const bestMonth = this.bestBucket(monthCounts);
+    const bestWeek = this.bestBucket(weekCounts);
+
+    return { total, activeDays, bestDay, currentStreak, longestStreak, bestMonth, bestWeek };
+  }
+
+  private bestBucket(map: Map<string, number>): { label: string; count: number } | null {
+    let best: { label: string; count: number } | null = null;
+    map.forEach((count, label) => {
+      if (!best || count > best.count) best = { label, count };
+    });
+    return best;
+  }
+
+  private formatShortDate(date: string): string {
+    const parsed = new Date(`${date}T00:00:00`);
+    if (Number.isNaN(parsed.getTime())) return date;
+    return parsed.toLocaleString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  private setStatus(message: string, state: 'loading' | 'error' = 'loading'): void {
     if (!this.root) return;
     const summary = this.root.querySelector<HTMLElement>('[data-github-summary]');
     if (summary) summary.textContent = message;
-    this.root.dataset.githubHeatmapState = 'loading';
+    this.root.dataset.githubHeatmapState = state;
   }
 
   private formatContributionLabel(day: ContributionDay): string {

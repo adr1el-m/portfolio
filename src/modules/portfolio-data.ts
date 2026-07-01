@@ -12,6 +12,31 @@ export type PortfolioHonorRecord = AchievementData & {
   path?: string;
 };
 
+export type PortfolioTimelineRecord = {
+  id: string;
+  title: string;
+  category: 'education' | 'experience' | 'scholarship';
+  period?: string;
+  organization?: string;
+  description?: string;
+  tags: string[];
+  element?: HTMLElement;
+  source: 'knowledge-base' | 'dom';
+};
+
+export type PortfolioSearchEntry = {
+  id: string;
+  title: string;
+  type: 'page' | 'project' | 'honor' | 'timeline' | 'contact' | 'action' | 'skill';
+  section: 'about' | 'background' | 'projects' | 'gear' | 'contact' | 'action';
+  subtitle?: string;
+  description?: string;
+  keywords: string[];
+  element?: HTMLElement;
+  target?: string;
+  url?: string;
+};
+
 const PROJECT_ALIAS_MAP: Record<string, string> = {
   'php loan system': 'Loan Management System (PHP/MySQL)',
   'online document request system': 'Online Document Request System (ODRS)',
@@ -103,6 +128,39 @@ function honorFromElement(element: HTMLElement): PortfolioHonorRecord | null {
     source: 'dom',
     element,
     path: element.dataset.honorPath || `/honors/${year}/${slugify(title)}`,
+  };
+}
+
+function timelineCategoryFromSection(section: HTMLElement | null): PortfolioTimelineRecord['category'] {
+  const title = cleanText(section?.querySelector('.section-title')?.textContent).toLowerCase();
+  if (title.includes('scholarship')) return 'scholarship';
+  if (title.includes('experience')) return 'experience';
+  return 'education';
+}
+
+function timelineFromElement(element: HTMLElement): PortfolioTimelineRecord | null {
+  const section = element.closest<HTMLElement>('.timeline-section');
+  const category = timelineCategoryFromSection(section);
+  const title = cleanText(element.querySelector('.timeline-title')?.textContent);
+  if (!title) return null;
+
+  const period = cleanText(element.querySelector('.timeline-period')?.textContent);
+  const organization = cleanText(element.querySelector('.company-name')?.textContent);
+  const description = cleanText(element.querySelector('.timeline-text')?.textContent);
+  const tags = Array.from(element.querySelectorAll<HTMLElement>('.timeline-tags .tag'))
+    .map((tag) => cleanText(tag.textContent))
+    .filter(Boolean);
+
+  return {
+    id: `dom-${category}-${slugify(title)}`,
+    title,
+    category,
+    period,
+    organization,
+    description,
+    tags,
+    element,
+    source: 'dom',
   };
 }
 
@@ -229,4 +287,228 @@ export function getHonorProjectLinks(): Array<{ honor: PortfolioHonorRecord; pro
       return project ? { honor, project } : null;
     })
     .filter((item): item is { honor: PortfolioHonorRecord; project: PortfolioProjectRecord } => Boolean(item));
+}
+
+export function getTimelineRecords(): PortfolioTimelineRecord[] {
+  const records = new Map<string, PortfolioTimelineRecord>();
+
+  KB.education.forEach((education) => {
+    const title = education.school;
+    records.set(`education-${normalizeKey(title)}`, {
+      id: `kb-education-${slugify(title)}`,
+      title,
+      category: 'education',
+      period: education.period,
+      organization: education.program,
+      description: education.notes,
+      tags: [education.program || '', 'education', 'school', 'background'].filter(Boolean),
+      source: 'knowledge-base',
+    });
+  });
+
+  KB.experience.forEach((experience) => {
+    const title = experience.role;
+    records.set(`experience-${normalizeKey(title)}-${normalizeKey(experience.company)}`, {
+      id: `kb-experience-${slugify(`${title}-${experience.company}`)}`,
+      title,
+      category: 'experience',
+      period: experience.period,
+      organization: experience.company,
+      description: experience.summary,
+      tags: ['experience', 'work', 'internship', experience.company, experience.role].filter(Boolean),
+      source: 'knowledge-base',
+    });
+  });
+
+  KB.scholarships.forEach((scholarship) => {
+    const title = scholarship.title;
+    records.set(`scholarship-${normalizeKey(title)}`, {
+      id: `kb-scholarship-${slugify(title)}`,
+      title,
+      category: 'scholarship',
+      period: scholarship.period,
+      organization: scholarship.provider,
+      description: [scholarship.program, scholarship.notes].filter(Boolean).join(' '),
+      tags: ['scholarship', 'scholar', scholarship.provider, scholarship.program || ''].filter(Boolean),
+      source: 'knowledge-base',
+    });
+  });
+
+  document.querySelectorAll<HTMLElement>('.timeline-item').forEach((element) => {
+    const item = timelineFromElement(element);
+    if (!item) return;
+    const key = `${item.category}-${normalizeKey(item.title)}-${normalizeKey(item.organization)}`;
+    const existing = records.get(key);
+    records.set(key, {
+      ...(existing || item),
+      ...item,
+      title: item.title || existing?.title || '',
+      organization: item.organization || existing?.organization,
+      period: item.period || existing?.period,
+      description: item.description || existing?.description,
+      tags: item.tags.length ? item.tags : existing?.tags || [],
+    });
+  });
+
+  const order = { experience: 0, scholarship: 1, education: 2 };
+  return Array.from(records.values()).sort((a, b) => {
+    const aYear = Number(a.period?.match(/\b20\d{2}\b/)?.[0] || 0);
+    const bYear = Number(b.period?.match(/\b20\d{2}\b/)?.[0] || 0);
+    return order[a.category] - order[b.category] || bYear - aYear || a.title.localeCompare(b.title);
+  });
+}
+
+export function getPortfolioSearchEntries(): PortfolioSearchEntry[] {
+  const entries: PortfolioSearchEntry[] = [
+    {
+      id: 'page-about',
+      title: 'About Adriel Magalona',
+      type: 'page',
+      section: 'about',
+      subtitle: 'Profile, tech stack, GitHub signal, honors, and contact',
+      description: KB.profile.summary,
+      keywords: ['about', 'profile', 'bio', 'services', 'tech stack', 'honors', 'contact', KB.profile.title],
+      target: 'about',
+    },
+    {
+      id: 'page-background',
+      title: 'Background & Experience',
+      type: 'page',
+      section: 'background',
+      subtitle: 'Education, professional experience, and scholarships',
+      description: 'Academic journey, work experience, and scholarship records.',
+      keywords: ['background', 'education', 'experience', 'scholarship', 'timeline'],
+      target: 'background',
+    },
+    {
+      id: 'page-projects',
+      title: 'Projects & Portfolio',
+      type: 'page',
+      section: 'projects',
+      subtitle: 'Full project gallery and detailed case-study modals',
+      description: 'Browse all project cards, demos, GitHub links, and project details.',
+      keywords: ['projects', 'portfolio', 'work', 'apps', 'web', 'ai'],
+      target: 'projects',
+    },
+    {
+      id: 'page-gear',
+      title: 'Gear',
+      type: 'page',
+      section: 'gear',
+      subtitle: 'Current workspace, devices, and creative setup',
+      description: 'Browse the tools and equipment behind the portfolio workflow.',
+      keywords: ['gear', 'setup', 'hardware', 'workspace', 'devices'],
+      target: 'gear',
+    },
+    {
+      id: 'contact-email',
+      title: 'Email Adriel',
+      type: 'contact',
+      section: 'contact',
+      subtitle: KB.contact.email,
+      description: 'Open contact options or copy the email address.',
+      keywords: ['email', 'contact', 'message', KB.contact.email],
+      target: 'contact',
+      url: `mailto:${KB.contact.email}`,
+    },
+    {
+      id: 'contact-github',
+      title: 'GitHub Profile',
+      type: 'contact',
+      section: 'contact',
+      subtitle: '@adr1el-m',
+      description: 'Open Adriel’s GitHub profile.',
+      keywords: ['github', 'code', 'repos', 'contributions'],
+      url: KB.contact.github,
+    },
+    {
+      id: 'contact-linkedin',
+      title: 'LinkedIn Profile',
+      type: 'contact',
+      section: 'contact',
+      subtitle: 'adrielmagalona',
+      description: 'Open Adriel’s LinkedIn profile.',
+      keywords: ['linkedin', 'professional', 'contact', 'network'],
+      url: KB.contact.linkedin,
+    },
+    {
+      id: 'action-resume',
+      title: 'Preview Resume',
+      type: 'action',
+      section: 'action',
+      subtitle: 'Open the latest resume PDF',
+      description: KB.resume.headline,
+      keywords: ['resume', 'cv', 'hire', 'candidate'],
+      url: KB.contact.resumeUrl,
+    },
+    {
+      id: 'action-adrai',
+      title: 'Ask AdrAI',
+      type: 'action',
+      section: 'action',
+      subtitle: 'Open the portfolio assistant',
+      description: 'Ask questions about projects, skills, honors, and contact links.',
+      keywords: ['adrai', 'ai', 'assistant', 'chatbot', 'ask'],
+      target: 'adrai',
+    },
+  ];
+
+  getProjectRecords().forEach((project) => {
+    entries.push({
+      id: `project-${slugify(project.title)}`,
+      title: project.title,
+      type: 'project',
+      section: 'projects',
+      subtitle: project.category || 'Project',
+      description: project.description,
+      keywords: [project.title, project.category || '', project.technologies || '', project.description || ''],
+      element: project.element,
+      target: project.title,
+      url: project.githubUrl || project.liveUrl || project.videoUrl,
+    });
+  });
+
+  getHonorRecords().forEach((honor) => {
+    entries.push({
+      id: `honor-${slugify(honor.title)}`,
+      title: honor.title,
+      type: 'honor',
+      section: 'about',
+      subtitle: [honor.date, honor.organizer].filter(Boolean).join(' • ') || 'Honor',
+      description: honor.description,
+      keywords: [honor.title, honor.organizer || '', honor.date || '', honor.location || '', honor.projectTitle || '', honor.description || ''],
+      element: honor.element,
+      target: honor.title,
+      url: honor.githubUrl || honor.linkedinUrl || honor.blogUrl,
+    });
+  });
+
+  getTimelineRecords().forEach((item) => {
+    entries.push({
+      id: `timeline-${item.id}`,
+      title: item.title,
+      type: 'timeline',
+      section: 'background',
+      subtitle: [item.organization, item.period].filter(Boolean).join(' • ') || item.category,
+      description: item.description,
+      keywords: [item.title, item.organization || '', item.period || '', item.category, ...item.tags, item.description || ''],
+      element: item.element,
+      target: item.category,
+    });
+  });
+
+  KB.skills.technologies.forEach((skill) => {
+    entries.push({
+      id: `skill-${slugify(skill)}`,
+      title: skill,
+      type: 'skill',
+      section: 'about',
+      subtitle: 'Technology',
+      description: `Technology listed in Adriel’s stack: ${skill}.`,
+      keywords: ['skill', 'technology', 'stack', skill],
+      target: 'skills',
+    });
+  });
+
+  return entries;
 }

@@ -101,6 +101,19 @@ export class TechStack {
   private render(list: TechItem[]): void {
     if (!this.grid) return;
     this.grid.innerHTML = '';
+    if (!list.length) {
+      const empty = document.createElement('li');
+      empty.className = 'stack-empty';
+      empty.innerHTML = `
+        <ion-icon name="file-tray-outline" aria-hidden="true"></ion-icon>
+        <strong>No technologies found</strong>
+        <span>Clear the search or switch categories.</span>
+      `;
+      this.grid.appendChild(empty);
+      this.grid.classList.add('is-ready');
+      return;
+    }
+
     const frag = document.createDocumentFragment();
     list.forEach(item => {
       const li = document.createElement('li');

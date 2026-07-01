@@ -1,6 +1,7 @@
 import type { AchievementData, ProjectData } from '@/types';
 import { logger } from '@/config';
 import { SecurityManager } from '@/modules/security';
+import { setPortfolioContext } from '@/modules/portfolio-actions';
 
 const TRANSPARENT_PLACEHOLDER = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 const ICONS = {
@@ -354,6 +355,7 @@ export class ModalManager {
 
   public openAchievementModal(data: AchievementData): void {
     logger.log('Opening achievement modal with data:', data);
+    setPortfolioContext('honor', data.title);
     this.previousFocus = document.activeElement as HTMLElement | null;
     
     // Ensure ARIA linkage between modal and title
@@ -598,6 +600,7 @@ export class ModalManager {
 
   public openProjectModal(data: ProjectData): void {
     logger.log('Opening project modal for:', data.title);
+    setPortfolioContext('project', data.title);
     this.previousFocus = document.activeElement as HTMLElement | null;
     
     // Use WebP if supported, fallback to regular images

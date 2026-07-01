@@ -277,6 +277,9 @@ class PortfolioApp {
         import('./modules/command-palette').then(({ CommandPalette }) => {
           new CommandPalette();
         });
+        import('./modules/mobile-action-bar').then(({ MobileActionBar }) => {
+          new MobileActionBar();
+        });
       }, 225);
 
       // Initialize AI summaries for project hover tooltips

@@ -1,10 +1,22 @@
 import { getHonorRecords, getProjectRecords, normalizeKey } from './portfolio-data';
+import { KB } from '@/data/knowledge-base';
+import {
+  copyText,
+  filterTimeline,
+  navigateToPage,
+  openAdrAI,
+  openExternalUrl,
+  openPortfolioHonor,
+  openPortfolioProject,
+  openPortfolioSearch,
+  openResumePreview,
+} from './portfolio-actions';
 
 type Command = {
   id: string;
   title: string;
   subtitle: string;
-  group: 'Navigate' | 'Projects' | 'Honors' | 'Actions';
+  group: 'Navigate' | 'Projects' | 'Honors' | 'Actions' | 'Contact';
   icon: string;
   keywords: string;
   action: () => void;
@@ -32,8 +44,11 @@ export class CommandPalette {
   private commands: Command[] = [];
   private filtered: Command[] = [];
   private activeIndex = 0;
+  private readonly recentKey = 'portfolio:recent-commands:v1';
+  private recentCommandIds: string[] = [];
 
   constructor() {
+    this.recentCommandIds = this.loadRecentCommands();
     this.commands = this.buildCommands();
     this.create();
     this.bind();
@@ -49,7 +64,7 @@ export class CommandPalette {
         group: 'Navigate',
         icon: 'person-outline',
         keywords: 'about profile services tech honors achievements',
-        action: () => this.navigate('about'),
+        action: () => navigateToPage('about'),
       },
       {
         id: 'page-background',
@@ -58,7 +73,7 @@ export class CommandPalette {
         group: 'Navigate',
         icon: 'school-outline',
         keywords: 'background education scholarships experience timeline',
-        action: () => this.navigate('background'),
+        action: () => navigateToPage('background'),
       },
       {
         id: 'page-projects',
@@ -67,7 +82,25 @@ export class CommandPalette {
         group: 'Navigate',
         icon: 'code-slash-outline',
         keywords: 'projects work portfolio apps',
-        action: () => this.navigate('projects'),
+        action: () => navigateToPage('projects'),
+      },
+      {
+        id: 'page-gear',
+        title: 'Open Gear',
+        subtitle: 'Workspace, devices, and current setup',
+        group: 'Navigate',
+        icon: 'hardware-chip-outline',
+        keywords: 'gear setup hardware workspace devices tools',
+        action: () => navigateToPage('gear'),
+      },
+      {
+        id: 'search',
+        title: 'Search Portfolio',
+        subtitle: 'Open the global search surface',
+        group: 'Actions',
+        icon: 'search-outline',
+        keywords: 'search find global portfolio command slash',
+        action: () => openPortfolioSearch(),
       },
       {
         id: 'resume',
@@ -76,10 +109,20 @@ export class CommandPalette {
         group: 'Actions',
         icon: 'document-text-outline',
         keywords: 'resume cv pdf hire',
+        action: () => openResumePreview(),
+      },
+      {
+        id: 'resume-download',
+        title: 'Download Resume',
+        subtitle: 'Download resume.pdf',
+        group: 'Actions',
+        icon: 'download-outline',
+        keywords: 'resume cv pdf download',
         action: () => {
-          window.dispatchEvent(new CustomEvent('portfolio:open-resume-preview', {
-            detail: { url: '/files/resume.pdf' },
-          }));
+          const link = document.createElement('a');
+          link.href = KB.contact.resumeUrl;
+          link.download = 'Adriel-Magalona-Resume.pdf';
+          link.click();
         },
       },
       {
@@ -89,10 +132,34 @@ export class CommandPalette {
         group: 'Actions',
         icon: 'mail-outline',
         keywords: 'contact email socials linkedin github',
-        action: () => {
-          this.navigate('about');
-          window.setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
-        },
+        action: () => navigateToPage('contact'),
+      },
+      {
+        id: 'copy-email',
+        title: 'Copy Email',
+        subtitle: KB.contact.email,
+        group: 'Contact',
+        icon: 'copy-outline',
+        keywords: `copy email contact ${KB.contact.email}`,
+        action: () => void copyText(KB.contact.email, 'email address'),
+      },
+      {
+        id: 'github',
+        title: 'Open GitHub',
+        subtitle: '@adr1el-m',
+        group: 'Contact',
+        icon: 'logo-github',
+        keywords: 'github repositories code contribution profile',
+        action: () => openExternalUrl(KB.contact.github, 'GitHub profile'),
+      },
+      {
+        id: 'linkedin',
+        title: 'Open LinkedIn',
+        subtitle: 'Professional profile',
+        group: 'Contact',
+        icon: 'logo-linkedin',
+        keywords: 'linkedin professional profile contact',
+        action: () => openExternalUrl(KB.contact.linkedin, 'LinkedIn profile'),
       },
       {
         id: 'adraI',
@@ -101,8 +168,18 @@ export class CommandPalette {
         group: 'Actions',
         icon: 'sparkles-outline',
         keywords: 'chatbot ai adrai assistant ask',
+        action: () => openAdrAI(),
+      },
+      {
+        id: 'adrai-context',
+        title: 'Ask AdrAI About This View',
+        subtitle: 'Use the current section as context',
+        group: 'Actions',
+        icon: 'chatbubbles-outline',
+        keywords: 'chatbot adrai ask current page context view explain',
         action: () => {
-          document.querySelector<HTMLButtonElement>('.chatbot-btn')?.click();
+          const page = document.querySelector<HTMLElement>('article[data-page].active')?.dataset.page || 'portfolio';
+          openAdrAI(`Explain the current ${page} section`);
         },
       },
       {
@@ -112,7 +189,7 @@ export class CommandPalette {
         group: 'Actions',
         icon: 'ribbon-outline',
         keywords: 'scholarship dost macemco taguig lani background',
-        action: () => this.filterTimeline('scholarship'),
+        action: () => filterTimeline('scholarship'),
       },
       {
         id: 'filter-education',
@@ -121,7 +198,7 @@ export class CommandPalette {
         group: 'Actions',
         icon: 'library-outline',
         keywords: 'education pup university school background',
-        action: () => this.filterTimeline('education'),
+        action: () => filterTimeline('education'),
       },
       {
         id: 'filter-experience',
@@ -130,7 +207,7 @@ export class CommandPalette {
         group: 'Actions',
         icon: 'briefcase-outline',
         keywords: 'experience work eskwelabs microsoft background',
-        action: () => this.filterTimeline('experience'),
+        action: () => filterTimeline('experience'),
       },
     ];
 
@@ -142,7 +219,7 @@ export class CommandPalette {
         group: 'Projects',
         icon: 'cube-outline',
         keywords: `${project.title} ${project.category} ${project.technologies} ${project.description}`,
-        action: () => this.openProject(project.title),
+        action: () => openPortfolioProject(project.title),
       });
     });
 
@@ -154,7 +231,7 @@ export class CommandPalette {
         group: 'Honors',
         icon: 'trophy-outline',
         keywords: `${honor.title} ${honor.organizer} ${honor.date} ${honor.location} ${honor.description} ${honor.projectTitle || ''}`,
-        action: () => this.openHonor(honor.title),
+        action: () => openPortfolioHonor(honor.title),
       });
     });
 
@@ -258,7 +335,10 @@ export class CommandPalette {
     const query = normalizeKey(this.input?.value || '');
     const queryTokens = query.split(' ').filter(Boolean);
     const score = (command: Command) => {
-      if (!queryTokens.length) return command.group === 'Navigate' ? 3 : command.group === 'Actions' ? 2 : 1;
+      const recentBoost = this.recentCommandIds.includes(command.id) ? 1.3 : 0;
+      if (!queryTokens.length) {
+        return (command.group === 'Navigate' ? 3 : command.group === 'Actions' ? 2 : 1) + recentBoost;
+      }
       const title = normalizeKey(command.title);
       const subtitle = normalizeKey(command.subtitle);
       const group = normalizeKey(command.group);
@@ -271,7 +351,7 @@ export class CommandPalette {
         if (subtitle.includes(token)) tokenScore += 1;
         if (group.includes(token)) tokenScore += 1;
         return sum + tokenScore;
-      }, exactPageBoost);
+      }, exactPageBoost + recentBoost);
     };
 
     this.filtered = this.commands
@@ -316,45 +396,24 @@ export class CommandPalette {
   private run(command?: Command): void {
     if (!command) return;
     this.close();
+    this.rememberCommand(command.id);
     trackCommand(command.title);
     command.action();
   }
 
-  private navigate(page: 'about' | 'background' | 'projects'): void {
-    const nav = Array.from(document.querySelectorAll<HTMLElement>('[data-nav-link]'))
-      .find((button) => (button.textContent || '').trim().toLowerCase() === page);
-    if (nav) {
-      nav.click();
-      return;
+  private loadRecentCommands(): string[] {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(this.recentKey) || '[]') as unknown;
+      return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string').slice(0, 6) : [];
+    } catch {
+      return [];
     }
-    document.querySelectorAll<HTMLElement>('article[data-page]').forEach((article) => article.classList.remove('active'));
-    document.querySelector<HTMLElement>(`article[data-page="${page}"]`)?.classList.add('active');
   }
 
-  private openProject(title: string): void {
-    this.navigate('projects');
-    window.setTimeout(() => {
-      window.dispatchEvent(new CustomEvent('portfolio:open-project', { detail: { title } }));
-      window.dispatchEvent(new CustomEvent('portfolio:analytics', {
-        detail: { type: 'project-open', label: title },
-      }));
-    }, 160);
-  }
-
-  private openHonor(title: string): void {
-    this.navigate('about');
-    window.setTimeout(() => {
-      window.dispatchEvent(new CustomEvent('portfolio:open-honor', { detail: { title } }));
-      window.dispatchEvent(new CustomEvent('portfolio:analytics', {
-        detail: { type: 'honor-open', label: title },
-      }));
-    }, 160);
-  }
-
-  private filterTimeline(filter: 'education' | 'experience' | 'scholarship'): void {
-    this.navigate('background');
-    window.setTimeout(() => {
-      window.dispatchEvent(new CustomEvent('portfolio:timeline-filter', { detail: { filter } }));
-    }, 140);
+  private rememberCommand(id: string): void {
+    this.recentCommandIds = [id, ...this.recentCommandIds.filter((item) => item !== id)].slice(0, 6);
+    try {
+      localStorage.setItem(this.recentKey, JSON.stringify(this.recentCommandIds));
+    } catch { /* ignore */ }
   }
 }

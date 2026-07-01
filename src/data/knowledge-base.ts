@@ -412,8 +412,8 @@ export const KB: KnowledgeBase = {
     },
 {
       title: 'Codebility Portfolio Contest 2025 — 2nd Place',
-      images: ['/images/honors/codebility/portfolio-contest-2025.jpg'],
-      webpImages: ['/images/honors/codebility/portfolio-contest-2025-400.webp'],
+      images: ['/images/honors/2025/codebiity/codebility.avif'],
+      webpImages: ['/images/honors/2025/codebiity/codebility.avif'],
       organizer: 'Codebility — Portfolio Contest 2025',
       date: 'October 2025',
       location: 'Online',
@@ -426,14 +426,14 @@ export const KB: KnowledgeBase = {
 {
       title: 'Technovation Summit 2025 Start‑up Hackathon',
       images: [
-        '/images/honors/technovation/1.jpeg',
-        '/images/honors/technovation/2.jpeg',
-        '/images/honors/technovation/3.jpeg',
+        '/images/honors/2025/technovation_summit/1.avif',
+        '/images/honors/2025/technovation_summit/2.avif',
+        '/images/honors/2025/technovation_summit/3.avif',
       ],
       webpImages: [
-        '/images/honors/technovation/1.jpeg',
-        '/images/honors/technovation/2.jpeg',
-        '/images/honors/technovation/3.jpeg',
+        '/images/honors/2025/technovation_summit/1.avif',
+        '/images/honors/2025/technovation_summit/2.avif',
+        '/images/honors/2025/technovation_summit/3.avif',
       ],
       organizer:
         'National Technovation Summit organized by START (DOST) — National Champion — ₱30,000',

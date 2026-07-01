@@ -161,8 +161,9 @@ try {
   for (const scenario of scenarios) {
     const page = await browser.newPage();
     await page.setViewport(scenario.viewport);
-    await page.goto(`http://127.0.0.1:${port}${scenario.path}`, { waitUntil: 'networkidle0', timeout: 30000 });
+    await page.goto(`http://127.0.0.1:${port}${scenario.path}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.evaluate(() => document.fonts?.ready);
+    await new Promise((resolve) => setTimeout(resolve, 900));
     await scenario.setup?.(page);
 
     for (const selector of scenario.selectors) {

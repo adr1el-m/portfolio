@@ -1,5 +1,12 @@
 {
   "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/resume",
+      "destination": "/files/resume.pdf",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/about",

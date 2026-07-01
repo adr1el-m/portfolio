@@ -61,7 +61,7 @@ export const KB: KnowledgeBase = {
     github: 'https://github.com/adr1el-m',
     linkedin: 'https://linkedin.com/in/adrielmagalona',
     website: 'https://adriel.dev',
-    resumeUrl: '/files/resume.pdf',
+    resumeUrl: '/resume',
   },
   education: [
     {

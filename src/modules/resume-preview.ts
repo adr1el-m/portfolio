@@ -1,5 +1,6 @@
-const RESUME_SELECTOR = 'a[data-resume-preview], a[href="/files/resume.pdf"], a[href$="/files/resume.pdf"]';
-const RESUME_URL = '/files/resume.pdf';
+const RESUME_SELECTOR = 'a[data-resume-preview], a[href="/resume"], a[href$="/resume"], a[href="/files/resume.pdf"], a[href$="/files/resume.pdf"]';
+const RESUME_SHARE_URL = '/resume';
+const RESUME_FILE_URL = '/files/resume.pdf';
 
 type ResumePreviewEvent = CustomEvent<{ url?: string }>;
 
@@ -14,7 +15,7 @@ export class ResumePreview {
   constructor() {
     this.bindLinks();
     window.addEventListener('portfolio:open-resume-preview', ((event: ResumePreviewEvent) => {
-      this.open(event.detail?.url || RESUME_URL);
+      this.open(event.detail?.url || RESUME_FILE_URL);
     }) as EventListener);
   }
 
@@ -24,9 +25,10 @@ export class ResumePreview {
 
       const target = (event.target as Element | null)?.closest<HTMLAnchorElement>(RESUME_SELECTOR);
       if (!target) return;
+      if (target.dataset.resumeDirect === 'true') return;
 
       event.preventDefault();
-      this.open(target.href || RESUME_URL);
+      this.open(target.href || RESUME_FILE_URL);
     });
   }
 
@@ -48,10 +50,10 @@ export class ResumePreview {
             <h2 id="resume-preview-title">Resume Preview</h2>
           </div>
           <div class="resume-preview-actions">
-            <a class="resume-preview-action" href="${RESUME_URL}" target="_blank" rel="noopener noreferrer" aria-label="Open resume PDF in a new tab">
+            <a class="resume-preview-action" href="${RESUME_SHARE_URL}" target="_blank" rel="noopener noreferrer" data-resume-direct="true" aria-label="Open resume PDF in a new tab">
               Open
             </a>
-            <a class="resume-preview-action" href="${RESUME_URL}" download aria-label="Download resume PDF">
+            <a class="resume-preview-action" href="${RESUME_FILE_URL}" download aria-label="Download resume PDF">
               Download
             </a>
             <button class="resume-preview-action" type="button" data-resume-preview-close aria-label="Close resume preview">
@@ -104,12 +106,15 @@ export class ResumePreview {
     try {
       const parsed = new URL(url, window.location.origin);
       if (parsed.origin === window.location.origin) {
+        if (parsed.pathname === RESUME_SHARE_URL) {
+          return `${RESUME_FILE_URL}#toolbar=1&navpanes=0`;
+        }
         return `${parsed.pathname}#toolbar=1&navpanes=0`;
       }
     } catch {
-      return `${RESUME_URL}#toolbar=1&navpanes=0`;
+      return `${RESUME_FILE_URL}#toolbar=1&navpanes=0`;
     }
 
-    return `${RESUME_URL}#toolbar=1&navpanes=0`;
+    return `${RESUME_FILE_URL}#toolbar=1&navpanes=0`;
   }
 }

@@ -1,16 +1,27 @@
 # Adriel Magalona — Portfolio
 
-Personal portfolio for Adriel Magalona: full-stack developer and AI builder. The live site is [www.adrielmagalona.dev](https://www.adrielmagalona.dev).
+The source for [adrielmagalona.dev](https://adrielmagalona.dev): a TypeScript portfolio with selected work, evidence-backed case studies, achievements, and a small serverless contact/AI layer.
 
-## What is in this repository
+## What it includes
 
-- Vite + TypeScript single-page portfolio with serverless Vercel API routes.
-- Static, indexable honor evidence pages generated at build time.
-- Static case studies for WorkSight, GeneSync, ODRS, DokQ, and LingapLink.
-- AdrAI portfolio guide with server-side provider access only.
-- Accessible project and achievement dialogs, role-tailored recruiter paths, and a secure server-owned visit counter.
+- Responsive Vite application with accessible navigation, dialogs, and keyboard support.
+- Static, indexable case studies and honor pages generated during the production build.
+- Project evidence: role, scope, constraints, decisions, outcomes, and relevant links.
+- AdrAI, a portfolio guide that calls providers only through server-side Vercel functions.
+- Optional Firebase-backed visitor analytics and Resend contact delivery.
 
-## Run locally
+## Stack
+
+| Area | Tools |
+| --- | --- |
+| App | TypeScript, Vite, vanilla DOM modules |
+| Hosting and APIs | Vercel Functions |
+| Optional services | Firebase Realtime Database, Resend, Gemini |
+| Quality checks | TypeScript, ESLint, Pa11y, Puppeteer, Lighthouse CI |
+
+## Local development
+
+Requires Node.js 24.
 
 ```bash
 npm ci
@@ -18,9 +29,9 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Never put secrets in a `VITE_*` variable. Server-only values are documented in [.env.example](.env.example).
+The portfolio works without optional service credentials. Add only the features you need using the documented values in [.env.example](.env.example). Never expose server secrets with a `VITE_*` prefix.
 
-## Validation
+## Verify changes
 
 ```bash
 npm run type-check
@@ -29,28 +40,30 @@ npm run build
 npm run check:links
 npm run test:behavior
 npm run test:visual
+npm run lighthouse:ci
 ```
 
-`npm run build` also generates honor and case-study pages in `dist/`.
+`npm run build` also creates static honor and case-study pages in `dist/`.
 
 ## Deployment
 
-The project deploys to Vercel. Production configuration requires server-only values for the Firebase visit counter and optional AdrAI provider access. Deploy with:
+The site deploys to Vercel. Configure any optional Firebase, Resend, and AI credentials as server-only Vercel environment variables, then run:
 
 ```bash
 npm run deploy
 ```
 
-## Project structure
+## Repository map
 
 ```text
-api/                 Vercel API routes
-public/              Static assets and split CSS
-scripts/             Build generators and behavior/visual checks
-src/data/            Portfolio, project-proof, and case-study presentation data
-src/modules/         UI behavior modules
+api/                 Vercel Functions
+public/              Static media, styles, service worker, offline page
+scripts/             Build generators and automated checks
+src/data/            Portfolio, project, and case-study content
+src/modules/         Page behavior and UI features
+config/              Lighthouse and performance budgets
 ```
 
 ## License
 
-MIT
+[MIT](LICENSE)

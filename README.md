@@ -1,10 +1,18 @@
 <div align="center">
 
-# Adriel Magalona
+<img src="https://raw.githubusercontent.com/adr1el-m/portfolio/main/public/images/my-avatar.png" width="144" height="144" alt="Portrait of Adriel Magalona" />
+
+# Adriel Magalona — Portfolio
 
 ### Portfolio website · selected work, case studies, and engineering notes
 
-[Live site](https://adrielmagalona.dev) · [Case studies](https://adrielmagalona.dev/case-studies/worksight) · [Report an issue](https://github.com/adr1el-m/portfolio/issues)
+[![Lighthouse Performance Audit](https://github.com/adr1el-m/portfolio/actions/workflows/performance.yml/badge.svg?branch=main)](https://github.com/adr1el-m/portfolio/actions/workflows/performance.yml)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
+[![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-2ea44f)](LICENSE)
+
+[Live site](https://adrielmagalona.dev) · [Case studies](https://adrielmagalona.dev/case-studies/worksight) · [GitHub](https://github.com/adr1el-m) · [LinkedIn](https://www.linkedin.com/in/adriel-magalona-0546b9318/) · [Report an issue](https://github.com/adr1el-m/portfolio/issues)
 
 </div>
 
@@ -19,6 +27,16 @@ This repository powers [adrielmagalona.dev](https://adrielmagalona.dev), a portf
 | **Experience** | Responsive navigation, keyboard-accessible dialogs, offline support, and tailored recruiter paths. |
 | **Services** | Optional contact delivery, visitor analytics, and the server-side AdrAI portfolio guide. |
 
+## Selected work
+
+| Project | Focus | Evidence |
+| --- | --- | --- |
+| [WorkSight](https://adrielmagalona.dev/case-studies/worksight) | Product thinking and frontend delivery | Scope, decisions, and outcome |
+| [GeneSync](https://adrielmagalona.dev/case-studies/genesync) | Algorithmic problem-solving | Implementation and demo evidence |
+| [ODRS](https://adrielmagalona.dev/case-studies/odrs) | Full-stack workflow design | Architecture and source repository |
+| [DokQ](https://adrielmagalona.dev/case-studies/dokq) | Document and queue experience | Product rationale and constraints |
+| [LingapLink](https://adrielmagalona.dev/case-studies/lingaplink) | Team delivery and social impact | Role, results, and external proof |
+
 ## Built with
 
 | Layer | Technology |
@@ -27,6 +45,20 @@ This repository powers [adrielmagalona.dev](https://adrielmagalona.dev), a portf
 | Platform | Vercel · Vercel Functions |
 | Optional integrations | Firebase Realtime Database · Resend · Gemini |
 | Quality | TypeScript · ESLint · Pa11y · Puppeteer · Lighthouse CI |
+
+## Architecture at a glance
+
+```mermaid
+flowchart LR
+  Visitor[Visitor] --> App[Static Vite portfolio]
+  App --> Content[Generated case studies and honor pages]
+  App --> Functions[Vercel Functions]
+  Functions --> Contact[Resend contact delivery]
+  Functions --> Analytics[Firebase analytics and visits]
+  Functions --> AI[AdrAI provider access]
+```
+
+The portfolio shell, content pages, service worker, and offline fallback are static. Contact delivery, analytics, visits, and AdrAI use server endpoints so provider credentials never ship to the browser.
 
 ## Local setup
 
@@ -55,6 +87,13 @@ npm run lighthouse:ci   # Lighthouse CI assertions
 ```
 
 The production build writes the static honor and case-study pages to `dist/`.
+
+## Design and engineering principles
+
+- **Evidence over claims** — project pages describe the work, not just the stack.
+- **Progressive enhancement** — useful core content remains available while richer interactions load when needed.
+- **Accessible by default** — semantic controls, focus handling, and keyboard paths are covered by smoke checks.
+- **Secrets stay server-side** — browser code never receives AI provider or privileged Firebase credentials.
 
 ## Deployment
 

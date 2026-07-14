@@ -116,6 +116,68 @@ export class ModalManager {
     }).join('')}</div>`;
   }
 
+  private renderAchievementEvidence(data: AchievementData): void {
+    const evidence = document.querySelector<HTMLElement>('.achievement-evidence');
+    if (!evidence) return;
+
+    const summary = evidence.querySelector<HTMLElement>('.achievement-evidence-summary');
+    const list = evidence.querySelector<HTMLUListElement>('.achievement-evidence-list');
+    const copyButton = evidence.querySelector<HTMLButtonElement>('.achievement-copy-link');
+    const status = evidence.querySelector<HTMLElement>('.achievement-copy-status');
+    const card = Array.from(document.querySelectorAll<HTMLElement>('.achievement-card')).find((item) => {
+      const title = item.querySelector('.card-title')?.textContent?.trim() || '';
+      return this.normalizeTitle(title) === this.normalizeTitle(data.title);
+    });
+    const directPath = card?.dataset.honorPath || window.location.pathname;
+    const directUrl = new URL(directPath, window.location.origin).href;
+    const proofCount = new Set([...(data.images || []), ...(data.webpImages || [])]).size;
+    const facts = [
+      data.organizer ? `Organizer: ${data.organizer}` : '',
+      data.date ? `Date: ${data.date}` : '',
+      data.location ? `Location: ${data.location}` : '',
+      proofCount ? `${proofCount} portfolio proof ${proofCount === 1 ? 'asset' : 'assets'} in the gallery` : 'Portfolio record with event details',
+    ].filter(Boolean);
+
+    if (summary) {
+      summary.textContent = 'This detail page is grounded in the portfolio record and its attached proof media.';
+    }
+    if (list) {
+      list.replaceChildren(...facts.map((fact) => {
+        const item = document.createElement('li');
+        item.textContent = fact;
+        return item;
+      }));
+    }
+    if (status) status.textContent = '';
+    if (copyButton) {
+      copyButton.onclick = () => {
+        const confirm = () => {
+          if (status) status.textContent = 'Evidence link copied.';
+        };
+        if (navigator.clipboard?.writeText) {
+          void navigator.clipboard.writeText(directUrl).then(confirm).catch(() => this.copyEvidenceLinkFallback(directUrl, confirm));
+        } else {
+          this.copyEvidenceLinkFallback(directUrl, confirm);
+        }
+      };
+    }
+  }
+
+  private copyEvidenceLinkFallback(value: string, onCopied: () => void): void {
+    const input = document.createElement('textarea');
+    input.value = value;
+    input.setAttribute('readonly', '');
+    input.style.position = 'fixed';
+    input.style.opacity = '0';
+    document.body.appendChild(input);
+    input.select();
+    try {
+      if (document.execCommand('copy')) onCopied();
+    } finally {
+      input.remove();
+    }
+  }
+
   private init(): void {
     this.setupEventListeners();
   }
@@ -394,6 +456,7 @@ export class ModalManager {
     if (this.titleEl) this.titleEl.textContent = data.title;
     if (this.organizerEl) this.organizerEl.textContent = data.organizer;
     if (this.dateLocEl) this.dateLocEl.textContent = `${data.date}${data.location ? ' • ' + data.location : ''}`;
+    this.renderAchievementEvidence(data);
 
     // New: add description content if present
     const descriptionEl = document.querySelector('.achievement-description') as HTMLElement;

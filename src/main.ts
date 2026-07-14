@@ -138,6 +138,23 @@ class PortfolioApp {
       event.stopPropagation();
       void this.loadChatbot(true);
     });
+
+    const requestAdrAI = (prompt = '') => {
+      void this.loadChatbot(true).then((manager) => {
+        if (!manager) return;
+        window.dispatchEvent(new CustomEvent('portfolio:ask-adrai', { detail: { prompt } }));
+      });
+    };
+
+    window.addEventListener('portfolio:request-adrai', (event) => {
+      requestAdrAI((event as CustomEvent<{ prompt?: string }>).detail?.prompt?.trim() || '');
+    });
+
+    document.addEventListener('click', (event) => {
+      const promptButton = (event.target as Element | null)?.closest<HTMLElement>('[data-adrai-prompt]');
+      if (!promptButton) return;
+      requestAdrAI(promptButton.dataset.adraiPrompt?.trim() || '');
+    });
   }
 
   /**

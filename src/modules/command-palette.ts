@@ -16,7 +16,7 @@ type Command = {
   id: string;
   title: string;
   subtitle: string;
-  group: 'Navigate' | 'Projects' | 'Honors' | 'Actions' | 'Contact';
+  group: 'Navigate' | 'Projects' | 'Honors' | 'Actions' | 'Contact' | 'Terminal';
   icon: string;
   keywords: string;
   action: () => void;
@@ -183,6 +183,42 @@ export class CommandPalette {
         },
       },
       {
+        id: 'terminal-recruiter-briefing',
+        title: 'Terminal: Recruiter Briefing',
+        subtitle: 'A concise, evidence-led hiring summary',
+        group: 'Terminal',
+        icon: 'terminal-outline',
+        keywords: 'terminal command hire recruiter briefing why hire summary cv',
+        action: () => openAdrAI('Why hire Adriel? Give me a concise recruiter briefing with evidence.'),
+      },
+      {
+        id: 'terminal-ai-proof',
+        title: 'Terminal: AI Proof Pack',
+        subtitle: 'Surface AI and full-stack evidence',
+        group: 'Terminal',
+        icon: 'sparkles-outline',
+        keywords: 'terminal command ai proof machine learning full stack evidence',
+        action: () => openAdrAI('Show proof of Adriel\'s AI and full-stack skills.'),
+      },
+      {
+        id: 'terminal-best-work',
+        title: 'Terminal: Best Work',
+        subtitle: 'Find projects by the role or skill you need',
+        group: 'Terminal',
+        icon: 'folder-open-outline',
+        keywords: 'terminal command projects best work frontend product portfolio',
+        action: () => openAdrAI('Which projects best show frontend, product thinking, and engineering depth?'),
+      },
+      {
+        id: 'terminal-achievement-proof',
+        title: 'Terminal: Achievement Evidence',
+        subtitle: 'Open awards with dates, organizers, and proof media',
+        group: 'Terminal',
+        icon: 'shield-checkmark-outline',
+        keywords: 'terminal command awards honors achievement evidence certificate proof',
+        action: () => openAdrAI('Summarize Adriel\'s most relevant awards and the evidence behind them.'),
+      },
+      {
         id: 'filter-scholarships',
         title: 'Filter Scholarships',
         subtitle: 'Show scholarship items in Background',
@@ -244,8 +280,8 @@ export class CommandPalette {
     const trigger = document.createElement('button');
     trigger.type = 'button';
     trigger.className = 'command-palette-trigger';
-    trigger.setAttribute('aria-label', 'Open command palette');
-    trigger.innerHTML = '<ion-icon name="search-outline" aria-hidden="true"></ion-icon>';
+    trigger.setAttribute('aria-label', 'Open command palette (Command K)');
+    trigger.innerHTML = '<ion-icon name="terminal-outline" aria-hidden="true"></ion-icon><span>Command</span><kbd>⌘K</kbd>';
     trigger.addEventListener('click', () => this.open());
 
     this.overlay = document.createElement('div');
@@ -256,7 +292,7 @@ export class CommandPalette {
       <div class="command-palette-panel" role="dialog" aria-modal="true" aria-labelledby="command-palette-title">
         <div class="command-palette-search">
           <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
-          <input id="command-palette-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search projects, honors, pages, actions" />
+          <input id="command-palette-input" type="search" autocomplete="off" spellcheck="false" placeholder="Try: hire, AI proof, projects, awards…" />
           <button type="button" class="command-palette-close" aria-label="Close command palette">
             <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
           </button>
@@ -289,6 +325,10 @@ export class CommandPalette {
     });
 
     this.overlay?.querySelector('.command-palette-close')?.addEventListener('click', () => this.close());
+
+    document.addEventListener('click', (event) => {
+      if ((event.target as Element | null)?.closest('[data-command-palette-open]')) this.open();
+    });
 
     this.input?.addEventListener('input', () => {
       this.activeIndex = 0;
@@ -337,7 +377,7 @@ export class CommandPalette {
     const score = (command: Command) => {
       const recentBoost = this.recentCommandIds.includes(command.id) ? 1.3 : 0;
       if (!queryTokens.length) {
-        return (command.group === 'Navigate' ? 3 : command.group === 'Actions' ? 2 : 1) + recentBoost;
+        return (command.group === 'Navigate' ? 3 : command.group === 'Terminal' ? 2.5 : command.group === 'Actions' ? 2 : 1) + recentBoost;
       }
       const title = normalizeKey(command.title);
       const subtitle = normalizeKey(command.subtitle);

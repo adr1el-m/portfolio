@@ -85,11 +85,8 @@ export function openPortfolioSearch(query = ''): void {
 }
 
 export function openAdrAI(prompt = ''): void {
-  document.querySelector<HTMLButtonElement>('.chatbot-btn')?.click();
-  window.setTimeout(() => {
-    window.dispatchEvent(new CustomEvent('portfolio:ask-adrai', { detail: { prompt } }));
-    setPortfolioContext('page', 'AdrAI', prompt);
-  }, 220);
+  window.dispatchEvent(new CustomEvent('portfolio:request-adrai', { detail: { prompt } }));
+  setPortfolioContext('page', 'AdrAI', prompt);
 }
 
 export function filterTimeline(filter: TimelineFilter): void {

@@ -362,15 +362,198 @@
   color: var(--orange-yellow-crayola);
 }
 
+/* Guided entry point for visitors who want a quick, contextual portfolio tour. */
+.adrai-guide {
+  margin: 20px 0 28px;
+  padding: clamp(18px, 3vw, 26px);
+  border: 1px solid rgba(255, 219, 112, 0.24);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 219, 112, 0.09), rgba(93, 172, 255, 0.045) 56%, rgba(255, 255, 255, 0.018));
+}
+
+.adrai-guide-heading {
+  max-width: 680px;
+}
+
+.adrai-guide-eyebrow,
+.achievement-evidence-kicker {
+  margin: 0 0 7px;
+  color: var(--orange-yellow-crayola);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.adrai-guide h3 {
+  margin-bottom: 8px;
+  color: var(--white-2);
+}
+
+.adrai-guide-heading > p:last-child {
+  margin: 0;
+  color: var(--light-gray-70);
+  line-height: 1.55;
+}
+
+.adrai-guide-prompts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.adrai-guide-prompts button,
+.adrai-guide-command {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 46px;
+  padding: 11px 13px;
+  color: var(--white-2);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 10px;
+  background: rgba(17, 17, 19, 0.52);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-align: left;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.adrai-guide-prompts button ion-icon,
+.adrai-guide-command ion-icon {
+  flex: none;
+  color: var(--orange-yellow-crayola);
+  font-size: 1.08rem;
+}
+
+.adrai-guide-prompts button:hover,
+.adrai-guide-prompts button:focus-visible,
+.adrai-guide-command:hover,
+.adrai-guide-command:focus-visible {
+  border-color: rgba(255, 219, 112, 0.55);
+  background: rgba(255, 219, 112, 0.1);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.adrai-guide-command {
+  width: 100%;
+  margin-top: 10px;
+  color: var(--light-gray);
+  font-size: 0.78rem;
+}
+
+.adrai-guide-command kbd,
+.command-palette-trigger kbd {
+  min-width: 20px;
+  padding: 2px 5px;
+  color: var(--white-2);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  font: inherit;
+  font-size: 0.68rem;
+  line-height: 1.2;
+}
+
+/* Record-level evidence shown on each shareable honor route. */
+.achievement-evidence {
+  padding: 15px;
+  border: 1px solid rgba(255, 219, 112, 0.18);
+  border-radius: 11px;
+  background: rgba(255, 219, 112, 0.045);
+}
+
+.achievement-evidence-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+
+.achievement-evidence-heading h4 {
+  margin: 0;
+  color: var(--white-2);
+  font-size: 0.95rem;
+}
+
+.achievement-evidence-kicker {
+  margin: 0;
+  font-size: 0.62rem;
+}
+
+.achievement-evidence-summary {
+  margin: 9px 0;
+  color: var(--light-gray);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.achievement-evidence-list {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--light-gray-70);
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.achievement-evidence-list li::before {
+  content: '•';
+  margin-right: 7px;
+  color: var(--orange-yellow-crayola);
+}
+
+.achievement-evidence-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 13px;
+}
+
+.achievement-copy-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  color: var(--orange-yellow-crayola);
+  border: 1px solid rgba(255, 219, 112, 0.32);
+  border-radius: 7px;
+  background: rgba(255, 219, 112, 0.08);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.achievement-copy-link:hover,
+.achievement-copy-link:focus-visible {
+  border-color: var(--orange-yellow-crayola);
+  background: rgba(255, 219, 112, 0.15);
+  outline: none;
+}
+
+.achievement-copy-status {
+  min-height: 1.2em;
+  color: #8fe3ae;
+  font-size: 0.74rem;
+}
+
 .command-palette-trigger {
   position: fixed;
   left: calc(22px + env(safe-area-inset-left));
   bottom: calc(22px + env(safe-area-inset-bottom));
   z-index: 1040;
-  width: 46px;
-  height: 46px;
-  display: grid;
-  place-items: center;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
   color: var(--orange-yellow-crayola);
   border: 1px solid rgba(255, 219, 112, 0.26);
   border-radius: 8px;
@@ -380,6 +563,11 @@
 
 .command-palette-trigger ion-icon {
   font-size: 22px;
+}
+
+.command-palette-trigger span {
+  font-size: 0.72rem;
+  font-weight: 700;
 }
 
 .command-palette {
@@ -1235,7 +1423,14 @@
     left: calc(12px + env(safe-area-inset-left));
     bottom: calc(132px + env(safe-area-inset-bottom));
     width: 42px;
-    height: 42px;
+    min-height: 42px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .command-palette-trigger span,
+  .command-palette-trigger kbd {
+    display: none;
   }
 
   .command-palette {

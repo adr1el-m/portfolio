@@ -1,6 +1,7 @@
 import { KB } from '@/data/knowledge-base';
+import { getProjectRecords } from './portfolio-data';
 
-const SITE_URL = 'https://adriel.dev';
+const SITE_URL = 'https://www.adrielmagalona.dev';
 
 function absoluteUrl(pathOrUrl?: string): string | undefined {
   if (!pathOrUrl) return undefined;
@@ -24,6 +25,7 @@ export class StructuredData {
     const existing = document.getElementById('portfolio-generated-schema');
     existing?.remove();
 
+    const projects = getProjectRecords();
     const graph = {
       '@context': 'https://schema.org',
       '@graph': [
@@ -60,7 +62,7 @@ export class StructuredData {
           '@type': 'ItemList',
           '@id': `${SITE_URL}#projects`,
           name: 'Portfolio Projects',
-          itemListElement: KB.projects.slice(0, 10).map((project, index) => ({
+          itemListElement: projects.slice(0, 10).map((project, index) => ({
             '@type': 'ListItem',
             position: index + 1,
             item: {

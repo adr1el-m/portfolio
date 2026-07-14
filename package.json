@@ -17,6 +17,7 @@
     "refresh:github": "node scripts/generate-github-contributions.mjs",
     "check:links": "node scripts/check-links.mjs",
     "test:visual": "node scripts/visual-regression.mjs",
+    "test:visual:update": "VISUAL_UPDATE=1 node scripts/visual-regression.mjs",
     "purge:css": "purgecss --css public/style.css --content index.html 'src/**/*.ts' --output ./public --safelist active open modal show hide loading article about background projects organizations faq achievements responsive-img-container progressive-img timeline-item timeline-list navbar-list sidebar-info",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit",

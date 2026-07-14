@@ -1135,6 +1135,10 @@
 }
 
 @media (max-width: 580px) {
+  main {
+    padding-bottom: calc(132px + env(safe-area-inset-bottom));
+  }
+
   .navbar-list {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1229,7 +1233,7 @@
 
   .command-palette-trigger {
     left: calc(12px + env(safe-area-inset-left));
-    bottom: calc(76px + env(safe-area-inset-bottom));
+    bottom: calc(132px + env(safe-area-inset-bottom));
     width: 42px;
     height: 42px;
   }
@@ -1256,7 +1260,7 @@
   }
 
   .search-overlay {
-    padding: max(42px, calc(14px + env(safe-area-inset-top))) 10px calc(86px + env(safe-area-inset-bottom));
+    padding: max(42px, calc(14px + env(safe-area-inset-top))) 10px calc(148px + env(safe-area-inset-bottom));
   }
 
   .search-panel {
@@ -1304,7 +1308,7 @@
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: calc(56px + env(safe-area-inset-bottom));
     z-index: 1035;
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));

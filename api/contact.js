@@ -1,6 +1,6 @@
 const DEFAULT_ALLOWED_ORIGINS = [
-  'https://adriel.dev',
-  'https://www.adriel.dev',
+  'https://adrielmagalona.dev',
+  'https://www.adrielmagalona.dev',
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'http://localhost:5174',
@@ -206,20 +206,20 @@ export default async function handler(req, res) {
       persistContact(payload),
     ]);
     if (!result.sent) {
-      console.warn('Contact accepted but not emailed:', result.reason);
-      res.status(202).json({
-        ok: true,
-        queued: false,
+      // Persistence is useful as a secondary record, but it must never be
+      // presented as a delivered message. The client will offer mailto when
+      // the configured provider cannot accept delivery.
+      console.warn('Contact email was not delivered:', result.reason);
+      res.status(503).json({
+        ok: false,
+        delivered: false,
         persisted,
-        email: OWNER_EMAIL,
-        message: persisted
-          ? 'Contact request saved. Email delivery is not configured yet.'
-          : 'Contact request accepted. Email delivery is not configured yet.',
+        error: 'Message delivery is unavailable. Please use the email draft instead.',
       });
       return;
     }
 
-    res.status(202).json({ ok: true, queued: true, persisted });
+    res.status(202).json({ ok: true, delivered: true, persisted });
   } catch (error) {
     console.error('Contact endpoint fatal error:', error);
     res.status(500).json({ error: 'Contact endpoint failed.' });

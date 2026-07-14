@@ -21,6 +21,7 @@ export class NavigationManager {
     this.setupNavigation();
     this.setupScrollEffects();
     this.setupFAQ();
+    this.setupCertificateModal();
     this.setupMicroInteractions();
   }
 
@@ -139,6 +140,7 @@ export class NavigationManager {
           // Push SPA route for the active section and update canonical
           const path = this.pathFromKey(targetKey);
           this.updateCanonical(path);
+          window.dispatchEvent(new CustomEvent('portfolio:pagechange', { detail: { page: targetKey } }));
           try {
             window.history.pushState({}, '', path);
           } catch (err) {
@@ -215,6 +217,36 @@ export class NavigationManager {
       question.addEventListener('click', () => {
         this.toggleFAQ(question);
       });
+    });
+  }
+
+  private setupCertificateModal(): void {
+    const modal = document.getElementById('cert-modal');
+    if (!(modal instanceof HTMLElement)) return;
+
+    const close = () => { modal.style.display = 'none'; };
+    modal.querySelector<HTMLButtonElement>('.cert-modal-close')?.addEventListener('click', close);
+    document.querySelectorAll<HTMLElement>('.cert-modal-trigger').forEach((trigger) => {
+      trigger.tabIndex = 0;
+      trigger.setAttribute('role', 'button');
+      trigger.setAttribute('aria-haspopup', 'dialog');
+      if (!trigger.hasAttribute('aria-label')) trigger.setAttribute('aria-label', 'Open certificate preview');
+      const open = () => {
+        const preview = modal.querySelector<HTMLImageElement>('[data-certificate-src]');
+        const source = preview?.dataset.certificateSrc;
+        if (preview && source && preview.getAttribute('src') !== source) preview.src = source;
+        modal.style.display = 'flex';
+      };
+      trigger.addEventListener('click', open);
+      trigger.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          open();
+        }
+      });
+    });
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) close();
     });
   }
 
@@ -351,6 +383,7 @@ export class NavigationManager {
     // Update canonical using normalized key to avoid stale/removed routes
     const canonicalPath = this.pathFromKey(key);
     this.updateCanonical(canonicalPath);
+    window.dispatchEvent(new CustomEvent('portfolio:pagechange', { detail: { page: key } }));
   }
 
   /**
@@ -381,7 +414,7 @@ export class NavigationManager {
     try {
       const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
       if (canonical) {
-        const base = 'https://adriel.dev';
+        const base = 'https://www.adrielmagalona.dev';
         const href = path === '/' ? base : `${base}${path}`;
         canonical.setAttribute('href', href);
 

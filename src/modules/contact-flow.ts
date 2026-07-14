@@ -157,7 +157,10 @@ export class ContactFlow {
       window.dispatchEvent(new CustomEvent('portfolio:analytics', {
         detail: { type: 'contact-submit', label: this.selectedReason },
       }));
-      this.setStatus(card, result?.queued === false ? 'Message noted. Email delivery needs deploy env setup.' : 'Message sent. Thanks.');
+      this.setStatus(card, result?.delivered ? 'Message sent. Thanks.' : 'Could not confirm delivery. Opening email draft instead.');
+      if (!result?.delivered) {
+        window.location.href = this.buildMailto(message);
+      }
     } catch {
       this.setStatus(card, 'Could not send here. Opening email draft instead.');
       window.setTimeout(() => {

@@ -212,59 +212,75 @@ class PortfolioApp {
         requestAnimationFrame(() => { setTimeout(cb, delay); });
       };
 
-      // Defer non-essential modules until after first paint/idle
-      defer(() => {
-        // Initialize Wow Factors
-        import('./modules/scroll-animations').then(({ ScrollAnimations }) => new ScrollAnimations());
-        import('./modules/custom-cursor').then(({ CustomCursor }) => new CustomCursor());
-        import('./modules/github-heatmap').then(({ GitHubHeatmap }) => {
-          new GitHubHeatmap().init();
-        });
-        import('./modules/resume-preview').then(({ ResumePreview }) => {
-          new ResumePreview();
-        });
+      // Page-specific enhancements used to be initialized together on every
+      // route. Keep the shell fast, then load a page's enhancement bundle only
+      // when that page becomes active. Each bundle is initialized once.
+      const loadedPageEnhancements = new Set<string>();
+      const loadPageEnhancements = (page: string): void => {
+        if (loadedPageEnhancements.has(page)) return;
+        loadedPageEnhancements.add(page);
 
-        import('./modules/about-enhancements').then(({ AboutEnhancements }) => {
-          new AboutEnhancements();
-        });
-      }, 0);
+        if (page === 'about') {
+          defer(() => {
+            import('./modules/scroll-animations').then(({ ScrollAnimations }) => new ScrollAnimations());
+            import('./modules/custom-cursor').then(({ CustomCursor }) => new CustomCursor());
+            import('./modules/github-heatmap').then(({ GitHubHeatmap }) => new GitHubHeatmap().init());
+            import('./modules/resume-preview').then(({ ResumePreview }) => new ResumePreview());
+            import('./modules/about-enhancements').then(({ AboutEnhancements }) => new AboutEnhancements());
+            import('./modules/awards-accordion').then(({ AwardsAccordion }) => new AwardsAccordion());
+            import('./modules/honors-gallery').then(({ HonorsGallery }) => new HonorsGallery());
+            import('./modules/honor-routes').then(({ HonorRoutes }) => new HonorRoutes());
+            import('./modules/tooltip-portal').then(({ TooltipPortal }) => new TooltipPortal());
+            import('./modules/tech-stack').then(({ TechStack }) => new TechStack());
+            import('./modules/honor-project-links').then(({ HonorProjectLinks }) => new HonorProjectLinks());
+          });
 
-      defer(() => {
-        import('./modules/awards-accordion').then(({ AwardsAccordion }) => {
-          new AwardsAccordion();
-        });
-        import('./modules/honors-gallery').then(({ HonorsGallery }) => {
-          new HonorsGallery();
-        });
-        import('./modules/honor-routes').then(({ HonorRoutes }) => {
-          new HonorRoutes();
-        });
-      }, 50);
+          const showPublicAnalytics = enabledFlag(import.meta.env.VITE_PUBLIC_ANALYTICS_SNAPSHOT)
+            || (import.meta.env.DEV && enabledFlag(qs.get('publicAnalytics')));
+          if (showPublicAnalytics) {
+            defer(() => import('./modules/public-analytics').then(({ PublicAnalytics }) => new PublicAnalytics()), 150);
+          }
 
-      defer(() => {
-        import('./modules/tooltip-portal').then(({ TooltipPortal }) => {
-          new TooltipPortal();
-        });
-      }, 100);
+          runWhenIdle(() => {
+            const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+            if (!auditMode && !prefersReducedMotion && !isCoarsePointer) {
+              import('vanilla-tilt').then(module => {
+                const VanillaTilt = module.default as unknown as { init: (elements: NodeListOf<Element> | Element[], options?: Record<string, unknown>) => void };
+                const cards = document.querySelectorAll('.achievement-card');
+                VanillaTilt.init(cards, { max: 15, speed: 400, glare: true, 'max-glare': 0.1 });
+                cards.forEach(card => card.addEventListener('mousemove', (event: Event) => {
+                  const rect = (card as HTMLElement).getBoundingClientRect();
+                  (card as HTMLElement).style.setProperty('--mouse-x', `${(event as MouseEvent).clientX - rect.left}px`);
+                  (card as HTMLElement).style.setProperty('--mouse-y', `${(event as MouseEvent).clientY - rect.top}px`);
+                }));
+              });
+            }
+          }, 2200);
+        }
 
-      // Initialize interactive Tech Stack section a bit later
-      defer(() => {
-        import('./modules/tech-stack').then(({ TechStack }) => {
-          new TechStack();
-        });
-        import('./modules/timeline-filters').then(({ TimelineFilters }) => {
-          new TimelineFilters();
-        });
-      }, 150);
+        if (page === 'background') {
+          defer(() => import('./modules/timeline-filters').then(({ TimelineFilters }) => new TimelineFilters()));
+        }
 
-      defer(() => {
-        import('./modules/project-previews').then(({ ProjectPreviews }) => {
-          new ProjectPreviews();
-        });
-        import('./modules/honor-project-links').then(({ HonorProjectLinks }) => {
-          new HonorProjectLinks();
-        });
-      }, 175);
+        if (page === 'projects') {
+          defer(() => {
+            import('./modules/project-previews').then(({ ProjectPreviews }) => new ProjectPreviews());
+            import('./modules/ai-summaries').then(({ AISummaries }) => new AISummaries());
+            import('./modules/video-thumbnails').then(({ VideoThumbnails }) => {
+              const videoThumbnails = new VideoThumbnails();
+              if (window.Portfolio?.lazy) window.Portfolio.lazy.VideoThumbnails = videoThumbnails;
+            });
+            import('./modules/projects-sort').then(({ ProjectsSorter }) => new ProjectsSorter().sort());
+          });
+        }
+      };
+
+      const initialPage = document.querySelector<HTMLElement>('article.active[data-page]')?.dataset.page || 'about';
+      loadPageEnhancements(initialPage);
+      window.addEventListener('portfolio:pagechange', (event: Event) => {
+        const page = (event as CustomEvent<{ page?: string }>).detail?.page;
+        if (page) loadPageEnhancements(page);
+      });
 
       defer(() => {
         const showPublicAnalytics = enabledFlag(import.meta.env.VITE_PUBLIC_ANALYTICS_SNAPSHOT)
@@ -282,39 +298,24 @@ class PortfolioApp {
         });
       }, 225);
 
-      // Initialize AI summaries for project hover tooltips
-      defer(() => {
-        import('./modules/ai-summaries').then(({ AISummaries }) => {
-          new AISummaries();
-        });
-      }, 200);
-
-      // Initialize visitor counter. The module handles missing Firebase config gracefully.
-      runWhenIdle(() => {
+      // Firebase and the injected contact card are sidebar enhancements, not
+      // initial-page requirements. Loading them after a sidebar interaction
+      // avoids late layout movement and keeps their code off the first view.
+      let sidebarEnhancementsLoaded = false;
+      const loadSidebarEnhancements = () => {
+        if (sidebarEnhancementsLoaded) return;
+        sidebarEnhancementsLoaded = true;
         import('./modules/visitor-counter').then(({ VisitorCounter }) => {
           new VisitorCounter();
         });
         import('./modules/contact-flow').then(({ ContactFlow }) => {
           new ContactFlow();
         });
-      }, 3000);
-
-      // Initialize video thumbnails manager earlier for faster poster setup
-      defer(() => {
-        import('./modules/video-thumbnails').then(({ VideoThumbnails }) => {
-          const vt = new VideoThumbnails();
-          if (window.Portfolio?.lazy) {
-            window.Portfolio.lazy.VideoThumbnails = vt;
-          }
-        });
-      }, 0);
-
-      // Sort project cards by thumbnail type (video > image > none)
-      defer(() => {
-        import('./modules/projects-sort').then(({ ProjectsSorter }) => {
-          new ProjectsSorter().sort();
-        });
-      }, 250);
+      };
+      const sidebar = document.querySelector<HTMLElement>('[data-sidebar]');
+      const sidebarButton = document.querySelector<HTMLButtonElement>('[data-sidebar-btn]');
+      sidebar?.addEventListener('focusin', loadSidebarEnhancements, { once: true });
+      sidebarButton?.addEventListener('click', loadSidebarEnhancements, { once: true });
 
       // Initialize Icon Replacer
       new IconReplacer();
@@ -337,33 +338,6 @@ class PortfolioApp {
 
       // Enhance landmarks after DOM is ready
       accessibilityEnhancer.enhanceLandmarks();
-
-      // Dynamically import and initialize vanilla-tilt (skip in audit mode) — defer
-      runWhenIdle(() => {
-        const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
-        if (!auditMode && !prefersReducedMotion && !isCoarsePointer) {
-          import('vanilla-tilt').then(module => {
-            const VanillaTilt = module.default as unknown as { init: (elements: NodeListOf<Element> | Element[], options?: Record<string, unknown>) => void };
-            const cards = document.querySelectorAll('.achievement-card');
-            VanillaTilt.init(cards, {
-              max: 15,
-              speed: 400,
-              glare: true,
-              "max-glare": 0.1,
-            });
-
-            cards.forEach(card => {
-              card.addEventListener('mousemove', (e: Event) => {
-                const rect = (card as HTMLElement).getBoundingClientRect();
-                const x = (e as MouseEvent).clientX - rect.left;
-                const y = (e as MouseEvent).clientY - rect.top;
-                (card as HTMLElement).style.setProperty('--mouse-x', `${x}px`);
-                (card as HTMLElement).style.setProperty('--mouse-y', `${y}px`);
-              });
-            });
-          });
-        }
-      }, 2200);
 
       // Optional dev-only stress test: run when URL has ?stress=1
       defer(() => {
@@ -399,14 +373,15 @@ class PortfolioApp {
         }
       }, 3500);
 
-      defer(() => {
-        import('./modules/analytics-dashboard').then(({ AnalyticsDashboard }) => {
-          const dashboard = new AnalyticsDashboard();
-          if (window.Portfolio?.lazy) {
-            window.Portfolio.lazy.AnalyticsDashboard = dashboard;
-          }
-        });
-      }, 450);
+      // The dashboard is an explicit admin tool; do not ship its code to normal visitors.
+      if (enabledFlag(qs.get('admin'))) {
+        defer(() => {
+          import('./modules/analytics-dashboard').then(({ AnalyticsDashboard }) => {
+            const dashboard = new AnalyticsDashboard();
+            if (window.Portfolio?.lazy) window.Portfolio.lazy.AnalyticsDashboard = dashboard;
+          });
+        }, 450);
+      }
 
       this.setupChatbotLoader();
 
@@ -445,8 +420,17 @@ class PortfolioApp {
   }
 }
 
-// Initialize the application
-new PortfolioApp();
+function isResumeRoute(): boolean {
+  return window.location.pathname.replace(/\/+$/, '') === '/resume';
+}
+
+// Vercel handles this as a server redirect in production. This keeps local Vite
+// preview/dev behavior aligned when someone opens /resume directly.
+if (isResumeRoute()) {
+  window.location.replace('/files/resume.pdf');
+} else {
+  new PortfolioApp();
+}
 
 
 // Hot Module Replacement for development

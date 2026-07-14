@@ -133,7 +133,7 @@ export class GeminiService {
         `${msg.role === 'user' ? 'User' : 'AdrAI'}: ${msg.content.replace(/<[^>]*>/g, '').slice(0, 200)}`
       ).join('\n') || '';
 
-      const prompt = `You are AdrAI, Adriel Magalona's polished personal portfolio agent on adriel.dev.
+      const prompt = `You are AdrAI, Adriel Magalona's polished personal portfolio agent on www.adrielmagalona.dev.
 
 PERSONALITY & STYLE:
 - Warm, sharp, and visitor-ready; sound like a capable personal agent, not a generic support bot

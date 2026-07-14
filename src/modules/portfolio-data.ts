@@ -164,24 +164,6 @@ function timelineFromElement(element: HTMLElement): PortfolioTimelineRecord | nu
   };
 }
 
-function mergeProject(base: PortfolioProjectRecord, incoming: PortfolioProjectRecord): PortfolioProjectRecord {
-  return {
-    ...base,
-    ...incoming,
-    title: incoming.title || base.title,
-    category: incoming.category || base.category,
-    description: incoming.description || base.description,
-    technologies: incoming.technologies || base.technologies,
-    images: incoming.images.length ? incoming.images : base.images,
-    webpImages: incoming.webpImages.length ? incoming.webpImages : base.webpImages,
-    githubUrl: incoming.githubUrl || base.githubUrl,
-    liveUrl: incoming.liveUrl || base.liveUrl,
-    videoUrl: incoming.videoUrl || base.videoUrl,
-    codedexUrl: incoming.codedexUrl || base.codedexUrl,
-    source: 'merged',
-  };
-}
-
 function mergeHonor(base: PortfolioHonorRecord, incoming: PortfolioHonorRecord): PortfolioHonorRecord {
   return {
     ...base,
@@ -211,21 +193,15 @@ function canonicalProjectKey(title: string): string {
 }
 
 export function getProjectRecords(): PortfolioProjectRecord[] {
+  // Project cards are the authoring source: modal, search, schema, and chat
+  // must describe exactly what a visitor can see and open. Do not merge a
+  // second hand-maintained project catalogue into these records.
   const records = new Map<string, PortfolioProjectRecord>();
-
-  KB.projects.forEach((project) => {
-    records.set(canonicalProjectKey(project.title), {
-      ...project,
-      source: 'knowledge-base',
-    });
-  });
-
   document.querySelectorAll<HTMLElement>('.project-item').forEach((element) => {
     const fromDom = projectFromElement(element);
     if (!fromDom) return;
     const key = canonicalProjectKey(fromDom.title);
-    const existing = records.get(key);
-    records.set(key, existing ? mergeProject(existing, fromDom) : fromDom);
+    records.set(key, fromDom);
   });
 
   return Array.from(records.values()).sort((a, b) => a.title.localeCompare(b.title));

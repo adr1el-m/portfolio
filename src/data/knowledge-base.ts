@@ -60,7 +60,7 @@ export const KB: KnowledgeBase = {
     email: 'dagsmagalona@gmail.com',
     github: 'https://github.com/adr1el-m',
     linkedin: 'https://linkedin.com/in/adrielmagalona',
-    website: 'https://adriel.dev',
+    website: 'https://www.adrielmagalona.dev',
     resumeUrl: '/resume',
   },
   education: [
@@ -207,7 +207,7 @@ export const KB: KnowledgeBase = {
         "Purpose: Optimize global pairwise biological sequence alignment using the Needleman-Wunsch dynamic programming algorithm.\nTeam: Group 5 presentation project.\nBuild: Validates DNA, RNA, and protein sequences, cleans FASTA-style input, fills the scoring matrix, performs traceback, calculates percentage identity, evaluates significance through sequence shuffling, maps gap or mismatch hotspots, and packages the result for playback and reporting.\nOutcome: Demonstrates why Needleman-Wunsch guarantees an optimal global alignment while turning matrix filling, traceback, and biological similarity analysis into an observable learning workflow.",
       technologies:
         'Swift, SwiftUI, Needleman-Wunsch, Bioinformatics, FASTA, Dynamic Programming, Monte Carlo Testing, iOS 17',
-      githubUrl: 'https://github.com/adr1el-m/genesync',
+      githubUrl: 'https://github.com/adr1el-m/gene-sync',
       liveUrl: 'https://www.youtube.com/watch?v=tuJthrRh8Ik',
     },
     {
@@ -405,7 +405,7 @@ export const KB: KnowledgeBase = {
         { name: 'Ellah Benerado', role: 'Bulacan State University' },
         { name: 'John Carlo Santos', role: 'Bulacan State University' },
       ],
-      githubUrl: 'https://github.com/adr1el-m/worksight',
+      githubUrl: 'https://github.com/4sightorg/worksight',
       description:
         "Recognition: Placed 3rd in the Workplace Productivity and Future of Work category at BPI DataWave Hackathon 2025.\nScope: Built WorkSight, an AI-powered well-being analytics platform for identifying burnout risk through behavioral and organizational signals.\nContribution: Helped develop the product narrative, system workflow, and competition pitch for a workplace analytics solution.",
       projectTitle: 'WorkSight',
@@ -445,7 +445,7 @@ export const KB: KnowledgeBase = {
         { name: 'Threshia Saut', role: 'Rizal Technological University - Bonifacio Campus' },
         { name: 'Franchezca Natividad Banayad', role: 'Pamantasang Lungsod ng Maynila' },
       ],
-      githubUrl: 'https://github.com/adr1el-m/technovation-2025',
+      githubUrl: 'https://github.com/adr1el-m/LingapLink',
       description:
         "Recognition: Won National Champion at the Technovation Summit 2025 Start-up Hackathon.\nScope: Built LingapLink, an AI-powered healthcare platform for triage, booking, communication, and record management.\nContribution: Helped shape the healthcare workflow, technical implementation, and pitch strategy for a competition-winning product.",
       projectTitle: 'LingapLink',
@@ -539,3 +539,48 @@ export const KB: KnowledgeBase = {
     },
   ],
 };
+
+// Project cards are the portfolio's authoring surface. Keep legacy data above
+// only as a non-browser fallback; all browser consumers receive a fresh view
+// of the card metadata so search, structured data, modals, and AdrAI cannot
+// drift apart when a project is edited.
+const fallbackProjects = KB.projects;
+
+function arrayAttribute(element: HTMLElement, name: string): string[] {
+  try {
+    const parsed = JSON.parse(element.getAttribute(name) || '[]') as unknown;
+    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+function textAttribute(element: HTMLElement, name: string): string {
+  return (element.getAttribute(name) || '').replace(/&#10;/g, '\n').replace(/\s+/g, ' ').trim();
+}
+
+function projectsFromCards(): ProjectData[] {
+  if (typeof document === 'undefined') return fallbackProjects;
+  const projects = Array.from(document.querySelectorAll<HTMLElement>('.project-item')).map((element) => {
+    const title = element.querySelector('.project-title')?.textContent?.replace(/\s+/g, ' ').trim() || '';
+    return {
+      title,
+      category: textAttribute(element, 'data-category') || 'Project',
+      description: textAttribute(element, 'data-description'),
+      technologies: textAttribute(element, 'data-tech') || textAttribute(element, 'data-technologies'),
+      images: arrayAttribute(element, 'data-images'),
+      webpImages: arrayAttribute(element, 'data-webp-images'),
+      videoUrl: textAttribute(element, 'data-video') || undefined,
+      githubUrl: textAttribute(element, 'data-github') || undefined,
+      liveUrl: textAttribute(element, 'data-live') || undefined,
+      codedexUrl: textAttribute(element, 'data-codedex') || undefined,
+    };
+  }).filter((project) => project.title);
+
+  return projects.length ? projects : fallbackProjects;
+}
+
+Object.defineProperty(KB, 'projects', {
+  enumerable: true,
+  get: projectsFromCards,
+});

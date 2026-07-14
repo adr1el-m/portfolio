@@ -1,6 +1,6 @@
 const DEFAULT_ALLOWED_ORIGINS = [
-  'https://adriel.dev',
-  'https://www.adriel.dev',
+  'https://adrielmagalona.dev',
+  'https://www.adrielmagalona.dev',
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'http://localhost:5174',
@@ -123,7 +123,7 @@ export default async function handler(req, res) {
     const response = await fetch(`https://github.com/users/${GITHUB_USERNAME}/contributions`, {
       headers: {
         Accept: 'text/html',
-        'User-Agent': 'adriel.dev portfolio contribution widget',
+        'User-Agent': 'www.adrielmagalona.dev portfolio contribution widget',
       },
     });
 

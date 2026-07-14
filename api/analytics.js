@@ -1,6 +1,4 @@
 const DEFAULT_ALLOWED_ORIGINS = [
-  'https://adriel.dev',
-  'https://www.adriel.dev',
   'https://adrielmagalona.dev',
   'https://www.adrielmagalona.dev',
   'http://localhost:5173',
@@ -162,7 +160,6 @@ function persistentToPublic(data, includePrivate = false) {
     honorOpens: toTop(summaryData.counts?.honorOpens),
     contactActions: toTop(summaryData.counts?.contactActions),
     contactSubmissions: toTop(summaryData.counts?.contactSubmissions),
-    recentQuestions: allQuestions.slice(-8).reverse(),
   };
 
   if (includePrivate) {
@@ -184,7 +181,6 @@ function summary(events, includePrivate = false) {
     honorOpens: topCounts(events, 'honor-open'),
     contactActions: topCounts(events, 'contact-action'),
     contactSubmissions: topCounts(events, 'contact-submit'),
-    recentQuestions: chatbotQuestions.slice(-8).reverse(),
   };
 
   if (includePrivate) {

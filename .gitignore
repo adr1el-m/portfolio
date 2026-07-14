@@ -23,6 +23,7 @@ lerna-debug.log*
 .playwright-mcp/
 portfolio-mobile-*.png
 .visual-regression/current/
+.visual-regression/baseline/
 
 # macOS metadata
 .DS_Store

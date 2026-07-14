@@ -12,7 +12,36 @@ const sourceFiles = [
 ];
 
 const ignorePrefixes = ['data:', 'blob:', 'javascript:', '#'];
-const allowedRoutes = new Set(['/', '/about', '/background', '/projects', '/gear', '/contact']);
+const fallbackAllowedRoutes = new Set(['/', '/about', '/background', '/projects', '/gear', '/contact']);
+
+function getVercelRouteSources() {
+  const exact = new Set();
+  const prefixes = new Set();
+  const file = path.join(root, 'vercel.json');
+  if (!fs.existsSync(file)) return { exact, prefixes };
+
+  try {
+    const config = JSON.parse(fs.readFileSync(file, 'utf8'));
+    const routes = [...(config.redirects || []), ...(config.rewrites || [])];
+    routes.forEach((route) => {
+      if (typeof route?.source !== 'string' || !route.source.startsWith('/')) return;
+      const wildcardIndex = route.source.indexOf('(.*)');
+      if (wildcardIndex >= 0) {
+        const prefix = route.source.slice(0, wildcardIndex);
+        if (prefix && prefix !== '/') prefixes.add(prefix);
+        return;
+      }
+      exact.add(route.source.replace(/\/+$/, '') || '/');
+    });
+  } catch (error) {
+    console.warn(`Could not parse vercel.json route sources: ${error.message}`);
+  }
+
+  return { exact, prefixes };
+}
+
+const vercelRoutes = getVercelRouteSources();
+const allowedRoutes = new Set([...fallbackAllowedRoutes, ...vercelRoutes.exact]);
 
 function read(file) {
   return fs.readFileSync(path.join(root, file), 'utf8');
@@ -44,13 +73,33 @@ function isExternal(link) {
   return /^https?:\/\//i.test(link);
 }
 
+function ownSitePath(link) {
+  if (!isExternal(link)) return '';
+  try {
+    const url = new URL(link);
+    if (['adrielmagalona.dev', 'www.adrielmagalona.dev'].includes(url.hostname)) {
+      return `${url.pathname}${url.search}${url.hash}`;
+    }
+  } catch {
+    return '';
+  }
+  return '';
+}
+
 function isMailOrTel(link) {
   return /^(mailto|tel):/i.test(link);
 }
 
 function publicPathExists(urlPath) {
   const clean = urlPath.split('#')[0].split('?')[0];
-  if (!clean || allowedRoutes.has(clean) || clean.startsWith('/honors/')) return true;
+  const normalized = clean.replace(/\/+$/, '') || '/';
+  if (
+    !clean ||
+    allowedRoutes.has(normalized) ||
+    [...vercelRoutes.prefixes].some((prefix) => clean.startsWith(prefix))
+  ) {
+    return true;
+  }
   if (clean.startsWith('/api/')) {
     const apiName = clean.replace(/^\/api\//, '');
     return ['.ts', '.js', '.mjs'].some((ext) => fs.existsSync(path.join(root, 'api', `${apiName}${ext}`)));
@@ -68,11 +117,11 @@ async function checkRemote(link) {
     if (response.status === 405) {
       response = await fetch(link, { ...options, method: 'GET' });
     }
-    return response.status < 400 || [401, 403, 429].includes(response.status);
+    return response.status < 400 || [401, 403, 429, 999].includes(response.status);
   } catch {
     try {
       const response = await fetch(link, { ...options, method: 'GET' });
-      return response.status < 400 || [401, 403, 429].includes(response.status);
+      return response.status < 400 || [401, 403, 429, 999].includes(response.status);
     } catch {
       return false;
     }
@@ -85,6 +134,12 @@ let skippedExternal = 0;
 
 for (const [link, refs] of links.entries()) {
   if (isMailOrTel(link)) continue;
+
+  const ownPath = ownSitePath(link);
+  if (ownPath) {
+    if (!publicPathExists(ownPath)) failures.push({ link, refs, reason: 'missing local asset or route' });
+    continue;
+  }
 
   if (isExternal(link)) {
     if (!checkExternal) {

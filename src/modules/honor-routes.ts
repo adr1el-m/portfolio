@@ -89,9 +89,9 @@ export class HonorRoutes {
 
     document.title = `${title} | Adriel Magalona`;
     const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-    canonical?.setAttribute('href', `https://adriel.dev${path}`);
+    canonical?.setAttribute('href', `https://www.adrielmagalona.dev${path}`);
     const ogUrl = document.querySelector<HTMLMetaElement>('meta[property="og:url"]');
-    ogUrl?.setAttribute('content', `https://adriel.dev${path}`);
+    ogUrl?.setAttribute('content', `https://www.adrielmagalona.dev${path}`);
     const ogTitle = document.querySelector<HTMLMetaElement>('meta[property="og:title"]');
     ogTitle?.setAttribute('content', `${title} | Adriel Magalona`);
     if (description) {

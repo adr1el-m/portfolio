@@ -14,6 +14,9 @@ export class AwardsAccordion {
     const yearHeaders = document.querySelectorAll('[data-year-toggle]');
     
     yearHeaders.forEach(header => {
+      const yearGroup = header.closest('.year-group');
+      const content = yearGroup?.querySelector<HTMLElement>('.year-content');
+      if (content) this.syncAccessibility(header as HTMLElement, content, header.classList.contains('active'));
       header.addEventListener('click', () => {
         this.toggleYear(header as HTMLElement);
       });
@@ -40,6 +43,7 @@ export class AwardsAccordion {
       header.classList.remove('active');
       content.classList.remove('active');
       content.style.maxHeight = '0px';
+      this.syncAccessibility(header, content, false);
 
       // Stop observing size changes while collapsed
       this.unobserveContent(content);
@@ -47,6 +51,7 @@ export class AwardsAccordion {
       // Expand
       header.classList.add('active');
       content.classList.add('active');
+      this.syncAccessibility(header, content, true);
 
       // Preload images when section expands
       this.preloadImagesForSection(content);
@@ -81,6 +86,12 @@ export class AwardsAccordion {
       // Keep content fully expanded if its size changes (e.g., fonts/images)
       this.observeContent(content);
     }
+  }
+
+  private syncAccessibility(header: HTMLElement, content: HTMLElement, expanded: boolean): void {
+    header.setAttribute('aria-expanded', String(expanded));
+    content.setAttribute('aria-hidden', String(!expanded));
+    content.toggleAttribute('inert', !expanded);
   }
 
   /**

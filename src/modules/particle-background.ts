@@ -17,6 +17,7 @@ export class ParticleBackground {
   private ctx: CanvasRenderingContext2D;
   private particles: Particle[] = [];
   private animationFrame = 0;
+  private lastFrameAt = 0;
   private width = 0;
   private height = 0;
   private dpr = 1;
@@ -55,8 +56,11 @@ export class ParticleBackground {
       throw new Error('Canvas 2D context is unavailable.');
     }
     this.ctx = ctx;
-    this.particleCount = isMobile ? 45 : 110;
-    this.maxDistance = isMobile ? 95 : 130;
+    // A subtle background should not compete with the content for CPU/GPU.
+    // 52 particles at 30fps is visually equivalent here while cutting the
+    // previous desktop pair checks by roughly 78% per rendered frame.
+    this.particleCount = isMobile ? 28 : 52;
+    this.maxDistance = isMobile ? 80 : 110;
 
     this.configureCanvasStyle();
     this.resize();
@@ -114,8 +118,12 @@ export class ParticleBackground {
     this.animationFrame = 0;
   }
 
-  private animate(): void {
-    this.animationFrame = window.requestAnimationFrame(() => this.animate());
+  private animate(timestamp = 0): void {
+    this.animationFrame = window.requestAnimationFrame((nextTimestamp) => this.animate(nextTimestamp));
+    // Cap decorative work at 30fps. requestAnimationFrame remains in use so
+    // the animation stays synchronized with browser visibility handling.
+    if (timestamp - this.lastFrameAt < 1000 / 30) return;
+    this.lastFrameAt = timestamp;
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.updateParticles();
     this.drawConnections();

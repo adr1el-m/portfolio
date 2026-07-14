@@ -1,6 +1,6 @@
 const DEFAULT_ALLOWED_ORIGINS = [
-  'https://adriel.dev',
-  'https://www.adriel.dev',
+  'https://adrielmagalona.dev',
+  'https://www.adrielmagalona.dev',
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'http://localhost:5174',
@@ -85,7 +85,7 @@ function setCors(res, origin, allowedOrigins) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   const allowedOrigins = getAllowedOrigins();
   const origin = getRequestOrigin(req);
   setCors(res, origin, allowedOrigins);
@@ -205,4 +205,4 @@ module.exports = async (req, res) => {
       error: 'Gemini proxy internal server error.',
     });
   }
-};
+}

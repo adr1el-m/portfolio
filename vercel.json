@@ -33,6 +33,10 @@
       "destination": "/privacy/index.html"
     },
     {
+      "source": "/case-studies/:slug",
+      "destination": "/case-studies/:slug/index.html"
+    },
+    {
       "source": "/honors/:year/:slug",
       "destination": "/honors/:year/:slug/index.html"
     }

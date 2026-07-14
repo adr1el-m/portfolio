@@ -321,7 +321,7 @@
 </head>
 
 <body>
-  <!-- Skip link removed per request -->
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <noscript>
     <style>
       /* Show content without JS; hide interactive UI */
@@ -420,7 +420,7 @@
     </div>
   </noscript>
   <canvas id="particle-background" aria-hidden="true"></canvas>
-  <main id="main-content">
+  <main id="main-content" tabindex="-1">
     <aside class="sidebar" data-sidebar>
 
       <div class="sidebar-info">
@@ -583,6 +583,12 @@
             <a class="recruiter-cta-primary" href="/projects">View selected work <ion-icon name="arrow-forward-outline" aria-hidden="true"></ion-icon></a>
             <a class="recruiter-cta-secondary" href="/resume" data-resume-preview>View resume</a>
             <a class="recruiter-cta-secondary" href="mailto:dagsmagalona@gmail.com">Contact me</a>
+          </div>
+          <div class="role-paths" aria-label="Choose a portfolio path by role">
+            <a href="/projects?role=frontend">Frontend hiring manager</a>
+            <a href="/projects?role=ai">AI reviewer</a>
+            <a href="/projects?role=founder">Startup founder</a>
+            <a href="/projects?role=internship">Internship recruiter</a>
           </div>
         </section>
 

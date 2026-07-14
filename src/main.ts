@@ -344,6 +344,7 @@ class PortfolioApp {
 
         if (page === 'projects') {
           defer(() => {
+            import('./modules/role-paths').then(({ RolePaths }) => new RolePaths());
             import('./modules/project-previews').then(({ ProjectPreviews }) => new ProjectPreviews());
             import('./modules/ai-summaries').then(({ AISummaries }) => new AISummaries());
             import('./modules/video-thumbnails').then(({ VideoThumbnails }) => {

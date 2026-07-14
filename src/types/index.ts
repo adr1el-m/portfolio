@@ -60,6 +60,7 @@ export interface ProjectProof {
   outcome: string;
   architecture: string;
   evidence?: Array<{ label: string; href: string }>;
+  caseStudyUrl?: string;
 }
 
 export interface Portfolio {

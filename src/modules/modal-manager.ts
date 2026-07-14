@@ -909,7 +909,7 @@ export class ModalManager {
       ['Role', proof.role], ['Team', proof.team], ['Timeframe', proof.timeframe],
       ['Constraint', proof.constraints], ['Outcome', proof.outcome], ['Architecture', proof.architecture],
     ];
-    section.innerHTML = `<h3>Project proof</h3><dl>${facts.map(([label, value]) => `<div><dt>${this.escapeHtml(label)}</dt><dd>${this.escapeHtml(value)}</dd></div>`).join('')}</dl>${proof.evidence?.length ? `<div class="project-proof-links">${proof.evidence.map((item) => `<a href="${this.escapeHtml(item.href)}" target="_blank" rel="noopener noreferrer">${this.escapeHtml(item.label)} ↗</a>`).join('')}</div>` : ''}`;
+    section.innerHTML = `<h3>Project proof</h3><dl>${facts.map(([label, value]) => `<div><dt>${this.escapeHtml(label)}</dt><dd>${this.escapeHtml(value)}</dd></div>`).join('')}</dl>${proof.evidence?.length ? `<div class="project-proof-links">${proof.evidence.map((item) => `<a href="${this.escapeHtml(item.href)}" target="_blank" rel="noopener noreferrer">${this.escapeHtml(item.label)} ↗</a>`).join('')}${proof.caseStudyUrl ? `<a href="${this.escapeHtml(proof.caseStudyUrl)}">Read case study →</a>` : ''}</div>` : ''}`;
   }
 
   private closeProjectModal(): void {

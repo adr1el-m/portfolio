@@ -11,6 +11,7 @@ const profiles: Record<string, ProjectProof> = {
     outcome: 'Delivered authentication, request tracking, status updates, and admin controls.',
     architecture: 'PHP application · MySQL data layer · browser-based admin and student workflows',
     evidence: [{ label: 'Source repository', href: 'https://github.com/adr1el-m/Online-Document-Request-System' }],
+    caseStudyUrl: '/case-studies/odrs',
   },
   worksight: {
     role: 'Product narrative, workflow design, and competition pitch', team: '4Sight · hackathon team', timeframe: 'BPI DataWave 2025',
@@ -18,6 +19,7 @@ const profiles: Record<string, ProjectProof> = {
     outcome: '3rd place in BPI DataWave 2025, Future of Work category.',
     architecture: 'Next.js App Router · TypeScript · Supabase/PostgreSQL · analytics workflows',
     evidence: [{ label: 'Live product', href: 'https://worksight.vercel.app/' }, { label: 'Documentation', href: 'https://worksightdocs.vercel.app/' }, { label: 'Source repository', href: 'https://github.com/4sightorg/worksight' }],
+    caseStudyUrl: '/case-studies/worksight',
   },
   genesync: {
     role: 'Group 5 contributor', team: 'Group 5 · presentation project', timeframe: 'Academic bioinformatics project',
@@ -25,6 +27,7 @@ const profiles: Record<string, ProjectProof> = {
     outcome: 'Interactive sequence validation, scoring, traceback, identity analysis, and hotspot visualization.',
     architecture: 'SwiftUI client · dynamic-programming alignment engine · FASTA-aware input handling',
     evidence: [{ label: 'Demo video', href: 'https://www.youtube.com/watch?v=tuJthrRh8Ik' }, { label: 'Source repository', href: 'https://github.com/adr1el-m/gene-sync' }],
+    caseStudyUrl: '/case-studies/genesync',
   },
   dokq: {
     role: 'Team contributor', team: '4Sight · DLSU HackerCup team', timeframe: 'DLSU HackerCup 2025',
@@ -32,6 +35,7 @@ const profiles: Record<string, ProjectProof> = {
     outcome: 'Patient and provider workflows for booking, queue visibility, and operational coordination.',
     architecture: 'React/Vite · TypeScript · Node/Express · Firebase services',
     evidence: [{ label: 'Live product', href: 'https://dokq.vercel.app/' }, { label: 'Source repository', href: 'https://github.com/4sightorg/dokq' }],
+    caseStudyUrl: '/case-studies/dokq',
   },
   lingaplink: {
     role: 'AI triage implementation, platform unification, and live demo pitch', team: 'Carmen The ParaSight · NCR representative', timeframe: 'Technovation Summit 2025',
@@ -39,6 +43,7 @@ const profiles: Record<string, ProjectProof> = {
     outcome: 'National Champion at Technovation Summit 2025.',
     architecture: 'React/TypeScript · Express services · Firebase · AI-assisted triage workflows',
     evidence: [{ label: 'Source repository', href: 'https://github.com/adr1el-m/carmen-the-parasight' }],
+    caseStudyUrl: '/case-studies/lingaplink',
   },
   'kita kita agentic': {
     role: 'Team contributor', team: 'Deansanitzy · hackathon team', timeframe: 'Agentic AI Hackathon 2025',

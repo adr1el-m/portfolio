@@ -29,6 +29,18 @@
 .project-proof-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .project-proof-links a { padding: 7px 9px; color: var(--orange-yellow-crayola); border: 1px solid rgba(255, 219, 112, .25); border-radius: 8px; font-size: 11px; }
 
+.skip-link { position: fixed; top: 12px; left: 12px; z-index: 5000; padding: 10px 14px; color: #171717; background: var(--orange-yellow-crayola); border-radius: 8px; font-weight: 800; transform: translateY(-160%); transition: transform .15s ease; }
+.skip-link:focus { transform: translateY(0); outline: 3px solid #fff; outline-offset: 3px; }
+.role-paths { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.role-paths a { padding: 8px 10px; color: var(--light-gray); border: 1px solid rgba(255,255,255,.13); border-radius: 8px; font-size: 12px; }
+.role-paths a:hover, .role-paths a:focus-visible { color: var(--orange-yellow-crayola); border-color: rgba(255,219,112,.46); outline: none; }
+.role-path-brief { margin: 0 0 22px; padding: 18px; border: 1px solid rgba(93,172,255,.24); border-radius: 14px; background: linear-gradient(135deg, rgba(93,172,255,.09), rgba(255,219,112,.04)); }
+.role-path-brief h3 { margin: 0; color: var(--white-2); font-size: 20px; }
+.role-path-brief > p { margin: 9px 0; color: var(--light-gray); line-height: 1.5; }
+.role-path-brief ol { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.role-path-brief button, .role-path-brief > a { padding: 8px 10px; color: var(--orange-yellow-crayola); border: 1px solid rgba(255,219,112,.25); border-radius: 8px; background: rgba(17,17,19,.45); font: inherit; font-size: 12px; cursor: pointer; }
+.role-path-brief .role-path-evidence { font-size: 12px; }
+
 .project-img {
   position: relative;
 }

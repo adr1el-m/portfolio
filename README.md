@@ -1,27 +1,36 @@
-# Adriel Magalona — Portfolio
+<div align="center">
 
-The source for [adrielmagalona.dev](https://adrielmagalona.dev): a TypeScript portfolio with selected work, evidence-backed case studies, achievements, and a small serverless contact/AI layer.
+# Adriel Magalona
 
-## What it includes
+### Portfolio website · selected work, case studies, and engineering notes
 
-- Responsive Vite application with accessible navigation, dialogs, and keyboard support.
-- Static, indexable case studies and honor pages generated during the production build.
-- Project evidence: role, scope, constraints, decisions, outcomes, and relevant links.
-- AdrAI, a portfolio guide that calls providers only through server-side Vercel functions.
-- Optional Firebase-backed visitor analytics and Resend contact delivery.
+[Live site](https://adrielmagalona.dev) · [Case studies](https://adrielmagalona.dev/case-studies/worksight) · [Report an issue](https://github.com/adr1el-m/portfolio/issues)
 
-## Stack
+</div>
 
-| Area | Tools |
+---
+
+This repository powers [adrielmagalona.dev](https://adrielmagalona.dev), a portfolio built to make the work easy to evaluate: projects have context, achievements have evidence, and the site remains useful across devices and connection states.
+
+| Focus | What is here |
 | --- | --- |
-| App | TypeScript, Vite, vanilla DOM modules |
-| Hosting and APIs | Vercel Functions |
-| Optional services | Firebase Realtime Database, Resend, Gemini |
-| Quality checks | TypeScript, ESLint, Pa11y, Puppeteer, Lighthouse CI |
+| **Work** | Selected projects with role, scope, constraints, decisions, outcomes, and links. |
+| **Evidence** | Build-generated, indexable case-study and honor pages. |
+| **Experience** | Responsive navigation, keyboard-accessible dialogs, offline support, and tailored recruiter paths. |
+| **Services** | Optional contact delivery, visitor analytics, and the server-side AdrAI portfolio guide. |
 
-## Local development
+## Built with
 
-Requires Node.js 24.
+| Layer | Technology |
+| --- | --- |
+| Application | TypeScript · Vite · focused DOM modules |
+| Platform | Vercel · Vercel Functions |
+| Optional integrations | Firebase Realtime Database · Resend · Gemini |
+| Quality | TypeScript · ESLint · Pa11y · Puppeteer · Lighthouse CI |
+
+## Local setup
+
+> **Requirement:** Node.js 24
 
 ```bash
 npm ci
@@ -29,41 +38,43 @@ cp .env.example .env.local
 npm run dev
 ```
 
-The portfolio works without optional service credentials. Add only the features you need using the documented values in [.env.example](.env.example). Never expose server secrets with a `VITE_*` prefix.
+The public portfolio runs without optional credentials. Enable only the services you need with the values documented in [.env.example](.env.example). Keep provider keys and server secrets out of `VITE_*` variables.
 
-## Verify changes
+## Quality checks
+
+Run the checks relevant to your change, or run the full suite before publishing:
 
 ```bash
-npm run type-check
-npm run lint
-npm run build
-npm run check:links
-npm run test:behavior
-npm run test:visual
-npm run lighthouse:ci
+npm run type-check      # TypeScript
+npm run lint            # Static analysis
+npm run build           # Production build + static page generation
+npm run check:links     # Internal-link validation
+npm run test:behavior   # Keyboard, dialog, route, and CTA smoke tests
+npm run test:visual     # Visual-regression snapshots
+npm run lighthouse:ci   # Lighthouse CI assertions
 ```
 
-`npm run build` also creates static honor and case-study pages in `dist/`.
+The production build writes the static honor and case-study pages to `dist/`.
 
 ## Deployment
 
-The site deploys to Vercel. Configure any optional Firebase, Resend, and AI credentials as server-only Vercel environment variables, then run:
+Production is hosted on Vercel. Set optional Firebase, Resend, and AI credentials as **server-only** Vercel environment variables, then deploy:
 
 ```bash
 npm run deploy
 ```
 
-## Repository map
+## Repository guide
 
 ```text
 api/                 Vercel Functions
-public/              Static media, styles, service worker, offline page
-scripts/             Build generators and automated checks
+config/              Lighthouse and performance budgets
+public/              Static media, styles, service worker, offline fallback
+scripts/             Page generators and automated checks
 src/data/            Portfolio, project, and case-study content
 src/modules/         Page behavior and UI features
-config/              Lighthouse and performance budgets
 ```
 
 ## License
 
-[MIT](LICENSE)
+Released under the [MIT License](LICENSE).

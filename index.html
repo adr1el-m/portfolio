@@ -583,6 +583,7 @@
             <a class="recruiter-cta-primary" href="/projects">View selected work <ion-icon name="arrow-forward-outline" aria-hidden="true"></ion-icon></a>
             <a class="recruiter-cta-secondary" href="/resume" data-resume-preview>View resume</a>
             <a class="recruiter-cta-secondary" href="mailto:dagsmagalona@gmail.com">Contact me</a>
+            <button class="recruiter-cta-secondary pwa-install-button" type="button" data-pwa-install hidden>Install for offline review</button>
           </div>
           <div class="role-paths" aria-label="Choose a portfolio path by role">
             <a href="/projects?role=frontend">Frontend hiring manager</a>
@@ -1868,11 +1869,26 @@
 
         <section class="gear-page" aria-labelledby="gear-title">
           <div class="gear-intro">
-            <p class="gear-kicker" id="gear-title">Desk setup and everyday carry</p>
+            <p class="gear-kicker" id="gear-title">Developer environment &amp; workflow</p>
             <p class="gear-lead">
-              The hardware I use for development, school work, content, and daily productivity.
+              The tools, process, and habits behind how I turn an idea into a reliable project.
             </p>
           </div>
+
+          <section class="workflow-section" aria-labelledby="workflow-title">
+            <div class="workflow-heading"><p class="gear-kicker">How I work</p><h3 id="workflow-title">A practical build loop—from problem framing to proof.</h3></div>
+            <ol class="workflow-grid">
+              <li><strong>01 · Frame</strong><span>Clarify the user, failure mode, and smallest useful outcome before choosing tools.</span></li>
+              <li><strong>02 · Build</strong><span>Ship focused workflows with typed code, version control, and small testable decisions.</span></li>
+              <li><strong>03 · Verify</strong><span>Use type checks, linting, behavior smoke tests, accessibility checks, and production previews.</span></li>
+              <li><strong>04 · Learn</strong><span>Turn demos, repos, outcomes, and feedback into the next iteration’s evidence.</span></li>
+            </ol>
+          </section>
+
+          <section class="workflow-section" aria-labelledby="workflow-stack-title">
+            <div class="workflow-heading"><p class="gear-kicker">Delivery stack</p><h3 id="workflow-stack-title">Tools chosen for fast feedback and dependable handoff.</h3></div>
+            <div class="workflow-pill-grid"><span>TypeScript + Vite</span><span>React / Next.js</span><span>Node + Express</span><span>Firebase + Supabase</span><span>Vercel deployments</span><span>GitHub + CI checks</span><span>Puppeteer behavior tests</span><span>Accessibility + performance audits</span></div>
+          </section>
 
           <div class="gear-section">
             <h3 class="gear-section-title">Desk Setup</h3>

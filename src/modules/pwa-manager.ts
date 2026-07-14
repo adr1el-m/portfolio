@@ -1,9 +1,19 @@
 export class PwaManager {
+  private static deferredPrompt: BeforeInstallPromptEvent | null = null;
+
   public static register(): void {
     if (typeof window === 'undefined') return;
     if (!('serviceWorker' in navigator)) return;
 
     const swUrl = '/sw.js';
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      PwaManager.deferredPrompt = event as BeforeInstallPromptEvent;
+      document.querySelectorAll<HTMLElement>('[data-pwa-install]').forEach((button) => {
+        button.hidden = false;
+        button.addEventListener('click', () => void PwaManager.install(), { once: true });
+      });
+    }, { once: true });
     window.addEventListener('load', () => {
       navigator.serviceWorker
         .register(swUrl)
@@ -29,6 +39,14 @@ export class PwaManager {
           console.warn('❌ Service Worker registration failed:', err);
         });
     });
+  }
+
+  private static async install(): Promise<void> {
+    const prompt = PwaManager.deferredPrompt;
+    if (!prompt) return;
+    await prompt.prompt();
+    PwaManager.deferredPrompt = null;
+    document.querySelectorAll<HTMLElement>('[data-pwa-install]').forEach((button) => { button.hidden = true; });
   }
 
   private static showInstalledToast(): void {
@@ -69,6 +87,11 @@ export class PwaManager {
     reload.addEventListener('click', () => { location.reload(); });
     dismiss.addEventListener('click', () => { el.remove(); });
   }
+}
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 }
 
 export default PwaManager;

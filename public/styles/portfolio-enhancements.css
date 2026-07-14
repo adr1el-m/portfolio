@@ -41,6 +41,17 @@
 .role-path-brief button, .role-path-brief > a { padding: 8px 10px; color: var(--orange-yellow-crayola); border: 1px solid rgba(255,219,112,.25); border-radius: 8px; background: rgba(17,17,19,.45); font: inherit; font-size: 12px; cursor: pointer; }
 .role-path-brief .role-path-evidence { font-size: 12px; }
 
+.workflow-section { margin: 0 0 26px; padding: clamp(18px, 3vw, 26px); border: 1px solid rgba(93,172,255,.18); border-radius: 14px; background: linear-gradient(135deg, rgba(93,172,255,.07), rgba(255,255,255,.018)); }
+.workflow-heading { max-width: 720px; }
+.workflow-heading h3 { margin: 0; color: var(--white-2); font-size: clamp(20px, 3vw, 26px); line-height: 1.2; }
+.workflow-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 18px 0 0; padding: 0; list-style: none; }
+.workflow-grid li { min-height: 132px; padding: 14px; border: 1px solid rgba(255,255,255,.09); border-radius: 10px; background: rgba(17,17,19,.56); }
+.workflow-grid strong { display: block; color: var(--orange-yellow-crayola); font-size: 12px; }
+.workflow-grid span { display: block; margin-top: 8px; color: var(--light-gray); font-size: 12px; line-height: 1.45; }
+.workflow-pill-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.workflow-pill-grid span { padding: 8px 10px; color: var(--light-gray); border: 1px solid rgba(255,219,112,.18); border-radius: 999px; background: rgba(255,219,112,.05); font-size: 12px; }
+@media (max-width: 760px) { .workflow-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
 .project-img {
   position: relative;
 }

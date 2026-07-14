@@ -1,10 +1,15 @@
-const CACHE_NAME = 'adriel-portfolio-v4';
+const CACHE_NAME = 'adriel-portfolio-v5';
 const OFFLINE_URLS = ['/offline', '/offline.html'];
 const PRECACHE_ASSETS = [
   '/',
   ...OFFLINE_URLS,
   '/style.css',
+  '/styles/portfolio-enhancements.css',
+  '/styles/chatbot.css',
   '/index.html',
+  '/projects',
+  '/about',
+  '/files/resume.pdf',
   '/images/my-avatar.png',
   '/images/pwa/icon-192x192.png',
   '/images/pwa/icon-512x512.png'
@@ -40,9 +45,7 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => {
-          if (isHtml) {
-            return caches.match(OFFLINE_URLS[0]).then((res) => res || caches.match(OFFLINE_URLS[1]));
-          }
+          if (isHtml) return cached || caches.match('/index.html').then((res) => res || caches.match(OFFLINE_URLS[0])).then((res) => res || caches.match(OFFLINE_URLS[1]));
           return cached;
         });
 

@@ -257,9 +257,6 @@ class PortfolioApp {
       securityManager.ensureSafeExternalLinks();
       // Apply text placeholders early to avoid image errors
       new TextPlaceholders().init();
-      import('./modules/structured-data').then(({ StructuredData }) => {
-        new StructuredData();
-      });
       const imageOptimizer = new ImageOptimizer();
       const loadingManager = new LoadingManager();
       const navigationManager = new NavigationManager();
@@ -359,6 +356,12 @@ class PortfolioApp {
       };
 
       const initialPage = document.querySelector<HTMLElement>('article.active[data-page]')?.dataset.page || 'about';
+      document.addEventListener('click', (event) => {
+        const target = (event.target as Element | null)?.closest<HTMLElement>('[data-open-project]');
+        const title = target?.dataset.openProject;
+        if (!title) return;
+        window.dispatchEvent(new CustomEvent('portfolio:open-project', { detail: { title } }));
+      });
       loadPageEnhancements(initialPage);
       window.addEventListener('portfolio:pagechange', (event: Event) => {
         const page = (event as CustomEvent<{ page?: string }>).detail?.page;

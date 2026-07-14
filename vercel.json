@@ -29,6 +29,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/privacy",
+      "destination": "/privacy/index.html"
+    },
+    {
       "source": "/honors/:year/:slug",
       "destination": "/honors/:year/:slug/index.html"
     }

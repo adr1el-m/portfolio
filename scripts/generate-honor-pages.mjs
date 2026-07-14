@@ -86,6 +86,62 @@ for (const match of source.matchAll(/<li class="achievement-card"([\s\S]*?)<\/li
   });
 }
 
+const projects = [];
+for (const match of source.matchAll(/<li class="project-item[\s\S]*?<\/li>/g)) {
+  const markup = match[0];
+  const title = cleanText(markup.match(/<h3 class="project-title">([\s\S]*?)<\/h3>/i)?.[1] || '');
+  if (!title) continue;
+  const images = parseImages(attribute(markup, 'data-webp-images'));
+  const fallbackImages = parseImages(attribute(markup, 'data-images'));
+  projects.push({
+    title,
+    category: cleanText(attribute(markup, 'data-category')),
+    description: cleanText(attribute(markup, 'data-description')),
+    technologies: attribute(markup, 'data-technologies').split('•').map(cleanText).filter(Boolean),
+    image: (images.length ? images : fallbackImages)[0] || '',
+    codeRepository: attribute(markup, 'data-github'),
+    url: attribute(markup, 'data-live') || attribute(markup, 'data-github') || siteUrl,
+  });
+}
+
+function absoluteUrl(value) {
+  return /^https?:\/\//i.test(value) ? value : `${siteUrl}${value}`;
+}
+
+function writePortfolioSchema() {
+  const graph = [
+    {
+      '@type': 'Person', '@id': `${siteUrl}/#person`, name: 'Adriel Magalona', url: siteUrl,
+      image: `${siteUrl}/images/my-avatar.avif`, jobTitle: 'Full-stack Developer and AI Builder',
+      sameAs: ['https://github.com/adr1el-m', 'https://linkedin.com/in/adrielmagalona'],
+    },
+    { '@type': 'WebSite', '@id': `${siteUrl}/#website`, name: 'Adriel Magalona Portfolio', url: siteUrl, publisher: { '@id': `${siteUrl}/#person` } },
+    {
+      '@type': 'ItemList', name: 'Portfolio projects', numberOfItems: projects.length,
+      itemListElement: projects.map((project, index) => ({ '@type': 'ListItem', position: index + 1, item: {
+        '@type': 'SoftwareSourceCode', name: project.title, url: absoluteUrl(project.url), description: project.description || undefined,
+        programmingLanguage: project.technologies.length ? project.technologies : undefined,
+        codeRepository: /^https:\/\//.test(project.codeRepository) ? project.codeRepository : undefined,
+        image: project.image ? absoluteUrl(project.image) : undefined,
+      } })),
+    },
+    {
+      '@type': 'ItemList', name: 'Portfolio honors', numberOfItems: honors.length,
+      itemListElement: honors.map((honor, index) => ({ '@type': 'ListItem', position: index + 1, item: {
+        '@type': 'CreativeWork', name: honor.title, url: `${siteUrl}${honor.pathName}`, description: honor.description || undefined,
+        dateCreated: honor.date || undefined, image: honor.images[0] ? absoluteUrl(honor.images[0]) : undefined,
+        publisher: honor.organizer ? { '@type': 'Organization', name: honor.organizer } : undefined,
+      } })),
+    },
+  ];
+  const schema = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
+  const file = path.join(dist, 'index.html');
+  const page = fs.readFileSync(file, 'utf8');
+  const placeholder = '<script id="portfolio-schema" type="application/ld+json">{}</script>';
+  if (!page.includes(placeholder)) throw new Error('Portfolio schema placeholder is missing.');
+  fs.writeFileSync(file, page.replace(placeholder, `<script id="portfolio-schema" type="application/ld+json">${schema}</script>`));
+}
+
 function detailPage(honor) {
   const canonical = `${siteUrl}${honor.pathName}`;
   const description = honor.description || `${honor.title} — ${honor.organizer || 'portfolio honor'}.`;
@@ -123,6 +179,8 @@ for (const honor of honors) {
   fs.writeFileSync(path.join(directory, 'index.html'), detailPage(honor));
 }
 
+writePortfolioSchema();
+
 const date = new Date().toISOString().slice(0, 10);
 const urls = [
   ['', '1.0'], ['/about', '0.8'], ['/background', '0.7'], ['/projects', '0.9'], ['/contact', '0.6'], ['/gear', '0.6'],
@@ -130,4 +188,4 @@ const urls = [
 ];
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(([pathName, priority]) => `  <url><loc>${siteUrl}${pathName || '/'}</loc><lastmod>${date}</lastmod><changefreq>monthly</changefreq><priority>${priority}</priority></url>`).join('\n')}\n</urlset>\n`;
 fs.writeFileSync(path.join(dist, 'sitemap.xml'), sitemap);
-console.log(`Generated ${honors.length} static honor detail pages and sitemap entries.`);
+console.log(`Generated one portfolio schema graph, ${honors.length} static honor detail pages, and sitemap entries.`);

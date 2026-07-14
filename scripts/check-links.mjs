@@ -25,10 +25,17 @@ function getVercelRouteSources() {
     const routes = [...(config.redirects || []), ...(config.rewrites || [])];
     routes.forEach((route) => {
       if (typeof route?.source !== 'string' || !route.source.startsWith('/')) return;
+      // A route destination can contain parameter placeholders (for example
+      // /honors/:year/:slug/index.html); it is not a literal public path.
       const wildcardIndex = route.source.indexOf('(.*)');
       if (wildcardIndex >= 0) {
         const prefix = route.source.slice(0, wildcardIndex);
         if (prefix && prefix !== '/') prefixes.add(prefix);
+        return;
+      }
+      if (route.source.includes(':')) {
+        const prefix = route.source.split('/:')[0];
+        if (prefix && prefix !== '/') prefixes.add(`${prefix}/`);
         return;
       }
       exact.add(route.source.replace(/\/+$/, '') || '/');

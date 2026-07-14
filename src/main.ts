@@ -316,6 +316,10 @@ class PortfolioApp {
       const sidebarButton = document.querySelector<HTMLButtonElement>('[data-sidebar-btn]');
       sidebar?.addEventListener('focusin', loadSidebarEnhancements, { once: true });
       sidebarButton?.addEventListener('click', loadSidebarEnhancements, { once: true });
+      // Keep the visible Total Views counter independent from the contact card.
+      runWhenIdle(() => {
+        import('./modules/visitor-counter').then(({ VisitorCounter }) => new VisitorCounter());
+      }, 2200);
 
       // Initialize Icon Replacer
       new IconReplacer();

@@ -167,10 +167,11 @@ export class GitHubHeatmap {
 
   private async fetchContributions(): Promise<ContributionResponse> {
     const errors: string[] = [];
-    for (const endpoint of [GITHUB_ENDPOINT, GITHUB_FALLBACK_ENDPOINT]) {
+    for (const endpoint of [`${GITHUB_ENDPOINT}?t=${Date.now()}`, GITHUB_FALLBACK_ENDPOINT]) {
       try {
         const response = await fetch(endpoint, {
-          headers: { Accept: 'application/json' },
+          headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' },
+          cache: 'no-store',
         });
 
         if (!response.ok) {

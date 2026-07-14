@@ -3365,9 +3365,9 @@ article.active {
 .project-modal-wrapper {
   background: linear-gradient(180deg, #1e1e1e 0%, #1a1a1a 100%);
   border-radius: 12px;
-  max-width: min(920px, 100%);
-  width: min(95vw, 920px);
-  max-height: min(95vh, 920px);
+  max-width: min(1280px, 100%);
+  width: min(96vw, 1280px);
+  max-height: 96vh;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -3482,7 +3482,7 @@ article.active {
 .project-gallery-image {
   display: block;
   max-width: 100%;
-  max-height: min(58vh, 560px);
+  max-height: min(68vh, 760px);
   width: auto;
   height: auto;
   border-radius: 8px;
@@ -3503,7 +3503,7 @@ article.active {
   max-width: 100%;
   width: 100%;
   height: auto;
-  max-height: min(58vh, 560px);
+  max-height: min(68vh, 760px);
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
   object-fit: contain;

@@ -8,7 +8,7 @@ const DEFAULT_ALLOWED_ORIGINS = [
 ];
 
 const GITHUB_USERNAME = 'adr1el-m';
-const CACHE_SECONDS = 60 * 30;
+const CACHE_SECONDS = 0;
 
 function getAllowedOrigins() {
   const raw = process.env.PORTFOLIO_ALLOWED_ORIGINS || '';
@@ -140,7 +140,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    res.setHeader('Cache-Control', `s-maxage=${CACHE_SECONDS}, stale-while-revalidate=${CACHE_SECONDS}`);
+    res.setHeader('Cache-Control', 'no-store, max-age=0');
     res.status(200).json(payload);
   } catch (error) {
     console.error('GitHub contribution fetch failed:', error?.message || error);

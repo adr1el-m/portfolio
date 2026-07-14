@@ -201,7 +201,7 @@ export const KB: KnowledgeBase = {
     {
       title: 'GeneSync',
       category: 'Mobile Bioinformatics App',
-      images: ['/images/projects/genesync/GeneSyncDemo.gif'],
+      images: [],
       webpImages: [],
       description:
         "Purpose: Optimize global pairwise biological sequence alignment using the Needleman-Wunsch dynamic programming algorithm.\nTeam: Group 5 presentation project.\nBuild: Validates DNA, RNA, and protein sequences, cleans FASTA-style input, fills the scoring matrix, performs traceback, calculates percentage identity, evaluates significance through sequence shuffling, maps gap or mismatch hotspots, and packages the result for playback and reporting.\nOutcome: Demonstrates why Needleman-Wunsch guarantees an optimal global alignment while turning matrix filling, traceback, and biological similarity analysis into an observable learning workflow.",
@@ -209,6 +209,7 @@ export const KB: KnowledgeBase = {
         'Swift, SwiftUI, Needleman-Wunsch, Bioinformatics, FASTA, Dynamic Programming, Monte Carlo Testing, iOS 17',
       githubUrl: 'https://github.com/adr1el-m/gene-sync',
       liveUrl: 'https://www.youtube.com/watch?v=tuJthrRh8Ik',
+      videoUrl: '/images/projects/genesync/GeneSyncDemo.mp4',
     },
     {
       title: 'WorkSight',

@@ -49,6 +49,17 @@ export interface ProjectData {
   liveUrl?: string;
   codedexUrl?: string;
   docsUrl?: string;
+  proof?: ProjectProof;
+}
+
+export interface ProjectProof {
+  role: string;
+  team: string;
+  timeframe: string;
+  constraints: string;
+  outcome: string;
+  architecture: string;
+  evidence?: Array<{ label: string; href: string }>;
 }
 
 export interface Portfolio {

@@ -290,6 +290,7 @@
   <link rel="preload" href="/style.css" as="style">
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/styles/portfolio-enhancements.css">
+  <link rel="stylesheet" href="/styles/chatbot.css">
 
   <!-- Preload hero avatar with responsive sources -->
   <link rel="preload" as="image" href="/images/my-avatar.avif"
@@ -1595,7 +1596,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/financeWise/fw.mp4" muted playsinline
+                  <video class="project-card-video" data-src="/images/projects/financeWise/fw.mp4" data-poster="/images/projects/financeWise/fw.poster.jpg" muted playsinline
                     preload="none"
                     poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3EFinanceWise%3C/text%3E%3C/svg%3E"
                     width="400" height="300"></video>
@@ -1612,7 +1613,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/greenPulse/GP-opt.mp4" muted playsinline
+                  <video class="project-card-video" data-src="/images/projects/greenPulse/GP-opt.mp4" data-poster="/images/projects/greenPulse/GP-opt.poster.jpg" muted playsinline
                     preload="none"
                     poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3EGreen Pulse%3C/text%3E%3C/svg%3E"
                     width="400" height="300"></video>
@@ -1642,7 +1643,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/talambuhay/talambuhay.mp4" muted
+                  <video class="project-card-video" data-src="/images/projects/talambuhay/talambuhay.mp4" data-poster="/images/projects/talambuhay/talambuhay.poster.jpg" muted
                     playsinline preload="none"
                     poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3ETalambuhay%3C/text%3E%3C/svg%3E"
                     width="400" height="300"></video>
@@ -1659,7 +1660,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/barangayNav/BarangayNav-opt.mp4" muted
+                  <video class="project-card-video" data-src="/images/projects/barangayNav/BarangayNav-opt.mp4" data-poster="/images/projects/barangayNav/BarangayNav-opt.poster.jpg" muted
                     playsinline preload="none"
                     poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3EBarangayNav%3C/text%3E%3C/svg%3E"
                     width="400" height="300"></video>
@@ -1676,7 +1677,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/agentic/Deansanitzy.mp4" muted
+                  <video class="project-card-video" data-src="/images/projects/agentic/Deansanitzy.mp4" data-poster="/images/projects/agentic/Deansanitzy.poster.jpg" muted
                     playsinline preload="none"
                     poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='45%25' fill='%23ffdb70' font-family='system-ui' font-size='22' font-weight='600' text-anchor='middle'%3EKita-Kita%3C/text%3E%3Ctext x='50%25' y='58%25' fill='%23ffdb70' font-family='system-ui' font-size='18' font-weight='600' text-anchor='middle'%3E(Agentic)%3C/text%3E%3C/svg%3E"
                     width="400" height="300"></video>
@@ -1685,8 +1686,9 @@
               </a>
             </li>
             <li class="project-item active" data-featured="true" data-filter-item data-category="Mobile App"
-              data-images='["/images/projects/genesync/GeneSyncDemo.gif"]'
+              data-images='[]'
               data-webp-images='[]'
+              data-video="/images/projects/genesync/GeneSyncDemo.mp4"
               data-description="Purpose: Optimize global pairwise biological sequence alignment using the Needleman-Wunsch dynamic programming algorithm.&#10;Team: Group 5 presentation project.&#10;Build: Validates DNA, RNA, and protein sequences, cleans FASTA-style input, fills the scoring matrix, performs traceback, calculates percentage identity, evaluates significance through sequence shuffling, maps gap or mismatch hotspots, and packages the result for playback and reporting.&#10;Outcome: Demonstrates why Needleman-Wunsch guarantees an optimal global alignment while turning matrix filling, traceback, and biological similarity analysis into an observable learning workflow."
               data-technologies="Swift • SwiftUI • Needleman-Wunsch • Bioinformatics • FASTA • Dynamic Programming • Monte Carlo Testing • iOS 17"
               data-github="https://github.com/adr1el-m/gene-sync"
@@ -1694,7 +1696,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <img src="/images/projects/genesync/GeneSyncDemo.gif" alt="GeneSync demo loop" loading="lazy" width="400" height="300">
+                  <video class="project-card-video" data-src="/images/projects/genesync/GeneSyncDemo.mp4" data-poster="/images/projects/genesync/GeneSyncDemo.poster.jpg" muted playsinline preload="none" width="400" height="300"></video>
                 </figure>
                 <h3 class="project-title">GeneSync</h3>
               </a>
@@ -1770,7 +1772,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/lingapLink/lingaplinkks.mp4" muted
+                  <video class="project-card-video" data-src="/images/projects/lingapLink/lingaplinkks.mp4" data-poster="/images/projects/lingapLink/lingaplinkks.poster.jpg" muted
                     playsinline preload="none"
                     poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3ELingapLink%3C/text%3E%3C/svg%3E"
                     width="400" height="300"></video>
@@ -1789,7 +1791,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/Fireside/fireside.mp4" muted playsinline
+                  <video class="project-card-video" data-src="/images/projects/Fireside/fireside.mp4" data-poster="/images/projects/Fireside/fireside.poster.jpg" muted playsinline
                     preload="none"
                     poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='22' font-weight='600' text-anchor='middle' dy='.3em'%3EFireside September%3C/text%3E%3C/svg%3E"
                     width="400" height="300"></video>
@@ -2063,6 +2065,7 @@
       <div class="project-modal-info">
         <h2 id="project-modal-title" class="project-info-title"></h2>
         <p class="project-info-description"></p>
+        <section class="project-proof" aria-label="Project proof" hidden></section>
         <div class="project-info-tech">
           <span class="tech-label">Technologies:</span>
           <span class="tech-stack"></span>
@@ -2177,569 +2180,7 @@
   <!-- TypeScript Application Entry Point (Vite will handle bundling) -->
   <script type="module" src="/src/main.ts"></script>
 
-  <style>
-    .chatbot-btn {
-      position: fixed;
-      bottom: calc(30px + env(safe-area-inset-bottom));
-      right: calc(30px + env(safe-area-inset-right));
-      background:
-        radial-gradient(circle at 30% 20%, rgba(255, 240, 170, 0.35), transparent 32%),
-        linear-gradient(145deg, #2a2a2a, #151515);
-      color: var(--text-primary);
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: var(--type-2xl);
-      cursor: pointer;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.34),
-        inset 0 1px 0 rgba(255, 255, 255, 0.12);
-      z-index: 1000;
-      transition: transform 0.22s ease, box-shadow 0.22s ease, color 0.22s ease;
-      border: 1px solid rgba(255, 219, 112, 0.28);
-    }
 
-    .chatbot-btn:hover {
-      transform: translateY(-2px) scale(1.04);
-      color: var(--accent-gold);
-      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42), 0 0 0 4px rgba(255, 219, 112, 0.08);
-    }
-
-    .chatbot-btn:focus-visible {
-      outline: 3px solid rgba(255, 219, 112, 0.55);
-      outline-offset: 4px;
-    }
-
-    .chatbot-btn svg {
-      width: 27px;
-      height: 27px;
-    }
-
-    .chatbox {
-      position: fixed;
-      bottom: calc(104px + env(safe-area-inset-bottom));
-      right: calc(30px + env(safe-area-inset-right));
-      width: min(390px, calc(100vw - 32px));
-      height: min(610px, calc(100dvh - 138px));
-      min-height: 430px;
-      background: rgba(24, 24, 25, 0.96);
-      border-radius: 18px;
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.52);
-      display: flex;
-      flex-direction: column;
-      z-index: 1100;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(18px);
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transform: translateY(14px) scale(0.98);
-      transform-origin: bottom right;
-      transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
-    }
-
-    .chatbox.active {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transform: translateY(0) scale(1);
-    }
-
-    .chatbox-header {
-      background: linear-gradient(180deg, rgba(45, 45, 47, 0.98), rgba(32, 32, 34, 0.98));
-      color: var(--text-primary);
-      padding: 16px 16px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .chatbox-title-block {
-      min-width: 0;
-    }
-
-    .chatbox-eyebrow {
-      display: block;
-      color: rgba(255, 219, 112, 0.92);
-      font-size: 0.67rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      line-height: 1;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-    }
-
-    .chatbox-header h3 {
-      margin: 0;
-      font-size: 1rem;
-      line-height: 1.1;
-    }
-
-    .chatbox-header-actions {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      flex: none;
-    }
-
-    .chatbox-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: rgba(255, 255, 255, 0.78);
-      font-size: 0.74rem;
-      line-height: 1;
-      white-space: nowrap;
-    }
-
-    .chatbox-status::before {
-      content: "";
-      width: 7px;
-      height: 7px;
-      background: #79e0a2;
-      border-radius: 50%;
-      box-shadow: 0 0 0 3px rgba(121, 224, 162, 0.14);
-    }
-
-    .close-btn {
-      cursor: pointer;
-      font-size: 1rem;
-      color: var(--text-primary);
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 50%;
-      transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex: none;
-    }
-
-    .close-btn:hover {
-      background: rgba(255, 255, 255, 0.11);
-      border-color: rgba(255, 219, 112, 0.24);
-      transform: translateY(-1px);
-    }
-
-    .chatbox-messages {
-      flex: 1;
-      padding: 16px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: linear-gradient(180deg, #171717, #121212);
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255, 219, 112, 0.75) transparent;
-    }
-
-    .chatbox-messages::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .chatbox-messages::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .chatbox-messages::-webkit-scrollbar-thumb {
-      background: rgba(255, 219, 112, 0.7);
-      border-radius: 3px;
-    }
-
-    .message {
-      max-width: 91%;
-      padding: 11px 13px;
-      border-radius: 14px;
-      word-wrap: break-word;
-      animation: messagePopIn 0.3s ease-out forwards;
-      opacity: 0;
-      transform: translateY(10px);
-      font-size: 0.86rem;
-      line-height: 1.55;
-    }
-
-    @keyframes messagePopIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .user-message {
-      background: linear-gradient(145deg, #ffdf86, #eabf52);
-      color: #181512;
-      align-self: flex-end;
-      border-bottom-right-radius: 5px;
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-    }
-
-    .bot-message {
-      background: linear-gradient(145deg, #29292b, #202022);
-      color: #fff;
-      align-self: flex-start;
-      border-bottom-left-radius: 5px;
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    /* Chatbot links: gold, not default blue */
-    .bot-message a {
-      color: var(--accent-gold);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-
-    .bot-message a:hover {
-      color: var(--accent-gold);
-    }
-
-    .bot-message a:focus {
-      outline: 2px solid var(--color-accent-weak);
-      outline-offset: 2px;
-    }
-
-    .bot-message strong {
-      color: #fff4c2;
-      font-weight: 700;
-    }
-
-    .bot-message code {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 6px;
-      color: #fff4c2;
-      font-size: 0.9em;
-      padding: 2px 5px;
-    }
-
-    .sources {
-      margin-top: 10px;
-      color: rgba(255, 255, 255, 0.72);
-      font-size: 0.76rem;
-    }
-
-    .sources summary {
-      cursor: pointer;
-      color: rgba(255, 219, 112, 0.9);
-    }
-
-    .sources ul {
-      margin: 8px 0 0 16px;
-      padding: 0;
-    }
-
-    .bot-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin: -4px 0 6px 0;
-      max-width: 94%;
-    }
-
-    .bot-actions button {
-      background: rgba(255, 255, 255, 0.055);
-      color: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(255, 219, 112, 0.25);
-      border-radius: 999px;
-      cursor: pointer;
-      font-size: 0.76rem;
-      line-height: 1.25;
-      padding: 7px 10px;
-      transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
-      white-space: normal;
-    }
-
-    .bot-actions button:hover,
-    .bot-actions button:focus-visible {
-      background: rgba(255, 219, 112, 0.12);
-      border-color: rgba(255, 219, 112, 0.48);
-      transform: translateY(-1px);
-      outline: none;
-    }
-
-    .chatbox-input {
-      display: flex;
-      padding: 13px;
-      gap: 9px;
-      background: rgba(31, 31, 33, 0.98);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .chatbox-privacy {
-      margin: 0;
-      padding: 9px 13px;
-      color: rgba(255, 255, 255, 0.66);
-      background: rgba(255, 219, 112, 0.045);
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      font-size: 0.7rem;
-      line-height: 1.4;
-    }
-
-    .chatbox-privacy a { color: #ffdb70; text-underline-offset: 2px; }
-
-    .chatbox-input input {
-      flex: 1;
-      min-width: 0;
-      padding: 12px 14px;
-      border: 1px solid rgba(255, 255, 255, 0.09);
-      border-radius: 12px;
-      font-size: 0.88rem;
-      outline: none;
-      background: #151515;
-      color: #fff;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-    }
-
-    .chatbox-input input:focus {
-      border-color: #ffdb70;
-      background: #111;
-      box-shadow: 0 0 0 3px rgba(255, 219, 112, 0.12);
-    }
-
-    .chatbox-input input:disabled {
-      opacity: 0.72;
-      cursor: wait;
-    }
-
-    .chatbox-input input::placeholder {
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .chatbox-input button {
-      background: linear-gradient(145deg, #ffdb70, #FFC000);
-      color: #000;
-      border: none;
-      width: 44px;
-      height: 44px;
-      padding: 0;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      flex: none;
-    }
-
-    .chatbox-input button:hover {
-      background: linear-gradient(145deg, #FFC000, #FFD700);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-    }
-
-    .chatbox-input button:disabled {
-      cursor: wait;
-      opacity: 0.62;
-      transform: none;
-    }
-
-    .typing-indicator {
-      display: flex;
-      gap: 4px;
-      padding: 10px 12px;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      border-bottom-left-radius: 5px;
-      width: fit-content;
-    }
-
-    .typing-dot {
-      width: 6px;
-      height: 6px;
-      background: #FFD700;
-      border-radius: 50%;
-      animation: typingBounce 1.4s infinite ease-in-out;
-    }
-
-    .typing-dot:nth-child(1) {
-      animation-delay: 0s;
-    }
-
-    .typing-dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .typing-dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes typingBounce {
-
-      0%,
-      60%,
-      100% {
-        transform: translateY(0);
-      }
-
-      30% {
-        transform: translateY(-4px);
-      }
-    }
-
-
-    /* Mobile-friendly chatbot styles */
-    @media (max-width: 768px) {
-      .chatbot-btn {
-        bottom: calc(118px + env(safe-area-inset-bottom));
-        right: calc(18px + env(safe-area-inset-right));
-        width: 50px;
-        height: 50px;
-      }
-
-      .chatbox {
-        position: fixed;
-        bottom: calc(94px + env(safe-area-inset-bottom));
-        right: 10px;
-        width: calc(100% - 20px);
-        max-width: none;
-        height: min(68dvh, 560px);
-        min-height: 420px;
-        margin: 0;
-        border-radius: 16px;
-      }
-
-      .chatbox-header {
-        padding: 14px;
-      }
-
-      .chatbox-messages {
-        padding: 14px;
-      }
-
-      .chatbox-input {
-        padding: 10px;
-      }
-
-      .chatbox-input input {
-        padding: 11px 12px;
-        font-size: 14px;
-      }
-
-      .chatbox-input button {
-        width: 42px;
-        height: 42px;
-      }
-
-      .message {
-        padding: 10px 12px;
-        font-size: 14px;
-        max-width: 90%;
-      }
-    }
-
-    /* Additional improvements for very small screens */
-    @media (max-width: 380px) {
-      .chatbox {
-        width: calc(100% - 12px);
-        right: 6px;
-        min-height: 400px;
-      }
-
-      .chatbot-btn {
-        width: 45px;
-        height: 45px;
-        bottom: calc(112px + env(safe-area-inset-bottom));
-      }
-
-      .chatbox-status {
-        display: none;
-      }
-
-      .bot-actions button {
-        font-size: 0.72rem;
-        padding: 7px 9px;
-      }
-    }
-
-    /* Add this CSS for dark mode adaptation */
-    .faq-section {
-      background-color: #2c2c2c;
-      /* Dark background */
-      color: #fff;
-      /* Light text */
-      padding: 20px;
-      border-radius: 8px;
-    }
-
-    .faq-item {
-      margin-bottom: 15px;
-    }
-
-    .faq-question {
-      cursor: pointer;
-      font-weight: bold;
-      transition: color 0.3s;
-      color: var(--text-primary);
-    }
-
-    .faq-question:hover {
-      color: var(--accent-gold);
-    }
-
-    .faq-answer {
-      display: none;
-      /* Initially hidden */
-      margin-top: 5px;
-      padding: 10px;
-      background-color: var(--surface-2);
-      color: var(--text-muted);
-      border-radius: 5px;
-    }
-
-    /* Project modal styles live in public/style.css. */
-
-    /* Keep achievement item pointer styling */
-    .achievement-item {
-      cursor: pointer;
-    }
-
-    /* Mobile project title overlay */
-    @media (max-width: 600px) {
-
-
-      article.projects ul.project-list li.project-item a {
-        position: relative;
-        display: block;
-      }
-
-      article.projects ul.project-list li.project-item .project-img {
-        position: relative;
-      }
-
-      /* Center the eye icon overlay on mobile */
-      article.projects ul.project-list li.project-item .project-item-icon-box {
-        inset: 0;
-        margin: auto;
-        transform: scale(var(--scale));
-        /* remove translate to avoid offset */
-        z-index: 3;
-      }
-
-      article.projects ul.project-list li.project-item .project-title {
-        position: absolute;
-        left: 12px;
-        bottom: 12px;
-        margin: 0;
-        padding: 6px 10px;
-        border-radius: 8px;
-        background: rgba(26, 26, 26, 0.65);
-        color: var(--white-1);
-        z-index: 2;
-        font-size: 0.95rem;
-        line-height: 1.2;
-        pointer-events: none;
-      }
-    }
-  </style>
 
 </body>
 

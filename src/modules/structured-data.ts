@@ -1,5 +1,5 @@
 import { KB } from '@/data/knowledge-base';
-import { getProjectRecords } from './portfolio-data';
+import { getHonorRecords, getProjectRecords } from './portfolio-data';
 
 const SITE_URL = 'https://www.adrielmagalona.dev';
 
@@ -26,6 +26,7 @@ export class StructuredData {
     existing?.remove();
 
     const projects = getProjectRecords();
+    const honors = getHonorRecords();
     const graph = {
       '@context': 'https://schema.org',
       '@graph': [
@@ -43,7 +44,7 @@ export class StructuredData {
             '@type': 'EducationalOrganization',
             name: item.school,
           })),
-          award: KB.achievements
+          award: honors
             .filter((item) => /winner|champion|place|runner|recognition|scholar/i.test(`${item.title} ${item.description || ''}`))
             .slice(0, 12)
             .map((item) => item.title),
@@ -81,7 +82,7 @@ export class StructuredData {
           '@type': 'ItemList',
           '@id': `${SITE_URL}#honors`,
           name: 'Honors and Awards',
-          itemListElement: KB.achievements.slice(0, 16).map((achievement, index) => ({
+          itemListElement: honors.slice(0, 16).map((achievement, index) => ({
             '@type': 'ListItem',
             position: index + 1,
             item: {

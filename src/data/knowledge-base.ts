@@ -545,6 +545,7 @@ export const KB: KnowledgeBase = {
 // of the card metadata so search, structured data, modals, and AdrAI cannot
 // drift apart when a project is edited.
 const fallbackProjects = KB.projects;
+const fallbackAchievements = KB.achievements;
 
 function arrayAttribute(element: HTMLElement, name: string): string[] {
   try {
@@ -580,7 +581,33 @@ function projectsFromCards(): ProjectData[] {
   return projects.length ? projects : fallbackProjects;
 }
 
+function honorsFromCards(): AchievementData[] {
+  if (typeof document === 'undefined') return fallbackAchievements;
+  const honors = Array.from(document.querySelectorAll<HTMLElement>('.achievement-card')).map((element) => ({
+    title: element.querySelector('.card-title')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+    images: arrayAttribute(element, 'data-images'),
+    webpImages: arrayAttribute(element, 'data-webp-images'),
+    organizer: textAttribute(element, 'data-organizer') || 'Portfolio honor',
+    date: textAttribute(element, 'data-date'),
+    location: textAttribute(element, 'data-location'),
+    description: textAttribute(element, 'data-description') || undefined,
+    projectTitle: textAttribute(element, 'data-project-title') || undefined,
+    githubUrl: textAttribute(element, 'data-github') || undefined,
+    liveUrl: textAttribute(element, 'data-live') || undefined,
+    linkedinUrl: textAttribute(element, 'data-linkedin') || undefined,
+    blogUrl: textAttribute(element, 'data-blog') || undefined,
+    facebookUrl: textAttribute(element, 'data-facebook') || undefined,
+  })).filter((honor) => honor.title);
+
+  return honors.length ? honors : fallbackAchievements;
+}
+
 Object.defineProperty(KB, 'projects', {
   enumerable: true,
   get: projectsFromCards,
+});
+
+Object.defineProperty(KB, 'achievements', {
+  enumerable: true,
+  get: honorsFromCards,
 });

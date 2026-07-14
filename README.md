@@ -142,7 +142,7 @@ npm >= 10.x
 3. **Set up environment variables**
    ```bash
    cp .env.example .env
-   # Add your API keys (VITE_GEMINI_API_KEY, etc.)
+   # Add server-side values from .env.example. Never put an AI provider key in VITE_*.
    ```
 
 4. **Start development server**
@@ -238,7 +238,7 @@ portfolio/
 │   │   ├── awards-accordion.ts
 │   │   ├── brand-logos.ts
 │   │   ├── chatbot.ts             # AI chatbot interface
-│   │   ├── gemini-service.ts      # Gemini API integration
+│   │   ├── ai-service.ts          # Server-proxy AdrAI integration
 │   │   ├── custom-cursor.ts
 │   │   ├── image-optimizer.ts
 │   │   ├── loading-manager.ts
@@ -322,7 +322,7 @@ Intelligent chatbot powered by Google's Gemini API:
 - **Safe Production Proxy**: Keeps the Gemini key server-side through `/api/gemini`
 - **Error Handling**: Graceful local fallbacks when the API is unavailable
 
-**Key Files**: [src/modules/chatbot.ts](src/modules/chatbot.ts), [src/modules/gemini-service.ts](src/modules/gemini-service.ts), [api/gemini.js](api/gemini.js)
+**Key Files**: [src/modules/chatbot.ts](src/modules/chatbot.ts), [src/modules/ai-service.ts](src/modules/ai-service.ts), [api/gemini.js](api/gemini.js)
 
 ---
 

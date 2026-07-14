@@ -2,7 +2,7 @@ import type { ChatMessage, ProjectData, AchievementData } from '@/types';
 import { logger } from '@/config';
 import { KB } from '@/data/knowledge-base';
 import { AIService } from './ai-service';
-import { findHonorRecord, findProjectRecord } from './portfolio-data';
+import { findHonorRecord, findProjectRecord, getHonorRecords, getProjectRecords } from './portfolio-data';
 import { openPortfolioSearch } from './portfolio-actions';
 
 // Use explicit data interfaces to avoid accidental 'never' inference
@@ -183,6 +183,14 @@ export class ChatbotManager {
     return '#';
   }
 
+  private projectRecords(): ProjectItem[] {
+    return getProjectRecords();
+  }
+
+  private honorRecords(): AchievementItem[] {
+    return getHonorRecords();
+  }
+
   private cleanText(value: string | undefined, limit = 260): string {
     if (!value) return '';
     let text = value;
@@ -273,13 +281,13 @@ export class ChatbotManager {
   private findProjectByTitle(title: string | null): ProjectItem | null {
     if (!title) return null;
     const normTitle = this.normalize(title);
-    return KB.projects.find((p) => this.normalize(p.title) === normTitle) || null;
+    return this.projectRecords().find((p) => this.normalize(p.title) === normTitle) || null;
   }
 
   private findAchievementByTitle(title: string | null): AchievementItem | null {
     if (!title) return null;
     const normTitle = this.normalize(title);
-    return KB.achievements.find((a) => this.normalize(a.title) === normTitle) || null;
+    return this.honorRecords().find((a) => this.normalize(a.title) === normTitle) || null;
   }
 
   private isFollowUpMessage(userMessage: string): boolean {
@@ -572,7 +580,7 @@ export class ChatbotManager {
       'Hack-it',
       'Data Structures',
     ]
-      .map((title) => KB.achievements.find((achievement) => this.normalize(achievement.title).includes(this.normalize(title))))
+      .map((title) => this.honorRecords().find((achievement) => this.normalize(achievement.title).includes(this.normalize(title))))
       .filter(Boolean) as AchievementItem[];
     const achievementProof = priorityAchievements.slice(0, 4)
       .map((achievement) => `• ${this.escapeHtml(achievement.title)}${achievement.date ? ` (${this.escapeHtml(achievement.date)})` : ''}`)
@@ -617,7 +625,7 @@ export class ChatbotManager {
       })
       .slice(0, 3);
 
-    const achievementPool = KB.achievements
+    const achievementPool = this.honorRecords()
       .map((achievement) => {
         const hay = `${achievement.title} ${achievement.description || ''} ${achievement.projectTitle || ''} ${achievement.organizer || ''}`;
         const aiRelevant = /\b(ai-powered|data and ai|agentic|agent|triage|analytics|fintech|healthcare|workplace|hack-it|technovation|start-a-ton|bpi)\b/i.test(hay);
@@ -731,7 +739,7 @@ export class ChatbotManager {
 
     const aiCue = /(ai|agent|ml|machine learning|openai|langchain)/i.test(msg);
 
-    KB.projects.forEach((p) => {
+    this.projectRecords().forEach((p) => {
       const titleNorm = this.normalize(p.title);
       const titleTokens = this.tokenize(p.title);
       const techTokens = this.tokenize(p.technologies || '');
@@ -768,7 +776,7 @@ export class ChatbotManager {
     // If user mentions a technology from recent context, return the most relevant project using it
     const techHint = this.conversationContext.lastTechnology;
     if (techHint && /(project|build|built|using|with|stack|tech)/i.test(userMessage)) {
-      const found = KB.projects.find((p) => this.normalize(p.technologies || '').includes(this.normalize(techHint)));
+      const found = this.projectRecords().find((p) => this.normalize(p.technologies || '').includes(this.normalize(techHint)));
       if (found) return found;
     }
 
@@ -781,7 +789,7 @@ export class ChatbotManager {
     let bestScore = -Infinity;
     let bestAchievement: AchievementItem | null = null;
 
-    KB.achievements.forEach((a) => {
+    this.honorRecords().forEach((a) => {
       const titleTokens = this.tokenize(a.title);
       const projTokens = this.tokenize(a.projectTitle || '');
       const descTokens = this.tokenize(a.description || '');
@@ -859,8 +867,8 @@ export class ChatbotManager {
       });
     });
 
-    // KB projects
-    KB.projects.forEach((p, i) => {
+    // Canonical project records
+    this.projectRecords().forEach((p, i) => {
       const facts = this.normalizeProjectFacts({
         title: p.title,
         technologies: p.technologies,
@@ -882,8 +890,8 @@ export class ChatbotManager {
       });
     });
 
-    // KB achievements
-    KB.achievements.forEach((a, i) => {
+    // Canonical honor records
+    this.honorRecords().forEach((a, i) => {
       index.push({
         id: `kb-ach-${i}`,
         kind: 'achievement',
@@ -1170,7 +1178,7 @@ export class ChatbotManager {
         links.length ? links.join('<br>') : 'The honors section has the best visual context for this one.',
       ].join('<br>');
     }
-    const top = KB.achievements.slice(0, 3)
+    const top = this.honorRecords().slice(0, 3)
       .map((ach) => `${this.escapeHtml(ach.title)} — ${this.escapeHtml(ach.location)}`)
       .join('; ');
     return `Top highlights: ${top}. Open the honors section for the timeline and photos.`;
@@ -1669,20 +1677,20 @@ export class ChatbotManager {
     }
 
     const projectBySuggestion = findProjectRecord(text)
-      || KB.projects.find((project) => normalizedSuggestion.includes(this.normalize(project.title)));
+      || this.projectRecords().find((project) => normalizedSuggestion.includes(this.normalize(project.title)));
     if (projectBySuggestion && (t.includes('open') || t.includes('view'))) {
       this.openProjectAction(projectBySuggestion.title);
       return;
     }
 
     const achievementBySuggestion = findHonorRecord(text)
-      || KB.achievements.find((achievement) => normalizedSuggestion.includes(this.normalize(achievement.title)));
+      || this.honorRecords().find((achievement) => normalizedSuggestion.includes(this.normalize(achievement.title)));
     if (achievementBySuggestion && (t.includes('open') || t.includes('view'))) {
       this.openHonorAction(achievementBySuggestion.title);
       return;
     }
     if (t.includes('list github repos')) {
-      const repos = KB.projects
+      const repos = this.projectRecords()
         .filter(pr => pr.githubUrl)
         .slice(0, 8)
         .map(pr => `<a href="${this.sanitizeUrl(pr.githubUrl || '')}" target="_blank" rel="noopener noreferrer">${this.escapeHtml(pr.title)}</a>`);
@@ -1819,7 +1827,7 @@ export class ChatbotManager {
     const normalized = this.normalize(userMessage);
     const command = normalized.replace(/\b(open|show|view|honor|award|achievement|details|modal)\b/g, '').trim();
     const candidates = [
-      ...KB.achievements.map((item) => ({ title: item.title })),
+      ...this.honorRecords().map((item) => ({ title: item.title })),
       ...this.getAchievementsFromDOM().map((item) => ({ title: item.title })),
     ];
     const scored = candidates
@@ -1874,7 +1882,7 @@ export class ChatbotManager {
       });
     };
 
-    KB.projects.forEach(add);
+    this.projectRecords().forEach(add);
     this.getProjectsFromDOM().forEach(add);
     return Array.from(byTitle.values());
   }
@@ -2010,8 +2018,8 @@ export class ChatbotManager {
 
   private buildProjectsListHTML(projects: ProjectSummary[]): string {
     if (!projects.length) {
-      // Fallback to KB projects (all)
-      const all = KB.projects.slice(0, 8)
+      // Fallback to canonical projects
+      const all = this.projectRecords().slice(0, 8)
         .map((p) => `<strong>${this.escapeHtml(p.title)}</strong> — ${this.escapeHtml(p.category)}`)
         .join('<br>');
       return `Projects overview:<br>${all}`;
@@ -2039,13 +2047,13 @@ export class ChatbotManager {
     const msg = this.normalize(userMessage);
     const msgTokens = this.tokenize(userMessage);
 
-    // Collect candidate names from KB and DOM
+    // Collect candidate names from canonical records and DOM
     const projectCandidates = new Set<string>();
-    KB.projects.forEach(p => projectCandidates.add(this.normalize(p.title)));
+    this.projectRecords().forEach(p => projectCandidates.add(this.normalize(p.title)));
     this.getProjectsFromDOM().forEach(p => projectCandidates.add(this.normalize(p.title)));
 
     const achievementCandidates = new Set<string>();
-    KB.achievements.forEach(a => {
+    this.honorRecords().forEach(a => {
       achievementCandidates.add(this.normalize(a.title));
       if (a.organizer) achievementCandidates.add(this.normalize(a.organizer));
     });
@@ -2063,7 +2071,7 @@ export class ChatbotManager {
         if (n) techCandidates.add(n);
       });
     });
-    KB.projects.forEach(p => {
+    this.projectRecords().forEach(p => {
       this.cleanText(p.technologies || '', 500).split(/[,;•]/).forEach(tok => {
         const n = this.normalize(tok);
         if (n) techCandidates.add(n);
@@ -2470,7 +2478,7 @@ export class ChatbotManager {
           return `${body}${foot}${this.buildCitationsHTML(cites)}`;
         }
         // Fallback
-        const top = KB.projects.slice(0, 3)
+        const top = this.projectRecords().slice(0, 3)
           .map((p) => `${this.escapeHtml(p.title)} — ${this.escapeHtml(this.cleanText(p.technologies.split(';')[0], 100))}`)
           .join('; ');
         const cites: Citation[] = [];
@@ -2744,14 +2752,14 @@ ${KB.resume.organizations.map((item) => `- ${item}`).join('\n')}`;
     ).join('\n');
 
     const domProjects = this.getProjectsFromDOM();
-    const projectSource = domProjects.length ? domProjects : KB.projects;
+    const projectSource = domProjects.length ? domProjects : this.projectRecords();
     const projects = projectSource.slice(0, 16).map(p =>
       `- ${p.title} (${p.category}): ${this.cleanText(p.description, 170) || 'Project details available'}. Tech: ${this.cleanText(p.technologies, 140) || 'Various'}. ${p.githubUrl ? `GitHub: ${p.githubUrl}` : ''}${p.liveUrl ? ` Live: ${p.liveUrl}` : ''}${p.videoUrl ? ` Demo: ${p.videoUrl}` : ''}`
     ).join('\n');
 
     const domAchievements = this.getAchievementsFromDOM();
     const achievementSource: AchievementSnippet[] = [
-      ...KB.achievements.map((achievement) => ({
+      ...this.honorRecords().map((achievement) => ({
         title: achievement.title,
         description: achievement.description,
         date: achievement.date,
@@ -2970,45 +2978,14 @@ Instruction: ${this.visitorProfileInstruction()}`;
     this.updateConversationContext(userMessage, intent, entities);
   }
 
-  // Dev-only connectivity test for Gemini API; returns a short status message
+  // Dev-only proxy check. Credentials remain server-side in every environment.
   private async checkGeminiConnectivity(): Promise<string> {
-    try {
-      if (!import.meta.env.DEV) {
-        return 'Gemini connectivity check is disabled outside development.';
-      }
-      const key = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-      const model = (import.meta.env.VITE_GEMINI_MODEL as string | undefined) || 'gemini-2.5-pro';
-      if (!key) {
-        return 'Gemini key not configured (VITE_GEMINI_API_KEY missing).';
-      }
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${key}`;
-      const body = {
-        contents: [
-          {
-            role: 'user',
-            parts: [{ text: 'ping' }],
-          },
-        ],
-        generationConfig: { maxOutputTokens: 8 },
-      };
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) {
-        const text = await res.text();
-        const snippet = text.length > 180 ? text.slice(0, 180) + '…' : text;
-        return `Gemini check failed (${res.status}): ${snippet}`;
-      }
-      const data = await res.json();
-      const sample = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? 'no-text';
-      const preview = sample.length > 160 ? sample.slice(0, 160) + '…' : sample;
-      return `Gemini responded OK with model “${model}”. Sample: ${preview}`;
-    } catch (e: unknown) {
-      const err = e as { message?: unknown } | null;
-      return `Gemini check error: ${err?.message || String(e)}`;
+    if (!import.meta.env.DEV) return 'AdrAI diagnostics are disabled outside development.';
+    if (import.meta.env.VITE_AI_PROXY_IN_DEV !== 'true') {
+      return 'AdrAI uses the server proxy in production. Enable VITE_AI_PROXY_IN_DEV only when a local API runtime is available.';
     }
+    const response = await this.aiService.generateResponse('Reply with exactly: proxy ready.', 'Development connectivity check.');
+    return response ? 'AdrAI server proxy responded successfully.' : 'AdrAI server proxy did not respond; local portfolio answers remain available.';
   }
 
   private loadPreferences(): void {

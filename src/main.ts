@@ -41,7 +41,6 @@ import { NavigationManager } from './modules/navigation';
 import { SecurityManager } from './modules/security';
 import { LoadingManager } from './modules/loading-manager';
 import { ImageOptimizer } from './modules/image-optimizer';
-import { ModalManager } from './modules/modal-manager';
 import { IconReplacer } from './modules/icon-replacer';
 import { SidebarAnimations } from './modules/sidebar-animations';
 import { SkeletonLoader } from './modules/skeleton-loader';
@@ -66,6 +65,11 @@ type ChatbotInstance = {
   openChatbox?: () => void;
 };
 
+type ModalInstance = {
+  openProjectByTitle?: (title: string) => boolean;
+  openAchievementByTitle?: (title: string) => boolean;
+};
+
 function runWhenIdle(callback: () => void, timeout = 1800): void {
   const idleWindow = window as Window & {
     requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number;
@@ -88,6 +92,7 @@ function enabledFlag(value: string | null | undefined): boolean {
  */
 class PortfolioApp {
   private chatbotLoadPromise: Promise<ChatbotInstance | null> | null = null;
+  private modalLoadPromise: Promise<ModalInstance | null> | null = null;
 
   constructor() {
     this.init();
@@ -157,6 +162,64 @@ class PortfolioApp {
     });
   }
 
+  private loadModalManager(): Promise<ModalInstance | null> {
+    const existing = window.Portfolio?.modules?.ModalManager as ModalInstance | undefined;
+    if (existing) return Promise.resolve(existing);
+
+    if (!this.modalLoadPromise) {
+      this.modalLoadPromise = import('./modules/modal-manager')
+        .then(({ ModalManager }) => {
+          const manager = new ModalManager();
+          if (window.Portfolio?.modules) window.Portfolio.modules.ModalManager = manager;
+          return manager as ModalInstance;
+        })
+        .catch((error) => {
+          logger.error('Failed to load modal manager:', error);
+          this.modalLoadPromise = null;
+          return null;
+        });
+    }
+
+    return this.modalLoadPromise;
+  }
+
+  private setupModalLoader(): void {
+    const triggerSelector = '.project-item, .achievement-card';
+    const openFromTrigger = (trigger: HTMLElement) => {
+      void this.loadModalManager().then(() => trigger.click());
+    };
+
+    document.addEventListener('click', (event) => {
+      if (window.Portfolio?.modules?.ModalManager) return;
+      const trigger = (event.target as Element | null)?.closest<HTMLElement>(triggerSelector);
+      if (!trigger) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      openFromTrigger(trigger);
+    }, { capture: true });
+
+    document.addEventListener('keydown', (event) => {
+      if (window.Portfolio?.modules?.ModalManager || !['Enter', ' '].includes(event.key)) return;
+      const trigger = (event.target as Element | null)?.closest<HTMLElement>(triggerSelector);
+      if (!trigger) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      openFromTrigger(trigger);
+    }, { capture: true });
+
+    window.addEventListener('portfolio:open-project', (event) => {
+      if (window.Portfolio?.modules?.ModalManager) return;
+      const title = (event as CustomEvent<{ title?: string }>).detail?.title || '';
+      void this.loadModalManager().then((manager) => manager?.openProjectByTitle?.(title));
+    });
+
+    window.addEventListener('portfolio:open-honor-modal', (event) => {
+      if (window.Portfolio?.modules?.ModalManager) return;
+      const title = (event as CustomEvent<{ title?: string }>).detail?.title || '';
+      void this.loadModalManager().then((manager) => manager?.openAchievementByTitle?.(title));
+    });
+  }
+
   /**
    * Initialize the portfolio application
    */
@@ -199,7 +262,6 @@ class PortfolioApp {
       });
       const imageOptimizer = new ImageOptimizer();
       const loadingManager = new LoadingManager();
-      const modalManager = new ModalManager();
       const navigationManager = new NavigationManager();
       // Initialize scroll progress bar
       new ScrollProgress();
@@ -217,12 +279,16 @@ class PortfolioApp {
           SecurityManager: securityManager,
           LoadingManager: loadingManager,
           ImageOptimizer: imageOptimizer,
-          ModalManager: modalManager,
           NavigationManager: navigationManager,
           Search: search,
         },
         lazy: window.Portfolio?.lazy || {},
       };
+
+      this.setupModalLoader();
+      if (window.location.pathname.startsWith('/honors/')) {
+        void this.loadModalManager();
+      }
 
       // Helper to defer non-critical work to after first paint
       const defer = (cb: () => void, delay = 0) => {

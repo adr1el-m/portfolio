@@ -3190,11 +3190,6 @@ article.active {
 
 /* Organization buttons lift on hover */
 
-/* Global transition for smoother interactions */
-* {
-  transition: all 0.25s ease;
-}
-
 /* FAQ answer expand/collapse animation */
 .faq-answer {
   max-height: 0;

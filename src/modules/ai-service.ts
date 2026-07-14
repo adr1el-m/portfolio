@@ -1,9 +1,6 @@
 import { logger } from '@/config';
 
-/**
- * Common interface for all AI providers.
- * Each provider wraps a different LLM API (Groq, Mistral, Gemini).
- */
+/** Server-mediated provider interface. Provider credentials never reach the browser. */
 export interface AIProvider {
   readonly name: string;
   isAvailable(): boolean;
@@ -19,309 +16,46 @@ export type AIProviderStatus = {
   timeoutMs: number;
 };
 
-function cleanEnvValue(value: unknown, fallback = ''): string {
-  if (typeof value !== 'string') return fallback;
-  const cleaned = value
-    .replace(/\s+#.*$/, '')
-    .replace(/^['"]|['"]$/g, '')
-    .trim();
-  return cleaned || fallback;
-}
-
-// ─── Groq Provider ───────────────────────────────────────────────────────────
-
-const GROQ_TIMEOUT_MS = 10_000;
-
-class GroqProvider implements AIProvider {
-  readonly name = 'Groq';
-  private apiKey: string;
-  private model: string;
-
-  constructor() {
-    this.apiKey = cleanEnvValue(import.meta.env.VITE_GROQ_API_KEY);
-    this.model = cleanEnvValue(import.meta.env.VITE_GROQ_MODEL, 'llama-3.3-70b-versatile');
-  }
-
-  isAvailable(): boolean {
-    return !!this.apiKey;
-  }
-
-  getStatus(): AIProviderStatus {
-    return {
-      name: this.name,
-      configured: this.isAvailable(),
-      model: this.model,
-      mode: this.isAvailable() ? 'client' : 'off',
-      timeoutMs: GROQ_TIMEOUT_MS,
-    };
-  }
-
-  async generateResponse(prompt: string): Promise<string | null> {
-    if (!this.apiKey) return null;
-
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), GROQ_TIMEOUT_MS);
-
-    try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify({
-          model: this.model,
-          messages: [{ role: 'user', content: prompt }],
-          temperature: 0.35,
-          max_tokens: 800,
-          top_p: 0.9,
-        }),
-        signal: controller.signal,
-      });
-
-      if (!response.ok) {
-        const raw = await response.text().catch(() => '');
-        const snippet = raw.length > 300 ? raw.slice(0, 300) + '…' : raw;
-        logger.error(`Groq API error (${response.status}):`, snippet);
-        return null;
-      }
-
-      const data = await response.json();
-      const text = data?.choices?.[0]?.message?.content;
-      return typeof text === 'string' && text.trim() ? text.trim() : null;
-    } catch (error) {
-      const isAbort = (error as { name?: unknown } | null)?.name === 'AbortError';
-      logger.error('Groq: Network error', isAbort ? { message: 'Request timed out' } : error);
-      return null;
-    } finally {
-      window.clearTimeout(timeoutId);
-    }
-  }
-}
-
-// ─── Mistral Provider ────────────────────────────────────────────────────────
-
-const MISTRAL_TIMEOUT_MS = 10_000;
-
-class MistralProvider implements AIProvider {
-  readonly name = 'Mistral';
-  private apiKey: string;
-  private model: string;
-
-  constructor() {
-    this.apiKey = cleanEnvValue(import.meta.env.VITE_MISTRAL_API_KEY);
-    this.model = cleanEnvValue(import.meta.env.VITE_MISTRAL_MODEL, 'mistral-large-latest');
-  }
-
-  isAvailable(): boolean {
-    return !!this.apiKey;
-  }
-
-  getStatus(): AIProviderStatus {
-    return {
-      name: this.name,
-      configured: this.isAvailable(),
-      model: this.model,
-      mode: this.isAvailable() ? 'client' : 'off',
-      timeoutMs: MISTRAL_TIMEOUT_MS,
-    };
-  }
-
-  async generateResponse(prompt: string): Promise<string | null> {
-    if (!this.apiKey) return null;
-
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), MISTRAL_TIMEOUT_MS);
-
-    try {
-      const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify({
-          model: this.model,
-          messages: [{ role: 'user', content: prompt }],
-          temperature: 0.35,
-          max_tokens: 800,
-          top_p: 0.9,
-        }),
-        signal: controller.signal,
-      });
-
-      if (!response.ok) {
-        const raw = await response.text().catch(() => '');
-        const snippet = raw.length > 300 ? raw.slice(0, 300) + '…' : raw;
-        logger.error(`Mistral API error (${response.status}):`, snippet);
-        return null;
-      }
-
-      const data = await response.json();
-      const text = data?.choices?.[0]?.message?.content;
-      return typeof text === 'string' && text.trim() ? text.trim() : null;
-    } catch (error) {
-      const isAbort = (error as { name?: unknown } | null)?.name === 'AbortError';
-      logger.error('Mistral: Network error', isAbort ? { message: 'Request timed out' } : error);
-      return null;
-    } finally {
-      window.clearTimeout(timeoutId);
-    }
-  }
-}
-
-// ─── Gemini Provider ─────────────────────────────────────────────────────────
-
 const GEMINI_TIMEOUT_MS = 12_000;
-const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
-const FALLBACK_GEMINI_MODEL = 'gemini-2.5-flash';
-const GEMINI_GENERATION_CONFIG = {
-  temperature: 0.35,
-  topP: 0.9,
-  maxOutputTokens: 800,
-};
 
-class GeminiProvider implements AIProvider {
-  readonly name = 'Gemini';
-  private apiKey: string;
-  private clientApiKey: string;
-  private model: string;
-  private serverModelLabel: string;
-  private baseUrl: string;
-  private useProxy: boolean;
-
-  constructor() {
-    this.clientApiKey = cleanEnvValue(import.meta.env.VITE_GEMINI_API_KEY);
-    const allowClientKey = import.meta.env.DEV || import.meta.env.VITE_GEMINI_USE_CLIENT_KEY === 'true';
-    const canUseDirect = allowClientKey && !!this.clientApiKey;
-    const allowDevProxy = import.meta.env.VITE_GEMINI_USE_PROXY_IN_DEV === 'true';
-    const explicitClientModel = cleanEnvValue(import.meta.env.VITE_GEMINI_MODEL);
-    this.serverModelLabel = explicitClientModel || 'server default (GEMINI_MODEL)';
-
-    if (canUseDirect) {
-      this.useProxy = false;
-      this.apiKey = this.clientApiKey;
-      this.model = explicitClientModel || DEFAULT_GEMINI_MODEL;
-      this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
-    } else if (import.meta.env.DEV && !allowDevProxy) {
-      this.useProxy = false;
-      this.apiKey = '';
-      this.model = explicitClientModel || DEFAULT_GEMINI_MODEL;
-      this.baseUrl = '';
-    } else {
-      this.useProxy = true;
-      this.apiKey = '';
-      this.model = explicitClientModel;
-      this.baseUrl = '/api/gemini';
-    }
-  }
+class PortfolioAIProxy implements AIProvider {
+  readonly name = 'AdrAI proxy';
 
   isAvailable(): boolean {
-    return this.useProxy || !!this.apiKey;
+    return !import.meta.env.DEV || import.meta.env.VITE_AI_PROXY_IN_DEV === 'true';
   }
 
   getStatus(): AIProviderStatus {
     return {
       name: this.name,
       configured: this.isAvailable(),
-      model: this.useProxy ? this.serverModelLabel : this.model,
-      mode: this.useProxy ? 'server-proxy' : this.isAvailable() ? 'client' : 'off',
+      model: 'server-managed',
+      mode: this.isAvailable() ? 'server-proxy' : 'off',
       timeoutMs: GEMINI_TIMEOUT_MS,
     };
   }
 
   async generateResponse(prompt: string): Promise<string | null> {
-    if (!this.useProxy && !this.apiKey) return null;
-
-    // Try primary model
-    const first = await this.callModel(this.model, prompt);
-    if (first.text) return first.text;
-
-    // If model not found, try fallback model.
-    const shouldRetryForModel = first.status === 404 || /not found|model/i.test(first.errorText || '');
-    if (shouldRetryForModel && this.model !== FALLBACK_GEMINI_MODEL) {
-      const second = await this.callModel(FALLBACK_GEMINI_MODEL, prompt);
-      if (second.text) {
-        this.model = FALLBACK_GEMINI_MODEL;
-        this.serverModelLabel = FALLBACK_GEMINI_MODEL;
-        return second.text;
-      }
-    }
-
-    // If proxy fails, try direct with client key
-    const shouldTryDirect = this.useProxy
-      && !!this.clientApiKey
-      && (first.status === 401
-        || first.status === 403
-        || first.status === 404
-        || first.status === 500
-        || /api key|not configured|html/i.test(first.errorText || ''));
-
-    if (shouldTryDirect) {
-      const directBaseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
-      const directFirst = await this.callModel(this.model, prompt, {
-        useProxy: false,
-        apiKey: this.clientApiKey,
-        baseUrl: directBaseUrl,
-      });
-      if (directFirst.text) return directFirst.text;
-      const directShouldRetryForModel = directFirst.status === 404 || /not found|model/i.test(directFirst.errorText || '');
-      if (directShouldRetryForModel && this.model !== FALLBACK_GEMINI_MODEL) {
-        const directSecond = await this.callModel(FALLBACK_GEMINI_MODEL, prompt, {
-          useProxy: false,
-          apiKey: this.clientApiKey,
-          baseUrl: directBaseUrl,
-        });
-        if (directSecond.text) {
-          this.model = FALLBACK_GEMINI_MODEL;
-          this.serverModelLabel = FALLBACK_GEMINI_MODEL;
-          return directSecond.text;
-        }
-      }
-    }
-
-    return null;
+    if (!this.isAvailable()) return null;
+    return this.callModel(prompt);
   }
 
-  private async callModel(
-    model: string,
-    prompt: string,
-    options?: { useProxy?: boolean; apiKey?: string; baseUrl?: string }
-  ): Promise<{ text: string | null; status?: number; errorText?: string }> {
+  private async callModel(prompt: string): Promise<string | null> {
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
-    const useProxy = options?.useProxy ?? this.useProxy;
-    const apiKey = options?.apiKey ?? this.apiKey;
-    const baseUrl = options?.baseUrl ?? this.baseUrl;
-
     try {
-      const response = await (useProxy
-        ? fetch(baseUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(model ? { model, prompt } : { prompt }),
-          signal: controller.signal,
-        })
-        : fetch(`${baseUrl}/${model}:generateContent?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              {
-                role: 'user',
-                parts: [{ text: prompt }],
-              },
-            ],
-            generationConfig: GEMINI_GENERATION_CONFIG,
-          }),
-          signal: controller.signal,
-        }));
+      const response = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+        signal: controller.signal,
+      });
 
       const raw = await response.text().catch(() => '');
       if (!response.ok) {
         const snippet = raw.length > 500 ? raw.slice(0, 500) + '…' : raw;
-        logger.error('Gemini API Error:', { status: response.status, model, body: snippet });
-        return { text: null, status: response.status, errorText: raw };
+        logger.error('AdrAI proxy error:', { status: response.status, body: snippet });
+        return null;
       }
 
       let data: unknown = null;
@@ -331,22 +65,12 @@ class GeminiProvider implements AIProvider {
         data = null;
       }
 
-      const parsed = data as {
-        candidates?: Array<{ content?: { parts?: Array<{ text?: unknown }> } }>;
-      } | null;
-      const parts = (useProxy
-        ? ((data as { text?: unknown } | null)?.text != null ? [{ text: (data as { text?: unknown }).text }] : undefined)
-        : parsed?.candidates?.[0]?.content?.parts) as Array<{ text?: unknown }> | undefined;
-      const text = Array.isArray(parts)
-        ? parts.map((p) => (typeof p?.text === 'string' ? p.text : '')).join('')
-        : null;
-
-      const cleaned = text && text.trim() ? text : null;
-      return { text: cleaned, status: response.status, errorText: cleaned ? undefined : raw };
+      const text = (data as { text?: unknown } | null)?.text;
+      return typeof text === 'string' && text.trim() ? text.trim() : null;
     } catch (error) {
       const isAbort = (error as { name?: unknown } | null)?.name === 'AbortError';
       logger.error('Gemini: Network error', isAbort ? { message: 'Request timed out' } : error);
-      return { text: null };
+      return null;
     } finally {
       window.clearTimeout(timeoutId);
     }
@@ -356,23 +80,15 @@ class GeminiProvider implements AIProvider {
 // ─── Unified AI Service ──────────────────────────────────────────────────────
 
 /**
- * AIService coordinates multiple AI providers in a waterfall pattern:
- * Groq → Mistral → Gemini
- *
- * If a provider fails, the next one is tried automatically.
- * The last successful provider name is tracked for UI display.
+ * AIService keeps model access behind the portfolio server endpoint. Local
+ * portfolio answers remain available when the endpoint is unavailable.
  */
 export class AIService {
   private providers: AIProvider[];
   private _lastProvider: string = '';
 
   constructor() {
-    // Order: Groq (fastest) → Mistral (strong mid-tier) → Gemini (reliable fallback)
-    this.providers = [
-      new GroqProvider(),
-      new MistralProvider(),
-      new GeminiProvider(),
-    ];
+    this.providers = [new PortfolioAIProxy()];
 
     const available = this.providers.filter(p => p.isAvailable()).map(p => p.name);
     if (available.length > 0) {

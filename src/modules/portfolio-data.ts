@@ -164,28 +164,6 @@ function timelineFromElement(element: HTMLElement): PortfolioTimelineRecord | nu
   };
 }
 
-function mergeHonor(base: PortfolioHonorRecord, incoming: PortfolioHonorRecord): PortfolioHonorRecord {
-  return {
-    ...base,
-    ...incoming,
-    title: incoming.title || base.title,
-    images: incoming.images.length ? incoming.images : base.images,
-    webpImages: incoming.webpImages.length ? incoming.webpImages : base.webpImages,
-    organizer: incoming.organizer || base.organizer,
-    date: incoming.date || base.date,
-    location: incoming.location || base.location,
-    description: incoming.description || base.description,
-    projectTitle: incoming.projectTitle || base.projectTitle,
-    githubUrl: incoming.githubUrl || base.githubUrl,
-    liveUrl: incoming.liveUrl || base.liveUrl,
-    linkedinUrl: incoming.linkedinUrl || base.linkedinUrl,
-    blogUrl: incoming.blogUrl || base.blogUrl,
-    facebookUrl: incoming.facebookUrl || base.facebookUrl,
-    path: incoming.path || base.path,
-    source: 'merged',
-  };
-}
-
 function canonicalProjectKey(title: string): string {
   const normalized = normalizeKey(title);
   const alias = PROJECT_ALIAS_MAP[normalized];
@@ -210,20 +188,11 @@ export function getProjectRecords(): PortfolioProjectRecord[] {
 export function getHonorRecords(): PortfolioHonorRecord[] {
   const records = new Map<string, PortfolioHonorRecord>();
 
-  KB.achievements.forEach((achievement) => {
-    records.set(normalizeKey(achievement.title), {
-      ...achievement,
-      path: `/honors/${slugify(achievement.date?.match(/\b20\d{2}\b/)?.[0] || 'honor')}/${slugify(achievement.title)}`,
-      source: 'knowledge-base',
-    });
-  });
-
   document.querySelectorAll<HTMLElement>('.achievement-card').forEach((element) => {
     const fromDom = honorFromElement(element);
     if (!fromDom) return;
     const key = normalizeKey(fromDom.title);
-    const existing = records.get(key);
-    records.set(key, existing ? mergeHonor(existing, fromDom) : fromDom);
+    records.set(key, fromDom);
   });
 
   return Array.from(records.values()).sort((a, b) => {

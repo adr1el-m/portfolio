@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "vite --open \"/?admin=true\"",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && node scripts/generate-honor-pages.mjs",
     "preview": "vite preview",
     "deploy": "vercel --prod --yes",
     "deploy:preview": "vercel --yes",

@@ -127,12 +127,39 @@ export class CommandPalette {
       },
       {
         id: 'contact',
-        title: 'Share Contact Info',
-        subtitle: 'Jump to email and socials',
+        title: 'Contact Adriel',
+        subtitle: 'Jump to email and professional links',
         group: 'Actions',
         icon: 'mail-outline',
         keywords: 'contact email socials linkedin github',
         action: () => navigateToPage('contact'),
+      },
+      {
+        id: 'show-frontend-work',
+        title: 'Show Frontend Work',
+        subtitle: 'Filter the project timeline for frontend-facing builds',
+        group: 'Projects',
+        icon: 'color-palette-outline',
+        keywords: 'show frontend work ui ux react angular vite typescript projects filter',
+        action: () => this.openProjectExplorer('typescript'),
+      },
+      {
+        id: 'compare-projects',
+        title: 'Compare Featured Projects',
+        subtitle: 'Open a side-by-side recruiter comparison',
+        group: 'Projects',
+        icon: 'git-compare-outline',
+        keywords: 'compare projects recruiter role scope complexity outcome selected work',
+        action: () => this.openProjectExplorer(undefined, true),
+      },
+      {
+        id: 'portfolio-changelog',
+        title: 'Open Portfolio Changelog',
+        subtitle: 'See what has changed and improved recently',
+        group: 'Navigate',
+        icon: 'time-outline',
+        keywords: 'changelog updates releases improvements history new portfolio',
+        action: () => navigateToPage('about', { scrollSelector: '#portfolio-changelog' }),
       },
       {
         id: 'copy-email',
@@ -439,6 +466,15 @@ export class CommandPalette {
     this.rememberCommand(command.id);
     trackCommand(command.title);
     command.action();
+  }
+
+  private openProjectExplorer(filter?: string, compare = false): void {
+    navigateToPage('projects', { track: false });
+    window.setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('portfolio:project-explorer', {
+        detail: compare ? { action: 'compare' } : { action: 'filter', value: filter },
+      }));
+    }, 180);
   }
 
   private loadRecentCommands(): string[] {

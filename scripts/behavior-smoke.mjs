@@ -33,6 +33,13 @@ try {
   const page = await browser.newPage();
   await page.goto(`http://127.0.0.1:${port}/projects?role=ai&audit=1`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('.role-path-brief');
+  await page.waitForSelector('[data-project-explorer]');
+  await page.select('[data-project-filter="stack"]', 'TypeScript');
+  const explorerStatus = await page.$eval('.project-explorer-status', (el) => el.textContent || '');
+  if (!/of \d+ projects shown/.test(explorerStatus)) throw new Error('Project explorer filter status did not render');
+  await page.select('[data-project-filter="stack"]', 'all');
+  await page.click('[data-compare-project]');
+  await page.waitForSelector('.project-comparison-grid article');
   await page.click('[data-open-project="WorkSight"]');
   await page.waitForSelector('.project-modal.active .project-proof:not([hidden])');
   await page.keyboard.press('Escape');
@@ -44,7 +51,19 @@ try {
   await page.keyboard.press('Enter');
   const focused = await page.evaluate(() => document.activeElement?.id);
   if (focused !== 'main-content') throw new Error(`Skip link focus target failed: ${focused}`);
+  await page.waitForSelector('#portfolio-changelog');
+  const changelog = await page.$eval('#portfolio-changelog', (el) => el.textContent || '');
+  if (!changelog.includes('Project explorer and recruiter comparison')) throw new Error('Portfolio changelog entry did not render');
+  await page.waitForSelector('.command-palette-trigger');
+  await page.click('.command-palette-trigger');
+  await page.waitForSelector('#command-palette.active');
+  await page.$eval('#command-palette-input', (input) => {
+    input.value = 'compare projects';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await page.click('[data-command-id="compare-projects"]');
+  await page.waitForSelector('.project-comparison-grid article:nth-child(3)');
   const caseResponse = await page.goto(`http://127.0.0.1:${port}/case-studies/worksight`);
   if (caseResponse?.status() !== 200) throw new Error('Case-study page route failed');
-  console.log('Behavior smoke tests passed: role path, modal, Escape, skip link, and case-study route.');
+  console.log('Behavior smoke tests passed: role path, explorer filters/comparison, command palette, modal, Escape, changelog, skip link, and case-study route.');
 } finally { await browser.close(); server.close(); }

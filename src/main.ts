@@ -351,7 +351,10 @@ class PortfolioApp {
               const videoThumbnails = new VideoThumbnails();
               if (window.Portfolio?.lazy) window.Portfolio.lazy.VideoThumbnails = videoThumbnails;
             });
-            import('./modules/projects-sort').then(({ ProjectsSorter }) => new ProjectsSorter().sort());
+            import('./modules/projects-sort').then(({ ProjectsSorter }) => {
+              new ProjectsSorter().sort();
+              return import('./modules/project-explorer');
+            }).then(({ ProjectExplorer }) => new ProjectExplorer());
           });
         }
       };

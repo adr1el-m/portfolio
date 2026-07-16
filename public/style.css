@@ -3508,7 +3508,7 @@ article.active {
   width: auto;
   height: auto;
   border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  box-shadow: none;
   object-fit: contain;
   transition: transform 0.3s ease, opacity 0.15s ease;
 }
@@ -3527,7 +3527,7 @@ article.active {
   height: auto;
   max-height: min(68vh, 760px);
   border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  box-shadow: none;
   object-fit: contain;
   background: #000;
 }

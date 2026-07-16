@@ -26,8 +26,26 @@ function yearFromTimeframe(timeframe?: string): string {
   return year || 'Archive';
 }
 
+function textFromMarkup(value: string): string {
+  return value
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function stackFromTechnologies(technologies: string): string[] {
-  return technologies.split(/[•,]/).map((item) => item.trim()).filter(Boolean);
+  // A few legacy project cards store a rich technology table/list. Extract the
+  // useful technology names before rendering the compact timeline text.
+  const tableNames = Array.from(technologies.matchAll(/<tr>\s*<td>([\s\S]*?)<\/td>/gi))
+    .map((match) => textFromMarkup(match[1]));
+  const listItems = Array.from(technologies.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi))
+    .map((match) => textFromMarkup(match[1]).replace(/^[^:]+:\s*/, ''));
+  const values = tableNames.length || listItems.length
+    ? [...tableNames, ...listItems]
+    : technologies.split(/[•,]/).map((item) => textFromMarkup(item));
+
+  return [...new Set(values.filter(Boolean))];
 }
 
 export class ProjectExplorer {

@@ -1386,6 +1386,33 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   background: rgba(255, 255, 255, 0.045);
 }
 
+.recruiter-cta-actions .recruiter-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 9px 13px;
+  color: var(--white-2);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 9px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.recruiter-cta-actions .recruiter-cta-secondary:hover,
+.recruiter-cta-actions .recruiter-cta-secondary:focus-visible {
+  color: var(--white-2);
+  border-color: var(--orange-yellow-crayola);
+  background: rgba(255, 219, 112, 0.08);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.pwa-install-button[hidden] { display: none !important; }
+
 .recruiter-cta-actions a:hover,
 .recruiter-cta-actions a:focus-visible {
   border-color: var(--orange-yellow-crayola);

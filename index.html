@@ -421,7 +421,8 @@
   </noscript>
   <canvas id="particle-background" aria-hidden="true"></canvas>
   <main id="main-content" tabindex="-1">
-    <aside class="sidebar" data-sidebar>
+    <div class="sidebar-rail">
+      <aside class="sidebar" data-sidebar>
 
       <div class="sidebar-info">
 
@@ -534,7 +535,34 @@
 
       </div>
 
-    </aside>
+      </aside>
+
+      <aside class="release-sidebar" aria-label="Portfolio changelog">
+        <details id="portfolio-changelog" class="sidebar-changelog">
+          <summary>
+            <span><ion-icon name="pulse-outline" aria-hidden="true"></ion-icon> Portfolio updates</span>
+            <ion-icon class="sidebar-changelog-chevron" name="chevron-down-outline" aria-hidden="true"></ion-icon>
+          </summary>
+          <div class="sidebar-changelog-content">
+            <p class="sidebar-changelog-intro">Recent improvements to the experience, evidence, and reliability of this portfolio.</p>
+            <ol class="sidebar-changelog-list">
+              <li>
+                <time datetime="2026-07-15">15 Jul 2026</time>
+                <div><strong>Project explorer &amp; comparison</strong><p>Added filters, side-by-side project review, command shortcuts, and release notes.</p></div>
+              </li>
+              <li>
+                <time datetime="2026-07-14">14 Jul 2026</time>
+                <div><strong>Evidence &amp; offline review</strong><p>Added case studies, role paths, offline review support, and workflow context.</p></div>
+              </li>
+              <li>
+                <time datetime="2026-07-14">14 Jul 2026</time>
+                <div><strong>Trust &amp; performance</strong><p>Hardened sensitive integrations, analytics, media delivery, and automated checks.</p></div>
+              </li>
+            </ol>
+          </div>
+        </details>
+      </aside>
+    </div>
 
 
 
@@ -546,20 +574,24 @@
         <ul class="navbar-list">
 
           <li class="navbar-item">
-            <button class="navbar-link  active" data-nav-link aria-label="Navigate to About section"
+            <button class="navbar-link  active" data-nav-link data-mobile-label="About" aria-label="Navigate to About section"
               aria-current="page">About</button>
           </li>
 
           <li class="navbar-item">
-            <button class="navbar-link" data-nav-link aria-label="Navigate to Background section">Background</button>
+            <button class="navbar-link" data-nav-link data-mobile-label="Bio" aria-label="Navigate to Background section">Background</button>
           </li>
 
           <li class="navbar-item">
-            <button class="navbar-link" data-nav-link aria-label="Navigate to Projects section">Projects</button>
+            <button class="navbar-link" data-nav-link data-mobile-label="Work" aria-label="Navigate to Projects section">Projects</button>
           </li>
 
           <li class="navbar-item">
-            <button class="navbar-link" data-nav-link aria-label="Navigate to Gear section">Gear</button>
+            <button class="navbar-link" data-nav-link data-mobile-label="Gear" aria-label="Navigate to Gear section">Gear</button>
+          </li>
+
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link data-mobile-label="More" aria-label="Navigate to More Places to Visit section">More</button>
           </li>
 
         </ul>
@@ -635,51 +667,6 @@
           </div>
 
           <p class="github-heatmap-summary" data-github-summary>Loading GitHub contributions...</p>
-        </section>
-
-        <section class="web-destinations" aria-labelledby="web-destinations-title">
-          <div class="web-destinations-heading">
-            <div>
-              <p class="web-destinations-kicker">Explore my domain</p>
-              <h3 id="web-destinations-title" class="h3 web-destinations-title">More places to visit</h3>
-            </div>
-            <p class="web-destinations-intro">Selected sites hosted under adrielmagalona.dev.</p>
-          </div>
-
-          <a class="web-destination-card" href="https://papers.adrielmagalona.dev/" target="_blank"
-            rel="noopener noreferrer" aria-label="Visit Papers, presentations, and study reviewers (opens in a new tab)">
-            <span class="web-destination-icon" aria-hidden="true"><ion-icon name="document-text-outline"></ion-icon></span>
-            <span class="web-destination-content">
-              <span class="web-destination-title">Papers, presentations &amp; reviewers</span>
-              <span class="web-destination-description">Browse academic papers, project documentation, presentations, and study resources.</span>
-              <span class="web-destination-url">papers.adrielmagalona.dev</span>
-            </span>
-            <ion-icon class="web-destination-arrow" name="arrow-up-outline" aria-hidden="true"></ion-icon>
-          </a>
-        </section>
-
-        <section id="portfolio-changelog" class="portfolio-changelog" aria-labelledby="portfolio-changelog-title">
-          <div class="portfolio-changelog-heading">
-            <div>
-              <p class="portfolio-changelog-kicker">Release notes</p>
-              <h3 id="portfolio-changelog-title" class="h3">Portfolio changelog</h3>
-            </div>
-            <p>A short record of improvements to the experience, evidence, and reliability of this portfolio.</p>
-          </div>
-          <ol class="portfolio-changelog-list">
-            <li>
-              <time datetime="2026-07-15">15 Jul 2026</time>
-              <div><h4>Project explorer and recruiter comparison</h4><p>Added a filterable work timeline, side-by-side project comparison, new command shortcuts, and this public changelog.</p></div>
-            </li>
-            <li>
-              <time datetime="2026-07-14">14 Jul 2026</time>
-              <div><h4>Evidence, offline review, and workflow clarity</h4><p>Added evidence-led case studies, role-tailored paths, an improved offline experience, and a developer-environment view.</p></div>
-            </li>
-            <li>
-              <time datetime="2026-07-14">14 Jul 2026</time>
-              <div><h4>Trust and performance hardening</h4><p>Moved sensitive integrations server-side, made visitor analytics safer, reduced media weight, and strengthened automated checks.</p></div>
-            </li>
-          </ol>
         </section>
 
         <!-- What I Do Section -->
@@ -1627,7 +1614,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/financeWise/fw.mp4" data-poster="/images/projects/financeWise/fw.poster.jpg" muted playsinline
+                  <video class="project-card-video" data-src="/images/projects/financeWise/fw.preview.mp4" data-poster="/images/projects/financeWise/fw.poster.jpg" muted playsinline
                     preload="none"
                     poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3EFinanceWise%3C/text%3E%3C/svg%3E"
                     width="400" height="300"></video>
@@ -1644,7 +1631,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/greenPulse/GP-opt.mp4" data-poster="/images/projects/greenPulse/GP-opt.poster.jpg" muted playsinline
+                  <video class="project-card-video" data-src="/images/projects/greenPulse/GP-opt.preview.mp4" data-poster="/images/projects/greenPulse/GP-opt.poster.jpg" muted playsinline
                     preload="none"
                     poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3EGreen Pulse%3C/text%3E%3C/svg%3E"
                     width="400" height="300"></video>
@@ -1674,7 +1661,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/talambuhay/talambuhay.mp4" data-poster="/images/projects/talambuhay/talambuhay.poster.jpg" muted
+                  <video class="project-card-video" data-src="/images/projects/talambuhay/talambuhay.preview.mp4" data-poster="/images/projects/talambuhay/talambuhay.poster.jpg" muted
                     playsinline preload="none"
                     poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3ETalambuhay%3C/text%3E%3C/svg%3E"
                     width="400" height="300"></video>
@@ -1691,7 +1678,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/barangayNav/BarangayNav-opt.mp4" data-poster="/images/projects/barangayNav/BarangayNav-opt.poster.jpg" muted
+                  <video class="project-card-video" data-src="/images/projects/barangayNav/BarangayNav-opt.preview.mp4" data-poster="/images/projects/barangayNav/BarangayNav-opt.poster.jpg" muted
                     playsinline preload="none"
                     poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3EBarangayNav%3C/text%3E%3C/svg%3E"
                     width="400" height="300"></video>
@@ -1700,7 +1687,7 @@
               </a>
             </li>
             <li class="project-item active" data-featured="true" data-filter-item data-category="AI/ML"
-              data-video="/images/projects/agentic/Deansanitzy.mp4"
+              data-images='["/images/projects/agentic/Deansanitzy.poster.jpg"]'
 
               data-description="Purpose: Help Filipinos manage money through an AI financial co-pilot.&#10;Build: Agent-driven platform with unified account management, expense intelligence, forecasting, charts, Firebase data storage, and Llama 3 assistance.&#10;Outcome: Demonstrates how agentic AI can turn financial data into practical recommendations and user-friendly planning workflows."
               data-technologies="HTML5, CSS3, JavaScript (ES6+), Node.js, Express.js, Firebase Firestore, Llama 3, Chart.js, Helmet, Express Rate Limit"
@@ -1708,10 +1695,8 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/agentic/Deansanitzy.mp4" data-poster="/images/projects/agentic/Deansanitzy.poster.jpg" muted
-                    playsinline preload="none"
-                    poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='45%25' fill='%23ffdb70' font-family='system-ui' font-size='22' font-weight='600' text-anchor='middle'%3EKita-Kita%3C/text%3E%3Ctext x='50%25' y='58%25' fill='%23ffdb70' font-family='system-ui' font-size='18' font-weight='600' text-anchor='middle'%3E(Agentic)%3C/text%3E%3C/svg%3E"
-                    width="400" height="300"></video>
+                  <img src="/images/projects/agentic/Deansanitzy.poster.jpg" alt="Kita-Kita Agentic preview" loading="lazy"
+                    decoding="async" width="400" height="300">
                 </figure>
                 <h3 class="project-title">Kita-Kita (Agentic)</h3>
               </a>
@@ -1727,7 +1712,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/genesync/GeneSyncDemo.mp4" data-poster="/images/projects/genesync/GeneSyncDemo.poster.jpg" muted playsinline preload="none" width="400" height="300"></video>
+                  <video class="project-card-video" data-src="/images/projects/genesync/GeneSyncDemo.preview.mp4" data-poster="/images/projects/genesync/GeneSyncDemo.poster.jpg" muted playsinline preload="none" width="400" height="300"></video>
                 </figure>
                 <h3 class="project-title">GeneSync</h3>
               </a>
@@ -1803,7 +1788,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/lingapLink/lingaplinkks.mp4" data-poster="/images/projects/lingapLink/lingaplinkks.poster.jpg" muted
+                  <video class="project-card-video" data-src="/images/projects/lingapLink/lingaplinkks.preview.mp4" data-poster="/images/projects/lingapLink/lingaplinkks.poster.jpg" muted
                     playsinline preload="none"
                     poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='24' font-weight='600' text-anchor='middle' dy='.3em'%3ELingapLink%3C/text%3E%3C/svg%3E"
                     width="400" height="300"></video>
@@ -1822,7 +1807,7 @@
               <a href="#">
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-                  <video class="project-card-video" data-src="/images/projects/Fireside/fireside.mp4" data-poster="/images/projects/Fireside/fireside.poster.jpg" muted playsinline
+                  <video class="project-card-video" data-src="/images/projects/Fireside/fireside.preview.mp4" data-poster="/images/projects/Fireside/fireside.poster.jpg" muted playsinline
                     preload="none"
                     poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='22' font-weight='600' text-anchor='middle' dy='.3em'%3EFireside September%3C/text%3E%3C/svg%3E"
                     width="400" height="300"></video>
@@ -2027,6 +2012,33 @@
           </div>
         </section>
 
+      </article>
+
+      <article id="destinations" class="destinations" data-page="destinations">
+        <header>
+          <h2 class="h2 article-title">More Places to Visit</h2>
+        </header>
+
+        <section class="web-destinations" aria-labelledby="web-destinations-title">
+          <div class="web-destinations-heading">
+            <div>
+              <p class="web-destinations-kicker">Explore my domain</p>
+              <h3 id="web-destinations-title" class="h3 web-destinations-title">Papers &amp; study resources</h3>
+            </div>
+            <p class="web-destinations-intro">Selected sites hosted under adrielmagalona.dev.</p>
+          </div>
+
+          <a class="web-destination-card" href="https://papers.adrielmagalona.dev/" target="_blank"
+            rel="noopener noreferrer" aria-label="Visit Papers, presentations, and study reviewers (opens in a new tab)">
+            <span class="web-destination-icon" aria-hidden="true"><ion-icon name="document-text-outline"></ion-icon></span>
+            <span class="web-destination-content">
+              <span class="web-destination-title">Papers, presentations &amp; reviewers</span>
+              <span class="web-destination-description">Browse academic papers, project documentation, presentations, and study resources.</span>
+              <span class="web-destination-url">papers.adrielmagalona.dev</span>
+            </span>
+            <ion-icon class="web-destination-arrow" name="arrow-up-outline" aria-hidden="true"></ion-icon>
+          </a>
+        </section>
       </article>
 
     </div>

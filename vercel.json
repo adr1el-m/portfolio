@@ -25,6 +25,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/destinations",
+      "destination": "/index.html"
+    },
+    {
       "source": "/contact",
       "destination": "/index.html"
     },

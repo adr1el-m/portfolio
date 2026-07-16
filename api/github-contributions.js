@@ -8,7 +8,7 @@ const DEFAULT_ALLOWED_ORIGINS = [
 ];
 
 const GITHUB_USERNAME = 'adr1el-m';
-const CACHE_SECONDS = 0;
+const CACHE_SECONDS = 21_600;
 
 function getAllowedOrigins() {
   const raw = process.env.PORTFOLIO_ALLOWED_ORIGINS || '';
@@ -125,6 +125,7 @@ export default async function handler(req, res) {
         Accept: 'text/html',
         'User-Agent': 'www.adrielmagalona.dev portfolio contribution widget',
       },
+      signal: AbortSignal.timeout(8_000),
     });
 
     if (!response.ok) {
@@ -140,7 +141,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    res.setHeader('Cache-Control', 'no-store, max-age=0');
+    res.setHeader('Cache-Control', `public, max-age=300, s-maxage=${CACHE_SECONDS}, stale-while-revalidate=86400`);
     res.status(200).json(payload);
   } catch (error) {
     console.error('GitHub contribution fetch failed:', error?.message || error);

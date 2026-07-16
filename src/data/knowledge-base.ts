@@ -189,13 +189,12 @@ export const KB: KnowledgeBase = {
     {
       title: 'Kita‑Kita (Agentic)',
       category: 'AI Banking Platform',
-      images: [],
+      images: ['/images/projects/agentic/Deansanitzy.poster.jpg'],
       webpImages: [],
       description:
         "Purpose: Help Filipinos manage money through an AI financial co-pilot.\nBuild: Agent-driven platform with unified account management, expense intelligence, forecasting, charts, Firebase data storage, and Llama 3 assistance.\nOutcome: Demonstrates how agentic AI can turn financial data into practical recommendations and user-friendly planning workflows.",
       technologies:
         'HTML, CSS, JavaScript, AI agent orchestration, charts, backend services',
-      videoUrl: '/images/projects/agentic/Deansanitzy.mp4',
       githubUrl: 'https://github.com/adr1el-m/team-Deansanitzy-2025',
     },
     {

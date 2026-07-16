@@ -183,7 +183,7 @@ writePortfolioSchema();
 
 const date = new Date().toISOString().slice(0, 10);
 const urls = [
-  ['', '1.0'], ['/about', '0.8'], ['/background', '0.7'], ['/projects', '0.9'], ['/contact', '0.6'], ['/gear', '0.6'],
+  ['', '1.0'], ['/about', '0.8'], ['/background', '0.7'], ['/projects', '0.9'], ['/contact', '0.6'], ['/gear', '0.6'], ['/destinations', '0.5'],
   ...honors.map((honor) => [honor.pathName, '0.7']),
 ];
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(([pathName, priority]) => `  <url><loc>${siteUrl}${pathName || '/'}</loc><lastmod>${date}</lastmod><changefreq>monthly</changefreq><priority>${priority}</priority></url>`).join('\n')}\n</urlset>\n`;

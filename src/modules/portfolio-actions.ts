@@ -1,10 +1,11 @@
 import { KB } from '@/data/knowledge-base';
 
-export type PortfolioPage = 'about' | 'background' | 'projects' | 'gear' | 'contact';
+export type PortfolioPage = 'about' | 'background' | 'projects' | 'gear' | 'destinations' | 'contact';
 export type TimelineFilter = 'all' | 'education' | 'experience' | 'scholarship';
 
 function getNavLabel(page: PortfolioPage): string {
-  return page === 'contact' ? 'about' : page;
+  if (page === 'contact') return 'about';
+  return page === 'destinations' ? 'more' : page;
 }
 
 function getPath(page: PortfolioPage): string {

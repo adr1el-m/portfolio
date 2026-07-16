@@ -10,6 +10,8 @@ import { logger } from '@/config';
 export class VideoThumbnails {
   private observer: IntersectionObserver | null = null;
   private videos: HTMLVideoElement[] = [];
+  private readonly previewsEnabled = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   constructor() {
     this.init();
@@ -44,27 +46,6 @@ export class VideoThumbnails {
           if (!entry.isIntersecting) {
             // Off-screen: pause video to save resources
             this.safePause(video);
-          } else {
-            // In view: load src and autoplay muted loop for thumbnail playback
-            try {
-              if (!video.getAttribute('src')) {
-                const ds = video.getAttribute('data-src');
-                if (ds) {
-                  video.src = ds;
-                }
-              }
-              video.loop = true;
-              video.muted = true;
-              video.setAttribute('playsinline', '');
-              video.setAttribute('autoplay', '');
-              // Prefer metadata preload once visible to speed first frame
-              video.preload = 'metadata';
-              video.play().catch((err) => {
-                logger.warn('VideoThumbnails: autoplay blocked', err);
-              });
-            } catch (e) {
-              logger.warn('VideoThumbnails: failed to start autoplay', e);
-            }
           }
         });
       },
@@ -102,8 +83,9 @@ export class VideoThumbnails {
         // Observe intersection for pausing when off-screen
         this.observer?.observe(video);
 
-        // Optional hover/touch playback. Disabled by default; enable via data-hover-play.
-        if (video.hasAttribute('data-hover-play')) {
+        // Preview media is intentionally opt-in by hover/focus on desktop. Mobile
+        // visitors keep the lightweight poster and only load the full demo in a modal.
+        if (this.previewsEnabled) {
           const playHandler = () => {
             // Ensure src is set only when user interacts
             if (!video.getAttribute('src')) {
@@ -112,6 +94,8 @@ export class VideoThumbnails {
                 video.src = ds;
               }
             }
+            video.loop = true;
+            video.preload = 'metadata';
             // Some browsers require a user gesture to play, so catch errors
             video.play().catch((err) => {
               logger.warn('VideoThumbnails: play blocked, require click', err);
@@ -131,6 +115,8 @@ export class VideoThumbnails {
                 video.src = ds;
               }
             }
+            video.loop = true;
+            video.preload = 'metadata';
             if (video.paused) {
               video.play().catch(() => {});
             } else {

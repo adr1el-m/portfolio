@@ -324,6 +324,7 @@ export class NavigationManager {
       case '/background': return 'background';
       case '/projects': return 'projects';
       case '/gear': return 'gear';
+      case '/destinations': return 'destinations';
       case '/contact': return 'contact';
       default: return 'about';
     }
@@ -338,6 +339,7 @@ export class NavigationManager {
       case 'background': return '/background';
       case 'projects': return '/projects';
       case 'gear': return '/gear';
+      case 'destinations': return '/destinations';
       case 'contact': return '/contact';
       default: return '/';
     }
@@ -363,7 +365,7 @@ export class NavigationManager {
     const navigationLinks = document.querySelectorAll<HTMLButtonElement>('[data-nav-link]');
     navigationLinks.forEach((btn) => {
       const label = (btn.textContent || '').trim().toLowerCase();
-      const activeLabel = key === 'contact' ? 'about' : key;
+      const activeLabel = key === 'contact' ? 'about' : key === 'destinations' ? 'more' : key;
       btn.classList.toggle('active', label === activeLabel);
     });
 

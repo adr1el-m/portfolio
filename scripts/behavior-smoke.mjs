@@ -52,8 +52,10 @@ try {
   const focused = await page.evaluate(() => document.activeElement?.id);
   if (focused !== 'main-content') throw new Error(`Skip link focus target failed: ${focused}`);
   await page.waitForSelector('#portfolio-changelog');
-  const changelog = await page.$eval('#portfolio-changelog', (el) => el.textContent || '');
-  if (!changelog.includes('Project explorer and recruiter comparison')) throw new Error('Portfolio changelog entry did not render');
+  const changelog = await page.$eval('#portfolio-changelog', (el) => ({ text: el.textContent || '', open: el.open, separate: Boolean(el.closest('.release-sidebar')) }));
+  if (!changelog.text.includes('Project explorer & comparison') || changelog.open || !changelog.separate) throw new Error('Separate sidebar changelog dropdown did not render closed');
+  await page.click('#portfolio-changelog summary');
+  await page.waitForSelector('#portfolio-changelog[open]');
   await page.waitForSelector('.command-palette-trigger');
   await page.click('.command-palette-trigger');
   await page.waitForSelector('#command-palette.active');
@@ -63,6 +65,10 @@ try {
   });
   await page.click('[data-command-id="compare-projects"]');
   await page.waitForSelector('.project-comparison-grid article:nth-child(3)');
+  await page.goto(`http://127.0.0.1:${port}/destinations`, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('article[data-page="destinations"].active');
+  const papers = await page.$eval('article[data-page="destinations"] .web-destination-card', (el) => el.getAttribute('href'));
+  if (papers !== 'https://papers.adrielmagalona.dev/') throw new Error('Papers destination link did not render');
   const caseResponse = await page.goto(`http://127.0.0.1:${port}/case-studies/worksight`);
   if (caseResponse?.status() !== 200) throw new Error('Case-study page route failed');
   console.log('Behavior smoke tests passed: role path, explorer filters/comparison, command palette, modal, Escape, changelog, skip link, and case-study route.');

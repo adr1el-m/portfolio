@@ -155,11 +155,20 @@ export class CommandPalette {
       {
         id: 'portfolio-changelog',
         title: 'Open Portfolio Changelog',
-        subtitle: 'See what has changed and improved recently',
+        subtitle: 'Open recent portfolio updates in the sidebar',
         group: 'Navigate',
         icon: 'time-outline',
         keywords: 'changelog updates releases improvements history new portfolio',
-        action: () => navigateToPage('about', { scrollSelector: '#portfolio-changelog' }),
+        action: () => this.openChangelog(),
+      },
+      {
+        id: 'more-places-to-visit',
+        title: 'More Places to Visit',
+        subtitle: 'Explore Papers, presentations, and study reviewers',
+        group: 'Navigate',
+        icon: 'compass-outline',
+        keywords: 'more places papers study reviewers presentations subdomain resources',
+        action: () => navigateToPage('destinations'),
       },
       {
         id: 'copy-email',
@@ -475,6 +484,14 @@ export class CommandPalette {
         detail: compare ? { action: 'compare' } : { action: 'filter', value: filter },
       }));
     }, 180);
+  }
+
+  private openChangelog(): void {
+    const changelog = document.querySelector<HTMLDetailsElement>('#portfolio-changelog');
+    if (!changelog) return;
+    changelog.open = true;
+    changelog.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    changelog.querySelector<HTMLElement>('summary')?.focus({ preventScroll: true });
   }
 
   private loadRecentCommands(): string[] {

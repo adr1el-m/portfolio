@@ -313,11 +313,16 @@ export class CommandPalette {
   private create(): void {
     if (document.getElementById('command-palette')) return;
 
-    const trigger = document.createElement('button');
-    trigger.type = 'button';
-    trigger.className = 'command-palette-trigger';
-    trigger.setAttribute('aria-label', 'Open command palette (Command K)');
-    trigger.innerHTML = '<ion-icon name="terminal-outline" aria-hidden="true"></ion-icon><span>Command</span><kbd>⌘K</kbd>';
+    let trigger = document.querySelector<HTMLButtonElement>('.command-palette-trigger');
+    if (!trigger) {
+      trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className = 'command-palette-trigger';
+      trigger.setAttribute('aria-label', 'Open command palette (Command K)');
+      trigger.innerHTML = '<span class="command-palette-trigger-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m5 7 4 5-4 5M11 17h8"/></svg></span><span class="command-palette-trigger-label">Command</span><kbd>⌘K</kbd>';
+      document.body.appendChild(trigger);
+    }
+    trigger.dataset.commandPaletteOpen = '';
     trigger.addEventListener('click', () => this.open());
 
     this.overlay = document.createElement('div');
@@ -338,7 +343,7 @@ export class CommandPalette {
       </div>
     `;
 
-    document.body.append(trigger, this.overlay);
+    document.body.append(this.overlay);
     this.input = this.overlay.querySelector<HTMLInputElement>('#command-palette-input');
     this.list = this.overlay.querySelector<HTMLElement>('.command-palette-list');
   }
@@ -393,7 +398,7 @@ export class CommandPalette {
     return this.overlay?.classList.contains('active') || false;
   }
 
-  private open(): void {
+  public open(): void {
     this.overlay?.classList.add('active');
     this.overlay?.setAttribute('aria-hidden', 'false');
     this.input?.focus({ preventScroll: true });

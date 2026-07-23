@@ -1,5 +1,3 @@
-import { KB } from '@/data/knowledge-base';
-
 export type PortfolioPage = 'about' | 'background' | 'projects' | 'gear' | 'destinations' | 'contact';
 export type TimelineFilter = 'all' | 'education' | 'experience' | 'scholarship';
 
@@ -75,7 +73,7 @@ export function openPortfolioHonor(title: string): void {
   }, 160);
 }
 
-export function openResumePreview(url = KB.contact.resumeUrl): void {
+export function openResumePreview(url = '/files/resume.pdf'): void {
   window.dispatchEvent(new CustomEvent('portfolio:open-resume-preview', { detail: { url } }));
   trackPortfolioAction('contact-action', 'Resume preview');
 }

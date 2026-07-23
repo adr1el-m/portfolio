@@ -31,38 +31,10 @@ export default defineConfig({
             return 'vendor-common';
           }
 
-          // Application chunks for deferred modules
-          if (id.includes('src/modules')) {
-            if (id.includes('chatbot') || id.includes('gemini-service') || id.includes('ai-service')) {
-              return 'chatbot';
-            }
-            if (id.includes('particle-background')) {
-              return 'visual-effects';
-            }
-            if (id.includes('pwa-manager')) {
-              return 'pwa';
-            }
-            if (id.includes('visitor-counter')) {
-              return 'visitor-counter';
-            }
-
-            // Group deferred UI enhancements
-            const uiModules = [
-              'scroll-animations',
-              'custom-cursor',
-              'about-enhancements',
-              'awards-accordion',
-              'tooltip-portal',
-              'tech-stack',
-              'video-thumbnails',
-              'projects-sort',
-            ];
-            if (uiModules.some(m => id.includes(m))) {
-              return 'deferred-ui';
-            }
-
-            return undefined;
-          }
+          // Preserve application-level dynamic-import boundaries. Grouping
+          // them here can pull shared modules into a lazy feature chunk and
+          // accidentally turn that feature into a critical modulepreload.
+          return undefined;
         },
       },
     },

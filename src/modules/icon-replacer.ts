@@ -5,6 +5,7 @@ import { logger } from '@/config';
  * Replaces ion-icon elements with Unicode equivalents to avoid external dependencies and CSP issues.
  */
 export class IconReplacer {
+  private iconObserver: IntersectionObserver | null = null;
   private readonly iconMap: Record<string, string> = {
     'chevron-down': '▼',
     'search-outline': '⌕',
@@ -63,8 +64,19 @@ export class IconReplacer {
   };
 
   constructor() {
-    this.replaceIcons(document, true);
+    this.setupVisibilityObserver();
+    this.observeIcons(document, true);
     this.observeDynamicIcons();
+  }
+
+  private setupVisibilityObserver(): void {
+    this.iconObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        this.replaceIcon(entry.target);
+        this.iconObserver?.unobserve(entry.target);
+      });
+    }, { rootMargin: '400px 0px', threshold: 0 });
   }
 
   private replacementFor(iconName: string): string {
@@ -110,12 +122,14 @@ export class IconReplacer {
     this.styleIcon(icon, false);
   }
 
-  private replaceIcons(root: ParentNode = document, shouldLog = false): void {
+  private observeIcons(root: ParentNode = document, shouldLog = false): void {
     root.querySelectorAll('ion-icon').forEach(icon => {
       const iconName = icon.getAttribute('name');
-      if (iconName) this.replaceIcon(icon);
+      if (iconName && icon.getAttribute('data-icon-replaced') !== 'true') {
+        this.iconObserver?.observe(icon);
+      }
     });
-    if (shouldLog) logger.log('✅ Icons replaced with Unicode/SVG equivalents.');
+    if (shouldLog) logger.log('✅ Icons queued for visibility-based replacement.');
   }
 
   private observeDynamicIcons(): void {
@@ -123,8 +137,8 @@ export class IconReplacer {
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
           if (!(node instanceof Element)) return;
-          if (node.matches('ion-icon')) this.replaceIcon(node);
-          this.replaceIcons(node);
+          if (node.matches('ion-icon')) this.iconObserver?.observe(node);
+          this.observeIcons(node);
         });
       });
     });

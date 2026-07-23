@@ -99,7 +99,7 @@ export const KB: KnowledgeBase = {
       program: 'Lifeline Assistance for Neighbors In-Need',
       period: '2026–present',
       notes:
-        'Honors-based educational assistance under Taguig City’s LANI scholarship program.',
+        "Awarded Honors status for ranking among the top 10 students out of 1,466 graduates in the University of Makati's 2024 Senior High School class.",
     },
   ],
   experience: [

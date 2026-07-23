@@ -1162,7 +1162,7 @@ export class ChatbotManager {
       'They show that Adriel’s academic work is backed by multiple forms of external recognition, not just self-description.',
       '• <strong>DOST-SEI RA 7687</strong> signals national STEM potential and supports his BS Computer Science path.',
       '• <strong>MACEMCO Scholar</strong> adds community-backed educational support.',
-      '• <strong>Taguig Scholar (Honors)</strong> shows honors-based local recognition through the LANI program beginning in 2026.',
+      "• <strong>Taguig Scholar (Honors)</strong> recognizes Adriel for ranking among the top 10 students out of 1,466 graduates in the University of Makati's 2024 Senior High School class.",
       'Together, they strengthen the portfolio’s education story: consistent academic promise, civic support, and technical direction.',
     ].join('<br>');
   }

@@ -9,16 +9,20 @@ on:
     # Run weekly on Mondays at 9 AM UTC
     - cron: '0 9 * * 1'
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   lighthouse:
     name: Lighthouse Audit
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '24'
           cache: 'npm'
@@ -35,21 +39,35 @@ jobs:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
       - name: Upload Lighthouse Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: lighthouse-results
           path: .lighthouseci/
+          include-hidden-files: true
           retention-days: 30
 
       - name: Comment PR with Results
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         if: github.event_name == 'pull_request'
         with:
           script: |
             const fs = require('fs');
-            const results = JSON.parse(fs.readFileSync('.lighthouseci/manifest.json', 'utf8'));
-            const scores = results[0].summary;
+            const manifestPath = '.lighthouseci/manifest.json';
+            if (!fs.existsSync(manifestPath)) {
+              core.setFailed(`Lighthouse manifest not found at ${manifestPath}`);
+              return;
+            }
+
+            const results = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            const result = results.find(entry => entry.isRepresentativeRun) || results[0];
+            if (!result?.summary) {
+              core.setFailed('Lighthouse manifest does not contain a scored report');
+              return;
+            }
+
+            const scores = result.summary;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             
             const comment = `## 🏆 Lighthouse Performance Results
             
@@ -60,9 +78,9 @@ jobs:
             | ✅ Best Practices | ${scores['best-practices'] * 100}/100 |
             | 🔍 SEO | ${scores.seo * 100}/100 |
             
-            [View Full Report](https://googlechrome.github.io/lighthouse/viewer/)`;
+            [Download full Lighthouse reports](${runUrl})`;
             
-            github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -74,10 +92,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '24'
           cache: 'npm'
@@ -103,7 +121,7 @@ jobs:
             --chrome-flags="--headless=new"
 
       - name: Upload Budget Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: budget-results

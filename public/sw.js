@@ -1,18 +1,12 @@
-const CACHE_NAME = 'adriel-portfolio-v5';
+const CACHE_NAME = 'adriel-portfolio-v6';
 const OFFLINE_URLS = ['/offline', '/offline.html'];
 const PRECACHE_ASSETS = [
   '/',
   ...OFFLINE_URLS,
   '/style.css',
   '/styles/portfolio-enhancements.css',
-  '/styles/chatbot.css',
-  '/index.html',
-  '/projects',
-  '/about',
-  '/files/resume.pdf',
-  '/images/my-avatar.png',
-  '/images/pwa/icon-192x192.png',
-  '/images/pwa/icon-512x512.png'
+  '/images/my-avatar.avif',
+  '/images/pwa/icon-192x192.png'
 ];
 
 self.addEventListener('install', (event) => {

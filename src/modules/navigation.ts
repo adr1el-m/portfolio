@@ -114,7 +114,7 @@ export class NavigationManager {
       link.addEventListener("click", () => {
         if (this.isTransitioning) return;
 
-        const targetKey = (link.textContent || '').toLowerCase().trim();
+        const targetKey = link.dataset.navTarget || (link.textContent || '').toLowerCase().trim();
         const currentPage = document.querySelector<HTMLElement>('[data-page].active');
         const targetPage = Array.from(pages).find(p => ((p.dataset.page || '').trim() === targetKey));
 
@@ -165,7 +165,7 @@ export class NavigationManager {
     });
 
     // Initialize active section based on URL path
-    this.applyRoute(window.location.pathname);
+    this.applyRoute(window.location.pathname, true);
 
     // Handle back/forward navigation
     window.addEventListener('popstate', () => {
@@ -348,7 +348,7 @@ export class NavigationManager {
   /**
    * Apply route: set active section and handle special anchors
    */
-  private applyRoute(pathname: string): void {
+  private applyRoute(pathname: string, isInitialLoad = false): void {
     const key = this.keyFromPath(pathname);
 
     // Toggle active section (contact reuses about page)
@@ -378,7 +378,7 @@ export class NavigationManager {
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 60);
       }
-    } else {
+    } else if (!(isInitialLoad && key === 'about')) {
       this.scrollToPageStart(targetPage || undefined);
     }
 
@@ -392,8 +392,15 @@ export class NavigationManager {
    * Keep mobile navigation focused on the selected article below the stacked sidebar.
    */
   private scrollToPageStart(page?: HTMLElement): void {
+    const sidebarRail = document.querySelector<HTMLElement>('.sidebar-rail');
+    const sidebarStacksBeforePage = Boolean(
+      page &&
+      sidebarRail &&
+      page.getBoundingClientRect().top >= sidebarRail.getBoundingClientRect().bottom - 1
+    );
     const shouldScrollToArticle = Boolean(
-      page && window.matchMedia && window.matchMedia('(max-width: 1023px)').matches
+      page &&
+      (window.matchMedia?.('(max-width: 1023px)').matches || sidebarStacksBeforePage)
     );
 
     if (shouldScrollToArticle && page) {

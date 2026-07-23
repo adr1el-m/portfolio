@@ -206,7 +206,9 @@ article {
 
 article.active {
   display: block;
-  animation: slideFadeIn 0.18s ease-out;
+  /* Do not animate the initial page from opacity: 0. Fully transparent
+     ancestors make visible content ineligible as an LCP candidate. */
+  animation: none;
 }
 
 @keyframes slideFadeOut {
@@ -1337,9 +1339,9 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 }
 
 .recruiter-cta-title {
-  max-width: 680px;
+  max-width: none;
   color: var(--white-2);
-  font-size: clamp(1.2rem, 2.4vw, 1.65rem);
+  font-size: clamp(1.1rem, 2vw, 1.65rem);
   line-height: 1.25;
 }
 
@@ -1429,6 +1431,10 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
     justify-content: stretch;
     max-width: none;
   }
+}
+
+@media (min-width: 681px) {
+  .recruiter-cta-title { white-space: nowrap; }
 }
 
 .service {
@@ -1548,10 +1554,9 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
   justify-self: center;
   border-radius: 999px;
   background: hsla(0, 0%, 100%, 0.11);
-  opacity: 0;
-  transform: scale(0.65);
-  animation: heatmapDotIn 420ms ease forwards;
-  animation-delay: calc(var(--stagger, 0) * 18ms);
+  opacity: 1;
+  transform: none;
+  animation: none;
   transition: background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
@@ -1721,9 +1726,16 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 }
 
 /* Avoid rendering long, below-the-fold collections until the visitor approaches them. */
+.github-heatmap,
+.service,
+.tech-stack-section,
 .achievements,
 .gear-section:not(:first-of-type) {
   content-visibility: auto;
+  contain-intrinsic-size: auto 720px;
+}
+
+.achievements {
   contain-intrinsic-size: auto 1200px;
 }
 
@@ -3115,7 +3127,7 @@ body.has-tooltip-portal .sidebar [data-tooltip]::after {
 /* Apply slide & fade to articles when activated */
 article.active {
   display: block;
-  animation: slideFadeIn 0.6s ease-out;
+  animation: none;
 }
 
 /* Add an animated underline effect to navigation links */
@@ -3143,7 +3155,25 @@ article.active {
 
 /* Enhanced Chatbot Features */
 .chatbot-btn {
+  position: fixed;
+  right: calc(30px + env(safe-area-inset-right));
+  bottom: calc(30px + env(safe-area-inset-bottom));
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border: 1px solid rgba(255, 219, 112, 0.28);
+  border-radius: 50%;
+  color: var(--text-primary);
+  cursor: pointer;
   animation: pulse 2s infinite;
+}
+
+.chatbot-btn svg {
+  width: 27px;
+  height: 27px;
 }
 
 .chatbot-btn:hover {
@@ -3475,7 +3505,7 @@ article.active {
 
 .project-gallery-slider {
   width: 100%;
-  height: 100%;
+  height: auto;
   position: relative;
   display: flex;
   align-items: center;
@@ -3485,10 +3515,10 @@ article.active {
 
 .project-gallery-image-container {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: grid;
   place-items: center;
-  padding: clamp(14px, 3vw, 20px) clamp(56px, 10vw, 100px);
+  padding: 68px clamp(20px, 4vw, 56px) 18px;
   /* extra horizontal space so buttons don’t overlap media */
   position: relative;
   box-sizing: border-box;
@@ -3496,16 +3526,16 @@ article.active {
 
 .project-modal-picture {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: grid;
   place-items: center;
 }
 
 .project-gallery-image {
   display: block;
-  max-width: 100%;
-  max-height: min(68vh, 760px);
-  width: auto;
+  max-width: none;
+  max-height: min(72vh, 860px);
+  width: 100%;
   height: auto;
   border-radius: 8px;
   box-shadow: none;
@@ -3522,10 +3552,10 @@ article.active {
   position: relative;
   z-index: 1;
   display: block;
-  max-width: 100%;
+  max-width: none;
   width: 100%;
   height: auto;
-  max-height: min(68vh, 760px);
+  max-height: min(72vh, 860px);
   border-radius: 8px;
   box-shadow: none;
   object-fit: contain;
@@ -3619,6 +3649,17 @@ article.active {
   display: flex;
   flex-direction: column;
   gap: 15px;
+}
+
+.chatbox-input button {
+  display: grid;
+  place-items: center;
+  line-height: 1;
+}
+
+.chatbox-input button > span {
+  display: block;
+  line-height: 1;
 }
 
 /* Custom scrollbar for info section */
@@ -5303,6 +5344,12 @@ article.active {
 /* Ensure the chatbox is always above the theme toggle */
 .chatbox {
   z-index: 1100 !important;
+}
+
+/* The full chat presentation is loaded only when it is requested. Keep the
+   server-rendered dialog invisible until that stylesheet is ready. */
+.chatbox[aria-hidden="true"] {
+  display: none;
 }
 
 /* ===== IMAGE OPTIMIZATION STYLES ===== */
@@ -7169,6 +7216,17 @@ article.projects ul.project-list li.project-item:focus-within {
   background: var(--polish-panel-soft);
   border: 1px solid var(--polish-border);
   box-shadow: var(--polish-shadow);
+}
+
+.back-to-top {
+  background: var(--polish-accent);
+  border-color: var(--polish-accent);
+  color: var(--smoky-black);
+}
+
+.back-to-top:hover {
+  background: #ffe08a;
+  border-color: #ffe08a;
 }
 
 .chatbot-btn:hover,

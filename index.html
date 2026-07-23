@@ -52,7 +52,7 @@
 
   <!-- Content Security Policy will be set by server headers -->
   <title>Adriel Magalona - Full-stack Developer & AI Builder | Portfolio</title>
-  <link rel="shortcut icon" href="/images/my-avatar@2x.png" type="image/x-icon">
+  <link rel="icon" href="/images/my-avatar.avif" type="image/avif">
 
   <!-- One build-generated schema graph; source cards remain the canonical portfolio facts. -->
   <script id="portfolio-schema" type="application/ld+json">{}</script>
@@ -290,7 +290,7 @@
   <link rel="preload" href="/style.css" as="style">
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/styles/portfolio-enhancements.css">
-  <link rel="stylesheet" href="/styles/chatbot.css">
+  <!-- Chatbot styles are loaded with its code on first interaction. -->
 
   <!-- Preload hero avatar with responsive sources -->
   <link rel="preload" as="image" href="/images/my-avatar.avif"
@@ -591,7 +591,7 @@
           </li>
 
           <li class="navbar-item">
-            <button class="navbar-link" data-nav-link data-mobile-label="More" aria-label="Navigate to More Places to Visit section">More</button>
+            <button class="navbar-link" data-nav-link data-nav-target="destinations" data-mobile-label="More" aria-label="Navigate to More Places to Visit section">More</button>
           </li>
 
         </ul>
@@ -1381,16 +1381,9 @@
                 <h4 class="h4 timeline-title">DOST-SEI Scholar under RA 7687</h4>
                 <div class="company-name">Department of Science and Technology - Science Education Institute</div>
                 <span class="timeline-period">2024 — Present</span>
-                <div class="timeline-tags">
-                  <span class="tag">Merit-Based</span>
-                  <span class="tag">STEM</span>
-                  <span class="tag">Full Scholarship</span>
-                </div>
                 <p class="timeline-text">
-                  Awarded the prestigious DOST-SEI Scholarship under Republic Act 7687, recognizing academic excellence
-                  and commitment to science and technology. This merit-based scholarship supports my pursuit of a degree
-                  in Computer Science, providing full tuition coverage and academic support to develop future scientists
-                  and technologists for the Philippines.
+                  Qualified for the 2024 DOST Undergraduate Scholarship Examination, placing among
+                  <strong>10,756 successful examinees out of 89,510 nationwide.</strong>
                 </p>
               </div>
             </div>
@@ -1401,16 +1394,9 @@
                 <h4 class="h4 timeline-title">MACEMCO Scholar</h4>
                 <div class="company-name">Makati City Employees Multi-Purpose Cooperative</div>
                 <span class="timeline-period">2024 — Present</span>
-                <div class="timeline-tags">
-                  <span class="tag">Community Support</span>
-                  <span class="tag">Educational Grant</span>
-                  <span class="tag">Cooperative</span>
-                </div>
                 <p class="timeline-text">
-                  Recognized as a scholar by the Makati City Employees Multi-Purpose Cooperative (MACEMCO), a
-                  community-based organization dedicated to supporting the educational advancement of deserving
-                  students. This scholarship demonstrates MACEMCO's commitment to fostering academic excellence and
-                  empowering the next generation of professionals.
+                  Passed the written examination and was selected as one of <strong>20 scholars from 56 candidates.</strong>
+                  This scholarship is awarded to the children of Makati City employees.
                 </p>
               </div>
             </div>
@@ -1421,15 +1407,6 @@
                 <h4 class="h4 timeline-title">Taguig Scholar (Honors)</h4>
                 <div class="company-name">Lifeline Assistance for Neighbors In-Need</div>
                 <span class="timeline-period">2026 — Present</span>
-                <div class="timeline-tags">
-                  <span class="tag">Honors</span>
-                  <span class="tag">Taguig City</span>
-                  <span class="tag">Educational Assistance</span>
-                </div>
-                <p class="timeline-text">
-                  Recognized as a Taguig Scholar under the Lifeline Assistance for Neighbors In-Need program, receiving
-                  honors-based educational support beginning in 2026.
-                </p>
               </div>
             </div>
 
@@ -1530,11 +1507,11 @@
                 <figure class="project-img">
                   <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
                   <img
-                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='45%25' fill='%23ffdb70' font-family='system-ui' font-size='18' font-weight='600' text-anchor='middle'%3ERGBC: ATM Transaction%3C/text%3E%3Ctext x='50%25' y='55%25' fill='%23ffdb70' font-family='system-ui' font-size='18' font-weight='600' text-anchor='middle'%3ESystem%3C/text%3E%3C/svg%3E"
-                    alt="RGBC: Richard Gwapo Banking Corporation (ATM Transaction System)" loading="lazy" width="400"
+                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%231a1a1a' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' fill='%23ffdb70' font-family='system-ui' font-size='20' font-weight='600' text-anchor='middle' dy='.3em'%3EATM Transaction System%3C/text%3E%3C/svg%3E"
+                    alt="ATM Transaction System" loading="lazy" width="400"
                     height="300">
                 </figure>
-                <h3 class="project-title">RGBC: Richard Gwapo Banking Corporation (ATM Transaction System)</h3>
+                <h3 class="project-title">ATM Transaction System</h3>
               </a>
             </li>
             <li class="project-item active" data-filter-item data-category="Web Development"
@@ -1583,7 +1560,7 @@
               </a>
             </li>
             <li class="project-item active" data-filter-item data-category="Web Design"
-              data-images='["/images/projects/ytLayout/clone.jpg"]'
+              data-images='["/images/projects/ytLayout/clone-enhanced.jpg"]'
 
               data-description="Purpose: Recreate a familiar video-platform interface as a first-year web design exercise.&#10;Build: Static HTML and CSS implementation focused on layout, spacing, visual hierarchy, and responsive structure.&#10;Outcome: Established early practice in translating a real interface into maintainable frontend markup and styling."
               data-technologies="HTML, CSS" data-github="https://github.com/adr1el-m/ITC-youtube-layout"

@@ -42,15 +42,12 @@ import { SecurityManager } from './modules/security';
 import { LoadingManager } from './modules/loading-manager';
 import { ImageOptimizer } from './modules/image-optimizer';
 import { IconReplacer } from './modules/icon-replacer';
-import { SidebarAnimations } from './modules/sidebar-animations';
-import { SkeletonLoader } from './modules/skeleton-loader';
 import { PerformanceMonitor } from './modules/performance-monitor';
 import { AccessibilityEnhancer } from './modules/accessibility-enhancer';
 import { ScrollProgress } from './modules/scroll-progress';
 import { logger } from './config';
 import type { Portfolio } from './types';
 import { TextPlaceholders } from './modules/text-placeholders';
-import { Search } from './modules/search';
 
 // Vercel Analytics & Speed Insights are loaded conditionally in production (see top of file);
 
@@ -70,6 +67,14 @@ type ModalInstance = {
   openAchievementByTitle?: (title: string) => boolean;
 };
 
+type SearchInstance = {
+  open?: (query?: string) => void;
+};
+
+type CommandPaletteInstance = {
+  open?: () => void;
+};
+
 function runWhenIdle(callback: () => void, timeout = 1800): void {
   const idleWindow = window as Window & {
     requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number;
@@ -87,12 +92,58 @@ function enabledFlag(value: string | null | undefined): boolean {
   return ['1', 'true', 'yes'].includes((value || '').toLowerCase());
 }
 
+function loadStylesheetOnce(href: string): Promise<void> {
+  const existing = document.querySelector<HTMLLinkElement>(`link[rel="stylesheet"][href="${href}"]`);
+  if (existing?.dataset.loadState === 'loaded' || existing?.sheet) return Promise.resolve();
+
+  if (existing?.dataset.loadState === 'loading') {
+    return new Promise((resolve, reject) => {
+      existing.addEventListener('load', () => resolve(), { once: true });
+      existing.addEventListener('error', () => reject(new Error(`Failed to load stylesheet: ${href}`)), { once: true });
+    });
+  }
+
+  // A failed lazy stylesheet must not block later retries.
+  existing?.remove();
+
+  return new Promise((resolve, reject) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    link.dataset.loadState = 'loading';
+    link.onload = () => {
+      link.dataset.loadState = 'loaded';
+      resolve();
+    };
+    link.onerror = () => {
+      link.remove();
+      reject(new Error(`Failed to load stylesheet: ${href}`));
+    };
+    document.head.appendChild(link);
+  });
+}
+
+function runWhenNear(selector: string, callback: () => void, rootMargin = '500px 0px'): void {
+  const target = document.querySelector(selector);
+  if (!target) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    if (!entries.some((entry) => entry.isIntersecting)) return;
+    observer.disconnect();
+    callback();
+  }, { rootMargin, threshold: 0 });
+  observer.observe(target);
+}
+
 /**
  * Main Portfolio Application Class
  */
 class PortfolioApp {
   private chatbotLoadPromise: Promise<ChatbotInstance | null> | null = null;
+  private chatbotStylesReady = false;
   private modalLoadPromise: Promise<ModalInstance | null> | null = null;
+  private searchLoadPromise: Promise<SearchInstance | null> | null = null;
+  private commandPaletteLoadPromise: Promise<CommandPaletteInstance | null> | null = null;
 
   constructor() {
     this.init();
@@ -127,28 +178,41 @@ class PortfolioApp {
     });
   }
 
+  private loadChatbotStyles(): Promise<void> {
+    if (this.chatbotStylesReady) return Promise.resolve();
+    return loadStylesheetOnce('/styles/chatbot.css').then(() => {
+      this.chatbotStylesReady = true;
+    });
+  }
+
   private setupChatbotLoader(): void {
     const button = document.querySelector('.chatbot-btn');
     if (!(button instanceof HTMLButtonElement)) return;
 
     const preload = () => {
-      void this.loadChatbot(false);
+      void Promise.all([
+        this.loadChatbotStyles(),
+        this.loadChatbot(false),
+      ]).catch((error) => logger.warn('Chatbot preload failed:', error));
     };
 
     button.addEventListener('pointerenter', preload, { once: true, passive: true });
     button.addEventListener('focus', preload, { once: true });
     button.addEventListener('click', (event) => {
-      if (window.Portfolio?.lazy?.ChatbotManager) return;
+      if (this.chatbotStylesReady && window.Portfolio?.lazy?.ChatbotManager) return;
       event.preventDefault();
       event.stopPropagation();
-      void this.loadChatbot(true);
+      void this.loadChatbotStyles()
+        .then(() => this.loadChatbot(true))
+        .catch((error) => logger.warn('Chatbot styles failed to load:', error));
     });
 
     const requestAdrAI = (prompt = '') => {
-      void this.loadChatbot(true).then((manager) => {
+      void this.loadChatbotStyles()
+        .then(() => this.loadChatbot(true)).then((manager) => {
         if (!manager) return;
         window.dispatchEvent(new CustomEvent('portfolio:ask-adrai', { detail: { prompt } }));
-      });
+      }).catch((error) => logger.warn('Chatbot styles failed to load:', error));
     };
 
     window.addEventListener('portfolio:request-adrai', (event) => {
@@ -220,6 +284,96 @@ class PortfolioApp {
     });
   }
 
+  private loadSearch(): Promise<SearchInstance | null> {
+    const existing = window.Portfolio?.modules?.Search as SearchInstance | undefined;
+    if (existing) return Promise.resolve(existing);
+    if (!this.searchLoadPromise) {
+      this.searchLoadPromise = import('./modules/search')
+        .then(({ Search }) => {
+          const search = new Search();
+          if (window.Portfolio?.modules) window.Portfolio.modules.Search = search;
+          return search as SearchInstance;
+        })
+        .catch((error) => {
+          logger.error('Failed to load portfolio search:', error);
+          this.searchLoadPromise = null;
+          return null;
+        });
+    }
+    return this.searchLoadPromise;
+  }
+
+  private setupSearchLoader(initialQuery: string): void {
+    const open = (query = '') => void this.loadSearch().then((search) => search?.open?.(query));
+
+    window.addEventListener('portfolio:open-search', (event) => {
+      if (window.Portfolio?.modules?.Search) return;
+      event.stopImmediatePropagation();
+      open((event as CustomEvent<{ query?: string }>).detail?.query || '');
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (window.Portfolio?.modules?.Search || event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target as HTMLElement | null;
+      if (target?.matches('input, textarea, select, [contenteditable="true"]')) return;
+      event.preventDefault();
+      open('');
+    });
+
+    if (initialQuery) open(initialQuery);
+  }
+
+  private loadCommandPalette(openAfterLoad = false): Promise<CommandPaletteInstance | null> {
+    const existing = window.Portfolio?.lazy?.CommandPalette as CommandPaletteInstance | undefined;
+    if (existing) {
+      if (openAfterLoad) existing.open?.();
+      return Promise.resolve(existing);
+    }
+    if (!this.commandPaletteLoadPromise) {
+      this.commandPaletteLoadPromise = import('./modules/command-palette')
+        .then(({ CommandPalette }) => {
+          const palette = new CommandPalette() as CommandPaletteInstance;
+          if (window.Portfolio?.lazy) window.Portfolio.lazy.CommandPalette = palette;
+          return palette;
+        })
+        .catch((error) => {
+          logger.error('Failed to load command palette:', error);
+          this.commandPaletteLoadPromise = null;
+          return null;
+        });
+    }
+    return this.commandPaletteLoadPromise.then((palette) => {
+      if (openAfterLoad) palette?.open?.();
+      return palette;
+    });
+  }
+
+  private setupCommandPaletteLoader(): void {
+    if (!document.querySelector('.command-palette-trigger')) {
+      const trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className = 'command-palette-trigger';
+      trigger.dataset.commandPaletteOpen = '';
+      trigger.setAttribute('aria-label', 'Open command palette (Command K)');
+      trigger.innerHTML = '<span class="command-palette-trigger-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m5 7 4 5-4 5M11 17h8"/></svg></span><span class="command-palette-trigger-label">Command</span><kbd>⌘K</kbd>';
+      document.body.appendChild(trigger);
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (window.Portfolio?.lazy?.CommandPalette || event.key.toLowerCase() !== 'k' || !(event.metaKey || event.ctrlKey)) return;
+      event.preventDefault();
+      void this.loadCommandPalette(true);
+    });
+    document.addEventListener('click', (event) => {
+      if (window.Portfolio?.lazy?.CommandPalette) return;
+      const trigger = (event.target as Element | null)?.closest('[data-command-palette-open]');
+      if (!trigger) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      void this.loadCommandPalette(true);
+    }, { capture: true });
+  }
+
   /**
    * Initialize the portfolio application
    */
@@ -262,9 +416,6 @@ class PortfolioApp {
       const navigationManager = new NavigationManager();
       // Initialize scroll progress bar
       new ScrollProgress();
-      // Initialize client-side search (activates when URL has ?q=)
-      const search = new Search();
-
       window.Portfolio = {
         core: {
           version: '2.0.0',
@@ -277,12 +428,13 @@ class PortfolioApp {
           LoadingManager: loadingManager,
           ImageOptimizer: imageOptimizer,
           NavigationManager: navigationManager,
-          Search: search,
         },
         lazy: window.Portfolio?.lazy || {},
       };
 
       this.setupModalLoader();
+      this.setupSearchLoader(qs.get('q')?.trim() || '');
+      this.setupCommandPaletteLoader();
       if (window.location.pathname.startsWith('/honors/')) {
         void this.loadModalManager();
       }
@@ -303,17 +455,35 @@ class PortfolioApp {
         if (page === 'about') {
           defer(() => {
             import('./modules/scroll-animations').then(({ ScrollAnimations }) => new ScrollAnimations());
-            import('./modules/custom-cursor').then(({ CustomCursor }) => new CustomCursor());
-            import('./modules/github-heatmap').then(({ GitHubHeatmap }) => new GitHubHeatmap().init());
             import('./modules/resume-preview').then(({ ResumePreview }) => new ResumePreview());
             import('./modules/about-enhancements').then(({ AboutEnhancements }) => new AboutEnhancements());
+          });
+
+          runWhenNear('[data-github-heatmap]', () => {
+            import('./modules/github-heatmap').then(({ GitHubHeatmap }) => new GitHubHeatmap().init());
+          }, '0px');
+
+          runWhenNear('.tech-stack-section', () => {
+            import('./modules/tech-stack').then(({ TechStack }) => new TechStack());
+          });
+
+          runWhenNear('section.achievements', () => {
             import('./modules/awards-accordion').then(({ AwardsAccordion }) => new AwardsAccordion());
             import('./modules/honors-gallery').then(({ HonorsGallery }) => new HonorsGallery());
             import('./modules/honor-routes').then(({ HonorRoutes }) => new HonorRoutes());
-            import('./modules/tooltip-portal').then(({ TooltipPortal }) => new TooltipPortal());
-            import('./modules/tech-stack').then(({ TechStack }) => new TechStack());
             import('./modules/honor-project-links').then(({ HonorProjectLinks }) => new HonorProjectLinks());
           });
+
+          document.addEventListener('pointermove', () => {
+            import('./modules/custom-cursor').then(({ CustomCursor }) => new CustomCursor());
+          }, { once: true, passive: true });
+
+          const sidebar = document.querySelector<HTMLElement>('[data-sidebar]');
+          const loadTooltips = () => {
+            import('./modules/tooltip-portal').then(({ TooltipPortal }) => new TooltipPortal());
+          };
+          sidebar?.addEventListener('pointerenter', loadTooltips, { once: true, passive: true });
+          sidebar?.addEventListener('focusin', loadTooltips, { once: true });
 
           const showPublicAnalytics = enabledFlag(import.meta.env.VITE_PUBLIC_ANALYTICS_SNAPSHOT)
             || (import.meta.env.DEV && enabledFlag(qs.get('publicAnalytics')));
@@ -380,9 +550,6 @@ class PortfolioApp {
             new PublicAnalytics();
           });
         }
-        import('./modules/command-palette').then(({ CommandPalette }) => {
-          new CommandPalette();
-        });
         import('./modules/mobile-action-bar').then(({ MobileActionBar }) => {
           new MobileActionBar();
         });
@@ -413,13 +580,6 @@ class PortfolioApp {
 
       // Initialize Icon Replacer
       new IconReplacer();
-
-      // Initialize Skeleton Loader (runs first for loading states)
-      const skeletonLoader = new SkeletonLoader();
-      window.Portfolio.modules.SkeletonLoader = skeletonLoader;
-
-      // Initialize Sidebar Animations (after skeleton loader)
-      new SidebarAnimations();
 
       // Register PWA service worker (skip in audit mode to avoid SW interference) — defer
       defer(() => {

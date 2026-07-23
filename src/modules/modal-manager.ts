@@ -852,6 +852,9 @@ export class ModalManager {
         projectVideo.style.display = 'none';
       }
       projectImage.style.display = 'block';
+      // The shared loader can retain the placeholder's 1:1 aspect ratio as an
+      // inline hint. A project image must use its own intrinsic dimensions.
+      projectImage.style.removeProperty('aspect-ratio');
       const firstSrc = this.images[0];
       const firstWebp = this.projectWebpImages[0] || '';
       const firstJpeg = this.projectJpegImages[0] || firstSrc;
@@ -972,6 +975,7 @@ export class ModalManager {
     
     // Update image with fade effect
     projectImage.style.opacity = '0';
+    projectImage.style.removeProperty('aspect-ratio');
     setTimeout(() => {
       if (this.projectSourceWebpEl) {
         if (webpSrc) {

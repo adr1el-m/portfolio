@@ -84,14 +84,14 @@ export const KB: KnowledgeBase = {
       program: 'Republic Act 7687 Science and Technology Scholarship',
       period: '2024–present',
       notes:
-        'Merit-based undergraduate scholarship supporting his BS Computer Science studies and recognizing academic potential in science and technology.',
+        'Qualified for the 2024 DOST Undergraduate Scholarship Examination, placing among 10,756 successful examinees out of 89,510 nationwide.',
     },
     {
       title: 'MACEMCO Scholar',
       provider: 'Makati City Employees Multi-Purpose Cooperative',
       period: '2024–present',
       notes:
-        'Community-based scholarship supporting educational advancement and academic excellence.',
+        'Passed the written examination and was selected as one of 20 scholars from 56 candidates. The scholarship is awarded to the children of Makati City employees.',
     },
     {
       title: 'Taguig Scholar (Honors)',

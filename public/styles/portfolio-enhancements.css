@@ -53,6 +53,7 @@
 .sidebar-changelog-list p { margin: 3px 0 0; color: var(--light-gray-70); font-size: 10px; line-height: 1.45; }
 
 .sidebar-rail { display: grid; gap: 14px; align-self: flex-start; }
+.sidebar { padding-top: 28px !important; }
 .release-sidebar { padding: 15px; border: 1px solid var(--jet); border-radius: 14px; background: var(--eerie-black-2); box-shadow: var(--shadow-1); }
 .release-sidebar .sidebar-changelog { margin: 0; padding: 0; border: 0; }
 .release-sidebar .sidebar-changelog summary {
@@ -93,7 +94,17 @@
 
 @media (max-width: 1023px) {
   .sidebar-rail { width: min(520px, 100%); gap: 12px; margin-inline: auto; margin-bottom: 30px; }
-  .sidebar-rail .sidebar { margin-bottom: 0; }
+  .sidebar-rail .sidebar { margin-bottom: 0; padding-top: 28px !important; }
+  .sidebar-info { padding-top: 0; }
+  .sidebar .avatar-box { margin-top: 0; }
+}
+
+.timeline-section { padding: 18px; }
+.timeline-section .section-header { margin-bottom: 22px; }
+
+@media (max-width: 580px) {
+  .timeline-section { padding: 14px; }
+  .timeline-section .section-header { gap: 11px; }
 }
 
 @media (max-width: 580px) {
@@ -166,6 +177,11 @@
 
 .project-img {
   position: relative;
+}
+
+/* Preserve the full extra-wide YouTube Layout screenshot without letterboxing. */
+.project-item[data-github*="ITC-youtube-layout"] .project-img {
+  aspect-ratio: 2560 / 1208;
 }
 
 .project-placeholder-hidden {
@@ -891,11 +907,25 @@
   box-shadow: var(--shadow-2);
 }
 
-.command-palette-trigger ion-icon {
-  font-size: 22px;
+.command-palette-trigger-icon {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  place-items: center;
 }
 
-.command-palette-trigger span {
+.command-palette-trigger-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.command-palette-trigger-label {
   font-size: 0.72rem;
   font-weight: 700;
 }
@@ -1767,7 +1797,7 @@
     justify-content: center;
   }
 
-  .command-palette-trigger span,
+  .command-palette-trigger-label,
   .command-palette-trigger kbd {
     display: none;
   }

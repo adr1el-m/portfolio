@@ -99,7 +99,7 @@ export const KB: KnowledgeBase = {
       program: 'Lifeline Assistance for Neighbors In-Need',
       period: '2026–present',
       notes:
-        'Honors-based educational assistance under Taguig City’s LANI scholarship program.',
+        "Awarded Honors status for ranking among the top 10 students out of 1,466 graduates in the University of Makati's 2024 Senior High School class.",
     },
   ],
   experience: [
@@ -177,14 +177,13 @@ export const KB: KnowledgeBase = {
     {
       title: 'Green Pulse',
       category: 'Web App',
-      images: [],
+      images: ['/images/projects/greenPulse/green-pulse-mock.jpg'],
       webpImages: [],
       description:
-        "Purpose: Encourage sustainable habits through carbon footprint awareness and personalized eco-guidance.\nBuild: React, Vite, Tailwind CSS, Chart.js, and Gemini-powered tips for tracking emissions, visualizing progress, and recommending actions.\nOutcome: Turns environmental awareness into a measurable, interactive workflow for everyday users.",
+        "Purpose: Make sustainability practical through carbon tracking, AI guidance, and visual progress.\nBuild: React and Vite app with an Eco Innovation Hub, Green Gauge calculator, EcoBot chat, Eco Budget, Scrap Chef, Verde Quest, Chart.js analytics, and Gemini-powered recommendations.\nOutcome: Turns everyday eco choices into measurable habits through a responsive, interactive experience.",
       technologies:
         'React, Vite, Tailwind CSS, Chart.js, Google Generative AI',
       githubUrl: 'https://github.com/adr1el-m/green-pulse',
-      videoUrl: '/images/projects/greenPulse/GP-opt.mp4',
     },
     {
       title: 'Kita‑Kita (Agentic)',
@@ -376,7 +375,7 @@ export const KB: KnowledgeBase = {
         { name: 'John Carlo Santos', role: 'Bulacan State University' },
       ],
       description:
-        "Participation: Joined The Innovation Lab 2026: The Mindful Harvest with a collaborative student team.\nScope: Developed and evaluated an early-stage innovation concept through a structured program.\nContribution: Practiced product framing, team coordination, and concise pitch communication.",
+        "Recognition: Placed 7th in The Innovation Lab 2026: The Mindful Harvest with a collaborative student team.\nScope: Developed and evaluated an early-stage innovation concept through a structured program.\nContribution: Strengthened product framing, team coordination, and concise pitch communication.",
     },
 {
       title: 'SIKAPTala 2026 Hackathon',

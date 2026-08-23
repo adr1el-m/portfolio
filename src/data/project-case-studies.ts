@@ -237,32 +237,32 @@ export function renderProjectDescription(projectDescription: HTMLElement, data: 
         </div>`;
       } else if (data.title.trim() === 'green-pulse' || data.title.includes('GreenPulse') || data.title.includes('Green Pulse')) {
         projectDescription.classList.add('rich');
-        projectDescription.innerHTML = `<div class="desc-section"><p>GreenPulse is an interactive web application designed to promote sustainability and eco-friendly practices. It provides users with tools to calculate their environmental impact, offers personalized eco-tips, and features various sustainability-related functionalities. Our platform combines modern technology with environmental awareness to empower users in their green journey.</p></div>
+        projectDescription.innerHTML = `<div class="desc-section"><p>GreenPulse is a responsive sustainability hub that turns everyday eco choices into measurable habits. It combines carbon tracking, visual progress analytics, and AI guidance in one practical experience.</p></div>
         <hr class="desc-divider" />
         <div class="desc-section"><h4>Features</h4>
           <div class="feature-grid">
             <div class="feature-column">
               <h5>Track & Analyze</h5>
               <ul>
-                <li>Sustainability Calculator to measure carbon footprint</li>
-                <li>Visual progress tracking towards goals</li>
+                <li>Green Gauge impact calculator</li>
+                <li>Monthly carbon and progress analytics</li>
                 <li>Data visualization with Chart.js</li>
               </ul>
             </div>
             <div class="feature-column">
               <h5>AI Assistance</h5>
               <ul>
+                <li>EcoBot chat for instant support</li>
                 <li>Personalized AI-generated eco-tips</li>
-                <li>Interactive chatbot for instant support</li>
-                <li>Powered by Google Generative AI</li>
+                <li>Gemini-powered recommendations</li>
               </ul>
             </div>
             <div class="feature-column">
               <h5>User Experience</h5>
               <ul>
-                <li>Interactive and user-friendly interface</li>
-                <li>Engaging animations and effects</li>
-                <li>Responsive design for all devices</li>
+                <li>Eco Budget for savings and goals</li>
+                <li>Scrap Chef for waste-reducing recipes</li>
+                <li>Verde Quest for sustainability learning</li>
               </ul>
             </div>
           </div>

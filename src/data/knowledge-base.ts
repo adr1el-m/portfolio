@@ -171,13 +171,13 @@ export const KB: KnowledgeBase = {
         'Frontend: HTML, CSS, JavaScript, React, Vite; Backend: Node/Express; Data: Firebase Firestore; Charts: Chart.js; AI: Google Generative AI',
       githubUrl: 'https://github.com/adr1el-m/finance-and-ai',
       liveUrl: undefined,
-      videoUrl: '/images/projects/financeWise/fw.mp4',
+      videoUrl: '/images/projects/finance-wise/finance-wise.mp4',
       codedexUrl: undefined,
     },
     {
       title: 'Green Pulse',
       category: 'Web App',
-      images: ['/images/projects/greenPulse/green-pulse-mock.jpg'],
+      images: ['/images/projects/green-pulse/green-pulse-mock.jpg'],
       webpImages: [],
       description:
         "Purpose: Give people one practical hub for measuring environmental impact and acting on it.\nBuild: React and Vite platform with Green Gauge sustainability analysis, EcoSort AI waste classification, GreenBudget shopping planning, ScrapChef ingredient-to-recipe generation, Verde Quest adaptive quizzes, EcoBot chat, and Chart.js impact tracking — all powered by Gemini.\nOutcome: Turns sustainability from abstract advice into guided daily actions across waste, spending, food, learning, and carbon awareness.",
@@ -188,7 +188,7 @@ export const KB: KnowledgeBase = {
     {
       title: 'Kita‑Kita (Agentic)',
       category: 'AI Banking Platform',
-      images: ['/images/projects/agentic/Deansanitzy.poster.jpg'],
+      images: ['/images/projects/agentic/kita-kita-demo.poster.jpg'],
       webpImages: [],
       description:
         "Purpose: Help Filipinos manage money through an AI financial co-pilot.\nBuild: Agent-driven platform with unified account management, expense intelligence, forecasting, charts, Firebase data storage, and Llama 3 assistance.\nOutcome: Demonstrates how agentic AI can turn financial data into practical recommendations and user-friendly planning workflows.",
@@ -207,7 +207,7 @@ export const KB: KnowledgeBase = {
         'Swift, SwiftUI, Needleman-Wunsch, Bioinformatics, FASTA, Dynamic Programming, Monte Carlo Testing, iOS 17',
       githubUrl: 'https://github.com/adr1el-m/gene-sync',
       liveUrl: 'https://www.youtube.com/watch?v=tuJthrRh8Ik',
-      videoUrl: '/images/projects/genesync/GeneSyncDemo.mp4',
+      videoUrl: '/images/projects/genesync/genesync-demo.mp4',
     },
     {
       title: 'WorkSight',
@@ -253,20 +253,20 @@ export const KB: KnowledgeBase = {
       title: 'Online Document Request System (ODRS)',
       category: 'Web App',
       images: [
-        '/images/projects/ODRS/1.jpeg',
-        '/images/projects/ODRS/2.jpeg',
-        '/images/projects/ODRS/3.jpeg',
-        '/images/projects/ODRS/4.jpeg',
-        '/images/projects/ODRS/5.jpeg',
-        '/images/projects/ODRS/6.jpeg',
+        '/images/projects/odrs/1.jpeg',
+        '/images/projects/odrs/2.jpeg',
+        '/images/projects/odrs/3.jpeg',
+        '/images/projects/odrs/4.jpeg',
+        '/images/projects/odrs/5.jpeg',
+        '/images/projects/odrs/6.jpeg',
       ],
       webpImages: [
-        '/images/projects/ODRS/1-400.webp',
-        '/images/projects/ODRS/2-400.webp',
-        '/images/projects/ODRS/3-400.webp',
-        '/images/projects/ODRS/4-400.webp',
-        '/images/projects/ODRS/5-400.webp',
-        '/images/projects/ODRS/6-400.webp',
+        '/images/projects/odrs/1-400.webp',
+        '/images/projects/odrs/2-400.webp',
+        '/images/projects/odrs/3-400.webp',
+        '/images/projects/odrs/4-400.webp',
+        '/images/projects/odrs/5-400.webp',
+        '/images/projects/odrs/6-400.webp',
       ],
       description:
         "Purpose: Digitize document requests for Grade 12 students at the University of Makati Higher School.\nBuild: PHP and MySQL system with authentication, request tracking, status updates, and admin controls.\nOutcome: Reduced manual coordination by giving students and staff a clearer workflow for submitting, processing, and monitoring school documents.",
@@ -277,10 +277,10 @@ export const KB: KnowledgeBase = {
       title: 'Four Fundamental Spaces Finder',
       category: 'Linear Algebra Tool',
       images: [
-        '/images/projects/fourFundamentalSpacesFinder/LandingPage.png',
-        '/images/projects/fourFundamentalSpacesFinder/Computation-mac.jpeg',
-        '/images/projects/fourFundamentalSpacesFinder/GeometricVisualization-mac.jpeg',
-        '/images/projects/fourFundamentalSpacesFinder/GeometricVisualization.png',
+        '/images/projects/four-fundamental-spaces-finder/landing-page.png',
+        '/images/projects/four-fundamental-spaces-finder/computation-mac.jpeg',
+        '/images/projects/four-fundamental-spaces-finder/geometric-visualization-mac.jpeg',
+        '/images/projects/four-fundamental-spaces-finder/geometric-visualization.png',
       ],
       webpImages: [],
       description:
@@ -291,6 +291,18 @@ export const KB: KnowledgeBase = {
     },
   ],
   achievements: [
+    {
+      title: 'SAAN SA PINAS? A Satellite Imagery Puzzler',
+      images: ['/images/honors/2026/geospectrum/geospectrum.jpg'],
+      webpImages: [],
+      organizer: 'Geospectrum Marketing Services',
+      date: 'August 10, 2026',
+      location: 'Online',
+      description:
+        "Recognition: Won Round 1 of the \"SAAN SA PINAS? A Satellite Imagery Puzzler\" by Geospectrum Marketing Services, held in celebration of Philippine Space Week 2026.\nContest: A daily satellite imagery challenge running August 10–14, 2026, where participants identify Philippine locations from Planet Labs satellite images posted on Geospectrum's social media. Round 1 featured identifying the Mactan-Cebu International Airport (MCIA) in Lapu-Lapu City.\nScope: Tested geographic literacy, spatial reasoning, and familiarity with Philippine landscapes through satellite imagery analysis under the theme \"Navigating Tomorrow.\"\nContribution: Correctly identified the satellite imagery location to win the round, demonstrating strong geospatial awareness and Earth observation interpretation skills.",
+      facebookUrl: 'https://www.facebook.com/share/p/14nHk4ijQod/',
+      blogUrl: 'https://www.canva.com/design/DAHRflIl6j0/VLza7IMV7tg1iz6mwc01cw/view?utm_content=DAHRflIl6j0&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h732ea38431',
+    },
     {
       title: 'SIKAPTala 2026 Quiz Bee',
       images: [
@@ -307,8 +319,8 @@ export const KB: KnowledgeBase = {
     },
 {
       title: 'CodeKada 2026',
-      images: ['/images/honors/2026/codekada/Adriel M. Magalona.avif'],
-      webpImages: ['/images/honors/2026/codekada/Adriel M. Magalona.avif'],
+      images: ['/images/honors/2026/codekada/codekada-certificate.avif'],
+      webpImages: ['/images/honors/2026/codekada/codekada-certificate.avif'],
       organizer: 'CodeKada',
       date: 'May 3–9, 2026',
       location: 'Online (Discord)',
@@ -323,9 +335,9 @@ export const KB: KnowledgeBase = {
 {
       title: 'START-a-TON: Data & AI Innovation Challenge',
       images: [
-        '/images/honors/2026/Start-a-Ton/geminated.avif',
-        '/images/honors/2026/Start-a-Ton/winners-champion.avif',
-        '/images/honors/2026/Start-a-Ton/winners-special-award.avif',
+        '/images/honors/2026/start-a-ton/geminated.avif',
+        '/images/honors/2026/start-a-ton/winners-champion.avif',
+        '/images/honors/2026/start-a-ton/winners-special-award.avif',
       ],
       webpImages: [],
       organizer:
@@ -364,7 +376,7 @@ export const KB: KnowledgeBase = {
     },
 {
       title: 'The Innovation Lab 2026: The Mindful Harvest',
-      images: ['/images/honors/2026/The Innovation Labs/innovation-labs.avif'],
+      images: ['/images/honors/2026/the-innovation-labs/innovation-labs.avif'],
       webpImages: [],
       organizer: 'The Innovation Lab 2026: The Mindful Harvest',
       date: 'February 2026',
@@ -379,7 +391,7 @@ export const KB: KnowledgeBase = {
     },
 {
       title: 'SIKAPTala 2026 Hackathon',
-      images: ['/images/honors/2026/sikaptala/Hackathon/hackathon-certificate.avif'],
+      images: ['/images/honors/2026/sikaptala/hackathon/hackathon-certificate.avif'],
       webpImages: [],
       organizer: 'SIKAPTala',
       date: '2026',
@@ -411,8 +423,8 @@ export const KB: KnowledgeBase = {
     },
 {
       title: 'Codebility Portfolio Contest 2025 — 2nd Place',
-      images: ['/images/honors/2025/codebiity/codebility.avif'],
-      webpImages: ['/images/honors/2025/codebiity/codebility.avif'],
+      images: ['/images/honors/2025/codebility/codebility.avif'],
+      webpImages: ['/images/honors/2025/codebility/codebility.avif'],
       organizer: 'Codebility — Portfolio Contest 2025',
       date: 'October 2025',
       location: 'Online',
@@ -425,14 +437,14 @@ export const KB: KnowledgeBase = {
 {
       title: 'Technovation Summit 2025 Start‑up Hackathon',
       images: [
-        '/images/honors/2025/technovation_summit/1.avif',
-        '/images/honors/2025/technovation_summit/2.avif',
-        '/images/honors/2025/technovation_summit/3.avif',
+        '/images/honors/2025/technovation-summit/1.avif',
+        '/images/honors/2025/technovation-summit/2.avif',
+        '/images/honors/2025/technovation-summit/3.avif',
       ],
       webpImages: [
-        '/images/honors/2025/technovation_summit/1.avif',
-        '/images/honors/2025/technovation_summit/2.avif',
-        '/images/honors/2025/technovation_summit/3.avif',
+        '/images/honors/2025/technovation-summit/1.avif',
+        '/images/honors/2025/technovation-summit/2.avif',
+        '/images/honors/2025/technovation-summit/3.avif',
       ],
       organizer:
         'National Technovation Summit organized by START (DOST) — National Champion — ₱30,000',
@@ -487,7 +499,7 @@ export const KB: KnowledgeBase = {
     },
 {
       title: 'Gawad Pagkilala Taong 2024 — National Competition (3rd Place)',
-      images: ['/images/honors/2024/gawad_pagkilala/1.avif'],
+      images: ['/images/honors/2024/gawad-pagkilala/1.avif'],
       webpImages: [],
       organizer: 'Gawad Pagkilala Taong 2024',
       date: 'November 21, 2024',

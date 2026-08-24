@@ -13,13 +13,13 @@ const ALLOWED_MODELS = new Set([
 ]);
 
 const RATE_WINDOW_MS = Number(process.env.GEMINI_RATE_LIMIT_WINDOW_MS || 60_000);
-const RATE_MAX_REQUESTS = Number(process.env.GEMINI_RATE_LIMIT_MAX_REQUESTS || 12);
+const RATE_MAX_REQUESTS = Number(process.env.GEMINI_RATE_LIMIT_MAX_REQUESTS || 40);
 const MAX_PROMPT_CHARS = Number(process.env.GEMINI_MAX_PROMPT_CHARS || 14_000);
 const DEFAULT_MODEL = 'gemini-2.5-pro';
 const GENERATION_CONFIG = {
-  temperature: 0.35,
-  topP: 0.9,
-  maxOutputTokens: 800,
+  temperature: 0.85,
+  topP: 0.95,
+  maxOutputTokens: 8192,
 };
 
 function getAllowedOrigins() {

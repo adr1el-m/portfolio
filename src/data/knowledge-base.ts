@@ -180,7 +180,7 @@ export const KB: KnowledgeBase = {
       images: ['/images/projects/greenPulse/green-pulse-mock.jpg'],
       webpImages: [],
       description:
-        "Purpose: Make sustainability practical through carbon tracking, AI guidance, and visual progress.\nBuild: React and Vite app with an Eco Innovation Hub, Green Gauge calculator, EcoBot chat, Eco Budget, Scrap Chef, Verde Quest, Chart.js analytics, and Gemini-powered recommendations.\nOutcome: Turns everyday eco choices into measurable habits through a responsive, interactive experience.",
+        "Purpose: Give people one practical hub for measuring environmental impact and acting on it.\nBuild: React and Vite platform with Green Gauge sustainability analysis, EcoSort AI waste classification, GreenBudget shopping planning, ScrapChef ingredient-to-recipe generation, Verde Quest adaptive quizzes, EcoBot chat, and Chart.js impact tracking — all powered by Gemini.\nOutcome: Turns sustainability from abstract advice into guided daily actions across waste, spending, food, learning, and carbon awareness.",
       technologies:
         'React, Vite, Tailwind CSS, Chart.js, Google Generative AI',
       githubUrl: 'https://github.com/adr1el-m/green-pulse',

@@ -10,6 +10,14 @@ export class VisitorCounter {
 
     private async init(): Promise<void> {
         this.createCounterUI();
+
+        // In dev the Vite proxy forwards /api/* to a local server that usually
+        // isn't running, producing a noisy 502. Show a placeholder instead.
+        if (import.meta.env.DEV) {
+            this.updateDisplay(0);
+            return;
+        }
+
         const excluded = this.isExcluded();
         const counted = sessionStorage.getItem('portfolio-visit-counted') === 'true';
         const method = !excluded && !counted ? 'POST' : 'GET';

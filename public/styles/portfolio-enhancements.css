@@ -92,8 +92,15 @@
 }
 .release-sidebar .sidebar-changelog[open] summary > span::after { content: 'Hide updates'; }
 
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
   .sidebar-rail { width: min(520px, 100%); gap: 12px; margin-inline: auto; margin-bottom: 30px; }
+  .sidebar-rail .sidebar { margin-bottom: 0; padding-top: 28px !important; }
+  .sidebar-info { padding-top: 0; }
+  .sidebar .avatar-box { margin-top: 0; }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sidebar-rail { width: 700px; gap: 12px; margin-inline: auto; margin-bottom: 30px; }
   .sidebar-rail .sidebar { margin-bottom: 0; padding-top: 28px !important; }
   .sidebar-info { padding-top: 0; }
   .sidebar .avatar-box { margin-top: 0; }

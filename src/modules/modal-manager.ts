@@ -23,6 +23,7 @@ const ICONS = {
 export class ModalManager {
   private modalEl: HTMLElement | null = null;
   private imgEl: HTMLImageElement | null = null;
+  private achievementSourceAvifEl: HTMLSourceElement | null = null;
   private achievementSourceWebpEl: HTMLSourceElement | null = null;
   private achievementSourceJpegEl: HTMLSourceElement | null = null;
   private projectSourceWebpEl: HTMLSourceElement | null = null;
@@ -268,6 +269,7 @@ export class ModalManager {
     // Cache achievement modal elements
     this.modalEl = document.getElementById('achievementModal');
     this.imgEl = document.querySelector('.achievement-slide-image');
+    this.achievementSourceAvifEl = document.querySelector('.achievement-image-avif');
     this.achievementSourceWebpEl = document.querySelector('.achievement-image-webp');
     this.achievementSourceJpegEl = document.querySelector('.achievement-image-jpeg');
     this.titleEl = document.querySelector('.achievement-title-modal');
@@ -436,14 +438,17 @@ export class ModalManager {
     const originalImages = data.images || [];
     const optimizedImages = data.webpImages || [];
     
-    // Prefer explicitly provided optimized assets only; do not invent paths that may not exist.
-    const supportsWebp = document.documentElement.classList.contains('webp');
+    const supportsAvif = typeof document !== 'undefined' && document.documentElement.classList.contains('avif');
+    const supportsWebp = typeof document !== 'undefined' && document.documentElement.classList.contains('webp');
     
-    if (supportsWebp && optimizedImages.length > 0) {
+    if (supportsAvif && originalImages.length > 0) {
+      this.images = originalImages;
+      this.achievementWebpImages = optimizedImages;
+    } else if (supportsWebp && optimizedImages.length > 0) {
       this.images = optimizedImages;
       this.achievementWebpImages = optimizedImages;
     } else {
-      this.images = originalImages;
+      this.images = originalImages.length > 0 ? originalImages : optimizedImages;
       this.achievementWebpImages = [];
     }
     this.achievementJpegImages = originalImages;
@@ -605,6 +610,10 @@ export class ModalManager {
     } else {
       // Images present: show media and initialize first image
       if (mediaSection) mediaSection.style.display = '';
+      const prevBtn = document.querySelector('.achievement-slider-prev') as HTMLElement | null;
+      const nextBtn = document.querySelector('.achievement-slider-next') as HTMLElement | null;
+      if (prevBtn) prevBtn.style.display = this.images.length > 1 ? 'flex' : 'none';
+      if (nextBtn) nextBtn.style.display = this.images.length > 1 ? 'flex' : 'none';
       if (sliderControls) sliderControls.style.display = this.images.length > 1 ? 'flex' : 'none';
 
       // Reset image element state and force eager loading while modal is visible
@@ -619,6 +628,10 @@ export class ModalManager {
     }
     
     if (this.modalEl) {
+      this.modalEl.classList.remove('is-landscape', 'is-portrait');
+      if (this.imgEl && this.imgEl.naturalWidth && this.imgEl.naturalHeight) {
+        this.updateAchievementModalOrientation(this.imgEl);
+      }
       this.modalEl.classList.add('active');
       (this.modalEl as HTMLElement).focus();
       logger.log('Modal class list after adding active:', this.modalEl.classList);
@@ -669,11 +682,17 @@ export class ModalManager {
     setPortfolioContext('project', data.title);
     this.previousFocus = document.activeElement as HTMLElement | null;
     
-    // Use WebP if supported, fallback to regular images
-    const supportsWebp = document.documentElement.classList.contains('webp');
-    this.projectWebpImages = (data.webpImages || []).filter((p) => p.endsWith('.webp') || p.endsWith('.avif'));
+    const supportsAvif = typeof document !== 'undefined' && document.documentElement.classList.contains('avif');
+    const supportsWebp = typeof document !== 'undefined' && document.documentElement.classList.contains('webp');
+    this.projectWebpImages = (data.webpImages || []);
     this.projectJpegImages = (data.images || []);
-    this.images = supportsWebp && this.projectWebpImages.length > 0 ? this.projectWebpImages : this.projectJpegImages;
+    if (supportsAvif && this.projectJpegImages.length > 0) {
+      this.images = this.projectJpegImages;
+    } else if (supportsWebp && this.projectWebpImages.length > 0) {
+      this.images = this.projectWebpImages;
+    } else {
+      this.images = this.projectJpegImages.length > 0 ? this.projectJpegImages : this.projectWebpImages;
+    }
     this.currentIndex = 0;
 
     // Get project modal elements
@@ -1199,10 +1218,20 @@ export class ModalManager {
     }
     
     // Update <picture> sources before swapping image
+    if (this.achievementSourceAvifEl) {
+      const avifSrc = src.endsWith('.avif') ? src : '';
+      if (avifSrc) {
+        this.achievementSourceAvifEl.srcset = avifSrc;
+        this.achievementSourceAvifEl.sizes = '(max-width: 768px) 95vw, 1100px';
+      } else {
+        this.achievementSourceAvifEl.removeAttribute('srcset');
+        this.achievementSourceAvifEl.removeAttribute('sizes');
+      }
+    }
     if (this.achievementSourceWebpEl) {
       if (webpSrc) {
         this.achievementSourceWebpEl.srcset = webpSrc;
-        this.achievementSourceWebpEl.sizes = '(max-width: 768px) 90vw, 50vw';
+        this.achievementSourceWebpEl.sizes = '(max-width: 768px) 95vw, 1100px';
       } else {
         this.achievementSourceWebpEl.removeAttribute('srcset');
         this.achievementSourceWebpEl.removeAttribute('sizes');
@@ -1211,7 +1240,7 @@ export class ModalManager {
     if (this.achievementSourceJpegEl) {
       if (jpegSrc) {
         this.achievementSourceJpegEl.srcset = jpegSrc;
-        this.achievementSourceJpegEl.sizes = '(max-width: 768px) 90vw, 50vw';
+        this.achievementSourceJpegEl.sizes = '(max-width: 768px) 95vw, 1100px';
       } else {
         this.achievementSourceJpegEl.removeAttribute('srcset');
         this.achievementSourceJpegEl.removeAttribute('sizes');
@@ -1232,6 +1261,7 @@ export class ModalManager {
         img.classList.remove('image-error');
         img.style.display = 'block';
         slider?.querySelector('.image-error-placeholder')?.remove();
+        this.updateAchievementModalOrientation(img);
         // Apply adaptive fit on mobile to avoid letterboxing/cropping
         this.applyAchievementImageFit(img, slider as HTMLElement | null);
         requestAnimationFrame(() => (img.style.opacity = '1'));
@@ -1247,6 +1277,7 @@ export class ModalManager {
             img.classList.remove('image-error');
             img.style.display = 'block';
             slider?.querySelector('.image-error-placeholder')?.remove();
+            this.updateAchievementModalOrientation(img);
             this.applyAchievementImageFit(img, slider as HTMLElement | null);
             requestAnimationFrame(() => (img.style.opacity = '1'));
           };
@@ -1317,5 +1348,21 @@ export class ModalManager {
     // Always prioritize showing the full image on mobile
     img.classList.remove('fit-cover', 'fit-contain');
     img.classList.add('fit-contain');
+  }
+
+  /**
+   * Dynamically apply .is-landscape (16:9 stacked layout) or .is-portrait (2-column side-by-side layout)
+   * based on the actual aspect ratio of the active achievement image.
+   */
+  private updateAchievementModalOrientation(img: HTMLImageElement): void {
+    if (!this.modalEl || !img.naturalWidth || !img.naturalHeight) return;
+    const isLandscape = (img.naturalWidth / img.naturalHeight) >= 1.35;
+    if (isLandscape) {
+      this.modalEl.classList.add('is-landscape');
+      this.modalEl.classList.remove('is-portrait');
+    } else {
+      this.modalEl.classList.add('is-portrait');
+      this.modalEl.classList.remove('is-landscape');
+    }
   }
 }

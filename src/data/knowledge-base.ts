@@ -177,7 +177,7 @@ export const KB: KnowledgeBase = {
     {
       title: 'Green Pulse',
       category: 'Web App',
-      images: ['/images/projects/green-pulse/green-pulse-mock.jpg'],
+      images: ['/images/projects/green-pulse/green-pulse-mock.avif'],
       webpImages: [],
       description:
         "Purpose: Give people one practical hub for measuring environmental impact and acting on it.\nBuild: React and Vite platform with Green Gauge sustainability analysis, EcoSort AI waste classification, GreenBudget shopping planning, ScrapChef ingredient-to-recipe generation, Verde Quest adaptive quizzes, EcoBot chat, and Chart.js impact tracking — all powered by Gemini.\nOutcome: Turns sustainability from abstract advice into guided daily actions across waste, spending, food, learning, and carbon awareness.",
@@ -233,10 +233,10 @@ export const KB: KnowledgeBase = {
       title: 'Loan Management System (PHP/MySQL)',
       category: 'Web App',
       images: [
-        '/images/projects/loan/1.png',
-        '/images/projects/loan/2.png',
-        '/images/projects/loan/3.png',
-        '/images/projects/loan/4.png',
+        '/images/projects/loan/1.avif',
+        '/images/projects/loan/2.avif',
+        '/images/projects/loan/3.avif',
+        '/images/projects/loan/4.avif',
       ],
       webpImages: [
         '/images/projects/loan/1-400.webp',
@@ -253,12 +253,12 @@ export const KB: KnowledgeBase = {
       title: 'Online Document Request System (ODRS)',
       category: 'Web App',
       images: [
-        '/images/projects/odrs/1.jpeg',
-        '/images/projects/odrs/2.jpeg',
-        '/images/projects/odrs/3.jpeg',
-        '/images/projects/odrs/4.jpeg',
-        '/images/projects/odrs/5.jpeg',
-        '/images/projects/odrs/6.jpeg',
+        '/images/projects/odrs/1.avif',
+        '/images/projects/odrs/2.avif',
+        '/images/projects/odrs/3.avif',
+        '/images/projects/odrs/4.avif',
+        '/images/projects/odrs/5.avif',
+        '/images/projects/odrs/6.avif',
       ],
       webpImages: [
         '/images/projects/odrs/1-400.webp',
@@ -277,10 +277,10 @@ export const KB: KnowledgeBase = {
       title: 'Four Fundamental Spaces Finder',
       category: 'Linear Algebra Tool',
       images: [
-        '/images/projects/four-fundamental-spaces-finder/landing-page.png',
-        '/images/projects/four-fundamental-spaces-finder/computation-mac.jpeg',
-        '/images/projects/four-fundamental-spaces-finder/geometric-visualization-mac.jpeg',
-        '/images/projects/four-fundamental-spaces-finder/geometric-visualization.png',
+        '/images/projects/four-fundamental-spaces-finder/landing-page.avif',
+        '/images/projects/four-fundamental-spaces-finder/computation-mac.avif',
+        '/images/projects/four-fundamental-spaces-finder/geometric-visualization-mac.avif',
+        '/images/projects/four-fundamental-spaces-finder/geometric-visualization.avif',
       ],
       webpImages: [],
       description:
@@ -293,7 +293,7 @@ export const KB: KnowledgeBase = {
   achievements: [
     {
       title: 'SAAN SA PINAS? A Satellite Imagery Puzzler',
-      images: ['/images/honors/2026/geospectrum/geospectrum.jpg'],
+      images: ['/images/honors/2026/geospectrum/geospectrum.avif'],
       webpImages: [],
       organizer: 'Geospectrum Marketing Services',
       date: 'August 10, 2026',
@@ -302,6 +302,16 @@ export const KB: KnowledgeBase = {
         "Recognition: Won Round 1 of the \"SAAN SA PINAS? A Satellite Imagery Puzzler\" by Geospectrum Marketing Services, held in celebration of Philippine Space Week 2026.\nContest: A daily satellite imagery challenge running August 10–14, 2026, where participants identify Philippine locations from Planet Labs satellite images posted on Geospectrum's social media. Round 1 featured identifying the Mactan-Cebu International Airport (MCIA) in Lapu-Lapu City.\nScope: Tested geographic literacy, spatial reasoning, and familiarity with Philippine landscapes through satellite imagery analysis under the theme \"Navigating Tomorrow.\"\nContribution: Correctly identified the satellite imagery location to win the round, demonstrating strong geospatial awareness and Earth observation interpretation skills.",
       facebookUrl: 'https://www.facebook.com/share/p/14nHk4ijQod/',
       blogUrl: 'https://www.canva.com/design/DAHRflIl6j0/VLza7IMV7tg1iz6mwc01cw/view?utm_content=DAHRflIl6j0&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h732ea38431',
+    },
+    {
+      title: 'DoGoodie $5 Impact Hack',
+      images: ['/images/honors/2026/dogoodie/dogoodie.avif'],
+      webpImages: [],
+      organizer: 'DoGoodie',
+      date: 'August 12, 2026',
+      location: 'Online',
+      description:
+        'Recognition: Selected as one of 200 Funded Builders in the DoGoodie $5 Impact Hack, a 7-day tech-enabled experiment for positive impact.\nScope: A global builder challenge by DoGoodie where approved participants receive a $5 experiment fund to design and execute a measurable, tech-enabled project that reduces suffering and creates positive impact.\nParticipation: Applied and was selected to receive funding support, then designed and carried out a 7-day impact experiment using technology, creativity, and practical action.\nContribution: Demonstrated the ability to turn a small resource into a documented, real-world impact project under structured challenge constraints.',
     },
     {
       title: 'SIKAPTala 2026 Quiz Bee',
@@ -320,7 +330,7 @@ export const KB: KnowledgeBase = {
 {
       title: 'CodeKada 2026',
       images: ['/images/honors/2026/codekada/codekada-certificate.avif'],
-      webpImages: ['/images/honors/2026/codekada/codekada-certificate.avif'],
+      webpImages: [],
       organizer: 'CodeKada',
       date: 'May 3–9, 2026',
       location: 'Online (Discord)',
@@ -424,7 +434,7 @@ export const KB: KnowledgeBase = {
 {
       title: 'Codebility Portfolio Contest 2025 — 2nd Place',
       images: ['/images/honors/2025/codebility/codebility.avif'],
-      webpImages: ['/images/honors/2025/codebility/codebility.avif'],
+      webpImages: [],
       organizer: 'Codebility — Portfolio Contest 2025',
       date: 'October 2025',
       location: 'Online',
@@ -441,11 +451,7 @@ export const KB: KnowledgeBase = {
         '/images/honors/2025/technovation-summit/2.avif',
         '/images/honors/2025/technovation-summit/3.avif',
       ],
-      webpImages: [
-        '/images/honors/2025/technovation-summit/1.avif',
-        '/images/honors/2025/technovation-summit/2.avif',
-        '/images/honors/2025/technovation-summit/3.avif',
-      ],
+      webpImages: [],
       organizer:
         'National Technovation Summit organized by START (DOST) — National Champion — ₱30,000',
       date: 'August 31, 2025',

@@ -250,7 +250,7 @@ export class Search {
         this.highlightElement(result.element);
         break;
       case 'skill':
-        navigateToPage('about', { scrollSelector: '.tech-stack-section', track: false });
+        navigateToPage('stack', { track: false });
         break;
       case 'contact':
         if (result.id === 'contact-github' && result.url) openExternalUrl(result.url, 'GitHub profile');

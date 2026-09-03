@@ -1,5 +1,8 @@
 {
   "outputDirectory": "dist",
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
   "redirects": [
     {
       "source": "/resume",
@@ -10,6 +13,10 @@
   "rewrites": [
     {
       "source": "/about",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/stack",
       "destination": "/index.html"
     },
     {

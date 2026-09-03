@@ -19,7 +19,13 @@ const scenarios = [
     name: 'desktop-about',
     path: '/about?audit=1',
     viewport: { width: 1440, height: 1100 },
-    selectors: ['article[data-page="about"].active', '[data-github-heatmap]', '.tech-stack-section'],
+    selectors: ['article[data-page="about"].active', '[data-github-heatmap]', 'section.achievements'],
+  },
+  {
+    name: 'desktop-stack',
+    path: '/stack?audit=1',
+    viewport: { width: 1440, height: 1100 },
+    selectors: ['article[data-page="stack"].active', '.tech-stack-section', '#stack-grid'],
   },
   {
     name: 'desktop-search',

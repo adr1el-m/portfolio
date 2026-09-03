@@ -467,7 +467,7 @@ export class AnalyticsDashboard {
       .analytics-toggle {
         position: fixed;
         left: calc(22px + env(safe-area-inset-left));
-        bottom: calc(22px + env(safe-area-inset-bottom));
+        bottom: calc(78px + env(safe-area-inset-bottom));
         width: 46px;
         height: 46px;
         display: grid;

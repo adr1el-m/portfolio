@@ -23,6 +23,7 @@ const ICONS = {
 export class ModalManager {
   private modalEl: HTMLElement | null = null;
   private imgEl: HTMLImageElement | null = null;
+  private achievementSourceAvifEl: HTMLSourceElement | null = null;
   private achievementSourceWebpEl: HTMLSourceElement | null = null;
   private achievementSourceJpegEl: HTMLSourceElement | null = null;
   private projectSourceWebpEl: HTMLSourceElement | null = null;
@@ -122,8 +123,6 @@ export class ModalManager {
     const evidence = document.querySelector<HTMLElement>('.achievement-evidence');
     if (!evidence) return;
 
-    const summary = evidence.querySelector<HTMLElement>('.achievement-evidence-summary');
-    const list = evidence.querySelector<HTMLUListElement>('.achievement-evidence-list');
     const copyButton = evidence.querySelector<HTMLButtonElement>('.achievement-copy-link');
     const status = evidence.querySelector<HTMLElement>('.achievement-copy-status');
     const card = Array.from(document.querySelectorAll<HTMLElement>('.achievement-card')).find((item) => {
@@ -132,29 +131,13 @@ export class ModalManager {
     });
     const directPath = card?.dataset.honorPath || window.location.pathname;
     const directUrl = new URL(directPath, window.location.origin).href;
-    const proofCount = new Set([...(data.images || []), ...(data.webpImages || [])]).size;
-    const facts = [
-      data.organizer ? `Organizer: ${data.organizer}` : '',
-      data.date ? `Date: ${data.date}` : '',
-      data.location ? `Location: ${data.location}` : '',
-      proofCount ? `${proofCount} portfolio proof ${proofCount === 1 ? 'asset' : 'assets'} in the gallery` : 'Portfolio record with event details',
-    ].filter(Boolean);
 
-    if (summary) {
-      summary.textContent = 'This detail page is grounded in the portfolio record and its attached proof media.';
-    }
-    if (list) {
-      list.replaceChildren(...facts.map((fact) => {
-        const item = document.createElement('li');
-        item.textContent = fact;
-        return item;
-      }));
-    }
     if (status) status.textContent = '';
     if (copyButton) {
       copyButton.onclick = () => {
         const confirm = () => {
-          if (status) status.textContent = 'Evidence link copied.';
+          if (status) status.textContent = 'Copied!';
+          setTimeout(() => { if (status) status.textContent = ''; }, 2000);
         };
         if (navigator.clipboard?.writeText) {
           void navigator.clipboard.writeText(directUrl).then(confirm).catch(() => this.copyEvidenceLinkFallback(directUrl, confirm));
@@ -268,6 +251,7 @@ export class ModalManager {
     // Cache achievement modal elements
     this.modalEl = document.getElementById('achievementModal');
     this.imgEl = document.querySelector('.achievement-slide-image');
+    this.achievementSourceAvifEl = document.querySelector('.achievement-image-avif');
     this.achievementSourceWebpEl = document.querySelector('.achievement-image-webp');
     this.achievementSourceJpegEl = document.querySelector('.achievement-image-jpeg');
     this.titleEl = document.querySelector('.achievement-title-modal');
@@ -436,14 +420,17 @@ export class ModalManager {
     const originalImages = data.images || [];
     const optimizedImages = data.webpImages || [];
     
-    // Prefer explicitly provided optimized assets only; do not invent paths that may not exist.
-    const supportsWebp = document.documentElement.classList.contains('webp');
+    const supportsAvif = typeof document !== 'undefined' && document.documentElement.classList.contains('avif');
+    const supportsWebp = typeof document !== 'undefined' && document.documentElement.classList.contains('webp');
     
-    if (supportsWebp && optimizedImages.length > 0) {
+    if (supportsAvif && originalImages.length > 0) {
+      this.images = originalImages;
+      this.achievementWebpImages = optimizedImages;
+    } else if (supportsWebp && optimizedImages.length > 0) {
       this.images = optimizedImages;
       this.achievementWebpImages = optimizedImages;
     } else {
-      this.images = originalImages;
+      this.images = originalImages.length > 0 ? originalImages : optimizedImages;
       this.achievementWebpImages = [];
     }
     this.achievementJpegImages = originalImages;
@@ -601,14 +588,24 @@ export class ModalManager {
         this.imgEl.alt = '';
         this.imgEl.classList.remove('image-error');
         this.imgEl.removeAttribute('loading');
+        this.imgEl.removeAttribute('width');
+        this.imgEl.removeAttribute('height');
+        this.imgEl.style.removeProperty('aspect-ratio');
       }
     } else {
       // Images present: show media and initialize first image
       if (mediaSection) mediaSection.style.display = '';
+      const prevBtn = document.querySelector('.achievement-slider-prev') as HTMLElement | null;
+      const nextBtn = document.querySelector('.achievement-slider-next') as HTMLElement | null;
+      if (prevBtn) prevBtn.style.display = this.images.length > 1 ? 'flex' : 'none';
+      if (nextBtn) nextBtn.style.display = this.images.length > 1 ? 'flex' : 'none';
       if (sliderControls) sliderControls.style.display = this.images.length > 1 ? 'flex' : 'none';
 
       // Reset image element state and force eager loading while modal is visible
       if (this.imgEl) {
+        this.imgEl.style.removeProperty('aspect-ratio');
+        this.imgEl.removeAttribute('width');
+        this.imgEl.removeAttribute('height');
         this.imgEl.style.display = 'block';
         this.imgEl.classList.remove('image-error');
         this.imgEl.setAttribute('loading', 'lazy');
@@ -619,6 +616,10 @@ export class ModalManager {
     }
     
     if (this.modalEl) {
+      this.modalEl.classList.remove('is-landscape', 'is-portrait');
+      if (this.imgEl && this.imgEl.naturalWidth && this.imgEl.naturalHeight) {
+        this.updateAchievementModalOrientation(this.imgEl);
+      }
       this.modalEl.classList.add('active');
       (this.modalEl as HTMLElement).focus();
       logger.log('Modal class list after adding active:', this.modalEl.classList);
@@ -669,11 +670,17 @@ export class ModalManager {
     setPortfolioContext('project', data.title);
     this.previousFocus = document.activeElement as HTMLElement | null;
     
-    // Use WebP if supported, fallback to regular images
-    const supportsWebp = document.documentElement.classList.contains('webp');
-    this.projectWebpImages = (data.webpImages || []).filter((p) => p.endsWith('.webp') || p.endsWith('.avif'));
+    const supportsAvif = typeof document !== 'undefined' && document.documentElement.classList.contains('avif');
+    const supportsWebp = typeof document !== 'undefined' && document.documentElement.classList.contains('webp');
+    this.projectWebpImages = (data.webpImages || []);
     this.projectJpegImages = (data.images || []);
-    this.images = supportsWebp && this.projectWebpImages.length > 0 ? this.projectWebpImages : this.projectJpegImages;
+    if (supportsAvif && this.projectJpegImages.length > 0) {
+      this.images = this.projectJpegImages;
+    } else if (supportsWebp && this.projectWebpImages.length > 0) {
+      this.images = this.projectWebpImages;
+    } else {
+      this.images = this.projectJpegImages.length > 0 ? this.projectJpegImages : this.projectWebpImages;
+    }
     this.currentIndex = 0;
 
     // Get project modal elements
@@ -1166,6 +1173,11 @@ export class ModalManager {
       this.modalEl.setAttribute('aria-hidden', 'true');
       this.modalEl.setAttribute('inert', '');
     }
+    if (this.imgEl) {
+      this.imgEl.style.removeProperty('aspect-ratio');
+      this.imgEl.removeAttribute('width');
+      this.imgEl.removeAttribute('height');
+    }
     this.previousFocus = null;
     document.body.style.overflow = ''; // Restore scrolling
   }
@@ -1199,10 +1211,20 @@ export class ModalManager {
     }
     
     // Update <picture> sources before swapping image
+    if (this.achievementSourceAvifEl) {
+      const avifSrc = src.endsWith('.avif') ? src : '';
+      if (avifSrc) {
+        this.achievementSourceAvifEl.srcset = avifSrc;
+        this.achievementSourceAvifEl.sizes = '(max-width: 768px) 95vw, 1100px';
+      } else {
+        this.achievementSourceAvifEl.removeAttribute('srcset');
+        this.achievementSourceAvifEl.removeAttribute('sizes');
+      }
+    }
     if (this.achievementSourceWebpEl) {
       if (webpSrc) {
         this.achievementSourceWebpEl.srcset = webpSrc;
-        this.achievementSourceWebpEl.sizes = '(max-width: 768px) 90vw, 50vw';
+        this.achievementSourceWebpEl.sizes = '(max-width: 768px) 95vw, 1100px';
       } else {
         this.achievementSourceWebpEl.removeAttribute('srcset');
         this.achievementSourceWebpEl.removeAttribute('sizes');
@@ -1211,7 +1233,7 @@ export class ModalManager {
     if (this.achievementSourceJpegEl) {
       if (jpegSrc) {
         this.achievementSourceJpegEl.srcset = jpegSrc;
-        this.achievementSourceJpegEl.sizes = '(max-width: 768px) 90vw, 50vw';
+        this.achievementSourceJpegEl.sizes = '(max-width: 768px) 95vw, 1100px';
       } else {
         this.achievementSourceJpegEl.removeAttribute('srcset');
         this.achievementSourceJpegEl.removeAttribute('sizes');
@@ -1221,21 +1243,34 @@ export class ModalManager {
     // Fade out, swap, fade in
     img.style.opacity = '0';
     img.style.display = 'block';
+    img.style.removeProperty('aspect-ratio');
+    img.removeAttribute('width');
+    img.removeAttribute('height');
     setTimeout(() => {
       // Set fallback <img> for browsers without <picture> support
       // Keep <img> on a reliable JPEG source; optimized variants are handled by <picture><source>
       img.src = jpegSrc || src;
       img.srcset = jpegSrc || src;
       img.sizes = '(max-width: 768px) 90vw, 50vw';
-      img.onload = () => {
+      const handleLoaded = () => {
         this.hideImageLoader(slider);
         img.classList.remove('image-error');
         img.style.display = 'block';
         slider?.querySelector('.image-error-placeholder')?.remove();
+        if (img.naturalWidth && img.naturalHeight) {
+          img.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`;
+          img.setAttribute('width', String(img.naturalWidth));
+          img.setAttribute('height', String(img.naturalHeight));
+        }
+        this.updateAchievementModalOrientation(img);
         // Apply adaptive fit on mobile to avoid letterboxing/cropping
         this.applyAchievementImageFit(img, slider as HTMLElement | null);
         requestAnimationFrame(() => (img.style.opacity = '1'));
       };
+      img.onload = handleLoaded;
+      if (img.complete && img.naturalWidth) {
+        handleLoaded();
+      }
       img.onerror = () => {
         // Fallback to original JPEG if optimized format fails
         const fallbackSrc = jpegSrc;
@@ -1247,6 +1282,12 @@ export class ModalManager {
             img.classList.remove('image-error');
             img.style.display = 'block';
             slider?.querySelector('.image-error-placeholder')?.remove();
+            if (img.naturalWidth && img.naturalHeight) {
+              img.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`;
+              img.setAttribute('width', String(img.naturalWidth));
+              img.setAttribute('height', String(img.naturalHeight));
+            }
+            this.updateAchievementModalOrientation(img);
             this.applyAchievementImageFit(img, slider as HTMLElement | null);
             requestAnimationFrame(() => (img.style.opacity = '1'));
           };
@@ -1317,5 +1358,21 @@ export class ModalManager {
     // Always prioritize showing the full image on mobile
     img.classList.remove('fit-cover', 'fit-contain');
     img.classList.add('fit-contain');
+  }
+
+  /**
+   * Dynamically apply .is-landscape (16:9 stacked layout) or .is-portrait (2-column side-by-side layout)
+   * based on the actual aspect ratio of the active achievement image.
+   */
+  private updateAchievementModalOrientation(img: HTMLImageElement): void {
+    if (!this.modalEl || !img.naturalWidth || !img.naturalHeight) return;
+    const isLandscape = (img.naturalWidth / img.naturalHeight) >= 1.35;
+    if (isLandscape) {
+      this.modalEl.classList.add('is-landscape');
+      this.modalEl.classList.remove('is-portrait');
+    } else {
+      this.modalEl.classList.add('is-portrait');
+      this.modalEl.classList.remove('is-landscape');
+    }
   }
 }

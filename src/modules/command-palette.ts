@@ -60,11 +60,20 @@ export class CommandPalette {
       {
         id: 'page-about',
         title: 'Open About',
-        subtitle: 'Profile, services, tech stack, and honors',
+        subtitle: 'Profile, services, and honors',
         group: 'Navigate',
         icon: 'person-outline',
-        keywords: 'about profile services tech honors achievements',
+        keywords: 'about profile services honors achievements',
         action: () => navigateToPage('about'),
+      },
+      {
+        id: 'page-stack',
+        title: 'Open Tech Stack',
+        subtitle: 'Interactive technologies, frameworks, and developer tools',
+        group: 'Navigate',
+        icon: 'layers-outline',
+        keywords: 'tech stack tools skills languages frameworks libraries',
+        action: () => navigateToPage('stack'),
       },
       {
         id: 'page-background',

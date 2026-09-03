@@ -92,8 +92,15 @@
 }
 .release-sidebar .sidebar-changelog[open] summary > span::after { content: 'Hide updates'; }
 
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
   .sidebar-rail { width: min(520px, 100%); gap: 12px; margin-inline: auto; margin-bottom: 30px; }
+  .sidebar-rail .sidebar { margin-bottom: 0; padding-top: 28px !important; }
+  .sidebar-info { padding-top: 0; }
+  .sidebar .avatar-box { margin-top: 0; }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sidebar-rail { width: 700px; gap: 12px; margin-inline: auto; margin-bottom: 30px; }
   .sidebar-rail .sidebar { margin-bottom: 0; padding-top: 28px !important; }
   .sidebar-info { padding-top: 0; }
   .sidebar .avatar-box { margin-top: 0; }
@@ -110,7 +117,7 @@
 @media (max-width: 580px) {
   .navbar-list {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     width: 100%;
     gap: 0;
     padding: 0 4px;
@@ -807,88 +814,43 @@
 
 /* Record-level evidence shown on each shareable honor route. */
 .achievement-evidence {
-  padding: 15px;
-  border: 1px solid rgba(255, 219, 112, 0.18);
-  border-radius: 11px;
-  background: rgba(255, 219, 112, 0.045);
-}
-
-.achievement-evidence-heading {
-  display: flex;
-  align-items: baseline;
-  gap: 9px;
-}
-
-.achievement-evidence-heading h4 {
-  margin: 0;
-  color: var(--white-2);
-  font-size: 0.95rem;
-}
-
-.achievement-evidence-kicker {
-  margin: 0;
-  font-size: 0.62rem;
-}
-
-.achievement-evidence-summary {
-  margin: 9px 0;
-  color: var(--light-gray);
-  font-size: 0.8rem;
-  line-height: 1.45;
-}
-
-.achievement-evidence-list {
-  display: grid;
-  gap: 5px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  color: var(--light-gray-70);
-  font-size: 0.76rem;
-  line-height: 1.4;
-}
-
-.achievement-evidence-list li::before {
-  content: '•';
-  margin-right: 7px;
-  color: var(--orange-yellow-crayola);
-}
-
-.achievement-evidence-actions {
   display: flex;
   align-items: center;
+  gap: 10px;
   flex-wrap: wrap;
-  gap: 9px;
-  margin-top: 13px;
 }
 
 .achievement-copy-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 10px;
-  color: var(--orange-yellow-crayola);
-  border: 1px solid rgba(255, 219, 112, 0.32);
+  padding: 7px 12px;
+  color: var(--light-gray-70);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 7px;
-  background: rgba(255, 219, 112, 0.08);
+  background: transparent;
   cursor: pointer;
   font: inherit;
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: color 180ms ease, border-color 180ms ease, background 180ms ease;
 }
 
 .achievement-copy-link:hover,
 .achievement-copy-link:focus-visible {
-  border-color: var(--orange-yellow-crayola);
-  background: rgba(255, 219, 112, 0.15);
+  color: var(--orange-yellow-crayola);
+  border-color: rgba(255, 219, 112, 0.4);
+  background: rgba(255, 219, 112, 0.07);
   outline: none;
 }
 
 .achievement-copy-status {
-  min-height: 1.2em;
   color: #8fe3ae;
-  font-size: 0.74rem;
+  font-size: 0.76rem;
+  min-height: 1em;
+  transition: opacity 200ms ease;
 }
+
 
 .command-palette-trigger {
   position: fixed;
@@ -1689,7 +1651,7 @@
 
   .navbar-list {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 0;
     width: 100%;
   }

@@ -1,4 +1,4 @@
-export type PortfolioPage = 'about' | 'background' | 'projects' | 'gear' | 'destinations' | 'contact';
+export type PortfolioPage = 'about' | 'stack' | 'background' | 'projects' | 'gear' | 'destinations' | 'contact';
 export type TimelineFilter = 'all' | 'education' | 'experience' | 'scholarship';
 
 function getNavLabel(page: PortfolioPage): string {

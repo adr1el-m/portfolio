@@ -463,10 +463,6 @@ class PortfolioApp {
             import('./modules/github-heatmap').then(({ GitHubHeatmap }) => new GitHubHeatmap().init());
           }, '0px');
 
-          runWhenNear('.tech-stack-section', () => {
-            import('./modules/tech-stack').then(({ TechStack }) => new TechStack());
-          });
-
           runWhenNear('section.achievements', () => {
             import('./modules/awards-accordion').then(({ AwardsAccordion }) => new AwardsAccordion());
             import('./modules/honors-gallery').then(({ HonorsGallery }) => new HonorsGallery());
@@ -506,6 +502,12 @@ class PortfolioApp {
               });
             }
           }, 2200);
+        }
+
+        if (page === 'stack') {
+          defer(() => {
+            import('./modules/tech-stack').then(({ TechStack }) => new TechStack());
+          });
         }
 
         if (page === 'background') {

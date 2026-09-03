@@ -217,8 +217,12 @@ export class PerformanceMonitor {
 
       logger.info('📊 Resource Stats:', resourceStats);
 
-      // Warn if too many resources
-      if (resourceStats.scripts > 10) {
+      // Warn if too many resources.
+      // In dev mode Vite serves every dynamic import() as a separate script,
+      // so the count is naturally higher. Use a relaxed threshold to avoid
+      // false-positive noise during development.
+      const scriptThreshold = import.meta.env.DEV ? 30 : 10;
+      if (resourceStats.scripts > scriptThreshold) {
         logger.warn(`⚠️ High script count: ${resourceStats.scripts} (optimize bundle)`);
       }
       if (resourceStats.images > 20) {

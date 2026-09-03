@@ -321,6 +321,9 @@ export class NavigationManager {
     if (path === '' || path === '/') return 'about';
     switch (path) {
       case '/about': return 'about';
+      case '/stack':
+      case '/skills':
+      case '/tech': return 'stack';
       case '/background': return 'background';
       case '/projects': return 'projects';
       case '/gear': return 'gear';
@@ -336,6 +339,9 @@ export class NavigationManager {
   private pathFromKey(key: string): string {
     switch ((key || '').trim().toLowerCase()) {
       case 'about': return '/about';
+      case 'stack':
+      case 'skills':
+      case 'tech': return '/stack';
       case 'background': return '/background';
       case 'projects': return '/projects';
       case 'gear': return '/gear';

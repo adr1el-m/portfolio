@@ -144,6 +144,11 @@ export class LoadingManager {
         this.removeImageSkeleton(img);
         img.classList.add('image-loaded');
 
+        // Do not stamp intrinsic attributes or aspect ratio on modal placeholders
+        if (img.closest('.achievement-modal, .project-modal')) {
+          return;
+        }
+
         // After image loads, set width/height if missing to reduce CLS
         if (!img.hasAttribute('width') && img.naturalWidth > 0) {
           img.setAttribute('width', String(img.naturalWidth));

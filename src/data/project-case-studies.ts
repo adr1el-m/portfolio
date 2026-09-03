@@ -237,32 +237,32 @@ export function renderProjectDescription(projectDescription: HTMLElement, data: 
         </div>`;
       } else if (data.title.trim() === 'green-pulse' || data.title.includes('GreenPulse') || data.title.includes('Green Pulse')) {
         projectDescription.classList.add('rich');
-        projectDescription.innerHTML = `<div class="desc-section"><p>GreenPulse is a responsive sustainability hub that turns everyday eco choices into measurable habits. It combines carbon tracking, visual progress analytics, and AI guidance in one practical experience.</p></div>
+        projectDescription.innerHTML = `<div class="desc-section"><p>GreenPulse is a responsive sustainability hub that turns environmental intent into guided action. Its connected modules cover impact measurement, waste sorting, eco shopping, food-waste reduction, and sustainability learning.</p></div>
         <hr class="desc-divider" />
         <div class="desc-section"><h4>Features</h4>
           <div class="feature-grid">
             <div class="feature-column">
               <h5>Track & Analyze</h5>
               <ul>
-                <li>Green Gauge impact calculator</li>
-                <li>Monthly carbon and progress analytics</li>
-                <li>Data visualization with Chart.js</li>
+                <li><strong>Green Gauge:</strong> Analyzes transport, energy, water, diet, and waste inputs</li>
+                <li><strong>Chart.js:</strong> Visualizes impact and sustainability progress</li>
+                <li><strong>EcoBot:</strong> Provides instant guidance and daily eco tips</li>
               </ul>
             </div>
             <div class="feature-column">
               <h5>AI Assistance</h5>
               <ul>
-                <li>EcoBot chat for instant support</li>
-                <li>Personalized AI-generated eco-tips</li>
-                <li>Gemini-powered recommendations</li>
+                <li><strong>EcoSort AI:</strong> Classifies uploaded waste images</li>
+                <li><strong>ScrapChef:</strong> Creates recipes from available ingredients</li>
+                <li><strong>Gemini:</strong> Powers recommendations, chat, and adaptive content</li>
               </ul>
             </div>
             <div class="feature-column">
               <h5>User Experience</h5>
               <ul>
-                <li>Eco Budget for savings and goals</li>
-                <li>Scrap Chef for waste-reducing recipes</li>
-                <li>Verde Quest for sustainability learning</li>
+                <li><strong>GreenBudget:</strong> Plans eco-friendly purchases by budget and preferences</li>
+                <li><strong>Verde Quest:</strong> Generates sustainability quizzes with instant feedback</li>
+                <li><strong>Responsive Hub:</strong> Connects tools through a clean mobile-first experience</li>
               </ul>
             </div>
           </div>
@@ -291,7 +291,7 @@ export function renderProjectDescription(projectDescription: HTMLElement, data: 
           </div>
         </div>
         <hr class="desc-divider" />
-        <div class="desc-section"><h4>Usage</h4><ul><li><strong>Sustainability Calculator:</strong> Fill in the form with your daily activities to calculate your carbon footprint.</li><li><strong>Eco Tips:</strong> Click on the "Get Eco Tip" button to receive a personalized tip.</li><li><strong>Chatbot:</strong> Use the chat feature to ask questions and get instant responses.</li></ul></div>`;
+        <div class="desc-section"><h4>Usage</h4><ul><li><strong>Green Gauge:</strong> Enter daily activities to receive a personalized impact analysis.</li><li><strong>EcoSort AI:</strong> Upload a waste photo to identify the correct disposal approach.</li><li><strong>ScrapChef:</strong> Add ingredients and preferences to generate practical recipes.</li><li><strong>GreenBudget:</strong> Describe your budget and lifestyle to plan sustainable purchases.</li><li><strong>Verde Quest:</strong> Take generated quizzes to strengthen environmental knowledge.</li></ul></div>`;
       } else if (data.title.trim() === 'Kita-Kita (Agentic)' || data.title.includes('Agentic')) {
         projectDescription.classList.add('rich');
         projectDescription.innerHTML = `<div class="desc-section"><p>Kita-kita is a sophisticated AI-powered financial co-pilot designed to bridge the gap in personalized financial guidance for Filipinos. By combining advanced AI agents with a unified financial hub, it empowers users to manage debt, optimize cash flow, and build long-term wealth through data-driven insights and automated planning.</p></div>

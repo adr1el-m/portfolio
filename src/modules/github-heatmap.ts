@@ -167,7 +167,13 @@ export class GitHubHeatmap {
 
   private async fetchContributions(): Promise<ContributionResponse> {
     const errors: string[] = [];
-    for (const endpoint of [GITHUB_ENDPOINT, GITHUB_FALLBACK_ENDPOINT]) {
+    // In dev the Vite proxy forwards /api/* to a local server that usually
+    // isn't running, which produces a noisy 502 in the console. Skip the API
+    // endpoint during development and go straight to the static fallback.
+    const endpoints = import.meta.env.DEV
+      ? [GITHUB_FALLBACK_ENDPOINT]
+      : [GITHUB_ENDPOINT, GITHUB_FALLBACK_ENDPOINT];
+    for (const endpoint of endpoints) {
       try {
         const response = await fetch(endpoint, {
           headers: { Accept: 'application/json' },

@@ -27,12 +27,15 @@ export function navigateToPage(page: PortfolioPage, options: { scrollSelector?: 
   const navLabel = getNavLabel(page);
   const targetNav = Array.from(document.querySelectorAll<HTMLElement>('[data-nav-link]'))
     .find((button) => (button.textContent || '').trim().toLowerCase() === navLabel);
+  const navigationEvent = new CustomEvent('portfolio:navigate', { detail: { page }, cancelable: true });
+  const handled = !window.dispatchEvent(navigationEvent);
 
-  if (targetNav) {
+  if (!handled && targetNav) {
     targetNav.click();
-  } else {
+  } else if (!handled) {
+    const pageKey = page === 'contact' ? 'about' : page;
     document.querySelectorAll<HTMLElement>('article[data-page]').forEach((article) => article.classList.remove('active'));
-    document.querySelector<HTMLElement>(`article[data-page="${navLabel}"]`)?.classList.add('active');
+    document.querySelector<HTMLElement>(`article[data-page="${pageKey}"]`)?.classList.add('active');
     document.querySelectorAll<HTMLElement>('[data-nav-link]').forEach((button) => {
       button.classList.toggle('active', (button.textContent || '').trim().toLowerCase() === navLabel);
     });
@@ -47,7 +50,7 @@ export function navigateToPage(page: PortfolioPage, options: { scrollSelector?: 
   }
   setPortfolioContext('page', page);
 
-  const scrollSelector = options.scrollSelector || (page === 'contact' ? '#contact' : '');
+  const scrollSelector = options.scrollSelector || (!handled && page === 'contact' ? '#contact' : '');
   if (scrollSelector) {
     window.setTimeout(() => {
       document.querySelector<HTMLElement>(scrollSelector)?.scrollIntoView({ behavior: 'smooth', block: 'start' });

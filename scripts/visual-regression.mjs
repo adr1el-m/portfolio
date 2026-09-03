@@ -61,7 +61,7 @@ const scenarios = [
     path: '/about?audit=1',
     viewport: { width: 390, height: 844, isMobile: true },
     setup: async (page) => {
-      await page.click('.chatbot-btn');
+      await page.click('[data-mobile-action="adrai"]');
       await page.waitForSelector('.chatbox.active', { timeout: 7000 });
     },
     selectors: ['.chatbox.active', '.bot-actions'],

@@ -1,3 +1,5 @@
+import { lockDialogScroll, trapDialogFocus } from './dialog-accessibility';
+
 /**
  * Navigation Manager Module
  * Handles page navigation, sidebar, filters, forms, and scroll effects
@@ -5,7 +7,6 @@
 
 export class NavigationManager {
   private revealObserver: IntersectionObserver | null = null;
-  private isTransitioning: boolean = false;
 
   constructor() {
     this.init();
@@ -33,8 +34,10 @@ export class NavigationManager {
     const sidebarBtn = document.querySelector<HTMLButtonElement>("[data-sidebar-btn]");
 
     if (sidebar && sidebarBtn) {
+      sidebarBtn.setAttribute('aria-expanded', String(sidebar.classList.contains('active')));
       sidebarBtn.addEventListener("click", () => {
         this.elementToggleFunc(sidebar);
+        sidebarBtn.setAttribute('aria-expanded', String(sidebar.classList.contains('active')));
       });
     }
   }
@@ -108,60 +111,19 @@ export class NavigationManager {
    */
   private setupNavigation(): void {
     const navigationLinks = document.querySelectorAll<HTMLButtonElement>("[data-nav-link]");
-    const pages = document.querySelectorAll<HTMLElement>("[data-page]");
 
     navigationLinks.forEach((link) => {
       link.addEventListener("click", () => {
-        if (this.isTransitioning) return;
-
         const targetKey = link.dataset.navTarget || (link.textContent || '').toLowerCase().trim();
-        const currentPage = document.querySelector<HTMLElement>('[data-page].active');
-        const targetPage = Array.from(pages).find(p => ((p.dataset.page || '').trim() === targetKey));
-
-        if (!targetPage || targetPage === currentPage) return;
-
-        this.isTransitioning = true;
-
-        // Update nav active state
-        navigationLinks.forEach((l) => l.classList.remove('active'));
-        link.classList.add('active');
-
-
-        const finalize = () => {
-          if (!this.isTransitioning) return;
-          if (currentPage) {
-            currentPage.classList.remove('page-leave');
-            currentPage.classList.remove('active');
-          }
-          targetPage.classList.add('active');
-          this.scrollToPageStart(targetPage);
-          this.isTransitioning = false;
-
-          // Push SPA route for the active section and update canonical
-          const path = this.pathFromKey(targetKey);
-          this.updateCanonical(path);
-          window.dispatchEvent(new CustomEvent('portfolio:pagechange', { detail: { page: targetKey } }));
-          try {
-            window.history.pushState({}, '', path);
-          } catch (err) {
-            console.warn('History pushState failed', err);
-          }
-        };
-
-        // Use View Transitions API if available for smooth crossfade
-        const documentWithViewTransitions = document as Document & {
-          startViewTransition?: (callback: () => void) => void;
-        };
-
-        if (typeof documentWithViewTransitions.startViewTransition === 'function') {
-          documentWithViewTransitions.startViewTransition(() => {
-            finalize();
-          });
-        } else {
-          // Fallback for browsers without View Transitions API
-          finalize();
-        }
+        this.navigate(targetKey);
       });
+    });
+
+    window.addEventListener('portfolio:navigate', (event) => {
+      const page = (event as CustomEvent<{ page?: string }>).detail?.page;
+      if (!page) return;
+      event.preventDefault();
+      this.navigate(page);
     });
 
     // Initialize active section based on URL path
@@ -171,6 +133,21 @@ export class NavigationManager {
     window.addEventListener('popstate', () => {
       this.applyRoute(window.location.pathname);
     });
+  }
+
+  private navigate(key: string): void {
+    const pageKey = key === 'contact' ? 'about' : key;
+    if (!Array.from(document.querySelectorAll<HTMLElement>('[data-page]')).some((page) => page.dataset.page === pageKey)) return;
+
+    const path = this.pathFromKey(key);
+    if (window.location.pathname !== path) {
+      try {
+        window.history.pushState({}, '', path);
+      } catch (err) {
+        console.warn('History pushState failed', err);
+      }
+    }
+    this.applyRoute(path);
   }
 
   /**
@@ -224,7 +201,21 @@ export class NavigationManager {
     const modal = document.getElementById('cert-modal');
     if (!(modal instanceof HTMLElement)) return;
 
-    const close = () => { modal.style.display = 'none'; };
+    let previousFocus: HTMLElement | null = null;
+    let releaseScroll: (() => void) | null = null;
+    modal.setAttribute('aria-label', 'Workflow Architect certificate preview');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.inert = true;
+    const close = () => {
+      if (modal.style.display === 'none') return;
+      previousFocus?.focus({ preventScroll: true });
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      modal.inert = true;
+      releaseScroll?.();
+      releaseScroll = null;
+      previousFocus = null;
+    };
     modal.querySelector<HTMLButtonElement>('.cert-modal-close')?.addEventListener('click', close);
     document.querySelectorAll<HTMLElement>('.cert-modal-trigger').forEach((trigger) => {
       trigger.tabIndex = 0;
@@ -235,7 +226,12 @@ export class NavigationManager {
         const preview = modal.querySelector<HTMLImageElement>('[data-certificate-src]');
         const source = preview?.dataset.certificateSrc;
         if (preview && source && preview.getAttribute('src') !== source) preview.src = source;
+        previousFocus = trigger;
         modal.style.display = 'flex';
+        modal.setAttribute('aria-hidden', 'false');
+        modal.inert = false;
+        releaseScroll ??= lockDialogScroll();
+        modal.querySelector<HTMLButtonElement>('.cert-modal-close')?.focus({ preventScroll: true });
       };
       trigger.addEventListener('click', open);
       trigger.addEventListener('keydown', (event) => {
@@ -247,6 +243,15 @@ export class NavigationManager {
     });
     modal.addEventListener('click', (event) => {
       if (event.target === modal) close();
+    });
+    modal.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        close();
+      } else {
+        trapDialogFocus(event, modal);
+      }
     });
   }
 
@@ -370,9 +375,11 @@ export class NavigationManager {
     // Update nav button active state
     const navigationLinks = document.querySelectorAll<HTMLButtonElement>('[data-nav-link]');
     navigationLinks.forEach((btn) => {
-      const label = (btn.textContent || '').trim().toLowerCase();
-      const activeLabel = key === 'contact' ? 'about' : key === 'destinations' ? 'more' : key;
-      btn.classList.toggle('active', label === activeLabel);
+      const target = btn.dataset.navTarget || (btn.textContent || '').trim().toLowerCase();
+      const isActive = target === (key === 'contact' ? 'about' : key);
+      btn.classList.toggle('active', isActive);
+      if (isActive) btn.setAttribute('aria-current', 'page');
+      else btn.removeAttribute('aria-current');
     });
 
     // Scroll to contact anchor if /contact, else to top
@@ -381,6 +388,7 @@ export class NavigationManager {
       const el = document.getElementById('contact');
       if (el) {
         setTimeout(() => {
+          if (this.keyFromPath(window.location.pathname) !== 'contact') return;
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 60);
       }
@@ -391,7 +399,7 @@ export class NavigationManager {
     // Update canonical using normalized key to avoid stale/removed routes
     const canonicalPath = this.pathFromKey(key);
     this.updateCanonical(canonicalPath);
-    window.dispatchEvent(new CustomEvent('portfolio:pagechange', { detail: { page: key } }));
+    window.dispatchEvent(new CustomEvent('portfolio:pagechange', { detail: { page: key, initialLoad: isInitialLoad } }));
   }
 
   /**
@@ -411,8 +419,10 @@ export class NavigationManager {
 
     if (shouldScrollToArticle && page) {
       window.requestAnimationFrame(() => {
+        if (!page.classList.contains('active')) return;
         page.scrollIntoView({ behavior: 'auto', block: 'start' });
         window.setTimeout(() => {
+          if (!page.classList.contains('active') || this.keyFromPath(window.location.pathname) === 'contact') return;
           page.scrollIntoView({ behavior: 'auto', block: 'start' });
         }, 220);
       });

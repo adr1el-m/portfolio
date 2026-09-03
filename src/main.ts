@@ -210,7 +210,7 @@ class PortfolioApp {
     const requestAdrAI = (prompt = '') => {
       void this.loadChatbotStyles()
         .then(() => this.loadChatbot(true)).then((manager) => {
-        if (!manager) return;
+        if (!manager || !prompt) return;
         window.dispatchEvent(new CustomEvent('portfolio:ask-adrai', { detail: { prompt } }));
       }).catch((error) => logger.warn('Chatbot styles failed to load:', error));
     };
@@ -444,6 +444,11 @@ class PortfolioApp {
         requestAnimationFrame(() => { setTimeout(cb, delay); });
       };
 
+      // Resume controls belong to the shared shell and work on every entry route.
+      defer(() => {
+        import('./modules/resume-preview').then(({ ResumePreview }) => new ResumePreview());
+      });
+
       // Page-specific enhancements used to be initialized together on every
       // route. Keep the shell fast, then load a page's enhancement bundle only
       // when that page becomes active. Each bundle is initialized once.
@@ -455,7 +460,6 @@ class PortfolioApp {
         if (page === 'about') {
           defer(() => {
             import('./modules/scroll-animations').then(({ ScrollAnimations }) => new ScrollAnimations());
-            import('./modules/resume-preview').then(({ ResumePreview }) => new ResumePreview());
             import('./modules/about-enhancements').then(({ AboutEnhancements }) => new AboutEnhancements());
           });
 

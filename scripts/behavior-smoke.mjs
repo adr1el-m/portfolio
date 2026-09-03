@@ -33,6 +33,12 @@ try {
   const page = await browser.newPage();
   await page.goto(`http://127.0.0.1:${port}/projects?role=ai&audit=1`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('.role-path-brief');
+  // Resume is a global action and must work before About has ever loaded.
+  await page.waitForSelector('[data-mobile-action="resume"]');
+  await page.$eval('a[data-resume-preview]', (link) => link.click());
+  await page.waitForSelector('.resume-preview-modal.active');
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('.resume-preview-modal:not(.active)');
   await page.waitForSelector('[data-project-explorer]');
   await page.select('[data-project-filter="stack"]', 'TypeScript');
   const explorerStatus = await page.$eval('.project-explorer-status', (el) => el.textContent || '');
@@ -44,6 +50,16 @@ try {
   await page.waitForSelector('.project-modal.active .project-proof:not([hidden])');
   await page.keyboard.press('Escape');
   await page.waitForSelector('.project-modal:not(.active)');
+  await page.$$eval('[data-nav-link]', (buttons) => buttons.find((button) => button.textContent.trim() === 'Gear').click());
+  await page.waitForSelector('article.gear.active');
+  await page.goBack();
+  await page.waitForSelector('article.projects.active');
+  const backNav = await page.$$eval('[data-nav-link][aria-current="page"]', (buttons) => buttons.map((button) => button.textContent.trim()).join());
+  if (backNav !== 'Projects') throw new Error(`Back navigation ARIA state failed: ${backNav}`);
+  await page.goForward();
+  await page.waitForSelector('article.gear.active');
+  const forwardNav = await page.$$eval('[data-nav-link][aria-current="page"]', (buttons) => buttons.map((button) => button.textContent.trim()).join());
+  if (forwardNav !== 'Gear') throw new Error(`Forward navigation ARIA state failed: ${forwardNav}`);
   await page.goto(`http://127.0.0.1:${port}/about?audit=1`, { waitUntil: 'domcontentloaded' });
   await page.keyboard.press('Tab');
   const skip = await page.$eval('.skip-link', (el) => ({ text: el.textContent, focused: document.activeElement === el }));
@@ -59,6 +75,16 @@ try {
   await page.waitForSelector('.command-palette-trigger');
   await page.click('.command-palette-trigger');
   await page.waitForSelector('#command-palette.active');
+  await page.keyboard.down('Shift');
+  await page.keyboard.press('Tab');
+  await page.keyboard.up('Shift');
+  const trapped = await page.$eval('.command-palette-close', (button) => document.activeElement === button);
+  if (!trapped) throw new Error('Command palette did not wrap keyboard focus');
+  await page.keyboard.press('Escape');
+  const restored = await page.$eval('.command-palette-trigger', (button) => document.activeElement === button);
+  if (!restored) throw new Error('Command palette did not restore trigger focus');
+  await page.click('.command-palette-trigger');
+  await page.waitForSelector('#command-palette.active');
   await page.$eval('#command-palette-input', (input) => {
     input.value = 'compare projects';
     input.dispatchEvent(new Event('input', { bubbles: true }));
@@ -71,5 +97,5 @@ try {
   if (papers !== 'https://papers.adrielmagalona.dev/') throw new Error('Papers destination link did not render');
   const caseResponse = await page.goto(`http://127.0.0.1:${port}/case-studies/worksight`);
   if (caseResponse?.status() !== 200) throw new Error('Case-study page route failed');
-  console.log('Behavior smoke tests passed: role path, explorer filters/comparison, command palette, modal, Escape, changelog, skip link, and case-study route.');
+  console.log('Behavior smoke tests passed: role path, explorer filters/comparison, global resume, navigation history/ARIA, command palette focus, modal, Escape, changelog, skip link, and case-study route.');
 } finally { await browser.close(); server.close(); }

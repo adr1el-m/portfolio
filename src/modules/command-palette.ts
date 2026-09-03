@@ -1,5 +1,6 @@
 import { getHonorRecords, getProjectRecords, normalizeKey } from './portfolio-data';
 import { KB } from '@/data/knowledge-base';
+import { lockDialogScroll, trapDialogFocus } from './dialog-accessibility';
 import {
   copyText,
   filterTimeline,
@@ -44,6 +45,8 @@ export class CommandPalette {
   private commands: Command[] = [];
   private filtered: Command[] = [];
   private activeIndex = 0;
+  private previousFocus: HTMLElement | null = null;
+  private releaseScroll: (() => void) | null = null;
   private readonly recentKey = 'portfolio:recent-commands:v1';
   private recentCommandIds: string[] = [];
 
@@ -338,17 +341,18 @@ export class CommandPalette {
     this.overlay.id = 'command-palette';
     this.overlay.className = 'command-palette';
     this.overlay.setAttribute('aria-hidden', 'true');
+    this.overlay.inert = true;
     this.overlay.innerHTML = `
       <div class="command-palette-panel" role="dialog" aria-modal="true" aria-labelledby="command-palette-title">
         <div class="command-palette-search">
           <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
-          <input id="command-palette-input" type="search" autocomplete="off" spellcheck="false" placeholder="Try: hire, AI proof, projects, awards…" />
+          <input id="command-palette-input" type="search" role="combobox" aria-label="Search commands" aria-autocomplete="list" aria-expanded="false" aria-controls="command-palette-list" autocomplete="off" spellcheck="false" placeholder="Try: hire, AI proof, projects, awards…" />
           <button type="button" class="command-palette-close" aria-label="Close command palette">
             <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
           </button>
         </div>
         <h2 id="command-palette-title" class="sr-only">Command palette</h2>
-        <div class="command-palette-list" role="listbox" aria-label="Available commands"></div>
+        <div id="command-palette-list" class="command-palette-list" role="listbox" aria-label="Available commands"></div>
       </div>
     `;
 
@@ -373,6 +377,15 @@ export class CommandPalette {
     this.overlay?.addEventListener('click', (event) => {
       if (event.target === this.overlay) this.close();
     });
+    this.overlay?.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        this.close();
+      } else if (this.overlay) {
+        trapDialogFocus(event, this.overlay);
+      }
+    });
 
     this.overlay?.querySelector('.command-palette-close')?.addEventListener('click', () => this.close());
 
@@ -388,7 +401,7 @@ export class CommandPalette {
     this.input?.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowDown') {
         event.preventDefault();
-        this.activeIndex = Math.min(this.filtered.length - 1, this.activeIndex + 1);
+        this.activeIndex = Math.max(0, Math.min(this.filtered.length - 1, this.activeIndex + 1));
         this.updateActiveItem();
       }
       if (event.key === 'ArrowUp') {
@@ -408,16 +421,29 @@ export class CommandPalette {
   }
 
   public open(): void {
+    if (!this.isOpen()) {
+      this.previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      this.releaseScroll = lockDialogScroll();
+    }
     this.overlay?.classList.add('active');
     this.overlay?.setAttribute('aria-hidden', 'false');
+    if (this.overlay) this.overlay.inert = false;
+    this.input?.setAttribute('aria-expanded', 'true');
     this.input?.focus({ preventScroll: true });
     this.input?.select();
     trackCommand('Open palette');
   }
 
   private close(): void {
+    if (!this.isOpen()) return;
+    this.previousFocus?.focus({ preventScroll: true });
     this.overlay?.classList.remove('active');
     this.overlay?.setAttribute('aria-hidden', 'true');
+    if (this.overlay) this.overlay.inert = true;
+    this.input?.setAttribute('aria-expanded', 'false');
+    this.releaseScroll?.();
+    this.releaseScroll = null;
+    this.previousFocus = null;
   }
 
   private render(): void {
@@ -455,7 +481,7 @@ export class CommandPalette {
 
     this.list.innerHTML = this.filtered.length
       ? this.filtered.map((command, index) => `
-        <button type="button" class="command-palette-item${index === this.activeIndex ? ' active' : ''}" role="option" aria-selected="${index === this.activeIndex}" data-command-id="${escapeHtml(command.id)}">
+        <button type="button" id="command-option-${index}" tabindex="-1" class="command-palette-item${index === this.activeIndex ? ' active' : ''}" role="option" aria-selected="${index === this.activeIndex}" data-command-id="${escapeHtml(command.id)}">
           <span class="command-palette-icon"><ion-icon name="${escapeHtml(command.icon)}" aria-hidden="true"></ion-icon></span>
           <span class="command-palette-copy">
             <strong>${escapeHtml(command.title)}</strong>
@@ -473,6 +499,7 @@ export class CommandPalette {
       });
       button.addEventListener('click', () => this.run(this.filtered[index]));
     });
+    this.updateActiveItem();
   }
 
   private updateActiveItem(): void {
@@ -481,6 +508,13 @@ export class CommandPalette {
       button.classList.toggle('active', isActive);
       button.setAttribute('aria-selected', String(isActive));
     });
+    const active = this.list?.querySelector<HTMLElement>('.command-palette-item.active');
+    if (active) {
+      this.input?.setAttribute('aria-activedescendant', active.id);
+      if (this.isOpen()) active.scrollIntoView({ block: 'nearest' });
+    } else {
+      this.input?.removeAttribute('aria-activedescendant');
+    }
   }
 
   private run(command?: Command): void {

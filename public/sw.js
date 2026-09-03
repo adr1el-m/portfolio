@@ -1,10 +1,12 @@
-const CACHE_NAME = 'adriel-portfolio-v6';
+const CACHE_NAME = 'adriel-portfolio-v7';
 const OFFLINE_URLS = ['/offline', '/offline.html'];
 const PRECACHE_ASSETS = [
   '/',
   ...OFFLINE_URLS,
   '/style.css',
   '/styles/portfolio-enhancements.css',
+  '/styles/portfolio-theme.css',
+  '/styles/detail-pages.css',
   '/images/my-avatar.avif',
   '/images/pwa/icon-192x192.png'
 ];

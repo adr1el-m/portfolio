@@ -1,5 +1,6 @@
 import type { PortfolioSearchEntry } from './portfolio-data';
 import { getPortfolioSearchEntries, normalizeKey } from './portfolio-data';
+import { lockDialogScroll, trapDialogFocus } from './dialog-accessibility';
 import {
   filterTimeline,
   navigateToPage,
@@ -19,6 +20,8 @@ export class Search {
   private resultsEl: HTMLElement | null = null;
   private inputRef: HTMLInputElement | null = null;
   private countEl: HTMLElement | null = null;
+  private previousFocus: HTMLElement | null = null;
+  private releaseScroll: (() => void) | null = null;
 
   constructor() {
     this.init();
@@ -33,6 +36,10 @@ export class Search {
   }
 
   public open(initialQuery = ''): void {
+    if (!this.overlayEl) {
+      this.previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      this.releaseScroll = lockDialogScroll();
+    }
     this.renderOverlay();
     this.updateQueryParam(initialQuery);
     if (this.inputRef) {
@@ -63,13 +70,13 @@ export class Search {
         </div>
         <div class="search-box">
           <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
-          <input type="search" class="search-input" placeholder="Search projects, honors, tech, background, contact" autocomplete="off" spellcheck="false" />
+          <input type="search" class="search-input" aria-label="Search the portfolio" placeholder="Search projects, honors, tech, background, contact" autocomplete="off" spellcheck="false" />
         </div>
         <div class="search-meta" aria-live="polite">
           <span data-search-count>Type to search the full site.</span>
           <span>/ opens search · Esc closes</span>
         </div>
-        <div class="search-results" role="listbox" aria-label="Search results"></div>
+        <div class="search-results" role="group" aria-label="Search results"></div>
       </div>
     `;
 
@@ -96,6 +103,15 @@ export class Search {
     overlay.querySelector<HTMLButtonElement>('.search-close')?.addEventListener('click', () => this.closeOverlay());
     overlay.addEventListener('click', (event) => {
       if (event.target === overlay) this.closeOverlay();
+    });
+    overlay.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        this.closeOverlay();
+      } else {
+        trapDialogFocus(event, overlay);
+      }
     });
   }
 
@@ -175,7 +191,6 @@ export class Search {
     button.type = 'button';
     button.className = 'search-result';
     button.dataset.searchOpen = result.id;
-    button.setAttribute('role', 'option');
 
     const icon = document.createElement('span');
     icon.className = 'search-result-icon';
@@ -344,11 +359,16 @@ export class Search {
   }
 
   private closeOverlay(): void {
+    if (!this.overlayEl) return;
     this.overlayEl?.remove();
     this.overlayEl = null;
     this.resultsEl = null;
     this.inputRef = null;
     this.countEl = null;
+    this.releaseScroll?.();
+    this.releaseScroll = null;
+    this.previousFocus?.focus({ preventScroll: true });
+    this.previousFocus = null;
     this.updateQueryParam('');
   }
 

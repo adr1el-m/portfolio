@@ -4,6 +4,7 @@
  */
 
 import { logger } from '../config';
+import { trapDialogFocus } from './dialog-accessibility';
 
 export class AccessibilityEnhancer {
   private static instance: AccessibilityEnhancer;
@@ -103,32 +104,20 @@ export class AccessibilityEnhancer {
         if (event.key === 'Escape') {
           const closeBtn = modal.querySelector('.close-btn, .project-modal-close, .achievement-modal-close') as HTMLElement;
           if (closeBtn) {
+            event.preventDefault();
+            event.stopPropagation();
             closeBtn.click();
           }
         }
 
         // Focus trapping
-        if (event.key === 'Tab') {
-          const focusableElements = modal.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-          );
-          const firstElement = focusableElements[0] as HTMLElement;
-          const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-
-          if (event.shiftKey && document.activeElement === firstElement) {
-            event.preventDefault();
-            lastElement?.focus();
-          } else if (!event.shiftKey && document.activeElement === lastElement) {
-            event.preventDefault();
-            firstElement?.focus();
-          }
-        }
+        trapDialogFocus(event, modal as HTMLElement);
       });
 
       // Manage aria-hidden state
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
-          if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+          if (mutation.type === 'attributes') {
             const isHidden = (modal as HTMLElement).style.display === 'none' || 
                            !modal.classList.contains('active');
             modal.setAttribute('aria-hidden', isHidden.toString());
@@ -205,34 +194,19 @@ export class AccessibilityEnhancer {
    * Announce page/section changes to screen readers
    */
   private announcePageChanges(): void {
-    const navButtons = document.querySelectorAll('[data-nav-link]');
-
-    navButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        const pageName = button.textContent?.trim() || '';
-        
-        // Update aria-current
-        navButtons.forEach((btn) => btn.removeAttribute('aria-current'));
-        button.setAttribute('aria-current', 'page');
-
-        // Announce to screen readers
-        this.announceToScreenReader(`Navigated to ${pageName} section`);
-
-        // Focus the section heading
-        setTimeout(() => {
-          const article = document.querySelector('article.active');
-          const heading = article?.querySelector('h2');
-          if (heading) {
-            const focusTarget = heading as HTMLElement;
-            focusTarget.setAttribute('tabindex', '-1');
-            focusTarget.classList.add('section-focus-target');
-            focusTarget.focus({ preventScroll: true });
-            window.setTimeout(() => {
-              focusTarget.classList.remove('section-focus-target');
-            }, 1200);
-          }
-        }, 100);
-      });
+    window.addEventListener('portfolio:pagechange', (event) => {
+      const detail = (event as CustomEvent<{ page: string; initialLoad?: boolean }>).detail;
+      if (!detail || detail.initialLoad) return;
+      const article = document.querySelector<HTMLElement>('article[data-page].active');
+      const heading = detail.page === 'contact'
+        ? document.querySelector<HTMLElement>('#contact h2, #contact h3')
+        : article?.querySelector<HTMLElement>('h2');
+      this.announceToScreenReader(`Navigated to ${heading?.textContent?.trim() || detail.page} section`);
+      if (!heading) return;
+      heading.tabIndex = -1;
+      heading.classList.add('section-focus-target');
+      heading.focus({ preventScroll: true });
+      window.setTimeout(() => heading.classList.remove('section-focus-target'), 1200);
     });
 
     logger.info('✅ Page change announcements configured');

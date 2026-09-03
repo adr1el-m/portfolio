@@ -154,8 +154,7 @@ export class ProjectExplorer {
 
   private stackOptions(): string[] {
     return [...new Set(this.projects.flatMap((project) => project.stack).filter(Boolean))]
-      .sort((a, b) => a.localeCompare(b))
-      .slice(0, 18);
+      .sort((a, b) => a.localeCompare(b));
   }
 
   private filtered(): ExplorerProject[] {
@@ -168,8 +167,9 @@ export class ProjectExplorer {
   }
 
   private apply(): void {
+    const filtered = new Set(this.filtered());
     this.projects.forEach((project) => {
-      const matches = this.filtered().includes(project);
+      const matches = filtered.has(project);
       project.element?.classList.toggle('project-explorer-hidden', !matches);
       project.element?.setAttribute('aria-hidden', String(!matches));
     });
@@ -177,11 +177,17 @@ export class ProjectExplorer {
   }
 
   private renderSelect(label: string, key: keyof typeof this.filters, options: string[]): string {
-    return `<label><span>${label}</span><select data-project-filter="${key}"><option value="all">All ${label.toLowerCase()}s</option>${options.map((option) => `<option value="${escapeHtml(option)}"${this.filters[key] === option ? ' selected' : ''}>${escapeHtml(option)}</option>`).join('')}</select></label>`;
+    const plural = key === 'category' ? 'categories' : `${label.toLowerCase()}s`;
+    return `<label><span>${label}</span><select data-project-filter="${key}"><option value="all">All ${plural}</option>${options.map((option) => `<option value="${escapeHtml(option)}"${this.filters[key] === option ? ' selected' : ''}>${escapeHtml(option)}</option>`).join('')}</select></label>`;
   }
 
   private render(): void {
     if (!this.root) return;
+    const focused = document.activeElement instanceof HTMLElement && this.root.contains(document.activeElement)
+      ? document.activeElement : null;
+    const focusAttribute = ['data-project-filter', 'data-compare-project', 'data-explorer-open', 'data-compare-featured', 'data-compare-clear']
+      .find((attribute) => focused?.hasAttribute(attribute));
+    const focusValue = focusAttribute ? focused?.getAttribute(focusAttribute) : null;
     const filtered = this.filtered();
     const years = [...new Set(this.projects.map((project) => project.year))].sort((a, b) => b.localeCompare(a));
     const compared = this.projects.filter((project) => this.selected.has(normalizeKey(project.title)));
@@ -197,7 +203,7 @@ export class ProjectExplorer {
         ${this.renderSelect('Role', 'role', this.roleOptions())}
         ${this.renderSelect('Stack', 'stack', this.stackOptions())}
       </div>
-      <div class="project-explorer-status"><strong>${filtered.length}</strong> of ${this.projects.length} projects shown <span>·</span> <button type="button" data-compare-featured>Compare selected work</button></div>
+      <div class="project-explorer-status" aria-live="polite"><strong>${filtered.length}</strong> of ${this.projects.length} projects shown <span>·</span> <button type="button" data-compare-featured>Compare selected work</button></div>
       <ol class="project-explorer-timeline" aria-label="Filtered project timeline">
         ${filtered.slice(0, 10).map((project) => `<li><span class="project-explorer-year">${escapeHtml(project.year)}</span><div><strong>${escapeHtml(project.title)}</strong><small>${escapeHtml(project.role)} · ${escapeHtml(project.category)}</small><p>${escapeHtml(project.stack.slice(0, 4).join(' · ') || 'Project archive')}</p></div><div class="project-explorer-actions"><button type="button" data-explorer-open="${escapeHtml(project.title)}">Open</button><button type="button" data-compare-project="${escapeHtml(project.title)}" aria-pressed="${this.selected.has(normalizeKey(project.title))}">${this.selected.has(normalizeKey(project.title)) ? 'Selected' : 'Compare'}</button></div></li>`).join('') || '<li class="project-explorer-empty">No projects match those filters.</li>'}
       </ol>
@@ -208,5 +214,19 @@ export class ProjectExplorer {
           return `<article><h5>${escapeHtml(project.title)}</h5><dl><div><dt>Role</dt><dd>${escapeHtml(project.role)}</dd></div><div><dt>Scope</dt><dd>${escapeHtml(project.category)}</dd></div><div><dt>Complexity</dt><dd>${escapeHtml(proof?.architecture || project.stack.slice(0, 4).join(' · ') || 'Project implementation')}</dd></div><div><dt>Outcome</dt><dd>${escapeHtml(proof?.outcome || project.description || 'Open the project for details.')}</dd></div></dl><button type="button" data-explorer-open="${escapeHtml(project.title)}">View project →</button></article>`;
         }).join('')}</div>` : '<p class="project-comparison-empty">Choose up to three projects from the timeline to compare role, scope, complexity, and outcome.</p>'}
       </section>`;
+
+    this.root.querySelectorAll<HTMLButtonElement>('[data-compare-project]').forEach((button) => {
+      const selected = button.getAttribute('aria-pressed') === 'true';
+      button.disabled = this.selected.size >= 3 && !selected;
+      button.setAttribute('aria-label', `${selected ? 'Remove' : 'Compare'} ${button.dataset.compareProject}${selected ? ' from comparison' : ''}`);
+      if (button.disabled) button.title = 'Remove a selected project to compare another.';
+    });
+
+    // Rendering the results must not drop keyboard users back to the document.
+    if (focusAttribute) {
+      const replacement = Array.from(this.root.querySelectorAll<HTMLElement>(`[${focusAttribute}]`))
+        .find((element) => element.getAttribute(focusAttribute) === focusValue);
+      (replacement || this.root.querySelector<HTMLElement>('[data-compare-featured]'))?.focus({ preventScroll: true });
+    }
   }
 }

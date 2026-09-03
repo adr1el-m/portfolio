@@ -2,44 +2,54 @@ import { logger } from '@/config';
 
 /**
  * Icon Replacer Module
- * Replaces ion-icon elements with Unicode equivalents to avoid external dependencies and CSP issues.
+ * Renders local SVG icons without external dependencies or font-specific glyphs.
  */
 export class IconReplacer {
   private iconObserver: IntersectionObserver | null = null;
-  private readonly iconMap: Record<string, string> = {
-    'chevron-down': '▼',
-    'search-outline': '⌕',
-    'close-outline': '×',
-    'person-outline': '◉',
-    'school-outline': '▣',
-    'document-text-outline': '▤',
-    'ribbon-outline': '◇',
-    'library-outline': '▥',
-    'briefcase-outline': '▢',
-    'cube-outline': '⬡',
-    'copy-outline': '⧉',
-    'send-outline': '↗',
-    'open-outline': '↗',
-    'newspaper-outline': '▤',
-    'analytics-outline': '◌',
-    'shield-checkmark-outline': '✓',
-    'wallet-outline': '▭',
-    'calculator-outline': '#',
-    'log-in-outline': '↪',
-    'cash-outline': '$',
-    'checkmark-circle-outline': '✓',
-    // 'mail-outline': '✉️', // Replaced by SVG
-    // 'location-outline': '📍', // Replaced by SVG
-    // 'logo-linkedin': '💼', // Replaced by SVG
-    // 'logo-github': '🔗', // Replaced by SVG
-    // 'logo-facebook': '📘', // Replaced by SVG
-    // 'logo-twitter': '🐦', // Replaced by SVG
-    // 'logo-instagram': '📸', // Replaced by SVG
-    'book-outline': '📚',
-    'arrow-up-outline': '↑',
-    'sunny-outline': '☀️',
-    // 'eye-outline': '👁️', // Replaced by SVG
-    'checkmark-circle': '✅'
+  private readonly strokeMap: Record<string, string> = {
+    'chevron-down': '<path d="m6 9 6 6 6-6"/>',
+    'chevron-down-outline': '<path d="m6 9 6 6 6-6"/>',
+    'arrow-forward-outline': '<path d="M4 12h16m-6-6 6 6-6 6"/>',
+    'arrow-up-outline': '<path d="M12 20V4m-6 6 6-6 6 6"/>',
+    'search-outline': '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
+    'close-outline': '<path d="m6 6 12 12M6 18 18 6"/>',
+    'person-outline': '<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
+    'school-outline': '<path d="m2 9 10-5 10 5-10 5L2 9Zm4 2v6c4 3 8 3 12 0v-6m4-2v8"/>',
+    'document-text-outline': '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Zm0 0v6h6M8 13h8m-8 4h6"/>',
+    'ribbon-outline': '<circle cx="12" cy="8" r="5"/><path d="m8 12-2 9 6-3 6 3-2-9"/>',
+    'library-outline': '<path d="M4 4h5v16H4V4Zm5 0h5v16H9m8-16 4 15-4 1-4-15 4-1ZM4 8h5m0 8h5"/>',
+    'briefcase-outline': '<rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12c5 3 13 3 18 0m-9 1v3"/>',
+    'cube-outline': '<path d="m12 3 9 5v9l-9 5-9-5V8l9-5Zm0 10 9-5m-9 5L3 8m9 5v9M7.5 5.5l9 5"/>',
+    'copy-outline': '<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
+    'send-outline': '<path d="m21 3-7 18-4-7-7-4L21 3ZM10 14 21 3"/>',
+    'open-outline': '<path d="M14 3h7v7m0-7L10 14M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"/>',
+    'newspaper-outline': '<path d="M19 21H5a2 2 0 0 1-2-2V4h14v15a2 2 0 0 0 4 0V8h-4M7 8h6m-6 4h6m-6 4h6"/>',
+    'analytics-outline': '<path d="M4 3v17h17M8 16v-5m5 5V6m5 10v-8"/>',
+    'shield-checkmark-outline': '<path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Zm-4 9 3 3 5-6"/>',
+    'wallet-outline': '<path d="M20 8V5H6a3 3 0 0 0 0 6h15v10H6a3 3 0 0 1-3-3V8m18 7h-5v3h5"/>',
+    'calculator-outline': '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h1m6 0h1m-8 4h1m6 0h1m-8 3h1m6 0h1"/>',
+    'log-in-outline': '<path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5M3 12h12m-5-5 5 5-5 5"/>',
+    'cash-outline': '<rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/>',
+    'checkmark-circle-outline': '<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
+    'checkmark-circle': '<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
+    'book-outline': '<path d="M12 5v16m0-16C8 2 4 3 2 4v15c3-1 6-1 10 2 4-3 7-3 10-2V4c-2-1-6-2-10 1Z"/>',
+    'sunny-outline': '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/>',
+    'terminal-outline': '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3m6 0h4"/>',
+    'pulse-outline': '<path d="M2 12h5l3-8 4 16 3-8h5"/>',
+    'link-outline': '<path d="m10 13 4-4m-5 6-2 2a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 2 2-2a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0"/>',
+    'file-tray-outline': '<path d="M3 14 6 4h12l3 10v6H3v-6Zm0 0h5l2 3h4l2-3h5"/>',
+    'cloud-offline-outline': '<path d="m3 3 18 18M8 8a6 6 0 0 0-2 4 3 3 0 0 0 0 6h12m-6-12a6 6 0 0 1 6 6 3 3 0 0 1 3 3"/>',
+    'git-branch-outline': '<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M6 7v10m12-10c0 6-12 3-12 10"/>',
+    'layers-outline': '<path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5"/>',
+    'hardware-chip-outline': '<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 10h6v4H9v-4Zm0-7v3m6-3v3m-6 12v3m6-3v3M3 9h3m-3 6h3m12-6h3m-3 6h3"/>',
+    'download-outline': '<path d="M12 3v12m-5-5 5 5 5-5M4 15v5h16v-5"/>',
+    'git-compare-outline': '<circle cx="6" cy="5" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10h5m-3-3 3 3-3 3m10-3V7h-5m3-3-3 3 3 3"/>',
+    'time-outline': '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',
+    'compass-outline': '<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5 5-3Z"/>',
+    'chatbubbles-outline': '<path d="M15 4H5a2 2 0 0 0-2 2v8l4-3h8a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm-7 10v2a2 2 0 0 0 2 2h7l4 3V11a2 2 0 0 0-2-2"/>',
+    'folder-open-outline': '<path d="M3 20V5a2 2 0 0 1 2-2h5l3 4h6a2 2 0 0 1 2 2v2M3 20l3-9h16l-3 9H3Z"/>',
+    'construct-outline': '<path d="M14 4a6 6 0 0 0-7 7l-5 5a3 3 0 0 0 4 4l5-5a6 6 0 0 0 7-7l-4 4-4-4 4-4Z"/>',
+    'flash-outline': '<path d="m13 2-9 12h7l-1 8 10-13h-7l1-7Z"/>'
   };
 
   private readonly svgMap: Record<string, string> = {
@@ -80,8 +90,10 @@ export class IconReplacer {
   }
 
   private replacementFor(iconName: string): string {
+    if (this.strokeMap[iconName]) {
+      return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">${this.strokeMap[iconName]}</svg>`;
+    }
     if (this.svgMap[iconName]) return this.svgMap[iconName];
-    if (this.iconMap[iconName]) return this.iconMap[iconName];
     if (iconName.startsWith('logo-')) return '●';
     if (iconName.includes('arrow')) return '→';
     if (iconName.includes('calendar')) return '▣';
@@ -112,13 +124,14 @@ export class IconReplacer {
     const iconName = icon.getAttribute('name');
     if (!iconName) return;
 
-    if (this.svgMap[iconName]) {
-      icon.innerHTML = this.svgMap[iconName];
+    const replacement = this.replacementFor(iconName);
+    if (replacement.startsWith('<svg')) {
+      icon.innerHTML = replacement;
       this.styleIcon(icon, true);
       return;
     }
 
-    icon.textContent = this.replacementFor(iconName);
+    icon.textContent = replacement;
     this.styleIcon(icon, false);
   }
 

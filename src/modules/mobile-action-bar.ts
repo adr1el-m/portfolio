@@ -20,7 +20,7 @@ export class MobileActionBar {
     const actions: MobileAction[] = [
       { id: 'search', label: 'Search', icon: 'search-outline', action: () => openPortfolioSearch() },
       { id: 'projects', label: 'Projects', icon: 'code-slash-outline', action: () => navigateToPage('projects') },
-      { id: 'adrai', label: 'AdrAI', icon: 'sparkles-outline', action: () => openAdrAI('Help me explore this portfolio') },
+      { id: 'adrai', label: 'AdrAI', icon: 'sparkles-outline', action: () => openAdrAI() },
       { id: 'contact', label: 'Contact', icon: 'mail-outline', action: () => navigateToPage('contact') },
       { id: 'resume', label: 'Resume', icon: 'document-text-outline', action: () => openResumePreview() },
     ];
@@ -51,18 +51,17 @@ export class MobileActionBar {
 
   private bindActiveState(): void {
     const update = () => {
-      const activePage = document.querySelector<HTMLElement>('article[data-page].active')?.dataset.page || 'about';
+      const activePage = window.location.pathname.replace(/\/+$/, '');
       this.bar?.querySelectorAll<HTMLButtonElement>('[data-mobile-action]').forEach((button) => {
         const id = button.dataset.mobileAction;
-        const isActive = (id === 'projects' && activePage === 'projects') || (id === 'contact' && activePage === 'about');
+        const isActive = (id === 'projects' && activePage === '/projects') || (id === 'contact' && activePage === '/contact');
         button.classList.toggle('active', isActive);
+        if (isActive) button.setAttribute('aria-current', 'page');
+        else button.removeAttribute('aria-current');
       });
     };
 
     update();
-    document.querySelectorAll<HTMLElement>('[data-nav-link]').forEach((button) => {
-      button.addEventListener('click', () => window.setTimeout(update, 80));
-    });
-    window.addEventListener('popstate', () => window.setTimeout(update, 80));
+    window.addEventListener('portfolio:pagechange', update);
   }
 }

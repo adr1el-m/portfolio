@@ -4,6 +4,7 @@ import { SecurityManager } from '@/modules/security';
 import { setPortfolioContext } from '@/modules/portfolio-actions';
 import { renderProjectDescription } from '@/data/project-case-studies';
 import { getProjectProof } from '@/data/project-profiles';
+import { lockDialogScroll } from './dialog-accessibility';
 
 const TRANSPARENT_PLACEHOLDER = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 const ICONS = {
@@ -38,6 +39,7 @@ export class ModalManager {
   private projectWebpImages: string[] = [];
   private projectJpegImages: string[] = [];
   private previousFocus: HTMLElement | null = null;
+  private releaseScroll: (() => void) | null = null;
   private preloadedImages: Set<string> = new Set();
 
   constructor() {
@@ -621,11 +623,11 @@ export class ModalManager {
         this.updateAchievementModalOrientation(this.imgEl);
       }
       this.modalEl.classList.add('active');
-      (this.modalEl as HTMLElement).focus();
+      this.modalEl.querySelector<HTMLElement>('.achievement-modal-close')?.focus({ preventScroll: true });
       logger.log('Modal class list after adding active:', this.modalEl.classList);
     }
     
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    this.releaseScroll ??= lockDialogScroll();
   }
 
   private getProjectData(element: HTMLElement): ProjectData | null {
@@ -898,11 +900,11 @@ export class ModalManager {
       projectModal.setAttribute('aria-hidden', 'false');
       projectModal.removeAttribute('inert');
       projectModal.setAttribute('tabindex', '-1');
-      (projectModal as HTMLElement).focus();
+      projectModal.querySelector<HTMLElement>('.project-modal-close')?.focus({ preventScroll: true });
       logger.log('Modal opened for project:', data.title);
     }
     
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    this.releaseScroll ??= lockDialogScroll();
   }
 
   private renderProjectProof(data: ProjectData): void {
@@ -945,7 +947,7 @@ export class ModalManager {
       active.blur();
     }
     if (this.previousFocus) {
-      try { this.previousFocus.focus(); } catch { /* ignore */ }
+      try { this.previousFocus.focus({ preventScroll: true }); } catch { /* ignore */ }
     }
 
     if (projectModal) {
@@ -955,7 +957,8 @@ export class ModalManager {
       projectModal.setAttribute('inert', '');
     }
     this.previousFocus = null;
-    document.body.style.overflow = ''; // Restore scrolling
+    this.releaseScroll?.();
+    this.releaseScroll = null;
   }
 
   private navigateProjectPrevious(): void {
@@ -1165,7 +1168,7 @@ export class ModalManager {
       active.blur();
     }
     if (this.previousFocus) {
-      try { this.previousFocus.focus(); } catch { /* ignore */ }
+      try { this.previousFocus.focus({ preventScroll: true }); } catch { /* ignore */ }
     }
 
     this.modalEl?.classList.remove('active');
@@ -1179,7 +1182,8 @@ export class ModalManager {
       this.imgEl.removeAttribute('height');
     }
     this.previousFocus = null;
-    document.body.style.overflow = ''; // Restore scrolling
+    this.releaseScroll?.();
+    this.releaseScroll = null;
   }
 
   public navigateAchievementPrevious(): void {

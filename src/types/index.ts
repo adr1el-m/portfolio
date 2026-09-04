@@ -27,6 +27,7 @@ export interface AchievementData {
   organizer: string;
   date: string;
   location: string;
+  organizationLogos?: Array<{ src: string; alt: string }>;
   teammates?: Teammate[];
   githubUrl?: string;
   description?: string;

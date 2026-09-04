@@ -292,6 +292,22 @@ export const KB: KnowledgeBase = {
   ],
   achievements: [
     {
+      title: 'ImaGnation 2026 by GCash',
+      images: [],
+      webpImages: [],
+      organizer: 'GCash',
+      date: '2026',
+      location: '—',
+      teammates: [
+        { name: 'Eliazar Inso' },
+        { name: 'Kiel Ethan Lanzanas' },
+        { name: 'John Carlo Santos' },
+        { name: 'Ellah Benerado' },
+      ],
+      description:
+        'Participation: Participated in ImaGnation 2026 by GCash as part of a collaborative team.\nTeam: Worked alongside previous teammates Eliazar Inso, Kiel Ethan Lanzanas, John Carlo Santos, and Ellah Benerado.\nMedia: Project and participation media can be added to this portfolio entry later.',
+    },
+    {
       title: 'SAAN SA PINAS? A Satellite Imagery Puzzler',
       images: ['/images/honors/2026/geospectrum/geospectrum.avif'],
       webpImages: [],

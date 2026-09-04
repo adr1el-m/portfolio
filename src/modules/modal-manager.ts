@@ -367,6 +367,7 @@ export class ModalManager {
     const organizer = element.getAttribute('data-organizer') || '';
     const date = element.getAttribute('data-date') || '';
     const location = element.getAttribute('data-location') || '';
+    const organizationLogosStr = element.getAttribute('data-organization-logos') || '[]';
     const teammatesStr = element.getAttribute('data-teammates') || '[]';
     const githubUrl = element.getAttribute('data-github') || '';
     const description = element.getAttribute('data-description') || '';
@@ -380,6 +381,7 @@ export class ModalManager {
       const images = JSON.parse(imagesStr);
       const webpImages = JSON.parse(webpImagesStr);
       const teammates = JSON.parse(teammatesStr);
+      const organizationLogos = JSON.parse(organizationLogosStr);
       
       return {
         title,
@@ -388,6 +390,7 @@ export class ModalManager {
         organizer,
         date,
         location,
+        organizationLogos: organizationLogos.length ? organizationLogos : undefined,
         teammates: teammates.length > 0 ? teammates : undefined,
         githubUrl: githubUrl || undefined,
         description: description || undefined,
@@ -516,6 +519,15 @@ export class ModalManager {
 
     // Handle teammates section
     this.displayTeammates(data.teammates);
+    const logosBlock = document.querySelector('.achievement-organization-logos') as HTMLElement | null;
+    const logosList = logosBlock?.querySelector('div');
+    if (logosBlock && logosList) {
+      logosList.innerHTML = '';
+      (data.organizationLogos || []).forEach((logo) => {
+        const img = document.createElement('img'); img.src = logo.src; img.alt = logo.alt; img.loading = 'lazy'; logosList.appendChild(img);
+      });
+      logosBlock.style.display = data.organizationLogos?.length ? 'flex' : 'none';
+    }
 
     // Handle action buttons
     {

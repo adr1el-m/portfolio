@@ -7,7 +7,7 @@
 ### Portfolio website · selected work, case studies, and engineering notes
 
 [![Lighthouse Performance Audit](https://github.com/adr1el-m/portfolio/actions/workflows/performance.yml/badge.svg?branch=main)](https://github.com/adr1el-m/portfolio/actions/workflows/performance.yml)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-2ea44f)](LICENSE)
@@ -83,10 +83,14 @@ npm run build           # Production build + static page generation
 npm run check:links     # Internal-link validation
 npm run test:behavior   # Keyboard, dialog, route, and CTA smoke tests
 npm run test:visual     # Visual-regression snapshots
+npm run test:api        # Isolated handler validation and rate-limit burst
+# Start npm run preview in another terminal for the following:
+npm run test:stress     # 36 route/viewport combinations with WCAG checks
+npm run test:resilience # Slow loading, repeated actions, static routes, offline reload
 npm run lighthouse:ci   # Lighthouse CI assertions
 ```
 
-The production build writes the static honor and case-study pages to `dist/`.
+The production build writes the static honor and case-study pages to `dist/`. Preview serves their public routes. Browser tests use Puppeteer-managed Chrome, `PUPPETEER_EXECUTABLE_PATH` when set, or installed Google Chrome on macOS. Contact and AI tests intercept upstream calls; they do not send real messages. Visual baselines are local and ignored by Git; inspect captures before running `npm run test:visual:update`. The quality workflow runs responsive and resilience checks on pushes and pull requests.
 
 ## Design and engineering principles
 

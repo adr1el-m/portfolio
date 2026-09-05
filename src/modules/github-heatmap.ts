@@ -122,6 +122,7 @@ export class GitHubHeatmap {
       this.tooltip = document.createElement('div');
       this.tooltip.className = 'github-heatmap-tooltip';
       this.tooltip.setAttribute('role', 'tooltip');
+      this.tooltip.hidden = true;
       this.root.appendChild(this.tooltip);
     }
 
@@ -131,6 +132,7 @@ export class GitHubHeatmap {
       if (!label) return;
 
       this.tooltip.textContent = label;
+      this.tooltip.hidden = false;
       this.tooltip.classList.add('active');
 
       const rootRect = this.root.getBoundingClientRect();
@@ -149,6 +151,7 @@ export class GitHubHeatmap {
 
     const hide = () => {
       this.tooltip?.classList.remove('active');
+      if (this.tooltip) this.tooltip.hidden = true;
     };
 
     grid.addEventListener('pointerover', (event) => {

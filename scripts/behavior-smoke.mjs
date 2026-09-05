@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import puppeteer from 'puppeteer';
+import { browserOptions } from './browser-options.mjs';
 
 const root = process.cwd();
 const dist = path.join(root, 'dist');
@@ -18,17 +19,17 @@ function serve() {
   const server = http.createServer((req, res) => {
     const url = new URL(req.url || '/', 'http://localhost');
     const caseMatch = url.pathname.match(/^\/case-studies\/([^/]+)$/);
-    const file = caseMatch ? path.join(dist, 'case-studies', caseMatch[1], 'index.html') : (!path.extname(url.pathname) ? path.join(dist, 'index.html') : path.join(dist, url.pathname));
+    const file = caseMatch ? path.join(dist, 'case-studies', caseMatch[1], 'index.html') : (!path.extname(url.pathname) ? path.join(dist, 'index.html') : path.join(dist, decodeURIComponent(url.pathname)));
     if (!file.startsWith(dist) || !fs.existsSync(file)) return res.writeHead(404).end('Not found');
-    const type = file.endsWith('.js') ? 'text/javascript' : file.endsWith('.css') ? 'text/css' : file.endsWith('.mp4') ? 'video/mp4' : 'text/html';
+    const type = { '.js': 'text/javascript', '.css': 'text/css', '.mp4': 'video/mp4', '.pdf': 'application/pdf', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2' }[path.extname(file)] || 'text/html';
     res.writeHead(200, { 'content-type': type }); fs.createReadStream(file).pipe(res);
   });
   return new Promise((resolve) => server.listen(0, '127.0.0.1', () => resolve({ server, port: server.address().port })));
 }
 
-await run('npm', ['run', 'build']);
+if (process.env.TEST_SKIP_BUILD !== '1') await run('npm', ['run', 'build']);
 const { server, port } = await serve();
-const browser = await puppeteer.launch({ headless: 'new' });
+const browser = await puppeteer.launch(browserOptions());
 try {
   const page = await browser.newPage();
   await page.goto(`http://127.0.0.1:${port}/projects?role=ai&audit=1`, { waitUntil: 'domcontentloaded' });
@@ -39,6 +40,9 @@ try {
   await page.waitForSelector('.resume-preview-modal.active');
   await page.keyboard.press('Escape');
   await page.waitForSelector('.resume-preview-modal:not(.active)');
+  // PDF viewers maintain nested history. Start the navigation checks with a
+  // fresh top-level document so they test portfolio history specifically.
+  await page.goto(`http://127.0.0.1:${port}/projects?role=ai&audit=1`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('[data-project-explorer]');
   await page.select('[data-project-filter="stack"]', 'TypeScript');
   const explorerStatus = await page.$eval('.project-explorer-status', (el) => el.textContent || '');

@@ -18,7 +18,7 @@ const profiles: Record<string, ProjectProof> = {
     constraints: 'Make burnout risk legible from behavioral and organizational signals without reducing people to a single metric.',
     outcome: '3rd place in BPI DataWave 2025, Future of Work category.',
     architecture: 'Next.js App Router · TypeScript · Supabase/PostgreSQL · analytics workflows',
-    evidence: [{ label: 'Live product', href: 'https://worksight.vercel.app/' }, { label: 'Documentation', href: 'https://worksightdocs.vercel.app/' }, { label: 'Source repository', href: 'https://github.com/4sightorg/worksight' }],
+    evidence: [{ label: 'Source repository', href: 'https://github.com/4sightorg/worksight' }],
     caseStudyUrl: '/case-studies/worksight',
   },
   genesync: {

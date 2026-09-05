@@ -4,6 +4,7 @@ import http from 'node:http';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import puppeteer from 'puppeteer';
+import { browserOptions } from './browser-options.mjs';
 import sharp from 'sharp';
 
 const root = process.cwd();
@@ -159,7 +160,7 @@ fs.mkdirSync(currentDir, { recursive: true });
 fs.mkdirSync(baselineDir, { recursive: true });
 
 const { server, port } = await serveDist();
-const browser = await puppeteer.launch({ headless: 'new' });
+const browser = await puppeteer.launch(browserOptions());
 const failures = [];
 const createdBaselines = [];
 
@@ -167,9 +168,20 @@ try {
   for (const scenario of scenarios) {
     const page = await browser.newPage();
     await page.setViewport(scenario.viewport);
+    await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
     await page.goto(`http://127.0.0.1:${port}${scenario.path}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.evaluate(() => document.fonts?.ready);
     await new Promise((resolve) => setTimeout(resolve, 900));
+    // Load below-fold content before full-page capture, without capturing
+    // intermediate reveal animations or empty lazy sections as a baseline.
+    await page.evaluate(async () => {
+      for (let y = 0; y < document.body.scrollHeight; y += 700) {
+        window.scrollTo(0, y);
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+      window.scrollTo(0, 0);
+    });
+    await page.waitForNetworkIdle();
     await scenario.setup?.(page);
 
     for (const selector of scenario.selectors) {

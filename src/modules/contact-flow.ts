@@ -98,10 +98,11 @@ export class ContactFlow {
 
     copy?.addEventListener('click', async () => {
       try {
-        await navigator.clipboard?.writeText(KB.contact.email);
+        if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+        await navigator.clipboard.writeText(KB.contact.email);
         this.setStatus(card, 'Email copied.');
       } catch {
-        this.setStatus(card, KB.contact.email);
+        this.setStatus(card, `Copy this email: ${KB.contact.email}`);
       }
       trackContact('Contact flow: copied email');
     });

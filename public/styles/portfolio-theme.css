@@ -490,12 +490,9 @@ article.projects ul.project-list li.project-item:focus-within {
 .organization-logos {
   display: flex;
   align-items: center;
-  gap: 10px;
-  position: absolute;
-  top: 18px;
-  right: 18px;
   gap: 6px;
-  z-index: 1;
+  position: static;
+  margin: 0 0 12px;
 }
 
 .organization-logos img {
@@ -514,8 +511,17 @@ article.projects ul.project-list li.project-item:focus-within {
 .achievement-organization-logos img { width: 38px; height: 38px; padding: 4px; object-fit: contain; border-radius: 8px; background: rgba(31,34,39,.96); border: 1px solid var(--polish-border); box-shadow: 0 3px 10px rgba(0,0,0,.2); }
 
 .achievement-card .card-content {
-  padding-right: 84px;
+  padding-right: 0;
 }
+
+.scholarship-provider { display: flex; align-items: center; gap: 10px; min-height: 50px; margin: 8px 0 10px; }
+.scholarship-logo { flex: 0 0 auto; }
+.scholarship-logo img { display: block; width: 42px; height: 42px; object-fit: contain; padding: 4px; border: 1px solid var(--polish-border); border-radius: 9px; background: #202328; box-shadow: 0 3px 10px rgba(0,0,0,.2); }
+.scholarship-provider .company-name { min-width: 0; }
+.school-provider { display: flex; align-items: center; gap: 10px; min-height: 50px; margin-bottom: 8px; }
+.school-logo { flex: 0 0 auto; }
+.school-provider .timeline-title { min-width: 0; overflow-wrap: anywhere; }
+.school-logo img { display: block; width: 42px; height: 42px; object-fit: contain; padding: 4px; border: 1px solid var(--polish-border); border-radius: 9px; background: #202328; box-shadow: 0 3px 10px rgba(0,0,0,.2); }
 
 .timeline-container {
   margin-left: 0;
@@ -758,6 +764,7 @@ main#main-content {
 .sidebar .contacts-list { gap: 18px; overflow: visible; }
 .sidebar .contact-item { gap: 12px; overflow: visible; }
 .sidebar .contact-info .contact-link:not(.resume) { font-size: 12px; line-height: 1.5; white-space: normal; overflow-wrap: anywhere; }
+.sidebar .contact-info a[href^="mailto:"] { font-size: 11px; }
 .sidebar .contact-info address { font-size: 12px; line-height: 1.6; font-style: normal; color: var(--light-gray); }
 .sidebar .contact-title { font-size: 10px; letter-spacing: .08em; color: var(--polish-muted); }
 .sidebar .icon-box { width: 36px; height: 36px; min-width: 36px; border-radius: 10px; font-size: 16px; }

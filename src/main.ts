@@ -304,7 +304,14 @@ class PortfolioApp {
   }
 
   private setupSearchLoader(initialQuery: string): void {
-    const open = (query = '') => void this.loadSearch().then((search) => search?.open?.(query));
+    let pendingQuery: string | null = null;
+    const open = (query = '') => {
+      pendingQuery = query;
+      void this.loadSearch().then((search) => {
+        if (pendingQuery !== null) search?.open?.(pendingQuery);
+        pendingQuery = null;
+      });
+    };
 
     window.addEventListener('portfolio:open-search', (event) => {
       if (window.Portfolio?.modules?.Search) return;
@@ -313,6 +320,15 @@ class PortfolioApp {
     });
 
     document.addEventListener('keydown', (event) => {
+      // Keep fast typing while the search bundle loads on a slow connection.
+      if (pendingQuery !== null && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        if (event.key === 'Escape') pendingQuery = null;
+        else if (event.key === 'Backspace') pendingQuery = pendingQuery.slice(0, -1);
+        else if (event.key.length === 1) pendingQuery += event.key;
+        else return;
+        event.preventDefault();
+        return;
+      }
       if (window.Portfolio?.modules?.Search || event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
       const target = event.target as HTMLElement | null;
       if (target?.matches('input, textarea, select, [contenteditable="true"]')) return;

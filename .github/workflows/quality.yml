@@ -1,0 +1,44 @@
+name: Portfolio quality checks
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run type-check && npm run lint && npm run build && npm run check:links && npm run test:api
+      - run: npm run test:behavior
+        env:
+          TEST_SKIP_BUILD: '1'
+      - name: Responsive and resilience tests
+        run: |
+          npm run preview -- --host 127.0.0.1 > /tmp/portfolio-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid"' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/about > /dev/null; then break; fi
+            sleep 1
+          done
+          npm run test:stress
+          npm run test:resilience
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: portfolio-browser-checks
+          path: .visual-regression/current/
+          include-hidden-files: true
+          retention-days: 14

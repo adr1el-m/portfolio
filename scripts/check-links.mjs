@@ -6,6 +6,8 @@ const checkExternal = process.argv.includes('--external') || process.env.CHECK_E
 const sourceFiles = [
   'index.html',
   'src/data/knowledge-base.ts',
+  'src/data/project-profiles.ts',
+  'scripts/generate-case-study-pages.mjs',
   'src/modules/structured-data.ts',
   'public/manifest.json',
   'vercel.json',

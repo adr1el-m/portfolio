@@ -1,7 +1,23 @@
 import { defineConfig } from 'vite';
 import path from 'path';
+import fs from 'node:fs';
 
 export default defineConfig({
+  plugins: [{
+    name: 'preview-generated-pages',
+    configurePreviewServer(server) {
+      server.middlewares.use((req, _res, next) => {
+        const url = new URL(req.url || '/', 'http://localhost');
+        if (/^\/(?:honors\/\d{4}\/[a-z0-9-]+|case-studies\/[a-z0-9-]+)\/?$/.test(url.pathname)) {
+          const generated = `${url.pathname.replace(/\/$/, '')}/index.html`;
+          if (fs.existsSync(path.join(server.config.root, server.config.build.outDir, generated))) {
+            req.url = generated + url.search;
+          }
+        }
+        next();
+      });
+    },
+  }],
   server: {
     proxy: {
       '/api': {

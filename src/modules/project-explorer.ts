@@ -78,6 +78,7 @@ export class ProjectExplorer {
     host.insertBefore(this.root, selectedWork?.nextSibling || host.firstChild);
     this.bind();
     this.render();
+    window.dispatchEvent(new Event('portfolio:project-explorer-ready'));
   }
 
   private bind(): void {

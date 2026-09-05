@@ -67,11 +67,14 @@ for (const match of source.matchAll(/<li class="achievement-card"([\s\S]*?)<\/li
   const images = parseImages(attribute(markup, 'data-images'));
   const optimizedImages = parseImages(attribute(markup, 'data-webp-images'));
   const pathName = `/honors/${year}/${slugify(title)}`;
+  const organizer = cleanText(attribute(markup, 'data-organizer'));
   honors.push({
     title,
     year,
     pathName,
-    organizer: cleanText(attribute(markup, 'data-organizer')),
+    // Legacy cards store entire social captions here. Keep those captions in
+    // the original modal, not in an organization name or compact fact badge.
+    organizer: organizer.length <= 180 ? organizer : '',
     date: cleanText(attribute(markup, 'data-date')),
     location: cleanText(attribute(markup, 'data-location')),
     description: cleanText(attribute(markup, 'data-description')),

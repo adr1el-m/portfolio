@@ -526,12 +526,18 @@ export class CommandPalette {
   }
 
   private openProjectExplorer(filter?: string, compare = false): void {
-    navigateToPage('projects', { track: false });
-    window.setTimeout(() => {
+    const apply = () => {
       window.dispatchEvent(new CustomEvent('portfolio:project-explorer', {
         detail: compare ? { action: 'compare' } : { action: 'filter', value: filter },
       }));
-    }, 180);
+    };
+    if (document.querySelector('[data-project-explorer]')) {
+      navigateToPage('projects', { track: false });
+      apply();
+    } else {
+      window.addEventListener('portfolio:project-explorer-ready', apply, { once: true });
+      navigateToPage('projects', { track: false });
+    }
   }
 
   private openChangelog(): void {

@@ -14,7 +14,7 @@ export class PwaManager {
         button.hidden = false;
       });
     }, { once: true });
-    window.addEventListener('load', () => {
+    const registerWorker = () => {
       navigator.serviceWorker
         .register(swUrl)
         .then((registration) => {
@@ -38,7 +38,10 @@ export class PwaManager {
         .catch((err) => {
           console.warn('❌ Service Worker registration failed:', err);
         });
-    });
+    };
+    // This module is loaded after first paint, often after the load event.
+    if (document.readyState === 'complete') registerWorker();
+    else window.addEventListener('load', registerWorker, { once: true });
   }
 
   private static bindInstallButtons(): void {

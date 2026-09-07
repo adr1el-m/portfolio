@@ -4053,10 +4053,23 @@ article.active {
   box-sizing: border-box;
 }
 
+.achievement-modal-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  flex: 0 0 44px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+  background: #1c1c1f;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
 .achievement-modal-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
+  position: static;
+  flex: 0 0 36px;
+  margin: 0;
   width: 36px;
   height: 36px;
   display: inline-flex !important;
@@ -4070,7 +4083,6 @@ article.active {
   background: linear-gradient(180deg, rgba(255, 215, 0, 0.08), rgba(255, 215, 0, 0.02));
   cursor: pointer;
   transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
-  z-index: 15;
 }
 
 .achievement-modal-close svg,
@@ -4470,13 +4482,11 @@ article.active {
   border-radius: 3px;
 }
 
-/* In landscape the content scrolls, so the absolute-positioned close button
-   would scroll away. Use fixed positioning (relative to viewport) so it
-   always stays in the top-right corner of the visible modal area. */
-.achievement-modal.is-landscape .achievement-modal-close {
-  position: fixed;
-  top: clamp(12px, 4vw, 28px);
-  right: clamp(12px, 4vw, 28px);
+/* Keep the close toolbar inside the scrolling panel. A fixed control becomes
+   relative to the animated (transformed) panel and drifts outside its edge. */
+.achievement-modal.is-landscape .achievement-modal-toolbar {
+  position: sticky;
+  top: 0;
   z-index: 1010;
 }
 

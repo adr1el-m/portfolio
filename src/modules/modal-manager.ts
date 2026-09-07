@@ -524,7 +524,14 @@ export class ModalManager {
     if (logosBlock && logosList) {
       logosList.innerHTML = '';
       (data.organizationLogos || []).forEach((logo) => {
-        const img = document.createElement('img'); img.src = logo.src; img.alt = logo.alt; img.loading = 'lazy'; logosList.appendChild(img);
+        const img = document.createElement('img');
+        img.src = logo.src;
+        img.alt = logo.alt;
+        img.width = 38;
+        img.height = 38;
+        img.decoding = 'async';
+        img.loading = 'lazy';
+        logosList.appendChild(img);
       });
       logosBlock.style.display = data.organizationLogos?.length ? 'flex' : 'none';
     }

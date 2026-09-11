@@ -13,6 +13,9 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      # Use the runner Chrome covered by Ubuntu’s AppArmor sandbox policy.
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -21,8 +24,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run type-check && npm run lint && npm run build && npm run check:links && npm run test:api
-      - name: Install browser for visitor checks
-        run: npx puppeteer browsers install chrome
+      - name: Verify runner Chrome
+        run: /usr/bin/google-chrome --version
       - run: npm run test:behavior
         env:
           TEST_SKIP_BUILD: '1'

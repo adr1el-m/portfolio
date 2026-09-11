@@ -12,9 +12,9 @@ export class VisitorCounter {
         this.createCounterUI();
 
         // In dev the Vite proxy forwards /api/* to a local server that usually
-        // isn't running, producing a noisy 502. Show a placeholder instead.
+        // isn't running, producing a noisy 502. Keep the counter hidden instead.
         if (import.meta.env.DEV) {
-            this.updateDisplay(0);
+            this.updateUnavailable();
             return;
         }
 
@@ -53,6 +53,7 @@ export class VisitorCounter {
         if (!sidebarInfo || document.querySelector('.visitor-counter')) return;
         const counterWrapper = document.createElement('div');
         counterWrapper.className = 'visitor-counter';
+        counterWrapper.hidden = true;
         counterWrapper.innerHTML = `<div class="visitor-counter-inner"><ion-icon name="eye-outline" class="visitor-icon"></ion-icon><span class="visitor-count" id="visitor-count">…</span><span class="visitor-label">Total Visits</span></div>`;
         sidebarInfo.insertBefore(counterWrapper, sidebarInfo.querySelector('.contacts-list') || sidebarInfo.firstChild);
         this.visitorCountEl = document.getElementById('visitor-count');
@@ -69,14 +70,18 @@ export class VisitorCounter {
 
     private updateDisplay(count: number): void {
         this.visitorCountEl ||= document.getElementById('visitor-count');
-        if (this.visitorCountEl) this.visitorCountEl.textContent = new Intl.NumberFormat().format(count);
+        if (this.visitorCountEl) {
+            this.visitorCountEl.textContent = new Intl.NumberFormat().format(count);
+            const wrapper = this.visitorCountEl.closest<HTMLElement>('.visitor-counter');
+            if (wrapper) wrapper.hidden = false;
+        }
     }
 
     private updateUnavailable(): void {
         this.visitorCountEl ||= document.getElementById('visitor-count');
         if (this.visitorCountEl) {
-            this.visitorCountEl.textContent = '—';
-            this.visitorCountEl.title = 'The secure visit counter is temporarily unavailable.';
+            const wrapper = this.visitorCountEl.closest<HTMLElement>('.visitor-counter');
+            if (wrapper) wrapper.hidden = true;
         }
     }
 

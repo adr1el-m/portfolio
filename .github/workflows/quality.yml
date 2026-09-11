@@ -21,6 +21,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run type-check && npm run lint && npm run build && npm run check:links && npm run test:api
+      - name: Install browser for visitor checks
+        run: npx puppeteer browsers install chrome
       - run: npm run test:behavior
         env:
           TEST_SKIP_BUILD: '1'

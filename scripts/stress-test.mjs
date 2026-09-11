@@ -38,7 +38,12 @@ try {
       results.push({ width, route, ...state });
       if (state.overflow > 1 || state.broken.length || state.violations.length) failures.push({ width, route, ...state });
       await page.evaluate(() => { document.activeElement?.blur?.(); window.scrollTo(0, 0); });
-      if ([390, 1440].includes(width)) await page.screenshot({ path: `.visual-regression/current/review-${width}-${route}.png`, fullPage: true });
+      if ([390, 1440].includes(width)) {
+        // Full-page captures do not paint offscreen content-visibility:auto
+        // sections. Render them for the screenshot after testing normal layout.
+        await page.addStyleTag({ content: 'article.active section { content-visibility: visible !important; }' });
+        await page.screenshot({ path: `.visual-regression/current/review-${width}-${route}.png`, fullPage: true });
+      }
       console.log(`${width} ${route}: overflow=${state.overflow}, broken=${state.broken.length}, accessibility=${state.violations.map(v=>v.id).join(',') || 'pass'}`);
     }
     if (errors.length) failures.push({ width, errors });

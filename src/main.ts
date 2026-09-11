@@ -490,10 +490,6 @@ class PortfolioApp {
             import('./modules/honor-project-links').then(({ HonorProjectLinks }) => new HonorProjectLinks());
           });
 
-          document.addEventListener('pointermove', () => {
-            import('./modules/custom-cursor').then(({ CustomCursor }) => new CustomCursor());
-          }, { once: true, passive: true });
-
           const sidebar = document.querySelector<HTMLElement>('[data-sidebar]');
           const loadTooltips = () => {
             import('./modules/tooltip-portal').then(({ TooltipPortal }) => new TooltipPortal());

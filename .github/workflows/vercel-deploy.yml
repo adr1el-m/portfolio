@@ -1,8 +1,8 @@
 name: Vercel Deploy
 
 on:
-  push:
-    branches: [ main ]
+  # Production push deployments use the configured Vercel Git integration.
+  # This manual fallback requires VERCEL_TOKEN, VERCEL_ORG_ID and VERCEL_PROJECT_ID.
   workflow_dispatch:
 
 env:

@@ -28,8 +28,6 @@ export class PwaManager {
               if (installing.state === 'installed') {
                 if (navigator.serviceWorker.controller) {
                   PwaManager.showUpdatePrompt();
-                } else {
-                  PwaManager.showInstalledToast();
                 }
               }
             };
@@ -89,10 +87,6 @@ export class PwaManager {
     el.textContent = message;
     document.body.appendChild(el);
     setTimeout(() => { el.remove(); }, duration);
-  }
-
-  private static showInstalledToast(): void {
-    PwaManager.showToast('Content cached for offline use.');
   }
 
   private static showUpdatePrompt(): void {

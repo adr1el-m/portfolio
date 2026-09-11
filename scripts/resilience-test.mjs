@@ -74,7 +74,9 @@ try {
   await page.$eval('.contact-flow-copy', el => el.click());
   assert.match(await page.$eval('.contact-flow-status', el => el.textContent), /Copy this email:/);
   await page.$eval('.contact-flow-send', el => el.click());
+  await page.waitForFunction(() => document.querySelector('.contact-flow-status')?.textContent.includes('at least 8 characters'));
   assert.equal(contactRequests, 0, 'Empty message reached server');
+  assert.equal(await page.$eval('#contact-flow-message', el => document.activeElement === el), true);
   await page.$eval('#contact-flow-message', el => { el.value = 'Testing local delivery feedback only.'; });
   await page.$eval('.contact-flow-send', el => { for(let i=0;i<10;i++) el.click(); });
   await page.waitForFunction(() => document.querySelector('.contact-flow-status')?.textContent.includes('Message sent'));

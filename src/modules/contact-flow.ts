@@ -17,7 +17,6 @@ function trackContact(label: string): void {
 
 export class ContactFlow {
   private selectedReason = 'Project inquiry';
-  private statusTimer: number | null = null;
   private isSending = false;
 
   constructor() {
@@ -53,7 +52,7 @@ export class ContactFlow {
         <input id="contact-flow-email" class="contact-flow-input" type="email" maxlength="180" autocomplete="email" placeholder="Your email for replies">
       </div>
       <label class="contact-flow-label" for="contact-flow-message">Message</label>
-      <textarea id="contact-flow-message" class="contact-flow-message" rows="3" maxlength="420" placeholder="Optional context for the email draft"></textarea>
+      <textarea id="contact-flow-message" class="contact-flow-message" rows="3" minlength="8" maxlength="420" aria-describedby="contact-flow-status" placeholder="Tell me about your project or opportunity"></textarea>
       <div class="contact-flow-actions">
         <button type="button" class="contact-flow-action contact-flow-copy" data-analytics-label="Contact flow: copy email">
           <ion-icon name="copy-outline" aria-hidden="true"></ion-icon>
@@ -68,7 +67,7 @@ export class ContactFlow {
           Send
         </button>
       </div>
-      <p class="contact-flow-status" role="status" aria-live="polite"></p>
+      <p id="contact-flow-status" class="contact-flow-status" role="status" aria-live="polite"></p>
     `;
 
     socialList.insertAdjacentElement('afterend', card);
@@ -126,8 +125,14 @@ export class ContactFlow {
 
   private async sendContact(card: HTMLElement, payload: { name: string; email: string; message: string }): Promise<void> {
     const send = card.querySelector<HTMLButtonElement>('.contact-flow-send');
-    const message = payload.message.trim() || `I saw your portfolio and wanted to reach out about ${this.selectedReason.toLowerCase()}.`;
+    const message = payload.message.replace(/\s+/g, ' ').trim();
     const email = payload.email.trim();
+
+    if (message.length < 8) {
+      this.setStatus(card, 'Please write a message of at least 8 characters.');
+      card.querySelector<HTMLTextAreaElement>('.contact-flow-message')?.focus();
+      return;
+    }
 
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       this.setStatus(card, 'Please enter a valid reply email.');
@@ -189,10 +194,6 @@ export class ContactFlow {
     const status = card.querySelector<HTMLElement>('.contact-flow-status');
     if (!status) return;
     status.textContent = text;
-    if (this.statusTimer) window.clearTimeout(this.statusTimer);
-    this.statusTimer = window.setTimeout(() => {
-      status.textContent = '';
-    }, 2600);
   }
 
   private injectStyles(): void {

@@ -1000,3 +1000,44 @@ body :is(a, button, input, select, textarea, summary, [tabindex="0"]):focus-visi
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* Lead with real work; keep supporting tools secondary. */
+.sidebar .visitor-counter[hidden] { display: none; }
+.sidebar .contact-item:has(a[href^="mailto:"]) { gap: 8px; }
+.sidebar .contact-item:has(a[href^="mailto:"]) .icon-box { width: 24px; min-width: 24px; }
+.sidebar .contact-info a[href^="mailto:"] { font-size: 10.5px; }
+.featured-projects { margin: 32px 0 40px; }
+.featured-projects-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+.featured-eyebrow { color: var(--polish-muted); font-size: 10px; line-height: 1.5; letter-spacing: .06em; text-transform: uppercase; }
+.featured-projects-heading h3 { margin-top: 5px; }
+.featured-projects-heading > a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--polish-accent); font-size: 13px; white-space: nowrap; }
+.featured-projects-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.featured-project { display: flex; flex-direction: column; overflow: hidden; min-width: 0; border: 1px solid var(--polish-border); border-radius: 12px; background: var(--polish-panel); transition: border-color 160ms ease; }
+.featured-project:hover { border-color: var(--polish-accent); }
+.featured-project:focus-visible { outline: 2px solid var(--polish-accent); outline-offset: 4px; }
+.featured-project-media { aspect-ratio: 16 / 10; overflow: hidden; flex-shrink: 0; border-bottom: 1px solid var(--polish-border); background: #111; }
+.featured-project-media img { width: 100%; height: 100%; object-fit: contain; }
+.featured-project-copy { display: flex; flex: 1; flex-direction: column; align-items: start; padding: 20px; gap: 12px; }
+.featured-project-copy h4 { color: var(--polish-text); font-size: 19px; line-height: 1.3; letter-spacing: -.02em; }
+.featured-project-copy > p:not(.featured-eyebrow) { color: var(--polish-muted); font-size: 13px; line-height: 1.7; }
+.featured-role { margin-top: auto; color: var(--polish-muted); font-size: 11px; line-height: 1.6; }
+.featured-link { display: inline-flex; gap: 8px; align-items: center; color: var(--polish-accent); font-size: 12px; font-weight: 600; }
+@media (max-width: 1199px) and (min-width: 581px) {
+  .featured-projects-grid { grid-template-columns: 1fr; }
+  .featured-project { display: grid; grid-template-columns: 34% 1fr; }
+  .featured-project-media { height: 100%; aspect-ratio: auto; border-bottom: 0; border-right: 1px solid var(--polish-border); }
+}
+@media (max-width: 580px) {
+  /* Resume and contact remain in the persistent action bar and introduction. */
+  .sidebar .contacts-list { display: none; }
+  .sidebar-info_more { display: flex; justify-content: space-between; margin-top: 8px; gap: 8px; }
+  .sidebar .social-list { margin-left: auto; }
+  .sidebar .social-link { width: 40px; min-height: 44px; }
+  .sidebar-rail .sidebar { padding: 14px 18px !important; }
+  .about .article-title { margin-bottom: 18px; }
+  .recruiter-cta .recruiter-cta-title { font-size: clamp(28px, 7.5vw, 36px); }
+  .recruiter-cta-copy > p:last-child { font-size: 14px; }
+  .featured-projects { margin: 26px 0 32px; }
+  .featured-projects-grid { grid-template-columns: 1fr; }
+  .featured-project-copy { padding: 18px; }
+}

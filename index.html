@@ -613,8 +613,8 @@
         <section class="recruiter-cta" aria-labelledby="recruiter-cta-title">
           <div class="recruiter-cta-copy">
             <p class="recruiter-cta-eyebrow">Available for internships &amp; collaborations</p>
-            <h3 id="recruiter-cta-title" class="h3 recruiter-cta-title">Full-stack developer building practical AI and civic-tech products.</h3>
-            <p>I turn complex problems into thoughtful digital experiences—from the interface to the systems behind it.</p>
+            <h3 id="recruiter-cta-title" class="h3 recruiter-cta-title">I build web apps that make everyday tasks easier.</h3>
+            <p>I’m Adriel, a Computer Science student at PUP and DOST-SEI scholar in the Philippines. My work spans school services, healthcare prototypes, and AI-assisted tools.</p>
           </div>
           <div class="recruiter-cta-actions" aria-label="Recruiter actions">
             <a class="recruiter-cta-primary" href="/projects">View selected work <ion-icon name="arrow-forward-outline" aria-hidden="true"></ion-icon></a>
@@ -622,11 +622,27 @@
             <a class="recruiter-cta-secondary" href="mailto:dagsmagalona@gmail.com">Contact me</a>
             <button class="recruiter-cta-secondary pwa-install-button" type="button" data-pwa-install hidden>Install for offline review</button>
           </div>
-          <div class="role-paths" aria-label="Choose a portfolio path by role">
-            <a href="/projects?role=frontend">Frontend hiring manager</a>
-            <a href="/projects?role=ai">AI reviewer</a>
-            <a href="/projects?role=founder">Startup founder</a>
-            <a href="/projects?role=internship">Internship recruiter</a>
+
+        </section>
+
+        <section class="featured-projects" aria-labelledby="featured-projects-title">
+          <div class="featured-projects-heading">
+            <div><p class="featured-eyebrow">From the portfolio</p><h3 id="featured-projects-title" class="h3">Selected work</h3></div>
+            <a href="/projects">All projects <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="featured-projects-grid">
+            <a class="featured-project" href="/case-studies/odrs">
+              <div class="featured-project-media"><img src="/images/projects/odrs/1-800.webp" alt="Student document request system interface" width="800" height="361" loading="lazy" decoding="async"></div>
+              <div class="featured-project-copy"><p class="featured-eyebrow">Full-stack · Academic project</p><h4>Online Document Request System</h4><p>A student-and-staff workflow for submitting, tracking, and managing school document requests.</p><span class="featured-role">My role: full-stack implementation</span><span class="featured-link">Read case study <span aria-hidden="true">↗</span></span></div>
+            </a>
+            <a class="featured-project" href="/case-studies/worksight">
+              <div class="featured-project-media"><img src="/images/projects/worksight/1-800.webp" alt="WorkSight workplace analytics interface" width="800" height="375" loading="lazy" decoding="async"></div>
+              <div class="featured-project-copy"><p class="featured-eyebrow">Workplace analytics · Team project</p><h4>WorkSight</h4><p>A burnout-risk analytics prototype. Our team placed third in BPI DataWave 2025’s Future of Work category.</p><span class="featured-role">My role: product narrative, workflow &amp; pitch</span><span class="featured-link">Read case study <span aria-hidden="true">↗</span></span></div>
+            </a>
+            <a class="featured-project" href="/case-studies/genesync">
+              <div class="featured-project-media"><img src="/images/projects/genesync/genesync-demo.poster.jpg" alt="GeneSync sequence alignment demo" width="640" height="360" loading="lazy" decoding="async"></div>
+              <div class="featured-project-copy"><p class="featured-eyebrow">Algorithms · Academic team project</p><h4>GeneSync</h4><p>An interactive exploration of biological sequence alignment, from scoring to visual traceback.</p><span class="featured-role">My role: Group 5 contributor</span><span class="featured-link">Read case study <span aria-hidden="true">↗</span></span></div>
+            </a>
           </div>
         </section>
 
@@ -686,32 +702,6 @@
           </ul>
         </section>
 
-        <section class="adrai-guide" aria-labelledby="adrai-guide-title">
-          <div class="adrai-guide-heading">
-            <p class="adrai-guide-eyebrow">Ask AdrAI</p>
-            <h3 id="adrai-guide-title" class="h3">A guided way to explore the portfolio.</h3>
-            <p>Get a focused answer, proof trail, or next step without having to hunt through every section.</p>
-          </div>
-          <div class="adrai-guide-prompts" aria-label="Suggested questions for AdrAI">
-            <button type="button" data-adrai-prompt="Why hire Adriel? Give me a concise recruiter briefing.">
-              <ion-icon name="briefcase-outline" aria-hidden="true"></ion-icon><span>Why hire Adriel?</span>
-            </button>
-            <button type="button" data-adrai-prompt="Show proof of Adriel's AI and full-stack skills.">
-              <ion-icon name="sparkles-outline" aria-hidden="true"></ion-icon><span>Show AI proof</span>
-            </button>
-            <button type="button" data-adrai-prompt="Which projects best show frontend and product thinking?">
-              <ion-icon name="code-slash-outline" aria-hidden="true"></ion-icon><span>Find the best work</span>
-            </button>
-            <button type="button" data-adrai-prompt="Summarize Adriel's most relevant awards and the evidence behind them.">
-              <ion-icon name="trophy-outline" aria-hidden="true"></ion-icon><span>Review achievement proof</span>
-            </button>
-          </div>
-          <button type="button" class="adrai-guide-command" data-command-palette-open>
-            <ion-icon name="terminal-outline" aria-hidden="true"></ion-icon>
-            Explore with keyboard shortcuts <kbd>⌘</kbd><kbd>K</kbd>
-          </button>
-        </section>
-
         <section class="github-heatmap" data-github-heatmap aria-labelledby="github-heatmap-title">
           <div class="github-heatmap-header">
             <h3 id="github-heatmap-title" class="github-heatmap-title">Coding activity</h3>
@@ -752,7 +742,7 @@
                     data-organization-logos='[{"src":"/images/logos/gcash.webp","alt":"GCash logo"}]'
                     data-date="2026" data-location="—"
                     data-teammates='[{"name":"Eliazar Inso"},{"name":"Kiel Ethan Lanzanas"},{"name":"John Carlo Santos"},{"name":"Ellah Benerado"}]'
-                    data-description="Participation: Participated in ImaGnation 2026 by GCash as part of a collaborative team.&#10;Team: Worked alongside previous teammates Eliazar Inso, Kiel Ethan Lanzanas, John Carlo Santos, and Ellah Benerado.&#10;Media: Project and participation media can be added to this portfolio entry later.">
+                    data-description="Participation: Participated in ImaGnation 2026 by GCash as part of a collaborative team.&#10;Team: Worked alongside previous teammates Eliazar Inso, Kiel Ethan Lanzanas, John Carlo Santos, and Ellah Benerado.">
                     <div class="award-ribbon">Participant</div>
                     <div class="card-content">
                       <div class="organization-logos" aria-label="Related organizations">

@@ -1,7 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 const root = process.cwd();
+// The Git index is case-sensitive even on macOS. Match the filenames that a
+// clean Linux checkout receives, not just what the local filesystem resolves.
+const trackedPaths = new Map(execFileSync('git', ['ls-files', '-z', '--', 'public'], { encoding: 'utf8' })
+  .split('\0').filter(Boolean).map((file) => [file.toLowerCase(), file]));
 const checkExternal = process.argv.includes('--external') || process.env.CHECK_EXTERNAL_LINKS === '1';
 const sourceFiles = [
   'index.html',
@@ -113,7 +118,10 @@ function publicPathExists(urlPath) {
     const apiName = clean.replace(/^\/api\//, '');
     return ['.ts', '.js', '.mjs'].some((ext) => fs.existsSync(path.join(root, 'api', `${apiName}${ext}`)));
   }
-  return fs.existsSync(path.join(root, 'public', clean.replace(/^\/+/, '')))
+  const assetPath = `public/${clean.replace(/^\/+/, '')}`;
+  const trackedPath = trackedPaths.get(assetPath.toLowerCase());
+  if (trackedPath && trackedPath !== assetPath) return false;
+  return fs.existsSync(path.join(root, assetPath))
     || fs.existsSync(path.join(root, clean.replace(/^\/+/, '')));
 }
 

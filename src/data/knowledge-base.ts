@@ -161,6 +161,34 @@ export const KB: KnowledgeBase = {
   },
   projects: [
     {
+      title: 'Paperazzi',
+      category: 'Mobile App',
+      images: [
+        '/images/projects/paperazzi/hero.avif',
+        '/images/projects/paperazzi/dashboard.avif',
+        '/images/projects/paperazzi/scan-pipeline.avif',
+        '/images/projects/paperazzi/document-understanding.avif',
+        '/images/projects/paperazzi/verification.avif',
+        '/images/projects/paperazzi/drawing-intelligence.avif',
+        '/images/projects/paperazzi/export.avif',
+      ],
+      webpImages: [
+        '/images/projects/paperazzi/hero.webp',
+        '/images/projects/paperazzi/dashboard.webp',
+        '/images/projects/paperazzi/scan-pipeline.webp',
+        '/images/projects/paperazzi/document-understanding.webp',
+        '/images/projects/paperazzi/verification.webp',
+        '/images/projects/paperazzi/drawing-intelligence.webp',
+        '/images/projects/paperazzi/export.webp',
+      ],
+      description:
+        'Purpose: Help teams turn aging blueprints, field logs, and archive scans into structured information that can be checked against the source.\nTeam: Built by Team Cheezcribe for AppCon 2026; my role covered the Flutter core pipeline, iOS Apple Vision integration, drawing vectorizer, and tests.\nBuild: A Flutter app that moves from document capture and on-device OCR through source-linked human review to JSON, CSV, SVG, DXF, and PDF exports; the web demo uses a server-side vision proxy.\nOutcome: Won Best in Pitching and placed 3rd overall among 11 teams at AppCon 2026.',
+      technologies: 'Flutter • Dart • Swift • Apple Vision • Kotlin • ML Kit • Vercel',
+      githubUrl: 'https://github.com/adr1el-m/cheezcribe',
+      liveUrl: 'https://paperazzi-appcon.vercel.app/app/',
+      docsUrl: 'https://github.com/adr1el-m/cheezcribe#readme',
+    },
+    {
       title: 'FinanceWise',
       category: 'Web App',
       images: [],
@@ -291,6 +319,42 @@ export const KB: KnowledgeBase = {
     },
   ],
   achievements: [
+    {
+      title: 'AppCon 2026 — Best in Pitching',
+      projectTitle: 'Paperazzi',
+      images: [
+        '/images/honors/2026/appcon-paperazzi/best-in-pitching.avif',
+        '/images/honors/2026/appcon-paperazzi/official-winners.avif',
+        '/images/honors/2026/appcon-paperazzi/final-rankings.avif',
+        '/images/honors/2026/appcon-paperazzi/pitching-paperazzi.avif',
+      ],
+      webpImages: [
+        '/images/honors/2026/appcon-paperazzi/best-in-pitching.webp',
+        '/images/honors/2026/appcon-paperazzi/official-winners.webp',
+        '/images/honors/2026/appcon-paperazzi/final-rankings.webp',
+        '/images/honors/2026/appcon-paperazzi/pitching-paperazzi.webp',
+      ],
+      organizer: 'AppCon 2026: Virtual AI Matsuri',
+      date: 'September 25, 2026',
+      location: 'Online',
+      organizationLogos: [
+        {
+          src: '/images/honors/2026/appcon-paperazzi/paperazzi-icon.webp',
+          alt: 'Paperazzi app icon',
+        },
+      ],
+      teammates: [
+        { name: 'Vince Anjo Villar', role: 'Multi-Role & Strategy' },
+        { name: 'Paul Henry M. Dacalan', role: 'Developer' },
+        { name: 'Ashley Nicole S. Fullero', role: 'UI/UX Designer' },
+        { name: 'Johna Mae Boligod', role: 'Product Designer' },
+      ],
+      description:
+        'Recognition: Won Best in Pitching at AppCon 2026, received the ₱10,000 special-award prize, and placed 3rd overall out of 11 teams with a final score of 76.\nScope: Built Paperazzi, a Flutter-based legacy document intelligence prototype that turns scanned blueprints, field logs, and historical records into source-linked structured data and CAD-ready exports with human verification.\nContribution: Developed the Flutter core pipeline, iOS Apple Vision integration, drawing vectorizer, and test suite for Team Cheezcribe.\nOutcome: Delivered a public repository and browser demo for a working capture, OCR, review, and export workflow under the Legacy Knowledge Digitization & Asset Redefinition challenge.',
+      githubUrl: 'https://github.com/adr1el-m/cheezcribe',
+      liveUrl: 'https://paperazzi-appcon.vercel.app/app/',
+      facebookUrl: 'https://www.facebook.com/share/p/1MKrbLL5HP/',
+    },
     {
       title: 'ImaGnation 2026 by GCash',
       images: [],

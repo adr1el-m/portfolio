@@ -5,6 +5,19 @@ import type { ProjectProof } from '@/types';
  * Keep claims concise and traceable to a project repository, demo, or honor.
  */
 const profiles: Record<string, ProjectProof> = {
+  paperazzi: {
+    role: 'Flutter pipeline, iOS Apple Vision integration, drawing vectorizer, and tests',
+    team: 'Team Cheezcribe · AppCon 2026',
+    timeframe: 'September 2026',
+    constraints: 'Extract useful records and drawing geometry from aging documents while keeping each field available for source-linked human review.',
+    outcome: 'Best in Pitching and 3rd overall among 11 AppCon 2026 teams.',
+    architecture: 'Flutter client · Apple Vision and ML Kit OCR · human review · JSON, CSV, SVG, DXF, and PDF exports · web vision proxy',
+    evidence: [
+      { label: 'AppCon award', href: '/honors/2026/appcon-2026-best-in-pitching' },
+      { label: 'Source repository', href: 'https://github.com/adr1el-m/cheezcribe' },
+      { label: 'Browser demo', href: 'https://paperazzi-appcon.vercel.app/app/' },
+    ],
+  },
   'online document request system': {
     role: 'Full-stack implementation', team: 'Academic project', timeframe: 'Grade 12 school workflow',
     constraints: 'Replace manual request coordination with a trackable student-and-staff flow.',

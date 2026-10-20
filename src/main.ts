@@ -49,6 +49,8 @@ import { logger } from './config';
 import type { Portfolio } from './types';
 import { TextPlaceholders } from './modules/text-placeholders';
 import { CustomCursor } from './modules/custom-cursor';
+import { Stage } from './modules/stage';
+import { MotionFx } from './modules/motion-fx';
 
 // Vercel Analytics & Speed Insights are loaded conditionally in production (see top of file);
 
@@ -434,6 +436,10 @@ class PortfolioApp {
       const navigationManager = new NavigationManager();
       // Initialize scroll progress bar
       new ScrollProgress();
+      // Cinematic intro + site-wide motion. Audit runs get the static layout.
+      const stageRoot = document.querySelector<HTMLElement>('[data-stage]');
+      if (stageRoot) new Stage(stageRoot, { calm: auditMode }).init();
+      if (!auditMode) new MotionFx().init();
       window.Portfolio = {
         core: {
           version: '2.0.0',

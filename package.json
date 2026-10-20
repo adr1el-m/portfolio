@@ -10,10 +10,12 @@
   },
   "scripts": {
     "dev": "vite --open \"/?admin=true\"",
-    "build": "tsc && vite build && node scripts/generate-honor-pages.mjs && node scripts/generate-case-study-pages.mjs",
+    "build": "tsc && vite build && node scripts/verify-csp-hashes.mjs && node scripts/generate-honor-pages.mjs && node scripts/generate-case-study-pages.mjs",
     "preview": "vite preview",
     "deploy": "vercel --prod --yes",
     "deploy:preview": "vercel --yes",
+    "generate:orbit": "node scripts/generate-orbit-thumbs.mjs",
+    "generate:og": "node scripts/generate-og-image.mjs",
     "refresh:github": "node scripts/generate-github-contributions.mjs",
     "check:links": "node scripts/check-links.mjs",
     "test:visual": "node scripts/visual-regression.mjs",

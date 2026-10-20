@@ -171,7 +171,7 @@ export class NavigationManager {
     const backToTopBtn = document.querySelector<HTMLElement>('.back-to-top');
     if (backToTopBtn) {
       window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
+        if (window.scrollY > this.contentTop() + 300) {
           backToTopBtn.classList.add('show');
         } else {
           backToTopBtn.classList.remove('show');
@@ -179,7 +179,7 @@ export class NavigationManager {
       });
 
       backToTopBtn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: this.contentTop(), behavior: 'smooth' });
       });
     }
   }
@@ -384,7 +384,7 @@ export class NavigationManager {
 
     // Scroll to contact anchor if /contact, else to top
     if (key === 'contact') {
-      window.scrollTo({ top: 0, behavior: 'auto' });
+      window.scrollTo({ top: this.contentTop(), behavior: 'auto' });
       const el = document.getElementById('contact');
       if (el) {
         setTimeout(() => {
@@ -429,7 +429,18 @@ export class NavigationManager {
       return;
     }
 
-    window.scrollTo({ top: 0, behavior: 'auto' });
+    window.scrollTo({ top: this.contentTop(), behavior: 'auto' });
+  }
+
+  /**
+   * Top of the app content. On the home route an intro stage sits above
+   * <main>; in-app navigation should land on content, not replay the intro.
+   */
+  private contentTop(): number {
+    const stage = document.querySelector<HTMLElement>('[data-stage]');
+    if (!stage || stage.offsetHeight === 0) return 0;
+    const main = document.getElementById('main-content');
+    return main ? Math.max(0, main.getBoundingClientRect().top + window.scrollY) : 0;
   }
 
   /**

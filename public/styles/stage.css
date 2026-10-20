@@ -1508,8 +1508,9 @@ html.stage-on main#main-content {
   transition: translate 0.7s var(--ease-out-expo), opacity 0.4s ease;
 }
 
-/* On the home route the intro has its own bar; the nav slides in after it. */
-html.nav-tucked .main-content > nav.navbar {
+/* On the home route the intro has its own bar; the nav starts tucked (from
+   first paint) and slides in once the intro scrolls away. */
+html.stage-on:not(.nav-free) .main-content > nav.navbar {
   translate: -50% calc(-100% - 28px);
   opacity: 0;
   pointer-events: none;

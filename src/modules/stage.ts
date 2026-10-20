@@ -121,7 +121,7 @@ export class Stage {
   private tuckSiteNav(): void {
     const root = document.documentElement;
     new IntersectionObserver(([entry]) => {
-      root.classList.toggle('nav-tucked', Boolean(entry?.isIntersecting));
+      root.classList.toggle('nav-free', !entry?.isIntersecting);
     }, { rootMargin: '0px 0px -88% 0px' }).observe(this.root);
   }
 

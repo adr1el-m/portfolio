@@ -975,16 +975,28 @@ article.fx-enter > * {
   animation-delay: calc(var(--fx-i, 0) * 70ms);
 }
 
-/* Scroll reveal for below-the-fold blocks (opted in by JS before paint). */
-.fx-reveal {
+/* Scroll reveal: below-the-fold blocks and cards are opted in by JS
+   (never anything already on screen), then rise, sharpen and settle in a
+   stagger as they enter. Individual transform properties are used so they
+   compose with hover tilts and existing transforms. */
+.fx-r {
   opacity: 0;
-  transform: translate3d(0, 40px, 0);
-  transition: opacity 0.9s ease, transform 1.1s var(--ease-out-expo);
+  translate: 0 36px;
+  scale: 0.97;
+  filter: blur(8px);
 }
 
-.fx-reveal.fx-in {
+.fx-r.fx-in {
   opacity: 1;
-  transform: none;
+  translate: 0 0;
+  scale: 1;
+  filter: blur(0);
+  transition:
+    opacity 0.8s ease,
+    translate 1.1s var(--ease-out-expo),
+    scale 1.1s var(--ease-out-expo),
+    filter 0.8s ease;
+  transition-delay: calc(var(--fx-d, 0) * 75ms);
 }
 
 /* Magnetic CTAs elsewhere in the app. */
@@ -1088,6 +1100,664 @@ article.fx-enter > * {
   transform: scale(1.06);
 }
 
+/* =========================================================================
+   Site redesign: the app shell speaks the intro's language.
+   ========================================================================= */
+
+/* ---------- ambient backdrop ---------- */
+
+body {
+  background: #0c0d0f;
+}
+
+/* Slow-drifting aurora behind every page (one fixed layer, GPU transform only). */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -15%;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 32% at 12% 18%, rgba(232, 200, 121, 0.075), transparent 70%),
+    radial-gradient(34% 30% at 88% 28%, rgba(143, 123, 255, 0.07), transparent 70%),
+    radial-gradient(40% 34% at 62% 92%, rgba(255, 122, 69, 0.055), transparent 70%);
+  animation: ambient-drift 34s ease-in-out infinite alternate;
+}
+
+@keyframes ambient-drift {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(3%, -2%, 0) rotate(6deg); }
+  100% { transform: translate3d(-2%, 3%, 0) rotate(-4deg); }
+}
+
+/* ---------- glass panels with a lit edge ---------- */
+
+.sidebar-rail .sidebar,
+.main-content > article[data-page] {
+  border: 1px solid transparent;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(24, 25, 29, 0.9), rgba(15, 16, 19, 0.86)) padding-box,
+    linear-gradient(155deg, rgba(232, 200, 121, 0.3), rgba(255, 255, 255, 0.05) 26%, rgba(255, 255, 255, 0.03) 70%, rgba(143, 123, 255, 0.24)) border-box;
+  box-shadow: 0 40px 90px -50px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* ID-card sidebar: a beam of light continuously traces its border. */
+@property --beam {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.sidebar-rail .sidebar {
+  position: relative;
+  isolation: isolate;
+}
+
+.sidebar-rail .sidebar::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 2;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--beam), transparent 0 64%, rgba(232, 200, 121, 0.95) 76%, rgba(255, 122, 69, 0.85) 82%, transparent 90%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: beam-spin 7s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes beam-spin {
+  to { --beam: 360deg; }
+}
+
+.sidebar-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px auto 0;
+  padding: 5px 11px 5px 9px;
+  border: 1px solid rgba(94, 224, 143, 0.25);
+  border-radius: 999px;
+  background: rgba(94, 224, 143, 0.06);
+  color: #b9efcb;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 1023px) {
+  .sidebar-status { margin: 8px 0 0; }
+}
+
+.sidebar .social-link {
+  transition: transform 0.4s var(--ease-out-back), color 0.25s ease, filter 0.25s ease;
+}
+
+.sidebar .social-link:hover,
+.sidebar .social-link:focus-visible {
+  transform: translateY(-4px) scale(1.08);
+  filter: drop-shadow(0 6px 14px rgba(232, 200, 121, 0.45));
+}
+
+.sidebar .contact-item {
+  transition: transform 0.35s var(--ease-out-expo);
+}
+
+.sidebar .contact-item:hover {
+  transform: translateX(4px);
+}
+
+/* ---------- floating glass nav ---------- */
+
+.main-content > .navbar {
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+  background: rgba(17, 18, 21, 0.72);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  box-shadow: 0 24px 60px -34px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.navbar .navbar-link {
+  transition: color 0.3s ease, letter-spacing 0.4s var(--ease-out-expo);
+}
+
+.navbar .navbar-link.active {
+  color: var(--stage-gold);
+}
+
+/* ---------- page switch: the panel wipes open, its sections cascade ---------- */
+
+@keyframes fx-panel-in {
+  from {
+    clip-path: inset(0 0 100% 0 round 24px);
+    opacity: 0.4;
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 24px);
+    opacity: 1;
+  }
+}
+
+.main-content > article[data-page].fx-enter {
+  animation: fx-panel-in 0.75s var(--ease-out-expo) both;
+}
+
+/* ---------- headings: display face, kinetic words, drawn underline ---------- */
+
+.featured-projects-heading h3,
+.service-title,
+.achievements-title,
+.github-heatmap-title,
+.section-title,
+.selected-work h3,
+.project-explorer-heading h3,
+.workflow-heading h3,
+.recruiter-cta-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.fx-split .fx-word {
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+  vertical-align: top;
+}
+
+.fx-split .fx-word > span {
+  display: inline-block;
+  translate: 0 108%;
+  rotate: 4deg;
+  transform-origin: 0 100%;
+}
+
+.fx-split.fx-in .fx-word > span {
+  translate: 0 0;
+  rotate: 0deg;
+  transition: translate 1s var(--ease-out-expo), rotate 1s var(--ease-out-expo);
+  transition-delay: calc(var(--w, 0) * 55ms);
+}
+
+.article-title::after {
+  background: linear-gradient(90deg, var(--stage-gold), var(--stage-ember)) !important;
+  transform-origin: left;
+}
+
+.article-title.fx-split::after {
+  transform: scaleX(0);
+}
+
+.article-title.fx-split.fx-in::after {
+  transform: scaleX(1);
+  transition: transform 1.1s var(--ease-out-expo) 0.35s;
+}
+
+/* Gradient-filled emphasis on the about headline. */
+.recruiter-cta-title {
+  background: linear-gradient(100deg, #f6f3ea 30%, var(--stage-gold) 75%, var(--stage-ember));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- cards: depth, light, response ---------- */
+
+.featured-project,
+.service-item,
+.selected-work-card,
+.gear-card,
+.web-destination-card,
+.stack-item,
+.timeline-content,
+.honors-stats > div,
+.workflow-grid > li {
+  transition:
+    border-color 0.35s ease,
+    box-shadow 0.5s var(--ease-out-expo),
+    background-color 0.35s ease;
+}
+
+.featured-project:hover,
+.service-item:hover,
+.selected-work-card:hover,
+.gear-card:hover,
+.web-destination-card:hover,
+.timeline-content:hover,
+.workflow-grid > li:hover {
+  border-color: rgba(232, 200, 121, 0.35);
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(232, 200, 121, 0.08);
+}
+
+/* 3D tilt (transform set inline by motion-fx while hovered). */
+.fx-tilt {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.6s var(--ease-out-expo), border-color 0.35s ease, box-shadow 0.5s var(--ease-out-expo);
+}
+
+.fx-tilt.is-tilting {
+  transition: transform 0.12s linear, border-color 0.35s ease, box-shadow 0.5s var(--ease-out-expo);
+}
+
+/* Project imagery: slow push-in and a light sweep on hover. */
+.project-item .project-img {
+  overflow: hidden;
+}
+
+.project-item .project-img img {
+  transition: transform 1.2s var(--ease-out-expo), filter 0.6s ease;
+}
+
+.project-item:hover .project-img img,
+.project-item:focus-within .project-img img {
+  transform: scale(1.07);
+  filter: saturate(1.15);
+}
+
+.project-item .project-img::after,
+.featured-project-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.16) 50%, transparent 65%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+
+.featured-project-media {
+  position: relative;
+}
+
+.project-item:hover .project-img::after,
+.featured-project:hover .featured-project-media::after {
+  transform: translateX(120%);
+  transition: transform 1.1s var(--ease-out-expo);
+}
+
+/* Archive rows slide and light up. */
+.project-explorer-timeline > li {
+  transition: transform 0.45s var(--ease-out-expo), background-color 0.3s ease;
+}
+
+.project-explorer-timeline > li:hover {
+  transform: translateX(6px);
+  background-color: rgba(232, 200, 121, 0.035);
+}
+
+/* Service icons spin up on hover. */
+.service-icon-box {
+  transition: transform 0.6s var(--ease-out-back);
+}
+
+.service-item:hover .service-icon-box {
+  transform: rotate(-8deg) scale(1.12);
+}
+
+/* Gear objects float. */
+.gear-card .gear-visual {
+  animation: fx-float 6s ease-in-out infinite;
+  animation-delay: calc(var(--fx-float, 0) * -1.3s);
+}
+
+@keyframes fx-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -8px; }
+}
+
+.gear-card:hover .gear-visual {
+  scale: 1.06;
+  transition: scale 0.6s var(--ease-out-back);
+}
+
+/* Build-loop steps: numbered chips glow in sequence. */
+.workflow-grid > li strong {
+  background: linear-gradient(90deg, var(--stage-gold), var(--stage-ember));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- timeline: the line draws itself as you read ---------- */
+
+.timeline-container::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  bottom: 30px;
+  left: 15px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--stage-gold), var(--stage-ember) 70%, transparent);
+  box-shadow: 0 0 12px rgba(232, 200, 121, 0.55);
+  transform: scaleY(var(--tl, 0));
+  transform-origin: top;
+  pointer-events: none;
+}
+
+/* ---------- heatmap ripple ---------- */
+
+.github-heatmap-grid.fx-ripple .github-heatmap-cell {
+  animation: fx-cell 0.7s var(--ease-out-back) backwards;
+  animation-delay: calc(var(--hc, 0) * 14ms);
+}
+
+@keyframes fx-cell {
+  from { opacity: 0; scale: 0.2; }
+}
+
+/* ---------- tech marquee (Stack page) ---------- */
+
+.fx-marquee {
+  --skew: 0deg;
+  position: relative;
+  margin: 0 calc(clamp(24px, 3vw, 40px) * -1) 28px;
+  padding: 18px 0;
+  overflow: hidden;
+  border-block: 1px solid rgba(255, 255, 255, 0.06);
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+
+.fx-marquee-row {
+  display: flex;
+  gap: 34px;
+  width: max-content;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.4vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: skewX(var(--skew));
+  animation: stage-marquee 40s linear infinite;
+}
+
+.fx-marquee-row + .fx-marquee-row {
+  margin-top: 6px;
+  animation-direction: reverse;
+  animation-duration: 52s;
+}
+
+.fx-marquee-row span {
+  display: inline-block;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(243, 241, 235, 0.28);
+}
+
+.fx-marquee-row span:nth-child(3n + 1) {
+  color: rgba(243, 241, 235, 0.9);
+  -webkit-text-stroke: 0;
+}
+
+.fx-marquee-row span:nth-child(5n + 2) {
+  background: linear-gradient(90deg, var(--stage-gold), var(--stage-ember));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-stroke: 0;
+}
+
+.fx-marquee:hover .fx-marquee-row {
+  animation-play-state: paused;
+}
+
+@media (max-width: 720px) {
+  .fx-marquee { margin-inline: -18px; }
+}
+
+/* ---------- honors: stat tiles and opened years ---------- */
+
+.honors-stats > div strong {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.year-header .toggle-icon {
+  transition: transform 0.5s var(--ease-out-back);
+}
+
+/* ---------- custom cursor: brighter, blends with content ---------- */
+
+.custom-cursor {
+  border-width: 1.5px;
+  transition: width 0.45s var(--ease-out-expo), height 0.45s var(--ease-out-expo), background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.custom-cursor.hovered {
+  width: 72px;
+  height: 72px;
+  background-color: rgba(232, 200, 121, 0.14);
+  backdrop-filter: blur(2px);
+}
+
+/* ---------- desktop: profile header bar instead of a sidebar card ---------- */
+
+@media (min-width: 1024px) {
+  main#main-content {
+    display: block;
+    width: min(1320px, calc(100% - 64px));
+    margin-top: 28px;
+  }
+
+  .sidebar-rail {
+    position: static;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 16px;
+  }
+
+  .sidebar-rail .sidebar {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    width: 100%;
+    margin: 0;
+    padding: 16px 22px !important;
+  }
+
+  .sidebar-info {
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 18px;
+    text-align: left;
+  }
+
+  .sidebar .avatar-box {
+    width: 64px;
+    height: 64px;
+    flex: 0 0 64px;
+    margin: 0;
+    border-radius: 18px;
+  }
+
+  .sidebar .avatar-box::after { border-radius: 21px; }
+  .sidebar .avatar-box picture,
+  .sidebar .avatar-box img { border-radius: 16px; }
+
+  .info-content {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .info-content .name {
+    margin: 0 0 2px;
+    font-size: 20px;
+  }
+
+  .info-content .title {
+    margin: 0;
+  }
+
+  .sidebar-status {
+    margin: 6px 0 0;
+  }
+
+  .sidebar-info_more {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    min-width: 0;
+    margin: 0 0 0 auto;
+  }
+
+  .sidebar-info_more > .separator {
+    display: none;
+  }
+
+  .sidebar .contacts-list {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin: 0;
+  }
+
+  .sidebar .contact-item {
+    margin: 0;
+    padding: 0;
+  }
+
+  .sidebar .contact-item address {
+    max-width: 190px;
+  }
+
+  .sidebar .social-list {
+    display: flex;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .release-sidebar {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    border-radius: 24px;
+  }
+
+  .main-content > .navbar {
+    top: 12px;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1240px) {
+  .sidebar .contact-item:nth-child(3) { display: none; }
+}
+
+/* ---------- editorial type scale ---------- */
+
+.main-content > article[data-page] .article-title:not(.about .article-title) {
+  font-size: clamp(38px, 5.4vw, 78px);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  padding-bottom: 22px;
+  margin-bottom: 34px;
+}
+
+.recruiter-cta .recruiter-cta-title {
+  font-size: clamp(34px, 4.4vw, 62px);
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+}
+
+/* Numbered section headings: 01, 02, 03 … per page (numbers set by
+   motion-fx; CSS counters can't cross the sections' style containment). */
+.featured-projects-heading h3,
+.service-title,
+.github-heatmap-title,
+.achievements-title,
+.timeline-section .section-title,
+.selected-work h3,
+.project-explorer-heading h3,
+.workflow-heading h3 {
+  font-size: clamp(22px, 2.3vw, 32px);
+}
+
+.featured-projects-heading h3::before,
+.service-title::before,
+.github-heatmap-title::before,
+.achievements-title::before,
+.timeline-section .section-title::before,
+.selected-work h3::before,
+.project-explorer-heading h3::before,
+.workflow-heading h3::before {
+  content: attr(data-fx-index);
+  display: inline-block;
+  margin-right: 0.7em;
+  color: var(--stage-gold);
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.42em;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  vertical-align: 0.55em;
+}
+
+/* Giant outlined page name drifting behind each page's header. */
+.main-content > article[data-page] {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+}
+
+.main-content > article[data-page]::before {
+  content: attr(data-page);
+  position: absolute;
+  top: -0.12em;
+  right: -0.06em;
+  z-index: -1;
+  color: transparent;
+  font-family: var(--font-display);
+  font-size: clamp(90px, 15vw, 250px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  -webkit-text-stroke: 1px rgba(232, 200, 121, 0.13);
+  pointer-events: none;
+}
+
+.main-content > article.about::before {
+  content: 'Adriel';
+}
+
+.main-content > article.destinations::before {
+  content: 'More';
+}
+
+@supports (animation-timeline: scroll()) {
+  .main-content > article[data-page]::before {
+    animation: fx-watermark linear both;
+    animation-timeline: scroll(root);
+  }
+
+  @keyframes fx-watermark {
+    to { translate: -22% 0; }
+  }
+}
+
+/* Reserve the timeline filter bar's space until JS inserts it (no CLS). */
+article.background:not(:has(.timeline-filter-bar)) > header {
+  margin-bottom: calc(34px + 55px + 18px);
+}
+
+@media (max-width: 580px) {
+  article.background:not(:has(.timeline-filter-bar)) > header {
+    margin-bottom: calc(26px + 100px + 18px);
+  }
+}
+
 /* ---------- reduced motion: calm, static, complete ---------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1133,8 +1803,33 @@ article.fx-enter > * {
     transition: none;
   }
 
-  .fx-reveal {
+  .fx-r {
     opacity: 1;
+    translate: none;
+    scale: none;
+    filter: none;
+  }
+
+  .fx-split .fx-word > span {
+    translate: none;
+    rotate: none;
+  }
+
+  .article-title.fx-split::after {
+    transform: none;
+  }
+
+  body::before,
+  .sidebar-rail .sidebar::before,
+  .gear-card .gear-visual,
+  .fx-marquee-row,
+  .github-heatmap-grid.fx-ripple .github-heatmap-cell,
+  .main-content > article[data-page].fx-enter,
+  .main-content > article[data-page]::before {
+    animation: none;
+  }
+
+  .timeline-container::after {
     transform: none;
   }
 }

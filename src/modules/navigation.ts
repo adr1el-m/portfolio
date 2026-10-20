@@ -392,7 +392,14 @@ export class NavigationManager {
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 60);
       }
-    } else if (!(isInitialLoad && key === 'about')) {
+    } else if (isInitialLoad && key !== 'about') {
+      // Wait for first paint: a scroll during load ends Largest Contentful
+      // Paint recording, leaving deep-linked pages with no LCP at all.
+      // Paint timing is confirmed asynchronously, so allow a short grace period.
+      window.requestAnimationFrame(() => window.setTimeout(() => {
+        if (window.scrollY < 4) this.scrollToPageStart(targetPage || undefined);
+      }, 250));
+    } else if (!isInitialLoad) {
       this.scrollToPageStart(targetPage || undefined);
     }
 
@@ -429,7 +436,8 @@ export class NavigationManager {
       return;
     }
 
-    window.scrollTo({ top: this.contentTop(), behavior: 'auto' });
+    const top = this.contentTop();
+    if (Math.abs(window.scrollY - top) > 1) window.scrollTo({ top, behavior: 'auto' });
   }
 
   /**

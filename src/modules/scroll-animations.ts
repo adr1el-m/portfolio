@@ -24,10 +24,10 @@ export class ScrollAnimations {
   }
 
   private init(): void {
-    // Avoid revealing whole-page containers (e.g. article) to keep CLS stable.
-    const elements = document.querySelectorAll('.reveal, .content-card, .timeline-item');
+    // Only observe elements that opted into a reveal before first paint.
+    // Adding .reveal to already-visible cards here makes them briefly blink out.
+    const elements = document.querySelectorAll('.reveal');
     elements.forEach((el) => {
-      el.classList.add('reveal'); // Ensure they have the base class
       this.observer.observe(el);
     });
   }

@@ -6144,18 +6144,23 @@ article.projects ul.project-list li.project-item:focus-within {
    WOW FACTOR & OPTIMIZATION ADDITIONS
    ========================================= */
 
-/* --- Custom Cursor --- */
-@media (pointer: fine) {
-  body {
-    cursor: none;
+/* Hide the native cursor only after the replacement has been positioned. */
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html.custom-cursor-active,
+  html.custom-cursor-active * {
+    cursor: none !important;
   }
+}
 
-  a,
-  button,
-  input,
-  textarea,
-  .clickable {
-    cursor: none;
+.custom-cursor,
+.custom-cursor-dot {
+  visibility: hidden;
+}
+
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .custom-cursor-active .custom-cursor,
+  .custom-cursor-active .custom-cursor-dot {
+    visibility: visible;
   }
 }
 

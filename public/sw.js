@@ -1,4 +1,5 @@
-const CACHE_NAME = 'adriel-portfolio-v8';
+const CACHE_PREFIX = 'adriel-portfolio-';
+const CACHE_NAME = `${CACHE_PREFIX}v10`;
 const OFFLINE_URLS = ['/offline', '/offline.html'];
 const PRECACHE_ASSETS = [
   '/',
@@ -19,7 +20,7 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.map((key) => key !== CACHE_NAME && caches.delete(key))))
+    caches.keys().then((keys) => Promise.all(keys.map((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME && caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });
@@ -27,25 +28,43 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
+  const url = new URL(request.url);
+  // Live data, third-party resources and partial media responses must bypass
+  // the offline cache. A cached API response can otherwise freeze live counts.
+  if (url.origin !== self.location.origin || /^\/(api|_vercel)(\/|$)/.test(url.pathname) || request.headers.has('range')) return;
 
   const isHtml = request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html');
+  const isAsset = /\.(?:js|css|png|jpe?g|webp|avif|svg|ico|woff2?|json|pdf)$/i.test(url.pathname);
+  if (!isHtml && !isAsset) return;
+  const immutableAsset = /^\/assets\/.+-[\w-]+\.(?:js|css)$/.test(url.pathname);
 
   event.respondWith(
-    caches.match(request).then((cached) => {
-      const fetchPromise = fetch(request)
-        .then((networkResponse) => {
-          const clone = networkResponse.clone();
-          if (networkResponse.ok) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone)).catch(() => {});
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      const cached = await cache.match(request);
+      if (immutableAsset && cached) return cached;
+      try {
+        const response = await fetch(request);
+        if (response.ok && response.status === 200 && response.type !== 'opaque' && !/no-store/i.test(response.headers.get('cache-control') || '')) {
+          await cache.put(request, response.clone()).catch(() => {});
+        }
+        return response;
+      } catch {
+        if (cached) return cached;
+        if (isHtml) {
+          // Only SPA routes may reuse the home shell; detail pages need their
+          // own cached document or the explicit offline page.
+          if (/^\/(?:about|background|projects|gear|destinations|stack|skills|tech|contact)?\/?$/.test(url.pathname)) {
+            const shell = await cache.match('/');
+            if (shell) return shell;
           }
-          return networkResponse;
-        })
-        .catch(() => {
-          if (isHtml) return cached || caches.match('/index.html').then((res) => res || caches.match(OFFLINE_URLS[0])).then((res) => res || caches.match(OFFLINE_URLS[1]));
-          return cached;
-        });
-
-      return isHtml ? fetchPromise.then((res) => res || cached) : (cached || fetchPromise);
-    })
+          for (const path of OFFLINE_URLS) {
+            const fallback = await cache.match(path);
+            if (fallback) return fallback;
+          }
+        }
+        return Response.error();
+      }
+    })()
   );
 });

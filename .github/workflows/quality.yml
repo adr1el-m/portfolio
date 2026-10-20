@@ -23,7 +23,7 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: npm run type-check && npm run lint && npm run build && npm run check:links && npm run test:api
+      - run: npm run type-check && npm run lint && npm run build && npm run check:links && npm run test:api && npm run test:worker
       - name: Verify runner Chrome
         run: /usr/bin/google-chrome --version
       - run: npm run test:behavior

@@ -48,6 +48,7 @@ import { ScrollProgress } from './modules/scroll-progress';
 import { logger } from './config';
 import type { Portfolio } from './types';
 import { TextPlaceholders } from './modules/text-placeholders';
+import { CustomCursor } from './modules/custom-cursor';
 
 // Vercel Analytics & Speed Insights are loaded conditionally in production (see top of file);
 
@@ -422,6 +423,7 @@ class PortfolioApp {
       logger.log('♿ Accessibility enhancements active');
 
       // Initialize all modules
+      new CustomCursor();
       const securityManager = new SecurityManager();
       // Harden external links (adds rel noopener/noreferrer and disables javascript: URLs)
       securityManager.ensureSafeExternalLinks();

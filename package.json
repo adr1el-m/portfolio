@@ -19,6 +19,7 @@
     "test:visual": "node scripts/visual-regression.mjs",
     "test:visual:update": "VISUAL_UPDATE=1 node scripts/visual-regression.mjs",
     "test:api": "node scripts/api-test.mjs",
+    "test:worker": "node scripts/service-worker-test.mjs",
     "test:resilience": "node scripts/resilience-test.mjs",
     "test:stress": "node scripts/stress-test.mjs",
     "test:behavior": "node scripts/behavior-smoke.mjs",

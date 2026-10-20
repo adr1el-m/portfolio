@@ -136,9 +136,14 @@ export class ContactFlow {
 
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       this.setStatus(card, 'Please enter a valid reply email.');
+      card.querySelector<HTMLInputElement>('#contact-flow-email')?.focus();
       return;
     }
 
+    const reason = this.selectedReason;
+    const mailto = this.buildMailto(message, reason, payload.name, email);
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 15_000);
     this.isSending = true;
     if (send) send.disabled = true;
     this.setStatus(card, 'Sending message...');
@@ -146,9 +151,10 @@ export class ContactFlow {
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
+        signal: controller.signal,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          reason: this.selectedReason,
+          reason,
           name: payload.name.trim(),
           email,
           message,
@@ -161,31 +167,39 @@ export class ContactFlow {
       }
 
       window.dispatchEvent(new CustomEvent('portfolio:analytics', {
-        detail: { type: 'contact-submit', label: this.selectedReason },
+        detail: { type: 'contact-submit', label: reason },
       }));
       this.setStatus(card, result?.delivered ? 'Message sent. Thanks.' : 'Could not confirm delivery. Opening email draft instead.');
       if (!result?.delivered) {
-        window.location.href = this.buildMailto(message);
+        window.location.href = mailto;
       }
     } catch {
       this.setStatus(card, 'Could not send here. Opening email draft instead.');
       window.setTimeout(() => {
-        window.location.href = this.buildMailto(message);
+        window.location.href = mailto;
       }, 650);
     } finally {
+      window.clearTimeout(timeout);
       this.isSending = false;
       if (send) send.disabled = false;
     }
   }
 
-  private buildMailto(message: string): string {
-    const subject = `Portfolio Inquiry: ${this.selectedReason}`;
+  private buildMailto(
+    message: string,
+    reason = this.selectedReason,
+    name = document.querySelector<HTMLInputElement>('#contact-flow-name')?.value || '',
+    email = document.querySelector<HTMLInputElement>('#contact-flow-email')?.value || '',
+  ): string {
+    const subject = `Portfolio Inquiry: ${reason}`;
     const body = [
       'Hi Adriel,',
       '',
-      message.trim() || `I saw your portfolio and wanted to reach out about ${this.selectedReason.toLowerCase()}.`,
+      message.trim() || `I saw your portfolio and wanted to reach out about ${reason.toLowerCase()}.`,
       '',
       'Best,',
+      name.trim(),
+      email.trim() ? `Reply email: ${email.trim()}` : '',
     ].join('\n');
     return `mailto:${encodeURIComponent(KB.contact.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }

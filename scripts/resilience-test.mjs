@@ -12,6 +12,9 @@ try {
   await page.setRequestInterception(true);
   let contactRequests = 0;
   page.on('request', async request => {
+    if (request.url().includes('/api/gemini')) {
+      return request.respond({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'AI unavailable during local test' }) });
+    }
     if (request.url().includes('/api/contact')) {
       contactRequests++;
       // Exercise delivery UI without sending real email or writing visitor data.
@@ -83,6 +86,47 @@ try {
   assert.equal(contactRequests, 1, 'Repeated send produced duplicate submissions');
   assert.equal(await page.$eval('.contact-flow-send', el => el.disabled), false);
   console.log('Clipboard fallback, empty-message validation and duplicate-send prevention pass (delivery stubbed).');
+
+  await page.$eval('#contact-flow-email', el => { el.value = 'invalid'; });
+  await page.$eval('.contact-flow-send', el => el.click());
+  await page.waitForFunction(() => document.querySelector('.contact-flow-status')?.textContent.includes('valid reply email'));
+  assert.equal(await page.$eval('#contact-flow-email', el => document.activeElement === el), true);
+  assert.equal(contactRequests, 1, 'Invalid reply email reached the server');
+  await page.$eval('#contact-flow-email', el => { el.value = 'visitor@example.com'; });
+  await page.evaluate(() => {
+    // Simulate a stalled endpoint and accelerate only its 15-second timeout.
+    window.contactTestOriginalFetch = window.fetch;
+    window.contactTestOriginalTimer = window.setTimeout;
+    window.setTimeout = (callback, delay, ...args) => window.contactTestOriginalTimer(callback, delay === 15000 ? 50 : delay, ...args);
+    window.fetch = (url, options) => {
+      if (url !== '/api/contact') return window.contactTestOriginalFetch(url, options);
+      return new Promise((resolve, reject) => {
+        options.signal.addEventListener('abort', () => reject(new DOMException('Timed out', 'AbortError')), { once: true });
+      });
+    };
+  });
+  await page.$eval('.contact-flow-send', el => el.click());
+  await page.waitForFunction(() => document.querySelector('.contact-flow-status')?.textContent.includes('Could not send here'));
+  assert.equal(await page.$eval('.contact-flow-send', el => el.disabled), false, 'Timed-out contact request left Send disabled');
+  await page.evaluate(() => {
+    window.fetch = window.contactTestOriginalFetch;
+    window.setTimeout = window.contactTestOriginalTimer;
+    delete window.contactTestOriginalFetch;
+    delete window.contactTestOriginalTimer;
+  });
+  console.log('Invalid reply emails focus their field; stalled contact requests recover and offer an email draft.');
+
+  await page.$eval('.chatbot-btn', el => el.click());
+  await page.waitForSelector('.chatbox.active');
+  const botMessages = await page.$$eval('.bot-message', nodes => nodes.length);
+  await page.type('#chat-input', 'What scholarships does Adriel have?');
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(count => document.querySelectorAll('.bot-message').length > count, {}, botMessages);
+  await page.waitForFunction(() => /DOST|MACEMCO|Taguig/.test(Array.from(document.querySelectorAll('.bot-message')).at(-1)?.textContent || ''), { timeout: 20000 });
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('.chatbox:not(.active)');
+  assert.equal(await page.$eval('.chatbot-btn', el => document.activeElement === el), true);
+  console.log('Chatbot answers portfolio questions with the AI endpoint unavailable and restores focus on Escape.');
 
   let detailCount = 0;
   for (const group of ['honors', 'case-studies']) {

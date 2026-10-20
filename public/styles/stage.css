@@ -1830,13 +1830,14 @@ article.fx-enter .page-hero::after {
 .sidebar-rail.site-footer {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: 40px 48px;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(36px, 5vh, 56px);
   width: 100%;
   min-width: 0;
   margin: clamp(48px, 8vh, 96px) 0 0;
-  padding: clamp(56px, 10vh, 120px) 0 24px;
+  /* Bottom clearance so the floating command/chat buttons never sit on content. */
+  padding: clamp(56px, 10vh, 120px) 0 96px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -1921,12 +1922,16 @@ article.fx-enter .page-hero::after {
   transform: rotate(45deg) scale(1.15);
 }
 
-/* The old sidebar card, flattened into the footer's identity row. */
+/* The old sidebar card, recomposed: identity, contacts and socials on the
+   left, the contact form as a card on the right (stacks below 1024px).
+   .sidebar-info_more becomes display:contents so its children (including the
+   contact card injected by contact-flow) are placed directly by the grid. */
 .site-footer .sidebar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 24px 40px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: 'id' 'contacts' 'socials' 'views' 'card';
+  align-items: start;
+  gap: 28px;
   width: 100%;
   margin: 0;
   padding: 0 !important;
@@ -1937,40 +1942,61 @@ article.fx-enter .page-hero::after {
   overflow: visible;
 }
 
-.site-footer .sidebar::before {
-  content: none;
+.site-footer .sidebar::before { content: none; }
+.site-footer .sidebar-info_more { display: contents; }
+.site-footer .sidebar-info_more > .separator { display: none; }
+
+.site-footer .sidebar-info { grid-area: id; }
+.site-footer .contacts-list { grid-area: contacts; }
+.site-footer .social-list { grid-area: socials; }
+.site-footer .visitor-counter { grid-area: views; justify-content: flex-start; margin: 0; }
+.site-footer .contact-flow-card { grid-area: card; }
+
+@media (min-width: 1024px) {
+  .site-footer .sidebar {
+    grid-template-columns: minmax(0, 1fr) minmax(380px, 480px);
+    grid-template-areas:
+      'id card'
+      'contacts card'
+      'socials card'
+      'views card';
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: clamp(40px, 6vw, 96px);
+  }
 }
 
 .site-footer .sidebar-info {
   display: flex;
-  flex: 0 0 auto;
   flex-direction: row;
   align-items: center;
+  justify-content: flex-start;
+  justify-self: start;
   gap: 18px;
   margin: 0;
   text-align: left;
 }
 
 .site-footer .avatar-box {
-  width: 64px;
-  height: 64px;
-  flex: 0 0 64px;
+  width: 72px;
+  height: 72px;
+  flex: 0 0 72px;
   margin: 0;
-  border-radius: 18px;
+  border-radius: 20px;
 }
 
-.site-footer .avatar-box::after { border-radius: 21px; }
+.site-footer .avatar-box::after { border-radius: 23px; }
 .site-footer .avatar-box picture,
-.site-footer .avatar-box img { border-radius: 16px; }
+.site-footer .avatar-box img { border-radius: 18px; }
 
 .site-footer .info-content {
   align-items: flex-start;
+  min-width: 0;
   text-align: left;
 }
 
 .site-footer .info-content .name {
   margin: 0 0 2px;
-  font-size: 20px;
+  font-size: clamp(20px, 2vw, 26px);
 }
 
 .site-footer .info-content .title {
@@ -1978,49 +2004,155 @@ article.fx-enter .page-hero::after {
 }
 
 .site-footer .sidebar-status {
-  margin: 6px 0 0;
+  margin: 8px 0 0;
 }
 
-.site-footer .sidebar-info_more {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 18px 32px;
-  min-width: 0;
-  margin: 0;
-}
-
-.site-footer .sidebar-info_more > .separator {
-  display: none;
-}
-
+/* Contacts: a row of chips; the résumé link is a real button. */
 .site-footer .contacts-list {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 16px 28px;
+  gap: 12px;
   margin: 0;
+  padding: 0;
 }
 
 .site-footer .contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 52px;
   margin: 0;
+  padding: 6px 16px 6px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(20, 21, 25, 0.62);
+}
+
+.site-footer .contact-item:first-child {
   padding: 0;
+  border: 0;
+  background: none;
 }
 
+.site-footer .contact-item .icon-box {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.site-footer .contact-info {
+  min-width: 0;
+  max-width: none;
+  width: auto;
+}
+
+.site-footer .contact-title {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+.site-footer .contact-link,
 .site-footer .contact-item address {
-  max-width: 200px;
+  max-width: none;
+  font-size: 13.5px;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
+.site-footer .contact-link.resume {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: auto;
+  height: auto;
+  min-height: 52px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--stage-ink);
+  color: #0d0e10;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background-color 0.25s ease, transform 0.4s var(--ease-out-back);
+}
+
+.site-footer .contact-link.resume::after {
+  content: '\2197';
+  font-size: 15px;
+  letter-spacing: 0;
+}
+
+.site-footer .contact-link.resume:hover,
+.site-footer .contact-link.resume:focus-visible {
+  background: var(--stage-gold);
+  transform: translateY(-2px);
+}
+
+/* Socials: comfortable 44px targets. */
 .site-footer .social-list {
   display: flex;
-  gap: 2px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  justify-self: start;
+  gap: 6px;
   margin: 0;
   padding: 0;
+}
+
+.site-footer .social-link {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  background: rgba(20, 21, 25, 0.62);
+}
+
+/* Contact card: same glass language as the rest of the site. */
+.site-footer .contact-flow-card {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: clamp(20px, 2.4vw, 28px);
+  border: 1px solid transparent;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(24, 25, 29, 0.92), rgba(15, 16, 19, 0.9)) padding-box,
+    linear-gradient(155deg, rgba(232, 200, 121, 0.32), rgba(255, 255, 255, 0.05) 30%, rgba(143, 123, 255, 0.24)) border-box;
+  box-shadow: 0 40px 90px -50px rgba(0, 0, 0, 0.9);
+}
+
+.site-footer .contact-flow-card h2 {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2vw, 26px);
+  letter-spacing: -0.03em;
+}
+
+.site-footer .contact-flow-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (max-width: 420px) {
+  .site-footer .contact-flow-actions {
+    grid-template-columns: 1fr;
+  }
 }
 
 .site-footer .release-sidebar {
-  align-self: end;
-  min-width: 220px;
+  grid-column: 1 / -1;
+  justify-self: start;
+  width: min(100%, 440px);
+  min-width: 0;
   border-radius: 16px;
   background: rgba(20, 21, 25, 0.62);
 }
@@ -2063,13 +2195,6 @@ article.fx-enter .page-hero::after {
     padding-top: 92px;
   }
 
-  .sidebar-rail.site-footer {
-    grid-template-columns: 1fr;
-  }
-
-  .site-footer .release-sidebar {
-    justify-self: stretch;
-  }
 }
 
 @media (max-width: 720px) {
@@ -2128,10 +2253,8 @@ article.fx-enter .page-hero::after {
     line-height: 1.3;
   }
 
-  .site-footer .sidebar,
-  .site-footer .sidebar-info_more,
-  .site-footer .contacts-list {
-    gap: 16px 20px;
+  .sidebar-rail.site-footer {
+    padding-bottom: 24px;
   }
 }
 
@@ -2144,6 +2267,53 @@ article.background:not(:has(.timeline-filter-bar)) > header {
   article.background:not(:has(.timeline-filter-bar)) > header {
     margin-bottom: calc(clamp(40px, 6vh, 72px) + 100px + 18px);
   }
+}
+
+/* =========================================================================
+   Stress-test fixes
+   ========================================================================= */
+
+/* One focus ring everywhere. Several legacy rules set outline:none on
+   :focus-visible, which left keyboard users with no visible position. */
+:where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--stage-gold) !important;
+  outline-offset: 3px !important;
+}
+
+/* The intro tucks the site nav away; if keyboard focus lands in it, show it. */
+html.stage-on:not(.nav-free) .main-content > nav.navbar:focus-within {
+  translate: -50% 0;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Experience certificate (inline-floated in the markup): keep it above its
+   neighbours, and stack it full width on narrow screens instead of letting
+   the company name paint over it. */
+.timeline-content > div[style*="float"] {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 600px) {
+  .timeline-content > div[style*="float"] {
+    float: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 16px !important;
+  }
+}
+
+/* Deep links: until the router takes over (it removes data-route), show the
+   requested page from first paint instead of the About page. */
+html[data-route] .main-content > article[data-page] { display: none; }
+html[data-route="about"] .main-content > article[data-page="about"],
+html[data-route="stack"] .main-content > article[data-page="stack"],
+html[data-route="background"] .main-content > article[data-page="background"],
+html[data-route="projects"] .main-content > article[data-page="projects"],
+html[data-route="gear"] .main-content > article[data-page="gear"],
+html[data-route="destinations"] .main-content > article[data-page="destinations"] {
+  display: block;
 }
 
 /* ---------- reduced motion: calm, static, complete ---------- */

@@ -361,6 +361,8 @@ export class NavigationManager {
    */
   private applyRoute(pathname: string, isInitialLoad = false): void {
     const key = this.keyFromPath(pathname);
+    // The head script pre-selected the page for first paint; the router owns it now.
+    document.documentElement.removeAttribute('data-route');
 
     // Toggle active section (contact reuses about page)
     const pages = document.querySelectorAll<HTMLElement>('[data-page]');

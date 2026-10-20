@@ -293,9 +293,10 @@
   <link rel="stylesheet" href="/styles/portfolio-theme.css">
   <link rel="stylesheet" href="/styles/stage.css">
   <link rel="preload" href="/fonts/unbounded-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <!-- Decides before first paint whether the intro renders (home only).
+  <!-- Decides before first paint whether the intro renders (home only) and
+       which page shows first, so deep links never flash the About page.
        Inline for speed; allowed by its sha256 in vercel.json (verified by scripts/verify-csp-hashes.mjs). -->
-  <script>(function(){var p=location.pathname.replace(/\/+$/,'')||'/';document.documentElement.classList.add(p==='/'||p==='/index.html'?'stage-on':'stage-off')})();</script>
+  <script>(function(){var r=document.documentElement,p=location.pathname.replace(/\/+$/,'')||'/',m={'/stack':'stack','/background':'background','/projects':'projects','/gear':'gear','/destinations':'destinations'};r.classList.add(p==='/'||p==='/index.html'?'stage-on':'stage-off');r.setAttribute('data-route',m[p]||'about')})();</script>
   <!-- Chatbot styles are loaded with its code on first interaction. -->
 
   <!-- Preload hero avatar with responsive sources -->
@@ -1286,6 +1287,11 @@
         <header class="page-hero" data-kicker="02 — Tools I reach for">
           <h2 id="tech-stack-title" class="h2 article-title">Tech Stack &amp; Tools</h2>
         </header>
+
+        <div class="fx-marquee" aria-hidden="true">
+          <div class="fx-marquee-row"><span>TypeScript</span><span>React</span><span>Next.js</span><span>Node.js</span><span>Flutter</span><span>Firebase</span><span>Python</span><span>Tailwind CSS</span><span>Gemini</span><span>Express.js</span><span>Vite</span><span>Swift</span><span>JavaScript</span><span>MySQL</span><span>Java</span><span>PHP</span><span>C++</span><span>TypeScript</span><span>React</span><span>Next.js</span><span>Node.js</span><span>Flutter</span><span>Firebase</span><span>Python</span><span>Tailwind CSS</span><span>Gemini</span><span>Express.js</span><span>Vite</span><span>Swift</span><span>JavaScript</span><span>MySQL</span><span>Java</span><span>PHP</span><span>C++</span></div>
+          <div class="fx-marquee-row"><span>C#</span><span>C</span><span>HTML</span><span>CSS</span><span>Angular</span><span>Three.js</span><span>Bootstrap</span><span>Chart.js</span><span>Recharts</span><span>Firestore</span><span>Expo Go</span><span>Arduino</span><span>Git</span><span>GitHub</span><span>ESLint</span><span>Prettier</span><span>TypeScript</span><span>React</span><span>Next.js</span><span>C#</span><span>C</span><span>HTML</span><span>CSS</span><span>Angular</span><span>Three.js</span><span>Bootstrap</span><span>Chart.js</span><span>Recharts</span><span>Firestore</span><span>Expo Go</span><span>Arduino</span><span>Git</span><span>GitHub</span><span>ESLint</span><span>Prettier</span><span>TypeScript</span><span>React</span><span>Next.js</span></div>
+        </div>
 
         <section class="tech-stack-section" aria-labelledby="tech-stack-title">
           <div class="stack-controls" role="toolbar" aria-label="Filter tech stack">

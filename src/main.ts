@@ -252,8 +252,13 @@ class PortfolioApp {
 
   private setupModalLoader(): void {
     const triggerSelector = '.project-item, .achievement-card';
-    const openFromTrigger = (trigger: HTMLElement) => {
-      void this.loadModalManager().then(() => trigger.click());
+    // Replay on the element the visitor actually activated: the modal manager
+    // listens on a project card's inner link, so replaying on the card itself
+    // used to drop the first click on every project.
+    const openFromTrigger = (trigger: HTMLElement, origin: EventTarget | null) => {
+      const inner = (origin as Element | null)?.closest?.<HTMLElement>('a, [role="button"]');
+      const target = inner && trigger.contains(inner) ? inner : (trigger.querySelector<HTMLElement>('a') || trigger);
+      void this.loadModalManager().then(() => target.click());
     };
 
     document.addEventListener('click', (event) => {
@@ -262,7 +267,7 @@ class PortfolioApp {
       if (!trigger) return;
       event.preventDefault();
       event.stopImmediatePropagation();
-      openFromTrigger(trigger);
+      openFromTrigger(trigger, event.target);
     }, { capture: true });
 
     document.addEventListener('keydown', (event) => {
@@ -271,7 +276,7 @@ class PortfolioApp {
       if (!trigger) return;
       event.preventDefault();
       event.stopImmediatePropagation();
-      openFromTrigger(trigger);
+      openFromTrigger(trigger, event.target);
     }, { capture: true });
 
     window.addEventListener('portfolio:open-project', (event) => {

@@ -144,7 +144,6 @@ export class MotionFx {
 
     this.numberSections();
     document.querySelectorAll<HTMLElement>('.gear-card').forEach((el, i) => el.style.setProperty('--fx-float', String(i)));
-    this.buildStackMarquee();
     this.armHeatmap();
     this.updateTimelines();
   }
@@ -235,7 +234,17 @@ export class MotionFx {
   // ---------- scroll-linked ----------
 
   private setupScrollEffects(): void {
+    let idleTimer = 0;
+    const settle = (): void => {
+      window.clearTimeout(idleTimer);
+      idleTimer = window.setTimeout(() => this.revealOnScreen(), 180);
+    };
+    window.addEventListener('resize', settle, { passive: true });
+    window.addEventListener('portfolio:pagechange', settle);
+    window.addEventListener('load', settle);
+
     window.addEventListener('scroll', () => {
+      settle();
       const y = window.scrollY;
       const delta = y - this.lastScrollY;
       this.lastScrollY = y;
@@ -276,10 +285,20 @@ export class MotionFx {
   private revealAtPageEnd(): void {
     const doc = document.documentElement;
     if (window.scrollY + window.innerHeight < doc.scrollHeight - 4) return;
+    this.revealOnScreen();
+  }
+
+  /**
+   * Safety net behind the observer: reveal anything on screen that is still
+   * hidden. Observers can miss elements whose box moves mid-transition, that
+   * grow while lazy content loads, or that sit at the very end of a page.
+   */
+  private revealOnScreen(): void {
+    const vh = window.innerHeight;
     const pending = Array.from(document.querySelectorAll<HTMLElement>('.fx-r:not(.fx-in), .fx-split:not(.fx-in)'))
       .filter((el) => {
         const rect = el.getBoundingClientRect();
-        return rect.height > 0 && rect.top < window.innerHeight && rect.bottom > 0;
+        return rect.height > 0 && rect.top < vh && rect.bottom > 0;
       });
     if (pending.length) this.reveal(pending);
   }
@@ -337,26 +356,6 @@ export class MotionFx {
       grid.classList.add('fx-ripple');
     }, { threshold: 0.25 });
     io.observe(grid);
-  }
-
-  private buildStackMarquee(): void {
-    const article = document.querySelector<HTMLElement>('article[data-page="stack"]');
-    if (!article || article.querySelector('.fx-marquee')) return;
-    const names = Array.from(new Set(
-      Array.from(article.querySelectorAll('.stack-item .stack-name')).map((n) => n.textContent?.trim() || '').filter(Boolean),
-    ));
-    if (names.length < 6) return;
-    const half = Math.ceil(names.length / 2);
-    const row = (list: string[]): string => {
-      const items = list.map((name) => `<span>${name.replace(/[<>&]/g, '')}</span>`).join('');
-      return `<div class="fx-marquee-row">${items}${items}</div>`;
-    };
-    const marquee = document.createElement('div');
-    marquee.className = 'fx-marquee';
-    marquee.setAttribute('aria-hidden', 'true');
-    marquee.innerHTML = row(names.slice(0, half)) + row(names.slice(half).concat(names.slice(0, 3)));
-    const header = article.querySelector('header');
-    header?.after(marquee);
   }
 
   // ---------- pointer ----------

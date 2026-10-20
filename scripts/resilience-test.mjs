@@ -71,7 +71,7 @@ try {
   assert.ok(after.JSEventListeners - before.JSEventListeners < 100, 'Repeated modals accumulated listeners');
   console.log('60 route changes and 20 modal cycles preserve navigation, scroll locks and a single dialog.');
 
-  await page.$eval('a[data-resume-preview]', el => el.focus());
+  await page.$eval('[data-sidebar] a[data-resume-preview]', el => el.focus());
   await page.waitForSelector('.contact-flow-card');
   await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: undefined }));
   await page.$eval('.contact-flow-copy', el => el.click());

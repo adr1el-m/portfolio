@@ -599,6 +599,16 @@ class PortfolioApp {
       const sidebarButton = document.querySelector<HTMLButtonElement>('[data-sidebar-btn]');
       sidebar?.addEventListener('focusin', loadSidebarEnhancements, { once: true });
       sidebarButton?.addEventListener('click', loadSidebarEnhancements, { once: true });
+      // The profile now closes each page as a footer: have the contact card
+      // ready before it scrolls into view (off-screen, so no visible shift).
+      if (sidebar && 'IntersectionObserver' in window) {
+        const footerObserver = new IntersectionObserver((entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          footerObserver.disconnect();
+          loadSidebarEnhancements();
+        }, { rootMargin: '0px 0px 600px 0px' });
+        footerObserver.observe(sidebar);
+      }
       // Keep the visible Total Views counter independent from the contact card.
       runWhenIdle(() => {
         import('./modules/visitor-counter').then(({ VisitorCounter }) => new VisitorCounter());

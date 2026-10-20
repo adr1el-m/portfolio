@@ -23,11 +23,14 @@ const REVEAL_SELECTOR = [
   '.stack-item', '.timeline-content', '.honors-stats > div', '.workflow-grid > li', '.project-item',
   '.achievement-card', '.project-explorer-timeline > li', '.github-heatmap', '.section-header',
   '.honors-filter-bar', '.workflow-pill-grid', '.year-header', '.featured-projects-heading',
+  '.footer-cta', '.site-footer .sidebar', '.site-footer .release-sidebar', '.project-group-header',
 ].join(',');
+
+const SCRUB_SELECTOR = '.recruiter-cta-copy > p:last-child, .gear-lead, .selected-work-intro > p:last-child';
 
 const SPLIT_SELECTOR = [
   '.article-title', '.featured-projects-heading h3', '.service-title', '.achievements-title',
-  '.selected-work h3', '.project-explorer-heading h3', '.workflow-heading h3',
+  '.selected-work h3', '.project-explorer-heading h3', '.workflow-heading h3', '.project-group-title',
 ].join(',');
 // (.section-title is gradient-clipped text; splitting it into transformed
 // spans would drop the clip, so it only gets a number and a reveal.)
@@ -74,6 +77,7 @@ export class MotionFx {
       .observe(document.querySelector('.main-content') || document.body, { childList: true, subtree: true });
 
     if (this.finePointer.matches) {
+      this.setupGlow();
       this.setupSpotlights();
       this.setupTilt();
       this.setupMagnetic();
@@ -115,6 +119,21 @@ export class MotionFx {
       this.revealObserver?.observe(el);
     });
 
+    document.querySelectorAll<HTMLElement>(SCRUB_SELECTOR).forEach((el) => {
+      if (el.dataset.fxScrub || el.children.length || !offscreen(el)) return;
+      el.dataset.fxScrub = '1';
+      el.classList.add('fx-scrub');
+      const words = (el.textContent || '').trim().split(/\s+/);
+      el.textContent = '';
+      words.forEach((word, i) => {
+        const span = document.createElement('span');
+        span.className = 'fx-sw';
+        span.textContent = word;
+        el.appendChild(span);
+        if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
+      });
+    });
+
     document.querySelectorAll<HTMLElement>(REVEAL_SELECTOR).forEach((el) => {
       if (el.dataset.fx || el.closest('.stage')) return;
       el.dataset.fx = '1';
@@ -146,9 +165,11 @@ export class MotionFx {
   }
 
   private onReveal(entries: IntersectionObserverEntry[]): void {
-    const visible = entries
-      .filter((entry) => entry.isIntersecting)
-      .map((entry) => entry.target as HTMLElement)
+    this.reveal(entries.filter((entry) => entry.isIntersecting).map((entry) => entry.target as HTMLElement));
+  }
+
+  private reveal(elements: HTMLElement[]): void {
+    const visible = elements
       .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
 
     visible.forEach((el, i) => {
@@ -199,6 +220,12 @@ export class MotionFx {
       });
       void article.offsetWidth; // restart the animation on repeat visits
       article.classList.add('fx-enter');
+      // Replay the kinetic title on every visit, not just the first.
+      article.querySelectorAll<HTMLElement>('.page-hero .fx-split.fx-in').forEach((title) => {
+        title.classList.remove('fx-in');
+        requestAnimationFrame(() => requestAnimationFrame(() => title.classList.add('fx-in')));
+      });
+      requestAnimationFrame(() => this.updateScrubs());
       window.clearTimeout(timer);
       timer = window.setTimeout(() => article.classList.remove('fx-enter'), 1600);
       this.scheduleScan();
@@ -218,6 +245,8 @@ export class MotionFx {
       this.scrollFrame = requestAnimationFrame(() => {
         this.scrollFrame = 0;
         this.updateTimelines();
+        this.updateScrubs();
+        this.revealAtPageEnd();
       });
     }, { passive: true });
   }
@@ -238,6 +267,61 @@ export class MotionFx {
       const progress = clamp((vh * 0.78 - rect.top) / rect.height, 0, 1);
       tl.style.setProperty('--tl', progress.toFixed(3));
     });
+  }
+
+  /**
+   * Items hugging the very bottom of the page can never cross the reveal
+   * threshold, so once the reader reaches the end, show whatever is on screen.
+   */
+  private revealAtPageEnd(): void {
+    const doc = document.documentElement;
+    if (window.scrollY + window.innerHeight < doc.scrollHeight - 4) return;
+    const pending = Array.from(document.querySelectorAll<HTMLElement>('.fx-r:not(.fx-in), .fx-split:not(.fx-in)'))
+      .filter((el) => {
+        const rect = el.getBoundingClientRect();
+        return rect.height > 0 && rect.top < window.innerHeight && rect.bottom > 0;
+      });
+    if (pending.length) this.reveal(pending);
+  }
+
+  /** Words light up in reading order as the paragraph travels up the screen. */
+  private updateScrubs(): void {
+    const vh = window.innerHeight;
+    document.querySelectorAll<HTMLElement>('article.active .fx-scrub, .fx-scrub:not(article *)').forEach((p) => {
+      const rect = p.getBoundingClientRect();
+      if (!rect.height || rect.top > vh || rect.bottom < 0) return;
+      const progress = clamp((vh * 0.88 - rect.top) / (rect.height + vh * 0.32), 0, 1);
+      const words = p.querySelectorAll<HTMLElement>('.fx-sw');
+      const lit = Math.round(progress * words.length);
+      if (Number(p.dataset.lit) === lit) return;
+      p.dataset.lit = String(lit);
+      words.forEach((w, i) => w.classList.toggle('on', i < lit));
+    });
+  }
+
+  /** A soft light that trails the cursor across the backdrop. */
+  private setupGlow(): void {
+    const glow = document.createElement('div');
+    glow.className = 'fx-glow';
+    glow.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(glow);
+    let tx = window.innerWidth / 2;
+    let ty = window.innerHeight / 3;
+    let x = tx;
+    let y = ty;
+    let frame = 0;
+    const loop = (): void => {
+      x += (tx - x) * 0.08;
+      y += (ty - y) * 0.08;
+      glow.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+      frame = Math.abs(tx - x) + Math.abs(ty - y) > 0.5 ? requestAnimationFrame(loop) : 0;
+    };
+    window.addEventListener('pointermove', (e) => {
+      tx = e.clientX;
+      ty = e.clientY;
+      if (!frame) frame = requestAnimationFrame(loop);
+    }, { passive: true });
+    loop();
   }
 
   private armHeatmap(): void {

@@ -72,6 +72,7 @@ export class Stage {
 
     this.syncStats();
     this.bindNavigation();
+    this.tuckSiteNav();
 
     if (this.calm || this.reducedMotion.matches) return;
 
@@ -114,6 +115,14 @@ export class Stage {
     if (!document.fonts?.load) return timeout;
     const font = document.fonts.load('800 1em Unbounded').then(() => undefined).catch(() => undefined);
     return Promise.race([font, timeout]);
+  }
+
+  /** The intro has its own bar; keep the site nav tucked away until it's left. */
+  private tuckSiteNav(): void {
+    const root = document.documentElement;
+    new IntersectionObserver(([entry]) => {
+      root.classList.toggle('nav-tucked', Boolean(entry?.isIntersecting));
+    }, { rootMargin: '0px 0px -88% 0px' }).observe(this.root);
   }
 
   /** Keep headline numbers honest: derive them from the award cards. */

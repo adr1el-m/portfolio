@@ -1130,122 +1130,6 @@ body::before {
   100% { transform: translate3d(-2%, 3%, 0) rotate(-4deg); }
 }
 
-/* ---------- glass panels with a lit edge ---------- */
-
-.sidebar-rail .sidebar,
-.main-content > article[data-page] {
-  border: 1px solid transparent;
-  border-radius: 24px;
-  background:
-    linear-gradient(180deg, rgba(24, 25, 29, 0.9), rgba(15, 16, 19, 0.86)) padding-box,
-    linear-gradient(155deg, rgba(232, 200, 121, 0.3), rgba(255, 255, 255, 0.05) 26%, rgba(255, 255, 255, 0.03) 70%, rgba(143, 123, 255, 0.24)) border-box;
-  box-shadow: 0 40px 90px -50px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-/* ID-card sidebar: a beam of light continuously traces its border. */
-@property --beam {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
-
-.sidebar-rail .sidebar {
-  position: relative;
-  isolation: isolate;
-}
-
-.sidebar-rail .sidebar::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  z-index: 2;
-  padding: 1.5px;
-  border-radius: inherit;
-  background: conic-gradient(from var(--beam), transparent 0 64%, rgba(232, 200, 121, 0.95) 76%, rgba(255, 122, 69, 0.85) 82%, transparent 90%);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-  animation: beam-spin 7s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes beam-spin {
-  to { --beam: 360deg; }
-}
-
-.sidebar-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 10px auto 0;
-  padding: 5px 11px 5px 9px;
-  border: 1px solid rgba(94, 224, 143, 0.25);
-  border-radius: 999px;
-  background: rgba(94, 224, 143, 0.06);
-  color: #b9efcb;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-
-@media (max-width: 1023px) {
-  .sidebar-status { margin: 8px 0 0; }
-}
-
-.sidebar .social-link {
-  transition: transform 0.4s var(--ease-out-back), color 0.25s ease, filter 0.25s ease;
-}
-
-.sidebar .social-link:hover,
-.sidebar .social-link:focus-visible {
-  transform: translateY(-4px) scale(1.08);
-  filter: drop-shadow(0 6px 14px rgba(232, 200, 121, 0.45));
-}
-
-.sidebar .contact-item {
-  transition: transform 0.35s var(--ease-out-expo);
-}
-
-.sidebar .contact-item:hover {
-  transform: translateX(4px);
-}
-
-/* ---------- floating glass nav ---------- */
-
-.main-content > .navbar {
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 18px;
-  background: rgba(17, 18, 21, 0.72);
-  backdrop-filter: blur(18px) saturate(150%);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
-  box-shadow: 0 24px 60px -34px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-.navbar .navbar-link {
-  transition: color 0.3s ease, letter-spacing 0.4s var(--ease-out-expo);
-}
-
-.navbar .navbar-link.active {
-  color: var(--stage-gold);
-}
-
-/* ---------- page switch: the panel wipes open, its sections cascade ---------- */
-
-@keyframes fx-panel-in {
-  from {
-    clip-path: inset(0 0 100% 0 round 24px);
-    opacity: 0.4;
-  }
-  to {
-    clip-path: inset(0 0 0 0 round 24px);
-    opacity: 1;
-  }
-}
-
-.main-content > article[data-page].fx-enter {
-  animation: fx-panel-in 0.75s var(--ease-out-expo) both;
-}
-
 /* ---------- headings: display face, kinetic words, drawn underline ---------- */
 
 .featured-projects-heading h3,
@@ -1537,133 +1421,7 @@ body::before {
   backdrop-filter: blur(2px);
 }
 
-/* ---------- desktop: profile header bar instead of a sidebar card ---------- */
-
-@media (min-width: 1024px) {
-  main#main-content {
-    display: block;
-    width: min(1320px, calc(100% - 64px));
-    margin-top: 28px;
-  }
-
-  .sidebar-rail {
-    position: static;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: stretch;
-    gap: 12px;
-    width: 100%;
-    min-width: 0;
-    margin: 0 0 16px;
-  }
-
-  .sidebar-rail .sidebar {
-    display: flex;
-    align-items: center;
-    gap: 28px;
-    width: 100%;
-    margin: 0;
-    padding: 16px 22px !important;
-  }
-
-  .sidebar-info {
-    flex: 0 0 auto;
-    flex-direction: row;
-    align-items: center;
-    gap: 18px;
-    text-align: left;
-  }
-
-  .sidebar .avatar-box {
-    width: 64px;
-    height: 64px;
-    flex: 0 0 64px;
-    margin: 0;
-    border-radius: 18px;
-  }
-
-  .sidebar .avatar-box::after { border-radius: 21px; }
-  .sidebar .avatar-box picture,
-  .sidebar .avatar-box img { border-radius: 16px; }
-
-  .info-content {
-    align-items: flex-start;
-    text-align: left;
-  }
-
-  .info-content .name {
-    margin: 0 0 2px;
-    font-size: 20px;
-  }
-
-  .info-content .title {
-    margin: 0;
-  }
-
-  .sidebar-status {
-    margin: 6px 0 0;
-  }
-
-  .sidebar-info_more {
-    display: flex;
-    align-items: center;
-    gap: 26px;
-    min-width: 0;
-    margin: 0 0 0 auto;
-  }
-
-  .sidebar-info_more > .separator {
-    display: none;
-  }
-
-  .sidebar .contacts-list {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    margin: 0;
-  }
-
-  .sidebar .contact-item {
-    margin: 0;
-    padding: 0;
-  }
-
-  .sidebar .contact-item address {
-    max-width: 190px;
-  }
-
-  .sidebar .social-list {
-    display: flex;
-    gap: 2px;
-    margin: 0;
-    padding: 0;
-  }
-
-  .release-sidebar {
-    align-self: stretch;
-    display: flex;
-    align-items: center;
-    border-radius: 24px;
-  }
-
-  .main-content > .navbar {
-    top: 12px;
-  }
-}
-
-@media (min-width: 1024px) and (max-width: 1240px) {
-  .sidebar .contact-item:nth-child(3) { display: none; }
-}
-
 /* ---------- editorial type scale ---------- */
-
-.main-content > article[data-page] .article-title:not(.about .article-title) {
-  font-size: clamp(38px, 5.4vw, 78px);
-  line-height: 1;
-  letter-spacing: -0.045em;
-  padding-bottom: 22px;
-  margin-bottom: 34px;
-}
 
 .recruiter-cta .recruiter-cta-title {
   font-size: clamp(34px, 4.4vw, 62px);
@@ -1703,38 +1461,238 @@ body::before {
   vertical-align: 0.55em;
 }
 
-/* Giant outlined page name drifting behind each page's header. */
-.main-content > article[data-page] {
-  position: relative;
-  isolation: isolate;
-  overflow: clip;
+/* =========================================================================
+   Layout v2: no boxes. Pages are full-bleed scenes on the living backdrop,
+   one floating nav rides on top, and the profile closes every page as a
+   big contact footer.
+   ========================================================================= */
+
+main#main-content {
+  display: block;
+  width: min(1320px, calc(100% - 64px));
+  max-width: none;
+  margin: 0 auto;
+  padding: 108px 0 40px;
 }
 
-.main-content > article[data-page]::before {
-  content: attr(data-page);
-  position: absolute;
-  top: -0.12em;
-  right: -0.06em;
-  z-index: -1;
-  color: transparent;
-  font-family: var(--font-display);
-  font-size: clamp(90px, 15vw, 250px);
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.05em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  -webkit-text-stroke: 1px rgba(232, 200, 121, 0.13);
+html.stage-on main#main-content {
+  padding-top: 56px;
+}
+
+.main-content {
+  width: 100%;
+  margin: 0;
+}
+
+/* ---------- floating nav ---------- */
+
+.main-content > nav.navbar {
+  position: fixed;
+  inset: 14px auto auto 50%;
+  bottom: auto;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: min(940px, calc(100% - 24px));
+  height: auto;
+  margin: 0;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(13, 14, 16, 0.74);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  translate: -50% 0;
+  transition: translate 0.7s var(--ease-out-expo), opacity 0.4s ease;
+}
+
+/* On the home route the intro has its own bar; the nav slides in after it. */
+html.nav-tucked .main-content > nav.navbar {
+  translate: -50% calc(-100% - 28px);
+  opacity: 0;
   pointer-events: none;
 }
 
-.main-content > article.about::before {
-  content: 'Adriel';
+.main-content > nav.navbar .navbar-list {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  gap: 2px;
+  padding: 0;
 }
 
-.main-content > article.destinations::before {
-  content: 'More';
+.main-content > nav.navbar .navbar-item {
+  flex: 0 1 auto;
 }
+
+.main-content > nav.navbar .navbar-link {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--stage-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.main-content > nav.navbar .navbar-link:hover {
+  color: var(--stage-ink);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.main-content > nav.navbar .navbar-link.active {
+  color: var(--stage-ink);
+}
+
+.nav-indicator {
+  border-radius: 999px;
+}
+
+.nav-mark {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: conic-gradient(from var(--ring-spin), var(--stage-gold), var(--stage-ember), var(--stage-violet), var(--stage-gold));
+  animation: ring-spin 7s linear infinite;
+  text-decoration: none;
+}
+
+.nav-mark span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #0d0e10;
+  color: var(--stage-ink);
+  font: 800 11px/1 var(--font-display);
+}
+
+.nav-cta {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: var(--stage-ink);
+  color: #0d0e10;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.25s ease, transform 0.4s var(--ease-out-back);
+}
+
+.nav-cta:hover,
+.nav-cta:focus-visible {
+  background: var(--stage-gold);
+  transform: scale(1.04);
+}
+
+/* ---------- pages: no panel, just the scene ---------- */
+
+.main-content > article[data-page] {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+  overflow-x: clip;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  scroll-margin-top: 90px;
+}
+
+.main-content > article[data-page] > section,
+.main-content > article[data-page] > .recruiter-cta {
+  margin-block: 0 clamp(72px, 11vh, 132px);
+}
+
+/* Page hero: kicker, giant title, a hairline that draws itself. */
+.page-hero {
+  position: relative;
+  margin: 0 0 clamp(40px, 6vh, 72px);
+  padding: clamp(28px, 7vh, 88px) 0 clamp(28px, 4vh, 48px);
+}
+
+.page-hero::before {
+  content: attr(data-kicker);
+  display: block;
+  margin-bottom: clamp(16px, 2.4vh, 26px);
+  color: var(--stage-gold);
+  font: 500 12px/1.2 ui-monospace, 'SF Mono', Menlo, monospace;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.page-hero::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--stage-gold), rgba(255, 122, 69, 0.6) 30%, rgba(255, 255, 255, 0.08) 60%, transparent);
+  transform-origin: left;
+  animation: fx-draw 1.4s var(--ease-out-expo) 0.2s both;
+}
+
+article.fx-enter .page-hero::after {
+  animation: fx-draw 1.4s var(--ease-out-expo) 0.25s both;
+}
+
+@keyframes fx-draw {
+  from { transform: scaleX(0); }
+}
+
+.page-hero .article-title,
+.main-content > article[data-page] .page-hero .article-title {
+  margin: 0;
+  padding: 0;
+  /* 10.2vw keeps the longest word ("Background") on one line at 320px+. */
+  font-size: clamp(32px, 10.2vw, 168px);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+
+.page-hero .article-title::after {
+  content: none;
+}
+
+/* Giant outlined page name drifting behind the hero. */
+.main-content > article[data-page]::before {
+  content: attr(data-page);
+  position: absolute;
+  top: clamp(10px, 4vh, 40px);
+  right: -0.04em;
+  z-index: -1;
+  color: transparent;
+  font-family: var(--font-display);
+  font-size: clamp(110px, 21vw, 340px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  -webkit-text-stroke: 1px rgba(232, 200, 121, 0.12);
+  pointer-events: none;
+}
+
+.main-content > article.about::before { content: 'About'; }
+.main-content > article.destinations::before { content: 'More'; }
 
 @supports (animation-timeline: scroll()) {
   .main-content > article[data-page]::before {
@@ -1743,18 +1701,447 @@ body::before {
   }
 
   @keyframes fx-watermark {
-    to { translate: -22% 0; }
+    to { translate: -30% 0; }
+  }
+}
+
+/* About: the page's hero is the headline itself. */
+.about > header {
+  padding-top: clamp(24px, 6vh, 72px);
+}
+
+.about > header .article-title {
+  margin: 0 0 24px;
+  color: var(--stage-gold);
+  font: 500 12px/1.2 ui-monospace, 'SF Mono', Menlo, monospace;
+  letter-spacing: 0.22em;
+}
+
+.about > header .article-title::after {
+  content: none;
+}
+
+.recruiter-cta {
+  padding: 0 0 clamp(40px, 6vh, 64px);
+  border: 0;
+  background: none;
+}
+
+.recruiter-cta .recruiter-cta-title {
+  max-width: 14ch;
+  font-size: clamp(44px, 7vw, 112px);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.recruiter-cta-copy > p:last-child {
+  max-width: 54ch;
+  font-size: clamp(16px, 1.45vw, 21px);
+  line-height: 1.6;
+}
+
+/* Section headings become chapter openers. */
+.featured-projects-heading h3,
+.service-title,
+.github-heatmap-title,
+.achievements-title,
+.selected-work h3,
+.project-explorer-heading h3,
+.workflow-heading h3 {
+  font-size: clamp(28px, 3.6vw, 52px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+}
+
+.timeline-section .section-title {
+  font-size: clamp(24px, 2.6vw, 36px);
+}
+
+/* Cards: quieter glass now that panels are gone. */
+.featured-project,
+.service-item,
+.selected-work-card,
+.gear-card,
+.web-destination-card,
+.timeline-content,
+.achievement-card,
+.github-heatmap,
+.selected-work,
+.project-explorer,
+.workflow-section,
+.timeline-section,
+.honors-stats > div,
+.year-header,
+.stack-item {
+  border-radius: 20px;
+  border-color: rgba(255, 255, 255, 0.075);
+  background-color: rgba(20, 21, 25, 0.62);
+}
+
+/* Project groups (rendered by projects-sort) get chapter headings too. */
+.project-group-header {
+  margin-bottom: 28px;
+}
+
+.project-group-title {
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.6vw, 52px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+}
+
+.project-group + .project-group {
+  margin-top: clamp(64px, 10vh, 120px);
+}
+
+/* Availability pill (footer identity row). */
+.sidebar-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 5px 11px 5px 9px;
+  border: 1px solid rgba(94, 224, 143, 0.25);
+  border-radius: 999px;
+  background: rgba(94, 224, 143, 0.06);
+  color: #b9efcb;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.site-footer .social-link {
+  transition: transform 0.4s var(--ease-out-back), color 0.25s ease, filter 0.25s ease;
+}
+
+.site-footer .social-link:hover,
+.site-footer .social-link:focus-visible {
+  transform: translateY(-4px) scale(1.08);
+  filter: drop-shadow(0 6px 14px rgba(232, 200, 121, 0.45));
+}
+
+/* ---------- footer: the profile closes every page ---------- */
+
+.sidebar-rail.site-footer {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 40px 48px;
+  width: 100%;
+  min-width: 0;
+  margin: clamp(48px, 8vh, 96px) 0 0;
+  padding: clamp(56px, 10vh, 120px) 0 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer-cta {
+  grid-column: 1 / -1;
+}
+
+.footer-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 24px;
+  color: var(--stage-gold);
+  font: 500 12px/1.2 ui-monospace, 'SF Mono', Menlo, monospace;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.footer-title {
+  display: grid;
+  margin: 0 0 clamp(28px, 4vh, 44px);
+  font-family: var(--font-display);
+  font-size: clamp(46px, 9.6vw, 160px);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+}
+
+.footer-title span {
+  display: block;
+  color: var(--stage-ink);
+}
+
+.footer-title span + span {
+  background: linear-gradient(100deg, #f3f1eb 10%, var(--stage-gold) 50%, var(--stage-ember) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.footer-mail {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 6px;
+  color: var(--stage-ink);
+  font-size: clamp(20px, 2.8vw, 38px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.footer-mail span {
+  display: inline;
+}
+
+.footer-mail::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--stage-gold), var(--stage-ember));
+  transform: scaleX(0.25);
+  transform-origin: left;
+  transition: transform 0.7s var(--ease-out-expo);
+}
+
+.footer-mail svg {
+  transition: transform 0.5s var(--ease-out-back);
+}
+
+.footer-mail:hover::after,
+.footer-mail:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.footer-mail:hover svg,
+.footer-mail:focus-visible svg {
+  transform: rotate(45deg) scale(1.15);
+}
+
+/* The old sidebar card, flattened into the footer's identity row. */
+.site-footer .sidebar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px 40px;
+  width: 100%;
+  margin: 0;
+  padding: 0 !important;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.site-footer .sidebar::before {
+  content: none;
+}
+
+.site-footer .sidebar-info {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: row;
+  align-items: center;
+  gap: 18px;
+  margin: 0;
+  text-align: left;
+}
+
+.site-footer .avatar-box {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  margin: 0;
+  border-radius: 18px;
+}
+
+.site-footer .avatar-box::after { border-radius: 21px; }
+.site-footer .avatar-box picture,
+.site-footer .avatar-box img { border-radius: 16px; }
+
+.site-footer .info-content {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.site-footer .info-content .name {
+  margin: 0 0 2px;
+  font-size: 20px;
+}
+
+.site-footer .info-content .title {
+  margin: 0;
+}
+
+.site-footer .sidebar-status {
+  margin: 6px 0 0;
+}
+
+.site-footer .sidebar-info_more {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px 32px;
+  min-width: 0;
+  margin: 0;
+}
+
+.site-footer .sidebar-info_more > .separator {
+  display: none;
+}
+
+.site-footer .contacts-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
+  margin: 0;
+}
+
+.site-footer .contact-item {
+  margin: 0;
+  padding: 0;
+}
+
+.site-footer .contact-item address {
+  max-width: 200px;
+}
+
+.site-footer .social-list {
+  display: flex;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+}
+
+.site-footer .release-sidebar {
+  align-self: end;
+  min-width: 220px;
+  border-radius: 16px;
+  background: rgba(20, 21, 25, 0.62);
+}
+
+/* ---------- living backdrop: a glow that follows the cursor ---------- */
+
+.fx-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 720px;
+  height: 720px;
+  margin: -360px 0 0 -360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 200, 121, 0.09), rgba(143, 123, 255, 0.05) 40%, transparent 70%);
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* ---------- paragraphs light up word by word as you read ---------- */
+
+.fx-scrub .fx-sw {
+  display: inline;
+  /* Unlit words stay readable (>= 4.5:1 on the backdrop); lit ones glow. */
+  color: #85878c;
+  transition: color 0.4s ease, text-shadow 0.4s ease;
+}
+
+.fx-scrub .fx-sw.on {
+  color: #f6f3ea;
+  text-shadow: 0 0 18px rgba(232, 200, 121, 0.18);
+}
+
+/* ---------- v2 responsive ---------- */
+
+@media (max-width: 1023px) {
+  main#main-content {
+    width: calc(100% - 40px);
+    padding-top: 92px;
+  }
+
+  .sidebar-rail.site-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer .release-sidebar {
+    justify-self: stretch;
+  }
+}
+
+@media (max-width: 720px) {
+  main#main-content {
+    width: calc(100% - 32px);
+    padding-top: 78px;
+    padding-bottom: calc(100px + env(safe-area-inset-bottom));
+  }
+
+  html.stage-on main#main-content {
+    padding-top: 40px;
+  }
+
+  .main-content > nav.navbar {
+    top: 10px;
+    width: calc(100% - 16px);
+    padding: 4px;
+    gap: 2px;
+  }
+
+  .nav-cta {
+    display: none;
+  }
+
+  .nav-mark {
+    width: 36px;
+    height: 36px;
+  }
+
+  .nav-mark span {
+    width: 30px;
+    height: 30px;
+    font-size: 10px;
+  }
+
+  .main-content > nav.navbar .navbar-list {
+    justify-content: space-between;
+    gap: 0;
+  }
+
+  .main-content > nav.navbar .navbar-item {
+    flex: 1 1 0;
+  }
+
+  .main-content > nav.navbar .navbar-link {
+    width: 100%;
+    min-height: 36px;
+    padding: 0 2px;
+    font-size: 0;
+  }
+
+  .main-content > nav.navbar .navbar-link::before {
+    content: attr(data-mobile-label);
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .site-footer .sidebar,
+  .site-footer .sidebar-info_more,
+  .site-footer .contacts-list {
+    gap: 16px 20px;
   }
 }
 
 /* Reserve the timeline filter bar's space until JS inserts it (no CLS). */
 article.background:not(:has(.timeline-filter-bar)) > header {
-  margin-bottom: calc(34px + 55px + 18px);
+  margin-bottom: calc(clamp(40px, 6vh, 72px) + 55px + 18px);
 }
 
 @media (max-width: 580px) {
   article.background:not(:has(.timeline-filter-bar)) > header {
-    margin-bottom: calc(26px + 100px + 18px);
+    margin-bottom: calc(clamp(40px, 6vh, 72px) + 100px + 18px);
   }
 }
 
@@ -1820,13 +2207,21 @@ article.background:not(:has(.timeline-filter-bar)) > header {
   }
 
   body::before,
-  .sidebar-rail .sidebar::before,
   .gear-card .gear-visual,
   .fx-marquee-row,
   .github-heatmap-grid.fx-ripple .github-heatmap-cell,
-  .main-content > article[data-page].fx-enter,
+  .page-hero::after,
+  .nav-mark,
   .main-content > article[data-page]::before {
-    animation: none;
+    animation: none !important;
+  }
+
+  .fx-scrub .fx-sw {
+    color: inherit;
+  }
+
+  .main-content > nav.navbar {
+    transition: none;
   }
 
   .timeline-container::after {

@@ -1,52 +1,11 @@
-const DEFAULT_ALLOWED_ORIGINS = [
-  'https://adrielmagalona.dev',
-  'https://www.adrielmagalona.dev',
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  'http://localhost:5174',
-  'http://127.0.0.1:5174',
-];
+/**
+ * GitHub contribution calendar, scraped from the public profile endpoint and
+ * cached at the edge for six hours.
+ */
+import { prepare } from './_lib/http.js';
 
 const GITHUB_USERNAME = 'adr1el-m';
 const CACHE_SECONDS = 21_600;
-
-function getAllowedOrigins() {
-  const raw = process.env.PORTFOLIO_ALLOWED_ORIGINS || '';
-  const envOrigins = raw.split(',').map((value) => value.trim()).filter(Boolean);
-  return new Set(envOrigins.length ? envOrigins : DEFAULT_ALLOWED_ORIGINS);
-}
-
-function getRequestOrigin(req) {
-  const originHeader = typeof req.headers.origin === 'string' ? req.headers.origin : '';
-  if (originHeader) return originHeader;
-  const referer = typeof req.headers.referer === 'string' ? req.headers.referer : '';
-  if (!referer) return '';
-  try { return new URL(referer).origin; } catch { return ''; }
-}
-
-function isLocalhostOrigin(origin) {
-  if (!origin) return false;
-  try {
-    const { hostname, protocol } = new URL(origin);
-    return (protocol === 'http:' || protocol === 'https:')
-      && (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1');
-  } catch {
-    return false;
-  }
-}
-
-function setCors(req, res) {
-  const allowedOrigins = getAllowedOrigins();
-  const origin = getRequestOrigin(req);
-  const isAllowed = !origin || allowedOrigins.has(origin) || isLocalhostOrigin(origin);
-  if (origin && isAllowed) {
-    res.setHeader('Vary', 'Origin');
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  }
-  return { origin, isAllowed };
-}
 
 function decodeHtml(value) {
   return value
@@ -102,7 +61,7 @@ function parseGitHubContributions(html) {
 }
 
 export default async function handler(req, res) {
-  const cors = setCors(req, res);
+  const cors = prepare(req, res, { methods: 'GET,OPTIONS', allowMissingOrigin: true, allowLocalhost: true, cache: '' });
 
   if (req.method === 'OPTIONS') {
     res.status(cors.isAllowed ? 204 : 403).end();
@@ -129,7 +88,7 @@ export default async function handler(req, res) {
     });
 
     if (!response.ok) {
-      res.status(response.status).json({ error: 'GitHub contribution data unavailable.' });
+      res.status(502).json({ error: 'GitHub contribution data unavailable.' });
       return;
     }
 
@@ -145,6 +104,7 @@ export default async function handler(req, res) {
     res.status(200).json(payload);
   } catch (error) {
     console.error('GitHub contribution fetch failed:', error?.message || error);
-    res.status(500).json({ error: 'GitHub contribution data unavailable.' });
+    res.setHeader('Cache-Control', 'no-store');
+    res.status(502).json({ error: 'GitHub contribution data unavailable.' });
   }
 }

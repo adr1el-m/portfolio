@@ -18,6 +18,8 @@ function trackContact(label: string): void {
 export class ContactFlow {
   private selectedReason = 'Project inquiry';
   private isSending = false;
+  /** When the visitor started on the form; the server drops instant submissions. */
+  private startedAt = 0;
 
   constructor() {
     this.init();
@@ -51,6 +53,10 @@ export class ContactFlow {
         <label class="visually-hidden" for="contact-flow-email">Your email</label>
         <input id="contact-flow-email" class="contact-flow-input" type="email" maxlength="180" autocomplete="email" placeholder="Your email for replies">
       </div>
+      <div class="contact-flow-trap" aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden">
+        <label for="contact-flow-website">Leave this field empty</label>
+        <input id="contact-flow-website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
       <label class="contact-flow-label" for="contact-flow-message">Message</label>
       <textarea id="contact-flow-message" class="contact-flow-message" rows="3" minlength="8" maxlength="420" aria-describedby="contact-flow-status" placeholder="Tell me about your project or opportunity"></textarea>
       <div class="contact-flow-actions">
@@ -71,6 +77,13 @@ export class ContactFlow {
     `;
 
     socialList.insertAdjacentElement('afterend', card);
+    this.startedAt = performance.now();
+    card.addEventListener('focusin', () => {
+      if (!card.dataset.engaged) {
+        card.dataset.engaged = '1';
+        this.startedAt = performance.now();
+      }
+    });
     this.bind(card);
   }
 
@@ -159,6 +172,8 @@ export class ContactFlow {
           email,
           message,
           path: window.location.pathname,
+          website: card.querySelector<HTMLInputElement>('#contact-flow-website')?.value || '',
+          elapsedMs: Math.round(performance.now() - this.startedAt),
         }),
       });
       const result = await response.json().catch(() => ({}));

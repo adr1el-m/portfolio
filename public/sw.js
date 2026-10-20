@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'adriel-portfolio-';
-const CACHE_NAME = `${CACHE_PREFIX}v10`;
+const CACHE_NAME = `${CACHE_PREFIX}v11`;
 const OFFLINE_URLS = ['/offline', '/offline.html'];
 const PRECACHE_ASSETS = [
   '/',
@@ -8,6 +8,8 @@ const PRECACHE_ASSETS = [
   '/styles/portfolio-enhancements.css',
   '/styles/portfolio-theme.css',
   '/styles/detail-pages.css',
+  '/styles/stage.css',
+  '/fonts/unbounded-latin.woff2',
   '/images/my-avatar.avif',
   '/images/pwa/icon-192x192.png'
 ];

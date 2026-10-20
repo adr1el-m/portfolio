@@ -40,7 +40,7 @@ const NUMBERED_SELECTOR = [
   '.timeline-section .section-title', '.selected-work h3', '.project-explorer-heading h3', '.workflow-heading h3',
 ].join(',');
 
-const TILT_SELECTOR = '.featured-project, .selected-work-card, .gear-card, .project-item, .web-destination-card';
+const TILT_SELECTOR = '.featured-project, .selected-work-card, .gear-card, .project-item, .web-destination-card, .achievement-card';
 const MAGNETIC_SELECTOR = '[data-magnetic], .recruiter-cta-primary';
 const COUNT_SELECTOR = '.honors-stats strong, .github-drilldown-stat strong';
 

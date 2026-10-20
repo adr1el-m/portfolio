@@ -43,8 +43,8 @@ await caches.open('adriel-portfolio-v8');
 await caches.open('another-app-cache');
 await lifecycle('install');
 await lifecycle('activate');
-assert.deepEqual(await caches.keys(), ['another-app-cache', 'adriel-portfolio-v10']);
-const cache = await caches.open('adriel-portfolio-v10');
+assert.deepEqual(await caches.keys(), ['another-app-cache', 'adriel-portfolio-v11']);
+const cache = await caches.open('adriel-portfolio-v11');
 for (const path of ['/api/visits', '/api/analytics', '/_vercel/insights', 'https://cdn.test/script.js', '/video.mp4']) {
   assert.equal(await request(path), undefined, path);
 }

@@ -511,21 +511,7 @@ class PortfolioApp {
             defer(() => import('./modules/public-analytics').then(({ PublicAnalytics }) => new PublicAnalytics()), 150);
           }
 
-          runWhenIdle(() => {
-            const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
-            if (!auditMode && !prefersReducedMotion && !isCoarsePointer) {
-              import('vanilla-tilt').then(module => {
-                const VanillaTilt = module.default as unknown as { init: (elements: NodeListOf<Element> | Element[], options?: Record<string, unknown>) => void };
-                const cards = document.querySelectorAll('.achievement-card');
-                VanillaTilt.init(cards, { max: 15, speed: 400, glare: true, 'max-glare': 0.1 });
-                cards.forEach(card => card.addEventListener('mousemove', (event: Event) => {
-                  const rect = (card as HTMLElement).getBoundingClientRect();
-                  (card as HTMLElement).style.setProperty('--mouse-x', `${(event as MouseEvent).clientX - rect.left}px`);
-                  (card as HTMLElement).style.setProperty('--mouse-y', `${(event as MouseEvent).clientY - rect.top}px`);
-                }));
-              });
-            }
-          }, 2200);
+          // Achievement cards tilt via the shared motion layer (motion-fx).
         }
 
         if (page === 'stack') {

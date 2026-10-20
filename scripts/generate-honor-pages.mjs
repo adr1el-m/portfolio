@@ -71,6 +71,7 @@ for (const match of source.matchAll(/<li class="achievement-card"([\s\S]*?)<\/li
   honors.push({
     title,
     year,
+    ribbon: cleanText(markup.match(/<div class="award-ribbon">([\s\S]*?)<\/div>/i)?.[1] || ''),
     pathName,
     // Legacy cards store entire social captions here. Keep those captions in
     // the original modal, not in an organization name or compact fact badge.
@@ -111,12 +112,27 @@ function absoluteUrl(value) {
   return /^https?:\/\//i.test(value) ? value : `${siteUrl}${value}`;
 }
 
+// Profiles come straight from the page's social links, so the structured
+// data can never point search engines at a stale or wrong profile.
+const socialProfiles = [...new Set([...source.matchAll(/<a href="(https:\/\/[^"]+)" class="social-link"/g)].map((m) => m[1]))];
+const PODIUM = /^(champion|1st place|2nd place|3rd place|2nd runner-up|winner|best in pitching)$/i;
+
 function writePortfolioSchema() {
   const graph = [
     {
       '@type': 'Person', '@id': `${siteUrl}/#person`, name: 'Adriel Magalona', url: siteUrl,
-      image: `${siteUrl}/images/my-avatar.avif`, jobTitle: 'Full-stack Developer and AI Builder',
-      sameAs: ['https://github.com/adr1el-m', 'https://linkedin.com/in/adrielmagalona'],
+      image: `${siteUrl}/images/my-avatar.png`, jobTitle: 'Full-stack Developer and AI Builder',
+      description: 'Computer Science student at the Polytechnic University of the Philippines and DOST-SEI scholar building web apps, AI tools, and competition-winning prototypes.',
+      email: 'mailto:dagsmagalona@gmail.com',
+      address: { '@type': 'PostalAddress', addressLocality: 'Taguig City', addressRegion: 'Metro Manila', addressCountry: 'PH' },
+      alumniOf: { '@type': 'CollegeOrUniversity', name: 'Polytechnic University of the Philippines' },
+      knowsAbout: ['TypeScript', 'React', 'Node.js', 'Flutter', 'Firebase', 'Machine learning', 'AI integration', 'Web accessibility'],
+      award: honors.filter((honor) => PODIUM.test(honor.ribbon)).map((honor) => (
+        honor.title.toLowerCase().includes(honor.ribbon.toLowerCase())
+          ? `${honor.title} (${honor.year})`
+          : `${honor.ribbon}, ${honor.title} (${honor.year})`
+      )),
+      sameAs: socialProfiles,
     },
     { '@type': 'WebSite', '@id': `${siteUrl}/#website`, name: 'Adriel Magalona Portfolio', url: siteUrl, publisher: { '@id': `${siteUrl}/#person` } },
     {

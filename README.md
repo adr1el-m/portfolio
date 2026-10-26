@@ -37,6 +37,15 @@ This repository powers [adrielmagalona.dev](https://adrielmagalona.dev), a portf
 | [DokQ](https://adrielmagalona.dev/case-studies/dokq) | Document and queue experience | Product rationale and constraints |
 | [LingapLink](https://adrielmagalona.dev/case-studies/lingaplink) | Team delivery and social impact | Role, results, and external proof |
 
+## Experience
+
+| Layer | What it does |
+| --- | --- |
+| **Intro stage** | Kinetic name wordmark with 16 real competition and project photos orbiting it in 3D: drag to spin, hover to pause, click to open the honor or project. CSS renders the ring from first paint; JS picks up the identical geometry. |
+| **Scenes, not boxes** | Full-bleed pages with cinematic titles, numbered chapters, a scroll-drifting outlined page name, and a floating glass nav. The profile closes every page as a contact footer. |
+| **Motion system** | Scroll reveals, word-by-word headings, page-switch cascades, 3D tilt, cursor spotlight and glow, a self-drawing timeline, heatmap ripple, count-ups, and a velocity-reactive marquee. CSS transforms plus one small module (`src/modules/motion-fx.ts`); no animation libraries. |
+| **Calm by default where asked** | `prefers-reduced-motion` gets a complete, static layout (the orbit becomes a still 3D ring via CSS trigonometry). |
+
 ## Built with
 
 | Layer | Technology |
@@ -44,7 +53,8 @@ This repository powers [adrielmagalona.dev](https://adrielmagalona.dev), a portf
 | Application | TypeScript · Vite · focused DOM modules |
 | Platform | Vercel · Vercel Functions |
 | Optional integrations | Firebase Realtime Database · Resend · Gemini |
-| Quality | TypeScript · ESLint · Pa11y · Puppeteer · Lighthouse CI |
+| Quality | TypeScript · ESLint · Pa11y · axe · Puppeteer · Lighthouse CI |
+| Type | Unbounded (self-hosted variable woff2, metric-matched fallback) |
 
 ## Architecture at a glance
 
@@ -83,7 +93,8 @@ npm run build           # Production build + static page generation
 npm run check:links     # Internal-link validation
 npm run test:behavior   # Keyboard, dialog, route, and CTA smoke tests
 npm run test:visual     # Visual-regression snapshots
-npm run test:api        # Isolated handler validation and rate-limit burst
+npm run test:api        # Handlers: origins, validation, spam traps, AI scope/key/cache, auth, limits
+npm run test:worker     # Service worker caching and offline behavior
 # Start npm run preview in another terminal for the following:
 npm run test:stress     # 36 route/viewport combinations with WCAG checks
 npm run test:resilience # Slow loading, repeated actions, static routes, offline reload
@@ -98,6 +109,20 @@ The production build writes the static honor and case-study pages to `dist/`. Pr
 - **Progressive enhancement** — useful core content remains available while richer interactions load when needed.
 - **Accessible by default** — semantic controls, focus handling, and keyboard paths are covered by smoke checks.
 - **Secrets stay server-side** — browser code never receives AI provider or privileged Firebase credentials.
+- **Fast first paint** — the intro is CSS-driven from the first frame, the display font has a metric-matched fallback (no layout shift), and the only inline script is allowed by a CSP hash that the build verifies.
+
+## Backend and security
+
+| Endpoint | Purpose | Safeguards |
+| --- | --- | --- |
+| `/api/gemini` | AdrAI portfolio assistant | Persona, rules and scope live server-side; the browser sends only the question, retrieved portfolio context and recent turns. Key sent as a header, bounded inputs, 11s upstream timeout, 10-minute response cache, per-client burst limit. |
+| `/api/contact` | Message delivery via Resend | Honeypot field and minimum fill time (bots get a silent 202), validation, header-injection-safe text, burst limit, mailto fallback. |
+| `/api/analytics` | Aggregate, first-party counts | Event allowlist, conflict-safe Firebase writes (ETag retries), bounded history, constant-time admin-key check. |
+| `/api/visits` | Total-visits counter | Requires a server-side secret, ETag-safe increments, one increment per visitor per hour. |
+| `/api/github-contributions` | Coding-activity heatmap | Edge-cached for six hours. |
+| `/api/csp-report` | CSP violation reports | Rate-limited, compact bounded logging. |
+
+Shared request plumbing (CORS, hardening headers, rate limiting, Firebase transactions) lives in `api/_lib/http.js`. Site-wide headers add HSTS, Permissions-Policy, COOP, a strict CSP with `form-action 'self'`, and `noindex` on API routes.
 
 ## Deployment
 
@@ -110,10 +135,10 @@ npm run deploy
 ## Repository guide
 
 ```text
-api/                 Vercel Functions
+api/                 Vercel Functions (shared helpers in api/_lib)
 config/              Lighthouse and performance budgets
 public/              Static media, styles, service worker, offline fallback
-scripts/             Page generators and automated checks
+scripts/             Page generators, asset builders (orbit thumbs, OG card), checks
 src/data/            Portfolio, project, and case-study content
 src/modules/         Page behavior and UI features
 ```

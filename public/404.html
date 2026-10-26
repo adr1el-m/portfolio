@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0c0d0f">
+  <title>Lost in orbit · Adriel Magalona</title>
+  <link rel="icon" href="/images/my-avatar.avif" type="image/avif">
+  <link rel="preload" href="/fonts/unbounded-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    @font-face {
+      font-family: 'Unbounded';
+      font-weight: 300 900;
+      font-display: swap;
+      src: url('/fonts/unbounded-latin.woff2') format('woff2');
+    }
+
+    :root {
+      --ink: #f3f1eb;
+      --muted: #a3a29d;
+      --gold: #e8c879;
+      --ember: #ff7a45;
+      --violet: #8f7bff;
+      --bg: #0c0d0f;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      color-scheme: dark;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body { height: 100%; overflow-x: clip; }
+
+    body {
+      margin: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: -20%;
+      z-index: -1;
+      background:
+        radial-gradient(36% 30% at 25% 30%, rgba(232, 200, 121, 0.12), transparent 70%),
+        radial-gradient(32% 28% at 75% 65%, rgba(143, 123, 255, 0.12), transparent 70%);
+      animation: drift 24s ease-in-out infinite alternate;
+    }
+
+    @keyframes drift {
+      to { transform: translate3d(3%, -3%, 0) rotate(8deg); }
+    }
+
+    main {
+      position: relative;
+      width: min(1100px, calc(100% - 32px));
+      padding: 48px 0;
+      text-align: center;
+    }
+
+    .orbit {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: min(880px, 96vw);
+      aspect-ratio: 2.4;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+      transform: translate(-50%, -58%) rotate(-8deg);
+      pointer-events: none;
+    }
+
+    .orbit::after {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 18px var(--gold);
+      offset-path: ellipse(50% 50% at 50% 50%);
+      animation: travel 9s linear infinite;
+    }
+
+    @keyframes travel {
+      to { offset-distance: 100%; }
+    }
+
+    .code {
+      margin: 0;
+      font: 800 clamp(120px, 30vw, 340px)/0.85 'Unbounded', 'Arial Black', sans-serif;
+      letter-spacing: -0.06em;
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(232, 200, 121, 0.45);
+      animation: rise 1.1s var(--ease) both;
+    }
+
+    h1 {
+      margin: 8px 0 12px;
+      font: 700 clamp(28px, 4.4vw, 54px)/1.05 'Unbounded', 'Arial Black', sans-serif;
+      letter-spacing: -0.045em;
+      animation: rise 1.1s var(--ease) 0.1s both;
+    }
+
+    h1 span {
+      background: linear-gradient(100deg, var(--ink) 20%, var(--gold) 60%, var(--ember));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    p {
+      max-width: 44ch;
+      margin: 0 auto 32px;
+      color: var(--muted);
+      font-size: clamp(15px, 1.4vw, 18px);
+      line-height: 1.6;
+      animation: rise 1.1s var(--ease) 0.2s both;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      animation: rise 1.1s var(--ease) 0.3s both;
+    }
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 48px;
+      padding: 0 22px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      background: rgba(20, 21, 24, 0.9);
+      color: var(--ink);
+      font-weight: 600;
+      text-decoration: none;
+      transition: border-color 0.25s ease, transform 0.4s var(--ease);
+    }
+
+    a:hover, a:focus-visible { border-color: rgba(232, 200, 121, 0.6); transform: translateY(-2px); }
+    a:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+
+    a.primary {
+      border-color: transparent;
+      background: var(--gold);
+      color: #141414;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(24px); filter: blur(6px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="orbit" aria-hidden="true"></div>
+    <p class="code" aria-hidden="true">404</p>
+    <h1>This page drifted <span>out of orbit.</span></h1>
+    <p>The link may be old or mistyped. Everything else is right where it should be.</p>
+    <nav aria-label="Ways back">
+      <a class="primary" href="/">Back home</a>
+      <a href="/projects">See the work</a>
+      <a href="/contact">Get in touch</a>
+    </nav>
+  </main>
+</body>
+</html>

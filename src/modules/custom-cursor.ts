@@ -9,10 +9,16 @@ export class CustomCursor {
   private cursorY = 0;
   private rafId: number | null = null;
   private hasMoved = false;
+  private readonly finePointer = window.matchMedia('(pointer: fine)');
+  private readonly reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   private readonly clickableSelector = 'a, button, .content-card, input, textarea, .clickable';
 
   private onPointerMove = (e: PointerEvent) => {
+    if (!this.finePointer.matches || this.reducedMotion.matches || e.pointerType === 'touch') {
+      this.deactivate();
+      return;
+    }
     this.targetX = e.clientX;
     this.targetY = e.clientY;
     if (!this.hasMoved) {
@@ -20,6 +26,7 @@ export class CustomCursor {
       this.cursorX = this.targetX;
       this.cursorY = this.targetY;
       this.render(true);
+      document.documentElement.classList.add('custom-cursor-active');
       this.startLoop();
       return;
     }
@@ -48,27 +55,29 @@ export class CustomCursor {
 
   private onVisibilityChange = () => {
     if (document.visibilityState !== 'visible') {
-      this.stopLoop();
-      this.hasMoved = false;
+      this.deactivate();
     }
   };
 
-  constructor() {
-    // Check if device is touch-enabled, if so, skip custom cursor
-    if (window.matchMedia('(pointer: coarse)').matches) {
-      return;
-    }
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      return;
-    }
+  private deactivate = () => {
+    document.documentElement.classList.remove('custom-cursor-active');
+    this.cursor?.classList.remove('hovered');
+    this.stopLoop();
+    this.hasMoved = false;
+  };
 
+  constructor() {
+    // Keep the native cursor until the first eligible pointer movement.
+    document.documentElement.classList.remove('custom-cursor-active');
     document.querySelectorAll('.custom-cursor, .custom-cursor-dot').forEach((el) => el.remove());
 
     this.cursor = document.createElement('div');
     this.cursor.classList.add('custom-cursor');
+    this.cursor.setAttribute('aria-hidden', 'true');
     
     this.cursorDot = document.createElement('div');
     this.cursorDot.classList.add('custom-cursor-dot');
+    this.cursorDot.setAttribute('aria-hidden', 'true');
 
     document.body.appendChild(this.cursor);
     document.body.appendChild(this.cursorDot);
@@ -86,6 +95,10 @@ export class CustomCursor {
     document.addEventListener('pointerover', this.onPointerOver, { passive: true });
     document.addEventListener('pointerout', this.onPointerOut, { passive: true });
     document.addEventListener('visibilitychange', this.onVisibilityChange);
+    document.documentElement.addEventListener('pointerleave', this.deactivate);
+    window.addEventListener('blur', this.deactivate);
+    this.finePointer.addEventListener('change', this.deactivate);
+    this.reducedMotion.addEventListener('change', this.deactivate);
   }
 
   private startLoop(): void {

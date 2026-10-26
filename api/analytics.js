@@ -1,89 +1,16 @@
-const DEFAULT_ALLOWED_ORIGINS = [
-  'https://adrielmagalona.dev',
-  'https://www.adrielmagalona.dev',
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  'http://localhost:5174',
-  'http://127.0.0.1:5174',
-];
+/**
+ * First-party portfolio analytics: aggregate counts only, no visitor IDs.
+ * Persists to Firebase when configured (conflict-safe via ETags), else keeps
+ * a bounded in-memory window per function instance.
+ */
+import crypto from 'node:crypto';
+import { cleanText, clientIp, firebaseTransaction, firebaseUrl, jsonBody, prepare, queryParam, rateLimit, tooMany } from './_lib/http.js';
 
-function getAllowedOrigins() {
-  const raw = process.env.PORTFOLIO_ALLOWED_ORIGINS || '';
-  const envOrigins = raw.split(',').map((value) => value.trim()).filter(Boolean);
-  return new Set(envOrigins.length ? envOrigins : DEFAULT_ALLOWED_ORIGINS);
-}
-
-function getRequestOrigin(req) {
-  const originHeader = typeof req.headers.origin === 'string' ? req.headers.origin : '';
-  if (originHeader) return originHeader;
-  const referer = typeof req.headers.referer === 'string' ? req.headers.referer : '';
-  if (!referer) return '';
-  try { return new URL(referer).origin; } catch { return ''; }
-}
-
-function setCors(req, res, methods = 'GET,POST,OPTIONS') {
-  const allowedOrigins = getAllowedOrigins();
-  const origin = getRequestOrigin(req);
-  if (origin && allowedOrigins.has(origin)) {
-    res.setHeader('Vary', 'Origin');
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Methods', methods);
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Portfolio-Admin-Key');
-  }
-  return { origin, isAllowed: Boolean(origin && allowedOrigins.has(origin)) };
-}
-
-function getClientIp(req) {
-  const xff = typeof req.headers['x-forwarded-for'] === 'string' ? req.headers['x-forwarded-for'] : '';
-  if (xff) return xff.split(',')[0].trim();
-  const xrip = typeof req.headers['x-real-ip'] === 'string' ? req.headers['x-real-ip'] : '';
-  return xrip || req.socket?.remoteAddress || 'unknown';
-}
-
-function parseJsonBody(req) {
-  if (!req.body) return {};
-  if (typeof req.body === 'object') return req.body;
-  if (typeof req.body !== 'string') return {};
-  try { return JSON.parse(req.body); } catch { return null; }
-}
-
-function sanitizeText(value, maxLength = 500) {
-  if (typeof value !== 'string') return '';
-  return value.replace(/\s+/g, ' ').trim().slice(0, maxLength);
-}
-
-function getQueryParam(req, name) {
-  if (req.query && typeof req.query[name] === 'string') return req.query[name];
-  if (req.query && Array.isArray(req.query[name])) return req.query[name][0] || '';
-  try {
-    const url = new URL(req.url || '/', 'http://localhost');
-    return url.searchParams.get(name) || '';
-  } catch {
-    return '';
-  }
-}
-
-function getRateStore(name) {
-  const key = `__portfolioRateStore_${name}`;
-  if (!globalThis[key]) globalThis[key] = new Map();
-  return globalThis[key];
-}
-
-function checkRateLimit(name, ip, maxRequests, windowMs) {
-  const now = Date.now();
-  const store = getRateStore(name);
-  const entry = store.get(ip);
-  if (!entry || now - entry.windowStart >= windowMs) {
-    store.set(ip, { windowStart: now, count: 1 });
-    return { allowed: true, retryAfterSec: 0 };
-  }
-  if (entry.count >= maxRequests) {
-    const retryAfterSec = Math.max(1, Math.ceil((windowMs - (now - entry.windowStart)) / 1000));
-    return { allowed: false, retryAfterSec };
-  }
-  entry.count += 1;
-  store.set(ip, entry);
-  return { allowed: true, retryAfterSec: 0 };
+/** Constant-time comparison so the admin key can't be guessed by timing. */
+function safeEqual(a, b) {
+  const left = crypto.createHash('sha256').update(String(a)).digest();
+  const right = crypto.createHash('sha256').update(String(b)).digest();
+  return crypto.timingSafeEqual(left, right);
 }
 
 const EVENT_TYPES = new Set([
@@ -99,6 +26,7 @@ const MAX_EVENTS = Number(process.env.PORTFOLIO_ANALYTICS_MAX_EVENTS || 800);
 const RATE_WINDOW_MS = Number(process.env.PORTFOLIO_ANALYTICS_RATE_WINDOW_MS || 60_000);
 const RATE_MAX_REQUESTS = Number(process.env.PORTFOLIO_ANALYTICS_RATE_MAX_REQUESTS || 80);
 const FIREBASE_PATH = process.env.PORTFOLIO_ANALYTICS_FIREBASE_PATH || 'portfolioAnalytics/summary';
+const MAX_STORED_QUESTIONS = 200;
 
 function store() {
   if (!globalThis.__portfolioAnalyticsStore) {
@@ -190,24 +118,11 @@ function summary(events, includePrivate = false) {
   return publicSummary;
 }
 
-function firebaseBaseUrl() {
-  const url = process.env.FIREBASE_DATABASE_URL || process.env.VITE_FIREBASE_DATABASE_URL || '';
-  return url.trim().replace(/\/+$/, '');
-}
-
-function firebaseUrl() {
-  const base = firebaseBaseUrl();
-  if (!base) return '';
-  const auth = process.env.FIREBASE_DATABASE_SECRET || process.env.PORTFOLIO_FIREBASE_DATABASE_SECRET || '';
-  const suffix = auth ? `?auth=${encodeURIComponent(auth)}` : '';
-  return `${base}/${FIREBASE_PATH}.json${suffix}`;
-}
-
 async function readPersistentSummary() {
-  const url = firebaseUrl();
-  if (!url || typeof fetch === 'undefined') return null;
+  const url = firebaseUrl(FIREBASE_PATH);
+  if (!url) return null;
   try {
-    const response = await fetch(url, { method: 'GET' });
+    const response = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(6_000) });
     if (!response.ok) {
       console.warn(`Persistent analytics read failed (${response.status}).`);
       return null;
@@ -219,14 +134,11 @@ async function readPersistentSummary() {
   }
 }
 
-async function writePersistentSummary(event) {
-  const url = firebaseUrl();
-  if (!url || typeof fetch === 'undefined') return false;
-
-  const current = (await readPersistentSummary()) || emptyPersistentSummary();
+function applyEvent(data, event) {
+  const current = data && typeof data === 'object' ? data : emptyPersistentSummary();
   current.totalEvents = (current.totalEvents || 0) + 1;
   current.lastSeen = event.at;
-  current.counts = current.counts || emptyPersistentSummary().counts;
+  current.counts = { ...emptyPersistentSummary().counts, ...(current.counts || {}) };
 
   if (event.type === 'page-view') incrementCount(current.counts.pageViews, event.label);
   if (event.type === 'project-open') incrementCount(current.counts.projectOpens, event.label);
@@ -234,31 +146,25 @@ async function writePersistentSummary(event) {
   if (event.type === 'contact-action') incrementCount(current.counts.contactActions, event.label);
   if (event.type === 'contact-submit') incrementCount(current.counts.contactSubmissions, event.label);
   if (event.type === 'chatbot-question') {
-    current.chatbotQuestions = Array.isArray(current.chatbotQuestions)
+    const previous = Array.isArray(current.chatbotQuestions)
       ? current.chatbotQuestions
-      : Array.isArray(current.recentQuestions)
-        ? current.recentQuestions
-        : [];
-    current.chatbotQuestions.push({ label: event.label, at: event.at });
-    current.recentQuestions = Array.isArray(current.recentQuestions) ? current.recentQuestions : [];
-    current.recentQuestions.push({ label: event.label, at: event.at });
-    current.recentQuestions = current.recentQuestions.slice(-20);
+      : Array.isArray(current.recentQuestions) ? current.recentQuestions : [];
+    // Bounded: an ever-growing array would make every event slower to write.
+    current.chatbotQuestions = [...previous, { label: event.label, at: event.at }].slice(-MAX_STORED_QUESTIONS);
+    current.recentQuestions = current.chatbotQuestions.slice(-20);
   }
+  return current;
+}
 
-  const response = await fetch(url, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(current),
-  });
-  if (!response.ok) {
-    console.warn(`Persistent analytics write failed (${response.status}).`);
-    return false;
-  }
+async function writePersistentSummary(event) {
+  const url = firebaseUrl(FIREBASE_PATH);
+  if (!url) return false;
+  await firebaseTransaction(url, (data) => applyEvent(data, event));
   return true;
 }
 
 export default async function handler(req, res) {
-  const cors = setCors(req, res, 'GET,POST,OPTIONS');
+  const cors = prepare(req, res, { methods: 'GET,POST,OPTIONS', headers: 'Content-Type, X-Portfolio-Admin-Key' });
 
   if (req.method === 'OPTIONS') {
     res.status(cors.isAllowed ? 204 : 403).end();
@@ -273,12 +179,12 @@ export default async function handler(req, res) {
   const events = store();
 
   if (req.method === 'GET') {
-    const isPublicSnapshot = getQueryParam(req, 'public') === '1';
+    const isPublicSnapshot = queryParam(req, 'public') === '1';
     const adminKey = process.env.PORTFOLIO_ADMIN_KEY || '';
     const providedKey = typeof req.headers['x-portfolio-admin-key'] === 'string'
       ? req.headers['x-portfolio-admin-key']
       : '';
-    if (!isPublicSnapshot && (!adminKey || providedKey !== adminKey)) {
+    if (!isPublicSnapshot && (!adminKey || !safeEqual(providedKey, adminKey))) {
       res.status(401).json({ error: 'Missing or invalid admin key.' });
       return;
     }
@@ -292,22 +198,20 @@ export default async function handler(req, res) {
     return;
   }
 
-  const ip = getClientIp(req);
-  const rate = checkRateLimit('analytics', ip, RATE_MAX_REQUESTS, RATE_WINDOW_MS);
+  const rate = rateLimit('analytics', clientIp(req), RATE_MAX_REQUESTS, RATE_WINDOW_MS);
   if (!rate.allowed) {
-    res.setHeader('Retry-After', String(rate.retryAfterSec));
-    res.status(429).json({ error: 'Too many analytics events.' });
+    tooMany(res, rate.retryAfterSec, 'Too many analytics events.');
     return;
   }
 
-  const body = parseJsonBody(req);
+  const body = jsonBody(req);
   if (!body) {
     res.status(400).json({ error: 'Invalid JSON body.' });
     return;
   }
 
-  const type = sanitizeText(body.type, 60);
-  const label = sanitizeText(body.label, 180);
+  const type = cleanText(body.type, 60);
+  const label = cleanText(body.label, 180);
   if (!EVENT_TYPES.has(type) || !label) {
     res.status(400).json({ error: 'Invalid analytics event.' });
     return;
@@ -316,7 +220,7 @@ export default async function handler(req, res) {
   const event = {
     type,
     label,
-    path: sanitizeText(body.path, 160),
+    path: cleanText(body.path, 160),
     at: new Date().toISOString(),
   };
 

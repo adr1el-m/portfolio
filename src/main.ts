@@ -48,6 +48,9 @@ import { ScrollProgress } from './modules/scroll-progress';
 import { logger } from './config';
 import type { Portfolio } from './types';
 import { TextPlaceholders } from './modules/text-placeholders';
+import { CustomCursor } from './modules/custom-cursor';
+import { Stage } from './modules/stage';
+import { MotionFx } from './modules/motion-fx';
 
 // Vercel Analytics & Speed Insights are loaded conditionally in production (see top of file);
 
@@ -249,8 +252,13 @@ class PortfolioApp {
 
   private setupModalLoader(): void {
     const triggerSelector = '.project-item, .achievement-card';
-    const openFromTrigger = (trigger: HTMLElement) => {
-      void this.loadModalManager().then(() => trigger.click());
+    // Replay on the element the visitor actually activated: the modal manager
+    // listens on a project card's inner link, so replaying on the card itself
+    // used to drop the first click on every project.
+    const openFromTrigger = (trigger: HTMLElement, origin: EventTarget | null) => {
+      const inner = (origin as Element | null)?.closest?.<HTMLElement>('a, [role="button"]');
+      const target = inner && trigger.contains(inner) ? inner : (trigger.querySelector<HTMLElement>('a') || trigger);
+      void this.loadModalManager().then(() => target.click());
     };
 
     document.addEventListener('click', (event) => {
@@ -259,7 +267,7 @@ class PortfolioApp {
       if (!trigger) return;
       event.preventDefault();
       event.stopImmediatePropagation();
-      openFromTrigger(trigger);
+      openFromTrigger(trigger, event.target);
     }, { capture: true });
 
     document.addEventListener('keydown', (event) => {
@@ -268,7 +276,7 @@ class PortfolioApp {
       if (!trigger) return;
       event.preventDefault();
       event.stopImmediatePropagation();
-      openFromTrigger(trigger);
+      openFromTrigger(trigger, event.target);
     }, { capture: true });
 
     window.addEventListener('portfolio:open-project', (event) => {
@@ -422,6 +430,7 @@ class PortfolioApp {
       logger.log('♿ Accessibility enhancements active');
 
       // Initialize all modules
+      new CustomCursor();
       const securityManager = new SecurityManager();
       // Harden external links (adds rel noopener/noreferrer and disables javascript: URLs)
       securityManager.ensureSafeExternalLinks();
@@ -432,6 +441,10 @@ class PortfolioApp {
       const navigationManager = new NavigationManager();
       // Initialize scroll progress bar
       new ScrollProgress();
+      // Cinematic intro + site-wide motion. Audit runs get the static layout.
+      const stageRoot = document.querySelector<HTMLElement>('[data-stage]');
+      if (stageRoot) new Stage(stageRoot, { calm: auditMode }).init();
+      if (!auditMode) new MotionFx().init();
       window.Portfolio = {
         core: {
           version: '2.0.0',
@@ -503,21 +516,7 @@ class PortfolioApp {
             defer(() => import('./modules/public-analytics').then(({ PublicAnalytics }) => new PublicAnalytics()), 150);
           }
 
-          runWhenIdle(() => {
-            const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
-            if (!auditMode && !prefersReducedMotion && !isCoarsePointer) {
-              import('vanilla-tilt').then(module => {
-                const VanillaTilt = module.default as unknown as { init: (elements: NodeListOf<Element> | Element[], options?: Record<string, unknown>) => void };
-                const cards = document.querySelectorAll('.achievement-card');
-                VanillaTilt.init(cards, { max: 15, speed: 400, glare: true, 'max-glare': 0.1 });
-                cards.forEach(card => card.addEventListener('mousemove', (event: Event) => {
-                  const rect = (card as HTMLElement).getBoundingClientRect();
-                  (card as HTMLElement).style.setProperty('--mouse-x', `${(event as MouseEvent).clientX - rect.left}px`);
-                  (card as HTMLElement).style.setProperty('--mouse-y', `${(event as MouseEvent).clientY - rect.top}px`);
-                }));
-              });
-            }
-          }, 2200);
+          // Achievement cards tilt via the shared motion layer (motion-fx).
         }
 
         if (page === 'stack') {
@@ -591,6 +590,16 @@ class PortfolioApp {
       const sidebarButton = document.querySelector<HTMLButtonElement>('[data-sidebar-btn]');
       sidebar?.addEventListener('focusin', loadSidebarEnhancements, { once: true });
       sidebarButton?.addEventListener('click', loadSidebarEnhancements, { once: true });
+      // The profile now closes each page as a footer: have the contact card
+      // ready before it scrolls into view (off-screen, so no visible shift).
+      if (sidebar && 'IntersectionObserver' in window) {
+        const footerObserver = new IntersectionObserver((entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          footerObserver.disconnect();
+          loadSidebarEnhancements();
+        }, { rootMargin: '0px 0px 600px 0px' });
+        footerObserver.observe(sidebar);
+      }
       // Keep the visible Total Views counter independent from the contact card.
       runWhenIdle(() => {
         import('./modules/visitor-counter').then(({ VisitorCounter }) => new VisitorCounter());

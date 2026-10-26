@@ -27,8 +27,8 @@
   <meta property="og:title" content="Adriel Magalona - Full-stack Developer & AI Builder">
   <meta property="og:description"
     content="PUP BS Computer Science student, DOST-SEI scholar, full-stack developer, and AI builder. Explore projects, awards, and proof of practical execution.">
-  <meta property="og:image" content="/images/my-avatar.png">
-  <meta property="og:image:alt" content="Adriel Magalona Portfolio">
+  <meta property="og:image" content="https://www.adrielmagalona.dev/images/og-card.jpg">
+  <meta property="og:image:alt" content="Adriel Magalona — full-stack developer and AI builder, surrounded by hackathon and project highlights">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="Adriel Magalona Portfolio">
@@ -40,8 +40,8 @@
   <meta name="twitter:title" content="Adriel Magalona - Full-stack Developer & AI Builder">
   <meta name="twitter:description"
     content="PUP BS Computer Science student, DOST-SEI scholar, full-stack developer, and AI builder. Explore projects, awards, and proof of practical execution.">
-  <meta name="twitter:image" content="/images/my-avatar.png">
-  <meta name="twitter:image:alt" content="Adriel Magalona Portfolio">
+  <meta name="twitter:image" content="https://www.adrielmagalona.dev/images/og-card.jpg">
+  <meta name="twitter:image:alt" content="Adriel Magalona — full-stack developer and AI builder, surrounded by hackathon and project highlights">
   <meta name="twitter:creator" content="@adrielmagalona">
   <meta name="twitter:site" content="@adrielmagalona">
 
@@ -291,6 +291,12 @@
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/styles/portfolio-enhancements.css">
   <link rel="stylesheet" href="/styles/portfolio-theme.css">
+  <link rel="stylesheet" href="/styles/stage.css">
+  <link rel="preload" href="/fonts/unbounded-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Decides before first paint whether the intro renders (home only) and
+       which page shows first, so deep links never flash the About page.
+       Inline for speed; allowed by its sha256 in vercel.json (verified by scripts/verify-csp-hashes.mjs). -->
+  <script>(function(){var r=document.documentElement,p=location.pathname.replace(/\/+$/,'')||'/',m={'/stack':'stack','/background':'background','/projects':'projects','/gear':'gear','/destinations':'destinations'};r.classList.add(p==='/'||p==='/index.html'?'stage-on':'stage-off');r.setAttribute('data-route',m[p]||'about')})();</script>
   <!-- Chatbot styles are loaded with its code on first interaction. -->
 
   <!-- Preload hero avatar with responsive sources -->
@@ -421,156 +427,112 @@
     </div>
   </noscript>
   <canvas id="particle-background" aria-hidden="true"></canvas>
-  <main id="main-content" tabindex="-1">
-    <div class="sidebar-rail">
-      <aside class="sidebar" data-sidebar>
-
-      <div class="sidebar-info">
-
-        <figure class="avatar-box">
-          <picture>
-            <source type="image/avif" srcset="/images/my-avatar.avif 80w, /images/my-avatar@2x.avif 160w"
-              sizes="150px">
-            <source type="image/webp" srcset="/images/my-avatar.webp 80w, /images/my-avatar@2x.webp 160w"
-              sizes="150px">
-            <img src="/images/my-avatar@2x.png" srcset="/images/my-avatar@2x.png 160w" sizes="150px"
-              alt="Adriel Magalona" width="150" height="150" loading="eager" fetchpriority="high"
-              decoding="async" class="critical-image">
-          </picture>
-        </figure>
-
-        <div class="info-content">
-          <h1 class="name" title="Adriel Magalona">Adriel Magalona</h1>
-
-          <p class="title">Full-stack Developer & AI/ML</p>
-        </div>
-
-        <!-- Show Contacts button removed per request -->
-
-      </div>
-
-      <div class="sidebar-info_more">
-
-        <div class="separator"></div>
-
-        <ul class="contacts-list" id="contact">
-          <li class="contact-item">
-            <div class="contact-info">
-              <a class="contact-link resume" href="/resume" target="_blank" rel="noopener noreferrer"
-                data-resume-preview aria-label="Preview my resume (PDF)">RESUME</a>
-            </div>
-          </li>
-          <li class="contact-item">
-
-            <div class="icon-box">
-              <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
-            </div>
-
-            <div class="contact-info">
-              <p class="contact-title">Email</p>
-
-              <a href="mailto:dagsmagalona@gmail.com" class="contact-link">dagsmagalona@gmail.com</a>
-            </div>
-
-          </li>
-
-          <li class="contact-item">
-
-            <div class="icon-box">
-              <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
-            </div>
-
-            <div class="contact-info">
-              <p class="contact-title">Location</p>
-
-              <address>Taguig City, Metro Manila, Philippines</address>
-            </div>
-
-          </li>
-
-        </ul>
-
-        <div class="separator"></div>
-
-
-        <ul class="social-list" role="list" aria-label="Social media links">
-
-          <li class="social-item">
-            <a href="https://www.linkedin.com/in/adriel-magalona-0546b9318/" class="social-link" target="_blank"
-              rel="noopener noreferrer" aria-label="Connect with me on LinkedIn (opens in new tab)"
-              data-tooltip="Connect with me on LinkedIn">
-              <ion-icon name="logo-linkedin" aria-hidden="true"></ion-icon>
-            </a>
-          </li>
-
-          <li class="social-item">
-            <a href="https://github.com/adr1el-m" class="social-link" target="_blank" rel="noopener noreferrer"
-              aria-label="Check out my GitHub profile (opens in new tab)" data-tooltip="Check out my GitHub">
-              <ion-icon name="logo-github" aria-hidden="true"></ion-icon>
-            </a>
-          </li>
-
-          <li class="social-item">
-            <a href="https://www.facebook.com/Traceaz" class="social-link" target="_blank" rel="noopener noreferrer"
-              aria-label="Follow me on Facebook (opens in new tab)" data-tooltip="Follow me on Facebook">
-              <ion-icon name="logo-facebook" aria-hidden="true"></ion-icon>
-            </a>
-          </li>
-
-          <li class="social-item">
-            <a href="https://twitter.com/adr1el_m" class="social-link" target="_blank" rel="noopener noreferrer"
-              aria-label="Follow me on X, formerly Twitter (opens in new tab)" data-tooltip="Follow me on X (Twitter)">
-              <ion-icon name="logo-twitter" aria-hidden="true"></ion-icon>
-            </a>
-          </li>
-
-          <li class="social-item">
-            <a href="https://www.instagram.com/adr1elllll/" class="social-link" target="_blank"
-              rel="noopener noreferrer" aria-label="Follow me on Instagram (opens in new tab)"
-              data-tooltip="Follow me on Instagram">
-              <ion-icon name="logo-instagram" aria-hidden="true"></ion-icon>
-            </a>
-          </li>
-
-        </ul>
-
-      </div>
-
-      </aside>
-
-      <aside class="release-sidebar" aria-label="Portfolio changelog">
-        <details id="portfolio-changelog" class="sidebar-changelog">
-          <summary>
-            <span><ion-icon name="pulse-outline" aria-hidden="true"></ion-icon> Portfolio updates</span>
-            <ion-icon class="sidebar-changelog-chevron" name="chevron-down-outline" aria-hidden="true"></ion-icon>
-          </summary>
-          <div class="sidebar-changelog-content">
-            <p class="sidebar-changelog-intro">Recent improvements to the experience, evidence, and reliability of this portfolio.</p>
-            <ol class="sidebar-changelog-list">
-              <li>
-                <time datetime="2026-07-15">15 Jul 2026</time>
-                <div><strong>Project explorer &amp; comparison</strong><p>Added filters, side-by-side project review, command shortcuts, and release notes.</p></div>
-              </li>
-              <li>
-                <time datetime="2026-07-14">14 Jul 2026</time>
-                <div><strong>Evidence &amp; offline review</strong><p>Added case studies, role paths, offline review support, and workflow context.</p></div>
-              </li>
-              <li>
-                <time datetime="2026-07-14">14 Jul 2026</time>
-                <div><strong>Trust &amp; performance</strong><p>Hardened sensitive integrations, analytics, media delivery, and automated checks.</p></div>
-              </li>
-            </ol>
-          </div>
-        </details>
-      </aside>
+  <!-- Cinematic intro: kinetic wordmark + orbiting proof. Hidden on deep links by the inline head script. -->
+  <header class="stage" id="stage" data-stage aria-labelledby="stage-title">
+    <div class="stage-bg" aria-hidden="true">
+      <div class="stage-aurora"></div>
+      <div class="stage-grid"></div>
+      <div class="stage-vignette"></div>
     </div>
 
+    <nav class="stage-nav" aria-label="Intro shortcuts">
+      <a class="stage-mark" href="/" aria-label="Adriel Magalona, home"><span>AM</span></a>
+      <ul class="stage-nav-links">
+        <li><a href="/projects" data-stage-page="projects">Work</a></li>
+        <li><a href="/background" data-stage-page="background">Background</a></li>
+        <li><a href="/stack" data-stage-page="stack">Stack</a></li>
+        <li><a href="/about" data-stage-page="about" data-stage-anchor=".achievements">Honors</a></li>
+      </ul>
+      <a class="stage-nav-cta" href="/contact" data-stage-page="contact">Let&rsquo;s talk</a>
+    </nav>
 
+    <svg class="stage-rings" data-stage-rings aria-hidden="true" focusable="false" viewBox="-700 -400 1400 800" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="stage-ring-a" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#e8c879" stop-opacity="0" />
+          <stop offset="0.35" stop-color="#e8c879" />
+          <stop offset="0.7" stop-color="#ff7a45" />
+          <stop offset="1" stop-color="#ff7a45" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="stage-ring-b" x1="1" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#8f7bff" stop-opacity="0" />
+          <stop offset="0.45" stop-color="#8f7bff" />
+          <stop offset="1" stop-color="#4fd1c5" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <g class="stage-rings-plane" data-stage-plane>
+        <ellipse class="stage-ring stage-ring--base" cx="0" cy="0" rx="560" ry="230" />
+        <ellipse class="stage-ring stage-ring--a" cx="0" cy="0" rx="560" ry="230" pathLength="100" />
+        <ellipse class="stage-ring stage-ring--b" cx="0" cy="0" rx="610" ry="290" pathLength="100" />
+        <ellipse class="stage-ring stage-ring--faint" cx="0" cy="0" rx="470" ry="170" />
+      </g>
+    </svg>
 
+    <ul class="stage-orbit" data-orbit aria-label="Highlights from competitions and projects">
+      <li class="orbit-card" style="--i:0"><a href="/honors/2025/technovation-summit-2025-start-up-hackathon" data-orbit-honor="Technovation Summit 2025 Start-up Hackathon"><img src="/images/orbit/technovation-champion.webp" srcset="/images/orbit/technovation-champion.webp 400w, /images/orbit/technovation-champion@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>National Champion</b>Technovation Summit 2025</span></a></li>
+      <li class="orbit-card" style="--i:1"><a href="/case-studies/odrs" data-orbit-route><img src="/images/orbit/odrs.webp" srcset="/images/orbit/odrs.webp 400w, /images/orbit/odrs@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>Case study</b>Online Document Request System</span></a></li>
+      <li class="orbit-card" style="--i:2"><a href="/honors/2026/appcon-2026-best-in-pitching" data-orbit-honor="AppCon 2026 — Best in Pitching"><img src="/images/orbit/appcon-pitching.webp" srcset="/images/orbit/appcon-pitching.webp 400w, /images/orbit/appcon-pitching@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>Best in Pitching</b>AppCon 2026</span></a></li>
+      <li class="orbit-card" style="--i:3"><a href="/case-studies/genesync" data-orbit-route><img src="/images/orbit/genesync.webp" srcset="/images/orbit/genesync.webp 400w, /images/orbit/genesync@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>Algorithms</b>GeneSync</span></a></li>
+      <li class="orbit-card" style="--i:4"><a href="/honors/2025/bpi-datawave-hackathon-2025" data-orbit-honor="BPI DataWave Hackathon 2025"><img src="/images/orbit/bpi-datawave.webp" srcset="/images/orbit/bpi-datawave.webp 400w, /images/orbit/bpi-datawave@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>3rd Place</b>BPI DataWave 2025</span></a></li>
+      <li class="orbit-card" style="--i:5"><a href="/projects" data-orbit-project="Paperazzi"><img src="/images/orbit/paperazzi.webp" srcset="/images/orbit/paperazzi.webp 400w, /images/orbit/paperazzi@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>Flutter · Document AI</b>Paperazzi</span></a></li>
+      <li class="orbit-card" style="--i:6"><a href="/honors/2026/start-a-ton-data-ai-innovation-challenge" data-orbit-honor="START-a-TON: Data &amp; AI Innovation Challenge"><img src="/images/orbit/start-a-ton-champion.webp" srcset="/images/orbit/start-a-ton-champion.webp 400w, /images/orbit/start-a-ton-champion@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>Champion</b>START-a-TON 2026</span></a></li>
+      <li class="orbit-card" style="--i:7"><a href="/case-studies/dokq" data-orbit-route><img src="/images/orbit/dokq.webp" srcset="/images/orbit/dokq.webp 400w, /images/orbit/dokq@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>Healthcare</b>DokQ</span></a></li>
+      <li class="orbit-card" style="--i:8"><a href="/honors/2025/hack-it-the-new-era-of-banking-hackathon" data-orbit-honor="Hack-it: The New Era of Banking Hackathon"><img src="/images/orbit/hack-it.webp" srcset="/images/orbit/hack-it.webp 400w, /images/orbit/hack-it@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>2nd Runner-Up</b>Hack-it Banking Hackathon</span></a></li>
+      <li class="orbit-card" style="--i:9"><a href="/projects" data-orbit-project="Green Pulse"><img src="/images/orbit/green-pulse.webp" srcset="/images/orbit/green-pulse.webp 400w, /images/orbit/green-pulse@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>Sustainability</b>Green Pulse</span></a></li>
+      <li class="orbit-card" style="--i:10"><a href="/honors/2025/spark-rush-2025-google-developer-groups-on-campus-polytechnic-university-of-the-philippines" data-orbit-honor="Spark Rush 2025"><img src="/images/orbit/spark-rush.webp" srcset="/images/orbit/spark-rush.webp 400w, /images/orbit/spark-rush@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>2nd Runner-Up</b>GDG Spark Rush 2025</span></a></li>
+      <li class="orbit-card" style="--i:11"><a href="/case-studies/lingaplink" data-orbit-route><img src="/images/orbit/lingap-link.webp" srcset="/images/orbit/lingap-link.webp 400w, /images/orbit/lingap-link@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>Case study</b>LingapLink</span></a></li>
+      <li class="orbit-card orbit-card--extra" style="--i:12"><a href="/honors/2024/entrepreneurship-educators-association-hackathon" data-orbit-honor="Entrepreneurship Educators Association Hackathon"><img src="/images/orbit/eneda.webp" srcset="/images/orbit/eneda.webp 400w, /images/orbit/eneda@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>3rd Place</b>EEA Hackathon</span></a></li>
+      <li class="orbit-card orbit-card--extra" style="--i:13"><a href="/honors/2025/de-la-salle-university-hackercup" data-orbit-honor="De La Salle University Hackercup"><img src="/images/orbit/dlsu-hackercup.webp" srcset="/images/orbit/dlsu-hackercup.webp 400w, /images/orbit/dlsu-hackercup@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>Top 10</b>DLSU Hackercup</span></a></li>
+      <li class="orbit-card orbit-card--extra" style="--i:14"><a href="/honors/2025/agentic-ai-hackathon-2025" data-orbit-honor="Agentic AI Hackathon 2025"><img src="/images/orbit/agentic-ai.webp" srcset="/images/orbit/agentic-ai.webp 400w, /images/orbit/agentic-ai@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>Top 5</b>Agentic AI Hackathon</span></a></li>
+      <li class="orbit-card orbit-card--extra" style="--i:15"><a href="/honors/2026/saan-sa-pinas-a-satellite-imagery-puzzler" data-orbit-honor="SAAN SA PINAS? A Satellite Imagery Puzzler"><img src="/images/orbit/geospectrum.webp" srcset="/images/orbit/geospectrum.webp 400w, /images/orbit/geospectrum@2x.webp 600w" sizes="(max-width: 720px) 124px, 250px" alt="" width="400" height="280" decoding="async" fetchpriority="low"><span class="orbit-tag"><b>Winner</b>Philippine Space Week</span></a></li>
+    </ul>
+
+    <div class="stage-center" data-stage-center>
+      <p class="stage-kicker"><span class="stage-pulse" aria-hidden="true"></span>Open to internships &amp; collaborations</p>
+      <h2 id="stage-title" class="stage-wordmark" data-wordmark aria-label="Adriel Magalona">
+        <span class="wm-line" aria-hidden="true"><span class="wm-char" style="--c:0">A</span><span class="wm-char" style="--c:1">D</span><span class="wm-char" style="--c:2">R</span><span class="wm-char" style="--c:3">I</span><span class="wm-char" style="--c:4">E</span><span class="wm-char" style="--c:5">L</span></span>
+        <span class="wm-line wm-line--grad" aria-hidden="true" style="--chars:8"><span class="wm-char" style="--c:6;--k:0">M</span><span class="wm-char" style="--c:7;--k:1">A</span><span class="wm-char" style="--c:8;--k:2">G</span><span class="wm-char" style="--c:9;--k:3">A</span><span class="wm-char" style="--c:10;--k:4">L</span><span class="wm-char" style="--c:11;--k:5">O</span><span class="wm-char" style="--c:12;--k:6">N</span><span class="wm-char" style="--c:13;--k:7">A</span></span>
+      </h2>
+      <p class="stage-lede">
+        Full-stack developer &amp; AI builder from Manila. I turn hackathon weekends into
+        <span class="stage-rotator" data-rotator aria-hidden="true"><span class="stage-rotator-word">shipped products</span></span><span class="visually-hidden">: shipped products, healthcare tools, civic tech, and fintech prototypes</span>
+      </p>
+      <div class="stage-actions">
+        <a class="stage-btn stage-btn--primary" href="/projects" data-stage-page="projects" data-magnetic>
+          <span>Explore the work</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="stage-btn stage-btn--ghost" href="/resume" data-magnetic><span>Résumé</span></a>
+        <a class="stage-btn stage-btn--ghost" href="/contact" data-stage-page="contact" data-magnetic><span>Say hello</span></a>
+      </div>
+    </div>
+
+    <dl class="stage-stats" data-stage-stats>
+      <div class="stage-stat"><dt>Honors &amp; awards</dt><dd><span data-count="honors">27</span></dd></div>
+      <div class="stage-stat"><dt>Podium finishes</dt><dd><span data-count="podiums">11</span></dd></div>
+      <div class="stage-stat"><dt>Hackathon champion</dt><dd><span data-count="champions">2</span>&times;</dd></div>
+      <div class="stage-stat"><dt>Scholar</dt><dd class="stage-stat-text">DOST&#8209;SEI</dd></div>
+    </dl>
+
+    <div class="stage-marquee" aria-hidden="true">
+      <div class="stage-marquee-track">
+        <span>BPI DataWave</span><i></i><span>Technovation Summit</span><i></i><span>AppCon 2026</span><i></i><span>START-a-TON</span><i></i><span>GDG Spark Rush</span><i></i><span>DLSU Hackercup</span><i></i><span>Hack-it</span><i></i><span>Agentic AI Hackathon</span><i></i><span>Philippine Space Week</span><i></i><span>Apple Swift Student Challenge</span><i></i>
+      </div>
+    </div>
+
+    <a class="stage-scroll" href="#main-content" data-stage-scroll>
+      <span class="stage-scroll-line" aria-hidden="true"></span>
+      <span>Scroll</span>
+    </a>
+  </header>
+
+  <main id="main-content" tabindex="-1">
     <div class="main-content">
 
 
       <nav class="navbar" role="navigation" aria-label="Main navigation">
+
+        <a class="nav-mark" href="/" aria-label="Adriel Magalona, home"><span>AM</span></a>
 
         <ul class="navbar-list">
 
@@ -600,6 +562,8 @@
           </li>
 
         </ul>
+
+        <a class="nav-cta" href="/resume" data-resume-preview>R&eacute;sum&eacute;</a>
 
       </nav>
 
@@ -782,7 +746,7 @@
                   <li class="achievement-card" data-tilt data-tilt-glare data-tilt-max-glare="0.15"
                     data-images='["/images/honors/2026/geospectrum/geospectrum.avif"]' data-webp-images='["/images/honors/2026/geospectrum/geospectrum.webp"]'
                     data-organizer="Geospectrum Marketing Services"
-                    data-organization-logos='[{"src":"/images/logos/gcash.webp","alt":"GCash logo"},{"src":"/images/logos/geospectrum.webp","alt":"Geospectrum Marketing Services logo"}]'
+                    data-organization-logos='[{"src":"/images/logos/geospectrum.webp","alt":"Geospectrum Marketing Services logo"}]'
                     data-date="August 10, 2026" data-location="Online"
 
               data-description="Recognition: Won Round 1 of the &quot;SAAN SA PINAS? A Satellite Imagery Puzzler&quot; by Geospectrum Marketing Services, held in celebration of Philippine Space Week 2026.&#10;Contest: A daily satellite imagery challenge running August 10–14, 2026, where participants identify Philippine locations from Planet Labs satellite images posted on Geospectrum's social media. Round 1 featured identifying the Mactan-Cebu International Airport (MCIA) in Lapu-Lapu City.&#10;Scope: Tested geographic literacy, spatial reasoning, and familiarity with Philippine landscapes through satellite imagery analysis under the theme &quot;Navigating Tomorrow.&quot;&#10;Contribution: Correctly identified the satellite imagery location to win the round, demonstrating strong geospatial awareness and Earth observation interpretation skills."
@@ -791,8 +755,7 @@
                     <div class="award-ribbon">Winner</div>
                     <div class="card-content">
                       <div class="organization-logos" aria-label="Related organizations">
-                        <img src="/images/logos/gcash.webp" alt="GCash logo" width="34" height="34" decoding="async" loading="lazy">
-                        <img src="/images/logos/geospectrum.webp" alt="Geospectrum Marketing Services logo" width="34" height="34" decoding="async" loading="lazy">
+                                                <img src="/images/logos/geospectrum.webp" alt="Geospectrum Marketing Services logo" width="34" height="34" decoding="async" loading="lazy">
                       </div>
                       <h4 class="h4 card-title">SAAN SA PINAS? A Satellite Imagery Puzzler</h4>
                       <p class="card-subtitle">Round 1 Winner • Philippine Space Week 2026</p>
@@ -1321,9 +1284,14 @@
 
       <article id="stack" class="stack" data-page="stack">
 
-        <header>
+        <header class="page-hero" data-kicker="02 — Tools I reach for">
           <h2 id="tech-stack-title" class="h2 article-title">Tech Stack &amp; Tools</h2>
         </header>
+
+        <div class="fx-marquee" aria-hidden="true">
+          <div class="fx-marquee-row"><span>TypeScript</span><span>React</span><span>Next.js</span><span>Node.js</span><span>Flutter</span><span>Firebase</span><span>Python</span><span>Tailwind CSS</span><span>Gemini</span><span>Express.js</span><span>Vite</span><span>Swift</span><span>JavaScript</span><span>MySQL</span><span>Java</span><span>PHP</span><span>C++</span><span>TypeScript</span><span>React</span><span>Next.js</span><span>Node.js</span><span>Flutter</span><span>Firebase</span><span>Python</span><span>Tailwind CSS</span><span>Gemini</span><span>Express.js</span><span>Vite</span><span>Swift</span><span>JavaScript</span><span>MySQL</span><span>Java</span><span>PHP</span><span>C++</span></div>
+          <div class="fx-marquee-row"><span>C#</span><span>C</span><span>HTML</span><span>CSS</span><span>Angular</span><span>Three.js</span><span>Bootstrap</span><span>Chart.js</span><span>Recharts</span><span>Firestore</span><span>Expo Go</span><span>Arduino</span><span>Git</span><span>GitHub</span><span>ESLint</span><span>Prettier</span><span>TypeScript</span><span>React</span><span>Next.js</span><span>C#</span><span>C</span><span>HTML</span><span>CSS</span><span>Angular</span><span>Three.js</span><span>Bootstrap</span><span>Chart.js</span><span>Recharts</span><span>Firestore</span><span>Expo Go</span><span>Arduino</span><span>Git</span><span>GitHub</span><span>ESLint</span><span>Prettier</span><span>TypeScript</span><span>React</span><span>Next.js</span></div>
+        </div>
 
         <section class="tech-stack-section" aria-labelledby="tech-stack-title">
           <div class="stack-controls" role="toolbar" aria-label="Filter tech stack">
@@ -1349,7 +1317,7 @@
 
       <article id="background" class="background" data-page="background">
 
-        <header>
+        <header class="page-hero" data-kicker="03 — Where I&rsquo;ve been">
           <h2 class="h2 article-title">Background & Experience</h2>
         </header>
 
@@ -1541,7 +1509,7 @@
 
       <article id="projects" class="projects" data-page="projects">
 
-        <header>
+        <header class="page-hero" data-kicker="04 — Things I&rsquo;ve shipped">
           <h2 class="h2 article-title">Projects & Portfolio</h2>
         </header>
 
@@ -1986,7 +1954,7 @@
 
       <article id="gear" class="gear" data-page="gear">
 
-        <header>
+        <header class="page-hero" data-kicker="05 — How I work">
           <h2 class="h2 article-title">Gear</h2>
         </header>
 
@@ -2129,7 +2097,7 @@
       </article>
 
       <article id="destinations" class="destinations" data-page="destinations">
-        <header>
+        <header class="page-hero" data-kicker="06 — Elsewhere on the web">
           <h2 class="h2 article-title">More Places to Visit</h2>
         </header>
 
@@ -2156,6 +2124,158 @@
       </article>
 
     </div>
+
+    <footer class="sidebar-rail site-footer">
+      <div class="footer-cta">
+        <p class="footer-kicker"><span class="stage-pulse" aria-hidden="true"></span>Next step</p>
+        <p class="footer-title" aria-hidden="true"><span>Let&rsquo;s build</span><span>something great.</span></p>
+        <a class="footer-mail" href="mailto:dagsmagalona@gmail.com" data-magnetic>
+          <span>dagsmagalona@gmail.com</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+      <aside class="sidebar" data-sidebar>
+
+      <div class="sidebar-info">
+
+        <figure class="avatar-box">
+          <picture>
+            <source type="image/avif" srcset="/images/my-avatar.avif 80w, /images/my-avatar@2x.avif 160w"
+              sizes="150px">
+            <source type="image/webp" srcset="/images/my-avatar.webp 80w, /images/my-avatar@2x.webp 160w"
+              sizes="150px">
+            <img src="/images/my-avatar@2x.png" srcset="/images/my-avatar@2x.png 160w" sizes="150px"
+              alt="Adriel Magalona" width="150" height="150" loading="eager" fetchpriority="high"
+              decoding="async" class="critical-image">
+          </picture>
+        </figure>
+
+        <div class="info-content">
+          <h1 class="name" title="Adriel Magalona">Adriel Magalona</h1>
+
+          <p class="title">Full-stack Developer & AI/ML</p>
+          <p class="sidebar-status"><span class="stage-pulse" aria-hidden="true"></span>Open to internships</p>
+        </div>
+
+        <!-- Show Contacts button removed per request -->
+
+      </div>
+
+      <div class="sidebar-info_more">
+
+        <div class="separator"></div>
+
+        <ul class="contacts-list" id="contact">
+          <li class="contact-item">
+            <div class="contact-info">
+              <a class="contact-link resume" href="/resume" target="_blank" rel="noopener noreferrer"
+                data-resume-preview aria-label="Preview my resume (PDF)">RESUME</a>
+            </div>
+          </li>
+          <li class="contact-item">
+
+            <div class="icon-box">
+              <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
+            </div>
+
+            <div class="contact-info">
+              <p class="contact-title">Email</p>
+
+              <a href="mailto:dagsmagalona@gmail.com" class="contact-link">dagsmagalona@gmail.com</a>
+            </div>
+
+          </li>
+
+          <li class="contact-item">
+
+            <div class="icon-box">
+              <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+            </div>
+
+            <div class="contact-info">
+              <p class="contact-title">Location</p>
+
+              <address>Taguig City, Metro Manila, Philippines</address>
+            </div>
+
+          </li>
+
+        </ul>
+
+        <div class="separator"></div>
+
+
+        <ul class="social-list" role="list" aria-label="Social media links">
+
+          <li class="social-item">
+            <a href="https://www.linkedin.com/in/adriel-magalona-0546b9318/" class="social-link" target="_blank"
+              rel="noopener noreferrer" aria-label="Connect with me on LinkedIn (opens in new tab)"
+              data-tooltip="Connect with me on LinkedIn">
+              <ion-icon name="logo-linkedin" aria-hidden="true"></ion-icon>
+            </a>
+          </li>
+
+          <li class="social-item">
+            <a href="https://github.com/adr1el-m" class="social-link" target="_blank" rel="noopener noreferrer"
+              aria-label="Check out my GitHub profile (opens in new tab)" data-tooltip="Check out my GitHub">
+              <ion-icon name="logo-github" aria-hidden="true"></ion-icon>
+            </a>
+          </li>
+
+          <li class="social-item">
+            <a href="https://www.facebook.com/Traceaz" class="social-link" target="_blank" rel="noopener noreferrer"
+              aria-label="Follow me on Facebook (opens in new tab)" data-tooltip="Follow me on Facebook">
+              <ion-icon name="logo-facebook" aria-hidden="true"></ion-icon>
+            </a>
+          </li>
+
+          <li class="social-item">
+            <a href="https://twitter.com/adr1el_m" class="social-link" target="_blank" rel="noopener noreferrer"
+              aria-label="Follow me on X, formerly Twitter (opens in new tab)" data-tooltip="Follow me on X (Twitter)">
+              <ion-icon name="logo-twitter" aria-hidden="true"></ion-icon>
+            </a>
+          </li>
+
+          <li class="social-item">
+            <a href="https://www.instagram.com/adr1elllll/" class="social-link" target="_blank"
+              rel="noopener noreferrer" aria-label="Follow me on Instagram (opens in new tab)"
+              data-tooltip="Follow me on Instagram">
+              <ion-icon name="logo-instagram" aria-hidden="true"></ion-icon>
+            </a>
+          </li>
+
+        </ul>
+
+      </div>
+
+      </aside>
+
+      <aside class="release-sidebar" aria-label="Portfolio changelog">
+        <details id="portfolio-changelog" class="sidebar-changelog">
+          <summary>
+            <span><ion-icon name="pulse-outline" aria-hidden="true"></ion-icon> Portfolio updates</span>
+            <ion-icon class="sidebar-changelog-chevron" name="chevron-down-outline" aria-hidden="true"></ion-icon>
+          </summary>
+          <div class="sidebar-changelog-content">
+            <p class="sidebar-changelog-intro">Recent improvements to the experience, evidence, and reliability of this portfolio.</p>
+            <ol class="sidebar-changelog-list">
+              <li>
+                <time datetime="2026-07-15">15 Jul 2026</time>
+                <div><strong>Project explorer &amp; comparison</strong><p>Added filters, side-by-side project review, command shortcuts, and release notes.</p></div>
+              </li>
+              <li>
+                <time datetime="2026-07-14">14 Jul 2026</time>
+                <div><strong>Evidence &amp; offline review</strong><p>Added case studies, role paths, offline review support, and workflow context.</p></div>
+              </li>
+              <li>
+                <time datetime="2026-07-14">14 Jul 2026</time>
+                <div><strong>Trust &amp; performance</strong><p>Hardened sensitive integrations, analytics, media delivery, and automated checks.</p></div>
+              </li>
+            </ol>
+          </div>
+        </details>
+      </aside>
+    </footer>
 
   </main>
 

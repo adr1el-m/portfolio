@@ -31,6 +31,50 @@ if (process.env.TEST_SKIP_BUILD !== '1') await run('npm', ['run', 'build']);
 const { server, port } = await serve();
 const browser = await puppeteer.launch(browserOptions());
 try {
+  const cursorPage = await browser.newPage();
+  const cursorState = () => cursorPage.evaluate(() => ({
+    native: getComputedStyle(document.body).cursor,
+    active: document.documentElement.classList.contains('custom-cursor-active'),
+    visible: [...document.querySelectorAll('.custom-cursor, .custom-cursor-dot')]
+      .filter((el) => getComputedStyle(el).visibility === 'visible' && getComputedStyle(el).display !== 'none').length,
+  }));
+  await cursorPage.goto(`http://127.0.0.1:${port}/?audit=1`, { waitUntil: 'networkidle0' });
+  await cursorPage.waitForSelector('.custom-cursor');
+  let cursor = await cursorState();
+  if (cursor.native === 'none' || cursor.active) throw new Error('Native cursor hidden before replacement is ready');
+  await cursorPage.mouse.move(200, 200);
+  cursor = await cursorState();
+  if (cursor.native !== 'none' || !cursor.active || cursor.visible !== 2) throw new Error('Custom cursor did not activate on mouse movement');
+  const dot = await cursorPage.$eval('.custom-cursor-dot', (el) => {
+    const rect = el.getBoundingClientRect();
+    return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+  });
+  if (Math.abs(dot.x - 200) > 1 || Math.abs(dot.y - 200) > 1) throw new Error('Custom cursor did not follow the pointer');
+  await cursorPage.hover('a[href="/resume"]');
+  await cursorPage.waitForSelector('.custom-cursor.hovered');
+  await cursorPage.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+  await cursorPage.waitForFunction(() => !document.documentElement.classList.contains('custom-cursor-active'));
+  cursor = await cursorState();
+  if (cursor.native === 'none' || cursor.visible) throw new Error('Reduced motion did not restore native cursor');
+  await cursorPage.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
+  // Media-query change events arrive on the next rendering update.
+  await cursorPage.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await cursorPage.mouse.move(210, 210);
+  await cursorPage.waitForSelector('html.custom-cursor-active');
+  await cursorPage.evaluate(() => document.documentElement.dispatchEvent(new PointerEvent('pointerleave')));
+  cursor = await cursorState();
+  if (cursor.native === 'none' || cursor.active || cursor.visible) throw new Error('Pointer leave did not restore native cursor');
+  await cursorPage.emulate({ viewport: { width: 390, height: 844, isMobile: true, hasTouch: true }, userAgent: 'Mozilla/5.0 (iPhone)' });
+  await cursorPage.reload({ waitUntil: 'networkidle0' });
+  await cursorPage.touchscreen.tap(200, 200);
+  cursor = await cursorState();
+  if (cursor.native === 'none' || cursor.active || cursor.visible) throw new Error('Touch input activated a custom cursor');
+  await cursorPage.setJavaScriptEnabled(false);
+  await cursorPage.reload({ waitUntil: 'networkidle0' });
+  cursor = await cursorState();
+  if (cursor.native === 'none') throw new Error('Cursor hidden when JavaScript is unavailable');
+  await cursorPage.close();
+
   const page = await browser.newPage();
   await page.goto(`http://127.0.0.1:${port}/projects?role=ai&audit=1`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('.role-path-brief');
@@ -65,6 +109,16 @@ try {
   const forwardNav = await page.$$eval('[data-nav-link][aria-current="page"]', (buttons) => buttons.map((button) => button.textContent.trim()).join());
   if (forwardNav !== 'Gear') throw new Error(`Forward navigation ARIA state failed: ${forwardNav}`);
   await page.goto(`http://127.0.0.1:${port}/about?audit=1`, { waitUntil: 'domcontentloaded' });
+  await new Promise((resolve) => setTimeout(resolve, 350));
+  const visualStability = await page.evaluate(() => ({
+    bodyCursor: getComputedStyle(document.body).cursor,
+    linkCursor: getComputedStyle(document.querySelector('a[href]')).cursor,
+    lateHiddenTimelineItems: document.querySelectorAll('.timeline-item.reveal').length,
+  }));
+  // The dedicated cursor checks above cover native fallback and replacement.
+  if (visualStability.lateHiddenTimelineItems) {
+    throw new Error('Already-rendered timeline items were hidden by a late reveal class');
+  }
   await page.keyboard.press('Tab');
   const skip = await page.$eval('.skip-link', (el) => ({ text: el.textContent, focused: document.activeElement === el }));
   if (!skip.text?.includes('Skip') || !skip.focused) throw new Error('Skip link did not receive keyboard focus');

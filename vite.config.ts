@@ -39,13 +39,7 @@ export default defineConfig({
         manualChunks(id) {
           // Vendor chunks
           if (id.includes('node_modules')) {
-            if (id.includes('three')) {
-              return 'three';
-            }
-            if (id.includes('firebase')) {
-              return 'firebase';
-            }
-            if (id.includes('vanilla-tilt') || id.includes('web-vitals')) {
+            if (id.includes('web-vitals')) {
               return 'vendor';
             }
             if (id.includes('@vercel')) {

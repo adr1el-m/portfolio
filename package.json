@@ -10,18 +10,22 @@
   },
   "scripts": {
     "dev": "vite --open \"/?admin=true\"",
-    "build": "tsc && vite build && node scripts/generate-honor-pages.mjs && node scripts/generate-case-study-pages.mjs",
+    "build": "tsc && vite build && node scripts/verify-csp-hashes.mjs && node scripts/generate-honor-pages.mjs && node scripts/generate-case-study-pages.mjs",
     "preview": "vite preview",
     "deploy": "vercel --prod --yes",
     "deploy:preview": "vercel --yes",
+    "generate:orbit": "node scripts/generate-orbit-thumbs.mjs",
+    "generate:og": "node scripts/generate-og-image.mjs",
     "refresh:github": "node scripts/generate-github-contributions.mjs",
     "check:links": "node scripts/check-links.mjs",
     "test:visual": "node scripts/visual-regression.mjs",
     "test:visual:update": "VISUAL_UPDATE=1 node scripts/visual-regression.mjs",
     "test:api": "node scripts/api-test.mjs",
+    "test:worker": "node scripts/service-worker-test.mjs",
     "test:resilience": "node scripts/resilience-test.mjs",
     "test:stress": "node scripts/stress-test.mjs",
     "test:behavior": "node scripts/behavior-smoke.mjs",
+    "test:frontend": "node scripts/frontend-stress.mjs",
     "purge:css": "purgecss --css public/style.css --content index.html 'src/**/*.ts' --output ./public --safelist active open modal show hide loading article about background projects organizations faq achievements responsive-img-container progressive-img timeline-item timeline-list navbar-list sidebar-info",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit",
@@ -64,12 +68,8 @@
     "vite": "^8.0.3"
   },
   "dependencies": {
-    "@types/three": "^0.180.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
-    "firebase": "^12.8.0",
-    "three": "^0.180.0",
-    "vanilla-tilt": "^1.8.1",
     "web-vitals": "^5.1.0"
   },
   "overrides": {

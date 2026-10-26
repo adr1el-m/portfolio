@@ -171,7 +171,7 @@ export class NavigationManager {
     const backToTopBtn = document.querySelector<HTMLElement>('.back-to-top');
     if (backToTopBtn) {
       window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
+        if (window.scrollY > this.contentTop() + 300) {
           backToTopBtn.classList.add('show');
         } else {
           backToTopBtn.classList.remove('show');
@@ -179,7 +179,7 @@ export class NavigationManager {
       });
 
       backToTopBtn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: this.contentTop(), behavior: 'smooth' });
       });
     }
   }
@@ -361,6 +361,8 @@ export class NavigationManager {
    */
   private applyRoute(pathname: string, isInitialLoad = false): void {
     const key = this.keyFromPath(pathname);
+    // The head script pre-selected the page for first paint; the router owns it now.
+    document.documentElement.removeAttribute('data-route');
 
     // Toggle active section (contact reuses about page)
     const pages = document.querySelectorAll<HTMLElement>('[data-page]');
@@ -384,7 +386,7 @@ export class NavigationManager {
 
     // Scroll to contact anchor if /contact, else to top
     if (key === 'contact') {
-      window.scrollTo({ top: 0, behavior: 'auto' });
+      window.scrollTo({ top: this.contentTop(), behavior: 'auto' });
       const el = document.getElementById('contact');
       if (el) {
         setTimeout(() => {
@@ -392,7 +394,14 @@ export class NavigationManager {
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 60);
       }
-    } else if (!(isInitialLoad && key === 'about')) {
+    } else if (isInitialLoad && key !== 'about') {
+      // Wait for first paint: a scroll during load ends Largest Contentful
+      // Paint recording, leaving deep-linked pages with no LCP at all.
+      // Paint timing is confirmed asynchronously, so allow a short grace period.
+      window.requestAnimationFrame(() => window.setTimeout(() => {
+        if (window.scrollY < 4) this.scrollToPageStart(targetPage || undefined);
+      }, 250));
+    } else if (!isInitialLoad) {
       this.scrollToPageStart(targetPage || undefined);
     }
 
@@ -429,7 +438,19 @@ export class NavigationManager {
       return;
     }
 
-    window.scrollTo({ top: 0, behavior: 'auto' });
+    const top = this.contentTop();
+    if (Math.abs(window.scrollY - top) > 1) window.scrollTo({ top, behavior: 'auto' });
+  }
+
+  /**
+   * Top of the app content. On the home route an intro stage sits above
+   * <main>; in-app navigation should land on content, not replay the intro.
+   */
+  private contentTop(): number {
+    const stage = document.querySelector<HTMLElement>('[data-stage]');
+    if (!stage || stage.offsetHeight === 0) return 0;
+    const main = document.getElementById('main-content');
+    return main ? Math.max(0, main.getBoundingClientRect().top + window.scrollY) : 0;
   }
 
   /**

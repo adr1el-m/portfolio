@@ -3949,7 +3949,9 @@ article.active {
   }
 
   .project-modal-info {
-    flex: 0 0 45%;
+    /* The wrapper is stretched to full height here, so fill what the gallery leaves. */
+    flex: 1 1 0;
+    min-height: 0;
     padding: 15px;
     gap: 12px;
   }

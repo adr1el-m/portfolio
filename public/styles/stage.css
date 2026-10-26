@@ -791,7 +791,8 @@ html.stage-off .stage {
 .stage-scroll {
   position: absolute;
   right: clamp(16px, 3vw, 40px);
-  bottom: 78px;
+  /* Clears the fixed chat button (bottom 30px + 60px tall). */
+  bottom: 112px;
   z-index: 7;
   display: flex;
   flex-direction: column;

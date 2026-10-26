@@ -875,6 +875,12 @@ main#main-content {
 .project-info-title { font-size: clamp(22px, 3vw, 30px); line-height: 1.25; letter-spacing: -.025em; }
 .project-info-description { font-size: 14px; line-height: 1.75; }
 .command-palette-trigger { font-weight: 500; background: var(--polish-panel); border-color: var(--polish-border); }
+/* Rest as an icon in the gutter so it never sits on card titles; reveal the label on hover/focus. */
+.command-palette-trigger { left: calc(14px + env(safe-area-inset-left)); min-width: 46px; gap: 0; padding: 0 11px; transition: gap 200ms ease, border-color 200ms ease; }
+.command-palette-trigger-label, .command-palette-trigger kbd { min-width: 0; max-width: 0; overflow: hidden; opacity: 0; padding-inline: 0; border-width: 0; white-space: nowrap; transition: max-width 220ms ease, opacity 160ms ease; }
+.command-palette-trigger:hover, .command-palette-trigger:focus-visible { gap: 7px; border-color: rgba(255, 219, 112, .4); }
+.command-palette-trigger:hover .command-palette-trigger-label, .command-palette-trigger:focus-visible .command-palette-trigger-label { max-width: 80px; opacity: 1; }
+.command-palette-trigger:hover kbd, .command-palette-trigger:focus-visible kbd { min-width: 20px; max-width: 40px; opacity: 1; padding-inline: 5px; border-width: 1px; }
 .chatbot-btn { background: var(--polish-panel); box-shadow: var(--polish-shadow); }
 .chatbot-btn::before, .chatbot-btn::after { animation: none; }
 .project-modal, .achievement-modal { z-index: 2000; }

@@ -42,7 +42,7 @@ jobs:
           done
           npm run test:stress
           npm run test:resilience
-          STRESS_QUICK=1 npm run test:frontend
+          STRESS_CONCURRENCY=1 STRESS_QUICK=1 npm run test:frontend
       - uses: actions/upload-artifact@v6
         if: always()
         with:

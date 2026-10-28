@@ -24,7 +24,7 @@ const base = process.env.TEST_BASE_URL || 'http://127.0.0.1:4173';
 const quick = process.env.STRESS_QUICK === '1';
 const ROUTES = ['', 'about', 'stack', 'background', 'projects', 'gear', 'destinations'];
 const WIDTHS = quick ? [320, 390, 768, 1024, 1440] : [320, 375, 414, 600, 768, 820, 1024, 1180, 1366, 1440, 1920, 2560];
-const CONCURRENCY = 4;
+const CONCURRENCY = Math.max(1, Math.min(4, Number(process.env.STRESS_CONCURRENCY) || 4));
 // The local preview has no serverless backend; these failures are expected there.
 const IGNORED_CONSOLE = [/\/api\//, /Failed to load resource/, /favicon/];
 
@@ -313,7 +313,13 @@ async function storm(browser, width, { reducedMotion = false } = {}) {
   }
 }
 
-await Promise.all([storm(browsers[0], 1440), storm(browsers[1], 390), storm(browsers[2], 1440, { reducedMotion: true })]);
+if (CONCURRENCY === 1) {
+  await storm(browsers[0], 1440);
+  await storm(browsers[0], 390);
+  await storm(browsers[0], 1440, { reducedMotion: true });
+} else {
+  await Promise.all([storm(browsers[0], 1440), storm(browsers[1 % CONCURRENCY], 390), storm(browsers[2 % CONCURRENCY], 1440, { reducedMotion: true })]);
+}
 console.log('Phase 2: interaction storms done.');
 
 await Promise.all(browsers.map((browser) => browser.close()));

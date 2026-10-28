@@ -17,7 +17,6 @@ type WordChar = { el: HTMLElement; x: number; y: number };
 
 const TAU = Math.PI * 2;
 const BASE_SPEED = 0.085; // rad/s — one revolution in ~74s
-const ROTATOR_WORDS = ['shipped products', 'healthcare tools', 'civic tech', 'fintech prototypes', 'winning pitches'];
 const PODIUM_RIBBON = /^(champion|1st place|2nd place|3rd place|2nd runner-up|winner|best in pitching)$/i;
 
 const clamp = (v: number, min: number, max: number): number => Math.min(max, Math.max(min, v));
@@ -58,7 +57,6 @@ export class Stage {
   private lastFrame = 0;
   private visible = true;
   private settled = false;
-  private rotatorTimer = 0;
 
   private readonly calm: boolean;
 
@@ -93,7 +91,7 @@ export class Stage {
     this.measure();
     this.bindInteractions();
     this.startLoop();
-    this.startRotator();
+    // Keep the descriptive copy stable while the orbit animates.
 
     // The CSS entrance starts at first paint; only count up if the stats
     // haven't appeared yet (fast load), otherwise leave the final numbers.
@@ -490,30 +488,9 @@ export class Stage {
     requestAnimationFrame(tick);
   }
 
-  private startRotator(): void {
-    const host = this.root.querySelector<HTMLElement>('[data-rotator]');
-    if (!host) return;
-    let index = 0;
-    this.rotatorTimer = window.setInterval(() => {
-      if (document.hidden) return;
-      const current = host.querySelector<HTMLElement>('.stage-rotator-word');
-      index = (index + 1) % ROTATOR_WORDS.length;
-      const next = document.createElement('span');
-      next.className = 'stage-rotator-word is-in';
-      next.textContent = ROTATOR_WORDS[index];
-      if (current) {
-        current.classList.add('is-out');
-        window.setTimeout(() => {
-          current.replaceWith(next);
-        }, 320);
-      } else {
-        host.appendChild(next);
-      }
-    }, 2800);
-  }
+
 
   destroy(): void {
     this.stopLoop();
-    window.clearInterval(this.rotatorTimer);
   }
 }

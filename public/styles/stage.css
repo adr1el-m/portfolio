@@ -58,7 +58,8 @@ html.stage-off .stage {
     radial-gradient(34% 30% at 72% 58%, rgba(143, 123, 255, 0.14), transparent 70%),
     radial-gradient(30% 26% at 55% 30%, rgba(255, 122, 69, 0.10), transparent 70%);
   filter: blur(20px);
-  animation: stage-aurora 22s ease-in-out infinite alternate;
+  /* Keep the lighting static; the orbit supplies motion without repainting this blur. */
+  animation: none;
 }
 
 @keyframes stage-aurora {
@@ -2543,3 +2544,10 @@ html[data-route="destinations"] .main-content > article[data-page="destinations"
 @media (max-width: 720px) {
   .stage-stat:last-child { grid-column: 1 / -1; }
 }
+
+/* Paint primary copy immediately; only the surrounding orbit animates in. */
+.stage-on .wm-line,
+.stage-on .stage-kicker,
+.stage-on .stage-lede,
+.stage-on .stage-actions,
+.stage-on .stage-stats { animation: none; }

@@ -42,7 +42,17 @@ try {
   await cursorPage.waitForSelector('.custom-cursor');
   let cursor = await cursorState();
   if (cursor.native === 'none' || cursor.active) throw new Error('Native cursor hidden before replacement is ready');
+  await cursorPage.bringToFront();
   await cursorPage.mouse.move(200, 200);
+  // CDP input acknowledgement can precede pointer-event handling on CI.
+  // Wait for the actual replacement state; retain all visibility assertions.
+  await cursorPage.waitForFunction(() => {
+    const nodes = [...document.querySelectorAll('.custom-cursor, .custom-cursor-dot')];
+    return document.documentElement.classList.contains('custom-cursor-active')
+      && getComputedStyle(document.body).cursor === 'none'
+      && nodes.length === 2
+      && nodes.every(el => getComputedStyle(el).visibility === 'visible' && getComputedStyle(el).display !== 'none');
+  }, { timeout: 5000 });
   cursor = await cursorState();
   if (cursor.native !== 'none' || !cursor.active || cursor.visible !== 2) throw new Error('Custom cursor did not activate on mouse movement');
   const dot = await cursorPage.$eval('.custom-cursor-dot', (el) => {

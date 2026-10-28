@@ -34,6 +34,12 @@ try {
   const cursorPage = await browser.newPage();
   const cursorState = () => cursorPage.evaluate(() => ({
     native: getComputedStyle(document.body).cursor,
+    finePointer: matchMedia('(pointer: fine)').matches,
+    reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
+    visibility: document.visibilityState,
+    focused: document.hasFocus(),
+    pointerEvent: window.__lastCursorPointer,
+    nodes: [...document.querySelectorAll('.custom-cursor, .custom-cursor-dot')].map(el => ({ visibility: getComputedStyle(el).visibility, display: getComputedStyle(el).display })),
     active: document.documentElement.classList.contains('custom-cursor-active'),
     visible: [...document.querySelectorAll('.custom-cursor, .custom-cursor-dot')]
       .filter((el) => getComputedStyle(el).visibility === 'visible' && getComputedStyle(el).display !== 'none').length,
@@ -42,6 +48,7 @@ try {
   await cursorPage.waitForSelector('.custom-cursor');
   let cursor = await cursorState();
   if (cursor.native === 'none' || cursor.active) throw new Error('Native cursor hidden before replacement is ready');
+  await cursorPage.evaluate(() => document.addEventListener('pointermove', event => { window.__lastCursorPointer = {type:event.pointerType,x:event.clientX,y:event.clientY}; }));
   await cursorPage.bringToFront();
   await cursorPage.mouse.move(200, 200);
   // CDP input acknowledgement can precede pointer-event handling on CI.
@@ -52,7 +59,9 @@ try {
       && getComputedStyle(document.body).cursor === 'none'
       && nodes.length === 2
       && nodes.every(el => getComputedStyle(el).visibility === 'visible' && getComputedStyle(el).display !== 'none');
-  }, { timeout: 5000 });
+  }, { timeout: 5000 }).catch(async error => {
+    throw new Error(`Cursor activation failed: ${JSON.stringify(await cursorState())}`, { cause: error });
+  });
   cursor = await cursorState();
   if (cursor.native !== 'none' || !cursor.active || cursor.visible !== 2) throw new Error('Custom cursor did not activate on mouse movement');
   const dot = await cursorPage.$eval('.custom-cursor-dot', (el) => {

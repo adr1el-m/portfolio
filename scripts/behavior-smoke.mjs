@@ -29,9 +29,14 @@ function serve() {
 
 if (process.env.TEST_SKIP_BUILD !== '1') await run('npm', ['run', 'build']);
 const { server, port } = await serve();
-const browser = await puppeteer.launch(browserOptions());
+// CI uses a virtual desktop so Chrome exposes a real fine-pointer device.
+const browser = await puppeteer.launch({ ...browserOptions(), headless: process.env.TEST_HEADED !== '1' });
 try {
   const cursorPage = await browser.newPage();
+  await cursorPage.setViewport({ width: 1440, height: 1000, isMobile: false, hasTouch: false });
+  // A headed window may open beneath the host's pointer. Start outside its
+  // viewport so the initial-state assertion precedes deliberate mouse input.
+  await cursorPage.mouse.move(-100, -100);
   const cursorState = () => cursorPage.evaluate(() => ({
     native: getComputedStyle(document.body).cursor,
     finePointer: matchMedia('(pointer: fine)').matches,
@@ -69,7 +74,7 @@ try {
     return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
   });
   if (Math.abs(dot.x - 200) > 1 || Math.abs(dot.y - 200) > 1) throw new Error('Custom cursor did not follow the pointer');
-  await cursorPage.hover('a[href="/resume"]');
+  await cursorPage.hover('.stage-actions a[href="/resume"]');
   await cursorPage.waitForSelector('.custom-cursor.hovered');
   await cursorPage.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
   await cursorPage.waitForFunction(() => !document.documentElement.classList.contains('custom-cursor-active'));

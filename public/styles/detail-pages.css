@@ -8,7 +8,7 @@
   --detail-muted: #a8aaad;
   --detail-gold: #e8c879;
   --detail-border: rgba(255, 255, 255, 0.09);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
 }
 
 * { box-sizing: border-box; }

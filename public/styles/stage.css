@@ -5,35 +5,7 @@
    and without JavaScript.
    ========================================================================= */
 
-/* Unbounded (SIL Open Font License), self-hosted variable font. Latin is
-   preloaded; latin-ext only downloads if a page uses those characters. */
-@font-face {
-  font-family: 'Unbounded';
-  font-style: normal;
-  font-weight: 300 900;
-  font-display: swap;
-  src: url('/fonts/unbounded-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: 'Unbounded';
-  font-style: normal;
-  font-weight: 300 900;
-  font-display: swap;
-  src: url('/fonts/unbounded-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-
-/* Metric-matched stand-in while Unbounded loads: same wordmark width, so the
-   swap is invisible and doesn't register as a later, larger LCP paint.
-   (Arial Black 'MAGALONA' = 639.8 vs Unbounded 779.0 units -> 121.8%.) */
-@font-face {
-  font-family: 'Unbounded Fallback';
-  src: local('Arial Black'), local('Arial-Black'), local('ArialBlack');
-  size-adjust: 121.8%;
-}
-
+/* Native system typography: San Francisco on Apple devices, with local fallbacks. */
 :root {
   --stage-ink: #f3f1eb;
   --stage-muted: #a3a29d;
@@ -41,7 +13,7 @@
   --stage-ember: #ff7a45;
   --stage-violet: #8f7bff;
   --stage-bg: #0b0c0e;
-  --font-display: 'Unbounded', 'Unbounded Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -353,7 +325,7 @@ html.stage-off .stage {
 .orbit-tag b {
   color: var(--stage-gold);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -453,8 +425,8 @@ html.stage-off .stage {
   color: var(--stage-ink);
   font-family: var(--font-display);
   font-size: clamp(2.9rem, 9.2vw, 9.6rem);
-  font-weight: 800;
-  line-height: 0.9;
+  font-weight: 600;
+  line-height: 1.06;
   letter-spacing: -0.035em;
   text-transform: uppercase;
   text-shadow: 0 10px 60px rgba(0, 0, 0, 0.6);
@@ -683,7 +655,7 @@ html.stage-off .stage {
   position: relative;
   z-index: 8;
   display: grid;
-  grid-template-columns: repeat(4, auto);
+  grid-template-columns: repeat(3, auto);
   justify-content: center;
   gap: 0;
   width: min(880px, calc(100% - 32px));
@@ -723,7 +695,7 @@ html.stage-off .stage {
   color: var(--stage-ink);
   font-family: var(--font-display);
   font-size: clamp(1.4rem, 2.3vw, 2rem);
-  font-weight: 700;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   line-height: 1;
   white-space: nowrap;
@@ -926,7 +898,7 @@ body::after {
 /* Display face on article titles ties the app to the intro. */
 .article-title {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.02em;
 }
 
@@ -1083,7 +1055,7 @@ article.fx-enter > * {
 
 .sidebar .info-content .name {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.02em;
 }
 
@@ -1356,7 +1328,7 @@ body::before {
   width: max-content;
   font-family: var(--font-display);
   font-size: clamp(1.6rem, 3.4vw, 2.8rem);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -1631,8 +1603,8 @@ html.stage-on:not(.nav-free) .main-content > nav.navbar {
   display: block;
   margin-bottom: clamp(16px, 2.4vh, 26px);
   color: var(--stage-gold);
-  font: 500 12px/1.2 ui-monospace, 'SF Mono', Menlo, monospace;
-  letter-spacing: 0.22em;
+  font: 500 13px/1.4 var(--font-display);
+  letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
@@ -1660,11 +1632,11 @@ article.fx-enter .page-hero::after {
 .main-content > article[data-page] .page-hero .article-title {
   margin: 0;
   padding: 0;
-  /* 10.2vw keeps the longest word ("Background") on one line at 320px+. */
-  font-size: clamp(32px, 10.2vw, 168px);
-  font-weight: 800;
-  line-height: 0.9;
-  letter-spacing: -0.055em;
+  /* A restrained display scale keeps long titles readable on phones. */
+  font-size: clamp(40px, 7vw, 88px);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -0.04em;
   overflow-wrap: normal;
   word-break: normal;
   hyphens: none;
@@ -1676,7 +1648,7 @@ article.fx-enter .page-hero::after {
 
 /* Giant outlined page name drifting behind the hero. */
 .main-content > article[data-page]::before {
-  content: attr(data-page);
+  content: none;
   position: absolute;
   top: clamp(10px, 4vh, 40px);
   right: -0.04em;
@@ -1684,7 +1656,7 @@ article.fx-enter .page-hero::after {
   color: transparent;
   font-family: var(--font-display);
   font-size: clamp(110px, 21vw, 340px);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: -0.06em;
   text-transform: uppercase;
@@ -1693,8 +1665,8 @@ article.fx-enter .page-hero::after {
   pointer-events: none;
 }
 
-.main-content > article.about::before { content: 'About'; }
-.main-content > article.destinations::before { content: 'More'; }
+.main-content > article.about::before { content: none; }
+.main-content > article.destinations::before { content: none; }
 
 @supports (animation-timeline: scroll()) {
   .main-content > article[data-page]::before {
@@ -1715,8 +1687,8 @@ article.fx-enter .page-hero::after {
 .about > header .article-title {
   margin: 0 0 24px;
   color: var(--stage-gold);
-  font: 500 12px/1.2 ui-monospace, 'SF Mono', Menlo, monospace;
-  letter-spacing: 0.22em;
+  font: 500 13px/1.4 var(--font-display);
+  letter-spacing: 0.02em;
 }
 
 .about > header .article-title::after {
@@ -1730,10 +1702,10 @@ article.fx-enter .page-hero::after {
 }
 
 .recruiter-cta .recruiter-cta-title {
-  max-width: 14ch;
-  font-size: clamp(44px, 7vw, 112px);
-  font-weight: 700;
-  line-height: 0.95;
+  max-width: 20ch;
+  font-size: clamp(36px, 5.5vw, 72px);
+  font-weight: 600;
+  line-height: 1.1;
   letter-spacing: -0.05em;
 }
 
@@ -1751,8 +1723,8 @@ article.fx-enter .page-hero::after {
 .selected-work h3,
 .project-explorer-heading h3,
 .workflow-heading h3 {
-  font-size: clamp(28px, 3.6vw, 52px);
-  font-weight: 700;
+  font-size: clamp(28px, 3.4vw, 44px);
+  font-weight: 600;
   line-height: 1.02;
   letter-spacing: -0.045em;
 }
@@ -1790,8 +1762,8 @@ article.fx-enter .page-hero::after {
 .project-group-title {
   margin-top: 6px;
   font-family: var(--font-display);
-  font-size: clamp(28px, 3.6vw, 52px);
-  font-weight: 700;
+  font-size: clamp(28px, 3.4vw, 44px);
+  font-weight: 600;
   line-height: 1.02;
   letter-spacing: -0.045em;
 }
@@ -1852,8 +1824,8 @@ article.fx-enter .page-hero::after {
   gap: 10px;
   margin: 0 0 24px;
   color: var(--stage-gold);
-  font: 500 12px/1.2 ui-monospace, 'SF Mono', Menlo, monospace;
-  letter-spacing: 0.22em;
+  font: 500 13px/1.4 var(--font-display);
+  letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
@@ -1861,10 +1833,10 @@ article.fx-enter .page-hero::after {
   display: grid;
   margin: 0 0 clamp(28px, 4vh, 44px);
   font-family: var(--font-display);
-  font-size: clamp(46px, 9.6vw, 160px);
-  font-weight: 800;
-  line-height: 0.92;
-  letter-spacing: -0.055em;
+  font-size: clamp(40px, 7vw, 88px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
 }
 
 .footer-title span {
@@ -2078,7 +2050,7 @@ article.fx-enter .page-hero::after {
   background: var(--stage-ink);
   color: #0d0e10;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   transition: background-color 0.25s ease, transform 0.4s var(--ease-out-back);
@@ -2399,4 +2371,175 @@ html[data-route="destinations"] .main-content > article[data-page="destinations"
   .timeline-container::after {
     transform: none;
   }
+}
+
+/* Quiet landing page: content stays in normal flow at every viewport size. */
+.stage--editorial {
+  display: block;
+  min-height: auto;
+  padding-bottom: 48px;
+  background: radial-gradient(ellipse at 80% 30%, #26231c 0, transparent 55%), #101113;
+}
+.stage--editorial .stage-nav {
+  width: min(1240px, calc(100% - 48px));
+  animation: none;
+}
+.stage-intro {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: clamp(32px, 5vw, 80px);
+  width: min(1200px, calc(100% - 64px));
+  margin: 80px auto 64px;
+}
+.stage--editorial .stage-center {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  gap: 20px;
+  justify-items: start;
+  text-align: left;
+}
+.stage--editorial .stage-center > * {
+  animation: none;
+  translate: none;
+  opacity: 1;
+}
+.stage--editorial .stage-kicker {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 11px;
+  letter-spacing: .06em;
+}
+.stage--editorial .stage-pulse { flex: 0 0 7px; box-shadow: none; }
+.stage--editorial .stage-pulse::after { content: none; }
+.stage-name {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 5.6vw, 80px);
+  font-weight: 600;
+  letter-spacing: -.04em;
+  line-height: 1.15;
+}
+.stage-name span { color: var(--stage-gold); }
+.stage-role { color: #eeeae1; font-size: clamp(18px, 1.8vw, 23px); font-weight: 500; }
+.stage-description { max-width: 470px; color: #c2c3c5; font-size: 17px; line-height: 1.75; }
+.stage-location { color: #a8aaad; font-size: 13px; line-height: 1.6; }
+.stage--editorial .stage-actions { justify-content: flex-start; margin-top: 8px; flex-wrap: wrap; }
+.stage--editorial .stage-btn { min-height: 48px; box-shadow: none; }
+.stage-feature { min-width: 0; width: min(1200px, calc(100% - 64px)); margin: 0 auto 36px; }
+.stage-feature-link {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid #3c3a33;
+  border-radius: 18px;
+  background: #1b1c1e;
+  color: var(--stage-ink);
+  transition: border-color .2s;
+}
+.stage-feature-link:hover { border-color: var(--stage-gold); }
+.stage-feature-image { aspect-ratio: 16 / 9; overflow: hidden; background: #eeeae1; }
+.stage-feature-image img { width: 100%; height: 100%; object-fit: contain; }
+.stage-feature-copy { padding: 24px; }
+.stage-feature-kicker { color: var(--stage-gold); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+.stage-feature-copy h2 { display: flex; justify-content: space-between; margin: 8px 0; font-size: 27px; font-weight: 600; }
+.stage-feature-copy h2 span { color: var(--stage-gold); }
+.stage-feature-copy > p:not(.stage-feature-kicker) { color: #c2c3c5; font-size: 14px; line-height: 1.7; }
+.stage-feature-award { margin-top: 20px; padding-top: 16px; border-top: 1px solid #353638; color: #ded5bf; font-size: 12px; }
+.stage-credentials {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 28px;
+  width: min(1200px, calc(100% - 64px));
+  margin: 0 auto;
+  padding-top: 28px;
+  border-top: 1px solid #363533;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.stage-credentials p { color: #a8aaad; }
+.stage-credentials strong { color: #eeeae1; font-weight: 500; }
+.stage-credentials a { display: block; padding: 4px 0; }
+.stage-credentials a strong { display: block; }
+.stage-credentials a span { color: #a8aaad; font-size: 12px; }
+.stage-credentials a:hover span { color: var(--stage-gold); }
+@media (max-width: 800px) {
+  .stage-intro { grid-template-columns: 1fr; margin: 48px auto 36px; gap: 36px; max-width: 560px; }
+  .stage-name { font-size: clamp(44px, 9vw, 64px); }
+  .stage-credentials { grid-template-columns: 1fr 1fr; max-width: 560px; gap: 20px; }
+  .stage--editorial .stage-nav-links { display: flex; }
+  .stage--editorial .stage-nav-links li:not(:first-child) { display: none; }
+}
+@media (max-width: 480px) {
+  .stage--editorial .stage-nav { width: calc(100% - 32px); margin-top: 16px; gap: 8px; }
+  .stage-intro, .stage-feature, .stage-credentials { width: calc(100% - 40px); }
+  .stage--editorial .stage-kicker { font-size: 9px; letter-spacing: .035em; }
+  .stage--editorial .stage-center { gap: 18px; }
+  .stage--editorial .stage-actions { gap: 10px; }
+  .stage--editorial .stage-btn { padding: 0 18px; font-size: 13px; }
+  .stage-description { font-size: 16px; }
+  .stage-feature-copy { padding: 20px; }
+  .stage-credentials { grid-template-columns: 1fr; gap: 18px; }
+  .stage-credentials a { border-top: 1px solid #292a2d; padding-top: 16px; }
+}
+
+/* Portrait lighting is CSS-only; the photographic cutout stays untouched. */
+.stage-portrait {
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 480px);
+  aspect-ratio: 4 / 5;
+  margin: 0 auto;
+  align-self: end;
+}
+.portrait-halo {
+  position: absolute;
+  z-index: -1;
+  inset: 12% -6% 8%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(232, 200, 121, .2), rgba(232, 200, 121, .06) 48%, transparent 72%);
+  filter: blur(18px);
+}
+.stage-portrait::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 12% 1% 10%;
+  border: 1px solid rgba(232, 200, 121, .14);
+  border-radius: 48% 48% 36% 36%;
+  background: linear-gradient(150deg, rgba(232, 200, 121, .04), transparent 65%);
+}
+.stage-portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(12px 18px 22px rgba(0, 0, 0, .35));
+  mask-image: linear-gradient(#000 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(#000 80%, transparent 100%);
+}
+@media (max-width: 800px) {
+  .stage-portrait { width: min(100%, 440px); }
+  .stage-feature { max-width: 560px; }
+  .stage-feature-link { grid-template-columns: 1fr; }
+}
+
+/* The portrait belongs to the About introduction, below the orbit landing. */
+.about-introduction {
+  display: grid;
+  grid-template-columns: 1.25fr .75fr;
+  align-items: center;
+  gap: clamp(24px, 5vw, 72px);
+  margin-bottom: 48px;
+}
+.about-introduction .recruiter-cta { padding-bottom: 0; }
+.about-introduction .about-portrait { width: min(100%, 360px); }
+@media (max-width: 800px) {
+  .about-introduction { grid-template-columns: 1fr; gap: 24px; }
+  .about-introduction .about-portrait { width: min(85%, 320px); }
+}
+@media (max-width: 720px) {
+  .stage-stat:last-child { grid-column: 1 / -1; }
 }

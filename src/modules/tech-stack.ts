@@ -301,7 +301,7 @@ export class TechStack {
     const nameSet = new Set(this.essentialNames);
     const essentials = list.filter(i => nameSet.has(i.name));
     const pool = essentials.length ? essentials : list;
-    const shuffled = pool.slice().sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, Math.min(10, shuffled.length));
+    // Keep the initial selection stable across filters, reloads, and resize.
+    return pool.slice(0, 10);
   }
 }

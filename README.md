@@ -96,6 +96,7 @@ npm run test:visual     # Visual-regression snapshots
 npm run test:api        # Handlers: origins, validation, spam traps, AI scope/key/cache, auth, limits
 npm run test:worker     # Service worker caching and offline behavior
 # Start npm run preview in another terminal for the following:
+npm run test:homepage   # Landing layout, primary actions, project and résumé dialogs
 npm run test:stress     # 36 route/viewport combinations with WCAG checks
 npm run test:resilience # Slow loading, repeated actions, static routes, offline reload
 npm run lighthouse:ci   # Lighthouse CI assertions

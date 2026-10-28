@@ -11,7 +11,7 @@
 
   <!-- SEO Meta Tags -->
   <meta name="description"
-    content="Adriel Magalona is a PUP BS Computer Science student, DOST-SEI scholar, full-stack developer, and AI builder focused on civic tech, healthcare, fintech, and competition-grade prototypes.">
+    content="Adriel Magalona is a PUP BS Computer Science student, full-stack developer, and AI builder focused on civic tech, healthcare, fintech, and practical software projects.">
   <meta name="keywords"
     content="Adriel Magalona, Full-stack Developer, Web Developer, AI Engineer, Machine Learning, Software Engineer, Portfolio, Tech Projects, Innovation, Philippines">
   <meta name="author" content="Adriel Magalona">
@@ -26,7 +26,7 @@
   <meta property="og:url" content="https://www.adrielmagalona.dev">
   <meta property="og:title" content="Adriel Magalona - Full-stack Developer & AI Builder">
   <meta property="og:description"
-    content="PUP BS Computer Science student, DOST-SEI scholar, full-stack developer, and AI builder. Explore projects, awards, and proof of practical execution.">
+    content="PUP BS Computer Science student, full-stack developer, and AI builder. Explore selected projects, technical contributions, and competition awards.">
   <meta property="og:image" content="https://www.adrielmagalona.dev/images/og-card.jpg">
   <meta property="og:image:alt" content="Adriel Magalona — full-stack developer and AI builder, surrounded by hackathon and project highlights">
   <meta property="og:image:width" content="1200">
@@ -39,7 +39,7 @@
   <meta name="twitter:url" content="https://www.adrielmagalona.dev">
   <meta name="twitter:title" content="Adriel Magalona - Full-stack Developer & AI Builder">
   <meta name="twitter:description"
-    content="PUP BS Computer Science student, DOST-SEI scholar, full-stack developer, and AI builder. Explore projects, awards, and proof of practical execution.">
+    content="PUP BS Computer Science student, full-stack developer, and AI builder. Explore selected projects, technical contributions, and competition awards.">
   <meta name="twitter:image" content="https://www.adrielmagalona.dev/images/og-card.jpg">
   <meta name="twitter:image:alt" content="Adriel Magalona — full-stack developer and AI builder, surrounded by hackathon and project highlights">
   <meta name="twitter:creator" content="@adrielmagalona">
@@ -172,7 +172,7 @@
     }
 
     html {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
     }
 
     body {
@@ -262,18 +262,10 @@
       border-radius: 3px;
     }
 
+    /* Route headings receive focus for screen-reader navigation, without a visual flash. */
     .article-title:focus {
       outline: none;
-    }
-
-    .article-title.section-focus-target:focus {
-      border-radius: 10px;
-      box-shadow: 0 0 0 1px rgba(255, 219, 112, 0.18), inset 0 -1px 0 rgba(255, 219, 112, 0.35);
-    }
-
-    .article-title:focus-visible {
-      border-radius: 10px;
-      box-shadow: 0 0 0 1px rgba(255, 219, 112, 0.28), 0 0 0 5px rgba(255, 219, 112, 0.08);
+      box-shadow: none;
     }
 
     /* Ensure the initially active article is shown */
@@ -292,21 +284,18 @@
   <link rel="stylesheet" href="/styles/portfolio-enhancements.css">
   <link rel="stylesheet" href="/styles/portfolio-theme.css">
   <link rel="stylesheet" href="/styles/stage.css">
-  <link rel="preload" href="/fonts/unbounded-latin.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Decides before first paint whether the intro renders (home only) and
        which page shows first, so deep links never flash the About page.
        Inline for speed; allowed by its sha256 in vercel.json (verified by scripts/verify-csp-hashes.mjs). -->
   <script>(function(){var r=document.documentElement,p=location.pathname.replace(/\/+$/,'')||'/',m={'/stack':'stack','/background':'background','/projects':'projects','/gear':'gear','/destinations':'destinations'};r.classList.add(p==='/'||p==='/index.html'?'stage-on':'stage-off');r.setAttribute('data-route',m[p]||'about')})();</script>
   <!-- Chatbot styles are loaded with its code on first interaction. -->
 
-  <!-- Preload hero avatar with responsive sources -->
-  <link rel="preload" as="image" href="/images/my-avatar.avif"
-    imagesrcset="/images/my-avatar.avif 80w, /images/my-avatar@2x.avif 160w" imagesizes="80px" fetchpriority="high">
+  <!-- Images declare their loading priority at the point of use. -->
 
   <!-- Use system fonts instead of Google Fonts to avoid CSP issues -->
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
     }
 
     /* Visually hidden class for screen readers */
@@ -489,10 +478,10 @@
 
     <div class="stage-center" data-stage-center>
       <p class="stage-kicker"><span class="stage-pulse" aria-hidden="true"></span>Open to internships &amp; collaborations</p>
-      <h2 id="stage-title" class="stage-wordmark" data-wordmark aria-label="Adriel Magalona">
+      <h1 id="stage-title" class="stage-wordmark" data-wordmark aria-label="Adriel Magalona">
         <span class="wm-line" aria-hidden="true"><span class="wm-char" style="--c:0">A</span><span class="wm-char" style="--c:1">D</span><span class="wm-char" style="--c:2">R</span><span class="wm-char" style="--c:3">I</span><span class="wm-char" style="--c:4">E</span><span class="wm-char" style="--c:5">L</span></span>
         <span class="wm-line wm-line--grad" aria-hidden="true" style="--chars:8"><span class="wm-char" style="--c:6;--k:0">M</span><span class="wm-char" style="--c:7;--k:1">A</span><span class="wm-char" style="--c:8;--k:2">G</span><span class="wm-char" style="--c:9;--k:3">A</span><span class="wm-char" style="--c:10;--k:4">L</span><span class="wm-char" style="--c:11;--k:5">O</span><span class="wm-char" style="--c:12;--k:6">N</span><span class="wm-char" style="--c:13;--k:7">A</span></span>
-      </h2>
+      </h1>
       <p class="stage-lede">
         Full-stack developer &amp; AI builder from Manila. I turn hackathon weekends into
         <span class="stage-rotator" data-rotator aria-hidden="true"><span class="stage-rotator-word">shipped products</span></span><span class="visually-hidden">: shipped products, healthcare tools, civic tech, and fintech prototypes</span>
@@ -502,7 +491,7 @@
           <span>Explore the work</span>
           <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
-        <a class="stage-btn stage-btn--ghost" href="/resume" data-magnetic><span>Résumé</span></a>
+        <a class="stage-btn stage-btn--ghost" href="/resume" data-resume-preview data-magnetic><span>Résumé</span></a>
         <a class="stage-btn stage-btn--ghost" href="/contact" data-stage-page="contact" data-magnetic><span>Say hello</span></a>
       </div>
     </div>
@@ -511,7 +500,6 @@
       <div class="stage-stat"><dt>Honors &amp; awards</dt><dd><span data-count="honors">27</span></dd></div>
       <div class="stage-stat"><dt>Podium finishes</dt><dd><span data-count="podiums">11</span></dd></div>
       <div class="stage-stat"><dt>Hackathon champion</dt><dd><span data-count="champions">2</span>&times;</dd></div>
-      <div class="stage-stat"><dt>Scholar</dt><dd class="stage-stat-text">DOST&#8209;SEI</dd></div>
     </dl>
 
     <div class="stage-marquee" aria-hidden="true">
@@ -574,11 +562,12 @@
           <h2 class="h2 article-title">About me</h2>
         </header>
 
+        <div class="about-introduction">
         <section class="recruiter-cta" aria-labelledby="recruiter-cta-title">
           <div class="recruiter-cta-copy">
             <p class="recruiter-cta-eyebrow">Available for internships &amp; collaborations</p>
             <h3 id="recruiter-cta-title" class="h3 recruiter-cta-title">I build web apps that make everyday tasks easier.</h3>
-            <p>I’m Adriel, a Computer Science student at PUP and DOST-SEI scholar in the Philippines. My work spans school services, healthcare prototypes, and AI-assisted tools.</p>
+            <p>I’m Adriel, a Computer Science student at PUP in the Philippines. My work spans school services, healthcare prototypes, and AI-assisted tools.</p>
           </div>
           <div class="recruiter-cta-actions" aria-label="Recruiter actions">
             <a class="recruiter-cta-primary" href="/projects">View selected work <ion-icon name="arrow-forward-outline" aria-hidden="true"></ion-icon></a>
@@ -588,6 +577,16 @@
           </div>
 
         </section>
+
+      <figure class="stage-portrait about-portrait">
+        <div class="portrait-halo" aria-hidden="true"></div>
+        <img src="/images/portrait/adriel-800.webp"
+          srcset="/images/portrait/adriel-480.webp 480w, /images/portrait/adriel-800.webp 800w"
+          sizes="(max-width: 800px) min(88vw, 440px), 480px"
+          alt="Adriel Magalona in a charcoal blazer and white shirt"
+          width="800" height="1000" loading="lazy" decoding="async">
+      </figure>
+        </div>
 
         <section class="featured-projects" aria-labelledby="featured-projects-title">
           <div class="featured-projects-heading">
@@ -1463,19 +1462,6 @@
             <div class="timeline-item" data-timeline-item>
               <div class="timeline-content">
                 <div class="timeline-badge current">Active</div>
-                <h4 class="h4 timeline-title">DOST-SEI Scholar under RA 7687</h4>
-                <div class="scholarship-provider"><div class="scholarship-logo"><img src="/images/logos/dost-sei.webp" alt="Department of Science and Technology Science Education Institute logo" width="42" height="42" decoding="async" loading="lazy"></div><div class="company-name">Department of Science and Technology - Science Education Institute</div></div>
-                <span class="timeline-period">2024 — Present</span>
-                <p class="timeline-text">
-                  Qualified for the 2024 DOST Undergraduate Scholarship Examination, placing among
-                  <strong>10,756 successful examinees out of 89,510 nationwide.</strong>
-                </p>
-              </div>
-            </div>
-
-            <div class="timeline-item" data-timeline-item>
-              <div class="timeline-content">
-                <div class="timeline-badge current">Active</div>
                 <h4 class="h4 timeline-title">MACEMCO Scholar</h4>
                 <div class="scholarship-provider"><div class="scholarship-logo"><img src="/images/logos/macemco.webp" alt="Makati City Employees Multi-Purpose Cooperative logo" width="42" height="42" decoding="async" loading="lazy"></div><div class="company-name">Makati City Employees Multi-Purpose Cooperative</div></div>
                 <span class="timeline-period">2024 — Present</span>
@@ -1509,8 +1495,8 @@
 
       <article id="projects" class="projects" data-page="projects">
 
-        <header class="page-hero" data-kicker="04 — Things I&rsquo;ve shipped">
-          <h2 class="h2 article-title">Projects & Portfolio</h2>
+        <header class="page-hero" data-kicker="04 — Projects &amp; prototypes">
+          <h2 class="h2 article-title">Projects</h2>
         </header>
 
         <section class="projects">
@@ -1518,18 +1504,18 @@
           <section class="selected-work" aria-labelledby="selected-work-title">
             <div class="selected-work-intro">
               <p class="selected-work-kicker">Start here</p>
-              <h3 id="selected-work-title">Selected work, organized by the problem it solves.</h3>
-              <p>Three representative builds for recruiters and collaborators. The complete archive remains below.</p>
+              <h3 id="selected-work-title">A few places to start.</h3>
+              <p>Explore the problem, my contribution, and the implementation behind each project.</p>
             </div>
             <div class="selected-work-grid">
               <button class="selected-work-card" type="button" data-open-project="WorkSight">
-                <span>AI · Product thinking</span><strong>WorkSight</strong><small>Helps teams understand workplace burnout risk through guided analytics.</small><b>Open case study →</b>
+                <span>AI · Product thinking</span><strong>WorkSight</strong><small>Helps teams understand workplace burnout risk through guided analytics.</small><b>View project details →</b>
               </button>
               <button class="selected-work-card" type="button" data-open-project="Online Document Request System">
-                <span>Full-stack · Civic workflow</span><strong>Online Document Request System</strong><small>Replaces manual school-document requests with a clear tracked process.</small><b>Open case study →</b>
+                <span>Full-stack · School services</span><strong>Online Document Request System</strong><small>Replaces manual school-document requests with a clear tracked process.</small><b>View project details →</b>
               </button>
               <button class="selected-work-card" type="button" data-open-project="GeneSync">
-                <span>Algorithms · Team delivery</span><strong>GeneSync</strong><small>Visualizes global biological sequence alignment for an academic product demo.</small><b>Open case study →</b>
+                <span>Algorithms · Team delivery</span><strong>GeneSync</strong><small>Visualizes global biological sequence alignment for an academic product demo.</small><b>View project details →</b>
               </button>
             </div>
           </section>
@@ -2151,7 +2137,7 @@
         </figure>
 
         <div class="info-content">
-          <h1 class="name" title="Adriel Magalona">Adriel Magalona</h1>
+          <h2 class="name" title="Adriel Magalona">Adriel Magalona</h2>
 
           <p class="title">Full-stack Developer & AI/ML</p>
           <p class="sidebar-status"><span class="stage-pulse" aria-hidden="true"></span>Open to internships</p>

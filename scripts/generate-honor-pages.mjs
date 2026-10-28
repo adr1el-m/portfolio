@@ -122,7 +122,7 @@ function writePortfolioSchema() {
     {
       '@type': 'Person', '@id': `${siteUrl}/#person`, name: 'Adriel Magalona', url: siteUrl,
       image: `${siteUrl}/images/my-avatar.png`, jobTitle: 'Full-stack Developer and AI Builder',
-      description: 'Computer Science student at the Polytechnic University of the Philippines and DOST-SEI scholar building web apps, AI tools, and competition-winning prototypes.',
+      description: 'Computer Science student at the Polytechnic University of the Philippines building web apps, AI tools, and competition-winning prototypes.',
       email: 'mailto:dagsmagalona@gmail.com',
       address: { '@type': 'PostalAddress', addressLocality: 'Taguig City', addressRegion: 'Metro Manila', addressCountry: 'PH' },
       alumniOf: { '@type': 'CollegeOrUniversity', name: 'Polytechnic University of the Philippines' },

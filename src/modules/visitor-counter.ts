@@ -13,7 +13,7 @@ export class VisitorCounter {
 
         // In dev the Vite proxy forwards /api/* to a local server that usually
         // isn't running, producing a noisy 502. Keep the counter hidden instead.
-        if (import.meta.env.DEV) {
+        if (import.meta.env.DEV || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) {
             this.updateUnavailable();
             return;
         }
@@ -64,7 +64,7 @@ export class VisitorCounter {
         if (document.getElementById('visitor-counter-styles')) return;
         const style = document.createElement('style');
         style.id = 'visitor-counter-styles';
-        style.textContent = `.visitor-counter{display:flex;justify-content:center;margin-bottom:20px;padding:10px 0}.visitor-counter-inner{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(255,219,112,.08);border:1px solid rgba(255,219,112,.2);border-radius:20px;font-size:13px;color:var(--light-gray)}.visitor-icon{color:var(--orange-yellow-crayola);font-size:16px}.visitor-count{font-weight:600;color:var(--white-1);min-width:12px;text-align:center;font-variant-numeric:tabular-nums}.visitor-label{color:var(--light-gray-70);font-size:12px}`;
+        style.textContent = `.visitor-counter{display:flex;justify-content:center;margin-bottom:20px;padding:10px 0}.visitor-counter[hidden]{display:none}.visitor-counter-inner{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(255,219,112,.08);border:1px solid rgba(255,219,112,.2);border-radius:20px;font-size:13px;color:var(--light-gray)}.visitor-icon{color:var(--orange-yellow-crayola);font-size:16px}.visitor-count{font-weight:600;color:var(--white-1);min-width:12px;text-align:center;font-variant-numeric:tabular-nums}.visitor-label{color:var(--light-gray-70);font-size:12px}`;
         document.head.appendChild(style);
     }
 

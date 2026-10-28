@@ -43,8 +43,11 @@ await caches.open('adriel-portfolio-v8');
 await caches.open('another-app-cache');
 await lifecycle('install');
 await lifecycle('activate');
-assert.deepEqual(await caches.keys(), ['another-app-cache', 'adriel-portfolio-v11']);
-const cache = await caches.open('adriel-portfolio-v11');
+const portfolioCaches = (await caches.keys()).filter(name => name.startsWith('adriel-portfolio-'));
+assert.equal(portfolioCaches.length, 1, 'Only the newly installed portfolio cache should survive');
+assert.notEqual(portfolioCaches[0], 'adriel-portfolio-v8', 'The previous cache must be removed');
+assert.ok((await caches.keys()).includes('another-app-cache'), 'Other apps must keep their cache');
+const cache = await caches.open(portfolioCaches[0]);
 for (const path of ['/api/visits', '/api/analytics', '/_vercel/insights', 'https://cdn.test/script.js', '/video.mp4']) {
   assert.equal(await request(path), undefined, path);
 }

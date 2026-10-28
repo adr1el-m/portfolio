@@ -699,7 +699,7 @@ article.projects ul.project-list li.project-item:focus-within {
 
 /* Layout, hierarchy, and control sizing share one responsive system. */
 html {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
   scroll-padding-top: 100px;
 }
 body::-webkit-scrollbar { width: 8px; }

@@ -53,7 +53,7 @@ export const KB: KnowledgeBase = {
     name: 'Adriel Magalona',
     title: 'Computer Science Student, Full-stack Developer & AI Builder',
     summary:
-      'Adriel is a BS Computer Science student at the Polytechnic University of the Philippines, a DOST-SEI undergraduate scholar, and a hands-on builder focused on full-stack web apps, AI-assisted products, civic technology, healthcare tools, and competition-grade prototypes.',
+      'Adriel is a BS Computer Science student at the Polytechnic University of the Philippines, a hands-on builder focused on full-stack web apps, AI-assisted products, civic technology, healthcare tools, and competition-grade prototypes.',
     nationality: 'Filipino',
   },
   contact: {
@@ -78,14 +78,6 @@ export const KB: KnowledgeBase = {
     },
   ],
   scholarships: [
-    {
-      title: 'DOST-SEI Scholar under RA 7687',
-      provider: 'Department of Science and Technology - Science Education Institute',
-      program: 'Republic Act 7687 Science and Technology Scholarship',
-      period: '2024–present',
-      notes:
-        'Qualified for the 2024 DOST Undergraduate Scholarship Examination, placing among 10,756 successful examinees out of 89,510 nationwide.',
-    },
     {
       title: 'MACEMCO Scholar',
       provider: 'Makati City Employees Multi-Purpose Cooperative',
@@ -120,7 +112,7 @@ export const KB: KnowledgeBase = {
   ],
   resume: {
     headline:
-      'BS Computer Science student at PUP Manila, DOST-SEI undergraduate scholar, full-stack developer, AI builder, and hackathon lead from Taguig City.',
+      'BS Computer Science student at PUP Manila, full-stack developer, AI builder, and hackathon lead from Taguig City.',
     location: 'Taguig City, Metro Manila, Philippines',
     highlights: [
       'Technical stack includes C, C++, Python, HTML, CSS, Java, JavaScript, PHP, React, Bootstrap, Tailwind CSS, Axios, Express, CORS, MySQL, Firebase, Git, GitHub, XAMPP, npm, Vercel, Vite, ESLint, dotenv, and Multer.',

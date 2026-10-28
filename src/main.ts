@@ -441,7 +441,7 @@ class PortfolioApp {
       const navigationManager = new NavigationManager();
       // Initialize scroll progress bar
       new ScrollProgress();
-      // Cinematic intro + site-wide motion. Audit runs get the static layout.
+      // Animate the orbit homepage; audit runs retain its static layout.
       const stageRoot = document.querySelector<HTMLElement>('[data-stage]');
       if (stageRoot) new Stage(stageRoot, { calm: auditMode }).init();
       if (!auditMode) new MotionFx().init();

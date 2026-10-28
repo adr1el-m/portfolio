@@ -20,7 +20,7 @@ const SPOTLIGHT_SELECTOR = [
 
 const REVEAL_SELECTOR = [
   '.featured-project', '.service-item', '.selected-work-card', '.gear-card', '.web-destination-card',
-  '.stack-item', '.timeline-content', '.honors-stats > div', '.workflow-grid > li', '.project-item',
+  '.timeline-content', '.honors-stats > div', '.workflow-grid > li', '.project-item',
   '.achievement-card', '.project-explorer-timeline > li', '.github-heatmap', '.section-header',
   '.honors-filter-bar', '.workflow-pill-grid', '.year-header', '.featured-projects-heading',
   '.footer-cta', '.site-footer .sidebar', '.site-footer .release-sidebar', '.project-group-header',

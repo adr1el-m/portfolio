@@ -113,7 +113,7 @@ export class Stage {
   private whenFontReady(): Promise<void> {
     const timeout = new Promise<void>((resolve) => window.setTimeout(resolve, 1100));
     if (!document.fonts?.load) return timeout;
-    const font = document.fonts.load('800 1em Unbounded').then(() => undefined).catch(() => undefined);
+    const font = document.fonts.ready.then(() => undefined).catch(() => undefined);
     return Promise.race([font, timeout]);
   }
 

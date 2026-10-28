@@ -204,9 +204,7 @@ export class AccessibilityEnhancer {
       this.announceToScreenReader(`Navigated to ${heading?.textContent?.trim() || detail.page} section`);
       if (!heading) return;
       heading.tabIndex = -1;
-      heading.classList.add('section-focus-target');
       heading.focus({ preventScroll: true });
-      window.setTimeout(() => heading.classList.remove('section-focus-target'), 1200);
     });
 
     logger.info('✅ Page change announcements configured');

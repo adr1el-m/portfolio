@@ -176,7 +176,7 @@ try {
   await page.goto(`http://127.0.0.1:${port}/destinations`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('article[data-page="destinations"].active');
   const papers = await page.$eval('article[data-page="destinations"] .web-destination-card', (el) => el.getAttribute('href'));
-  if (papers !== 'https://papers.adrielmagalona.dev/') throw new Error('Papers destination link did not render');
+  if (papers !== 'https://papers.adrielmagalona.com/') throw new Error('Papers destination link did not render');
   const caseResponse = await page.goto(`http://127.0.0.1:${port}/case-studies/worksight`);
   if (caseResponse?.status() !== 200) throw new Error('Case-study page route failed');
   console.log('Behavior smoke tests passed: role path, explorer filters/comparison, global resume, navigation history/ARIA, command palette focus, modal, Escape, changelog, skip link, and case-study route.');

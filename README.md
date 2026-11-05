@@ -12,13 +12,13 @@
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-2ea44f)](LICENSE)
 
-[Live site](https://adrielmagalona.dev) · [Case studies](https://adrielmagalona.dev/case-studies/worksight) · [GitHub](https://github.com/adr1el-m) · [LinkedIn](https://www.linkedin.com/in/adriel-magalona-0546b9318/) · [Report an issue](https://github.com/adr1el-m/portfolio/issues)
+[Live site](https://adrielmagalona.com) · [Case studies](https://adrielmagalona.com/case-studies/worksight) · [GitHub](https://github.com/adr1el-m) · [LinkedIn](https://www.linkedin.com/in/adriel-magalona-0546b9318/) · [Report an issue](https://github.com/adr1el-m/portfolio/issues)
 
 </div>
 
 ---
 
-This repository powers [adrielmagalona.dev](https://adrielmagalona.dev), a portfolio built to make the work easy to evaluate: projects have context, achievements have evidence, and the site remains useful across devices and connection states.
+This repository powers [adrielmagalona.dev](https://adrielmagalona.com), a portfolio built to make the work easy to evaluate: projects have context, achievements have evidence, and the site remains useful across devices and connection states.
 
 | Focus | What is here |
 | --- | --- |
@@ -31,11 +31,11 @@ This repository powers [adrielmagalona.dev](https://adrielmagalona.dev), a portf
 
 | Project | Focus | Evidence |
 | --- | --- | --- |
-| [WorkSight](https://adrielmagalona.dev/case-studies/worksight) | Product thinking and frontend delivery | Scope, decisions, and outcome |
-| [GeneSync](https://adrielmagalona.dev/case-studies/genesync) | Algorithmic problem-solving | Implementation and demo evidence |
-| [ODRS](https://adrielmagalona.dev/case-studies/odrs) | Full-stack workflow design | Architecture and source repository |
-| [DokQ](https://adrielmagalona.dev/case-studies/dokq) | Document and queue experience | Product rationale and constraints |
-| [LingapLink](https://adrielmagalona.dev/case-studies/lingaplink) | Team delivery and social impact | Role, results, and external proof |
+| [WorkSight](https://adrielmagalona.com/case-studies/worksight) | Product thinking and frontend delivery | Scope, decisions, and outcome |
+| [GeneSync](https://adrielmagalona.com/case-studies/genesync) | Algorithmic problem-solving | Implementation and demo evidence |
+| [ODRS](https://adrielmagalona.com/case-studies/odrs) | Full-stack workflow design | Architecture and source repository |
+| [DokQ](https://adrielmagalona.com/case-studies/dokq) | Document and queue experience | Product rationale and constraints |
+| [LingapLink](https://adrielmagalona.com/case-studies/lingaplink) | Team delivery and social impact | Role, results, and external proof |
 
 ## Experience
 

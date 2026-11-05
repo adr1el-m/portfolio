@@ -18,7 +18,7 @@ const LIMITS = { message: 800, context: 9_000, tone: 600, turn: 300, turns: 8 };
 const CACHE_TTL_MS = 10 * 60_000;
 const CACHE_MAX = 200;
 
-const SYSTEM_INSTRUCTION = `You are AdrAI, Adriel Magalona's personal portfolio agent on www.adrielmagalona.dev.
+const SYSTEM_INSTRUCTION = `You are AdrAI, Adriel Magalona's personal portfolio agent on adrielmagalona.com.
 
 SCOPE (strict):
 - Only discuss Adriel: his projects, skills, experience, education, scholarships, awards, and how to contact, hire, or collaborate with him.

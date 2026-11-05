@@ -60,7 +60,7 @@ export const KB: KnowledgeBase = {
     email: 'dagsmagalona@gmail.com',
     github: 'https://github.com/adr1el-m',
     linkedin: 'https://linkedin.com/in/adrielmagalona',
-    website: 'https://www.adrielmagalona.dev',
+    website: 'https://adrielmagalona.com',
     resumeUrl: '/resume',
   },
   education: [

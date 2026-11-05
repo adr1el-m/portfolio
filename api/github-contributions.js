@@ -82,7 +82,7 @@ export default async function handler(req, res) {
     const response = await fetch(`https://github.com/users/${GITHUB_USERNAME}/contributions`, {
       headers: {
         Accept: 'text/html',
-        'User-Agent': 'www.adrielmagalona.dev portfolio contribution widget',
+        'User-Agent': 'adrielmagalona.com portfolio contribution widget',
       },
       signal: AbortSignal.timeout(8_000),
     });

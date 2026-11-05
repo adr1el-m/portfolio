@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const root = process.cwd();
 const dist = path.join(root, 'dist');
-const site = 'https://www.adrielmagalona.dev';
+const site = 'https://adrielmagalona.com';
 const studies = [
   { slug: 'worksight', title: 'WorkSight', problem: 'Leaders need earlier, more understandable signals of workplace burnout risk.', role: 'Product narrative, workflow design, and competition pitch with Team 4Sight.', constraints: 'Combine behavioral and organizational signals without treating people as a single score.', decisions: 'Used guided analytics workflows, a clear leader-facing product narrative, and privacy-conscious problem framing.', architecture: 'Next.js App Router, TypeScript, Supabase/PostgreSQL, analytics workflows.', results: 'Placed 3rd at BPI DataWave 2025.', image: '/images/projects/worksight/1-1200.avif', links: [['Repository', 'https://github.com/4sightorg/worksight']] },
   { slug: 'genesync', title: 'GeneSync', problem: 'Sequence alignment is difficult to inspect when the algorithm remains invisible to the learner.', role: 'Group 5 contributor on an academic bioinformatics project.', constraints: 'Preserve the global-alignment workflow while making validation, scoring, traceback, and similarity observable.', decisions: 'Built an interaction model around FASTA-aware input, scoring-matrix inspection, traceback, identity analysis, and hotspot mapping.', architecture: 'SwiftUI client with a Needleman–Wunsch dynamic-programming engine.', results: 'Delivered an explainable global-alignment learning workflow.', image: '/images/projects/genesync/genesync-demo.poster.jpg', links: [['Demo video', 'https://www.youtube.com/watch?v=tuJthrRh8Ik'], ['Repository', 'https://github.com/adr1el-m/gene-sync']] },

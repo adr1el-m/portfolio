@@ -91,7 +91,7 @@ function ownSitePath(link) {
   if (!isExternal(link)) return '';
   try {
     const url = new URL(link);
-    if (['adrielmagalona.dev', 'www.adrielmagalona.dev'].includes(url.hostname)) {
+    if (['adrielmagalona.com', 'www.adrielmagalona.com', 'adrielmagalona.dev', 'www.adrielmagalona.dev'].includes(url.hostname)) {
       return `${url.pathname}${url.search}${url.hash}`;
     }
   } catch {

@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const root = process.cwd();
 const dist = path.join(root, 'dist');
-const siteUrl = 'https://www.adrielmagalona.dev';
+const siteUrl = 'https://adrielmagalona.com';
 const source = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 
 function decode(value = '') {

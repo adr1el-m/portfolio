@@ -60,7 +60,7 @@ function parseGitHubContributions(html) {
 const response = await fetch(`https://github.com/users/${GITHUB_USERNAME}/contributions`, {
   headers: {
     Accept: 'text/html',
-    'User-Agent': 'www.adrielmagalona.dev portfolio contribution snapshot',
+    'User-Agent': 'adrielmagalona.com portfolio contribution snapshot',
   },
 });
 

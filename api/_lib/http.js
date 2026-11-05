@@ -4,6 +4,8 @@
  */
 
 const DEFAULT_ALLOWED_ORIGINS = [
+  'https://adrielmagalona.com',
+  'https://www.adrielmagalona.com',
   'https://adrielmagalona.dev',
   'https://www.adrielmagalona.dev',
   'http://localhost:5173',

@@ -460,7 +460,7 @@ export class NavigationManager {
     try {
       const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
       if (canonical) {
-        const base = 'https://www.adrielmagalona.dev';
+        const base = 'https://adrielmagalona.com';
         const href = path === '/' ? base : `${base}${path}`;
         canonical.setAttribute('href', href);
 
